@@ -3,147 +3,317 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Guess Their Answer — CREATOR</title>
+<title>CREATOR — Guess Their Answer</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff;--soft:#EAF0FF;--ink:#111827;--mute:#5b6478;--blue:#0033FF;--mint:#00E5A0;--org:#FF5C35;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1020;--soft:#18203a;--ink:#f3f5ff;--mute:#9aa4c2}}
-*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.4 Poppins,system-ui,sans-serif;min-height:100vh}
-main{max-width:1000px;margin:0 auto;padding:18px 16px 40px}
-section{display:none}section.on{display:block}
-h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.05;margin:.2em 0;font-weight:800}
-.blue{color:var(--blue)}.mute{color:var(--mute)}
-.pill{display:inline-block;padding:6px 14px;border-radius:99px;background:var(--mint);color:#111827;font-weight:700;font-size:.8rem}
-.hero{background:var(--blue);color:#fff;border-radius:28px;padding:26px;margin:12px 0;display:flex;gap:16px;align-items:center;justify-content:space-between}
-.hero h1{color:#fff}.hero p{margin:.3em 0;color:#cfd8ff}.hero svg{flex:0 0 auto;width:min(36vw,190px)}
-.card{background:var(--soft);border-radius:22px;padding:18px;margin:12px 0}
-.btn{display:block;width:100%;padding:15px;margin-top:10px;border:0;border-radius:99px;font:700 1rem Poppins,system-ui,sans-serif;cursor:pointer;background:var(--blue);color:#fff}
-.btn.mint{background:var(--mint);color:#111827}.btn.org{background:var(--org)}.btn.ghost{background:#fff;color:var(--blue);border:2px solid var(--blue)}
-.row{display:flex;gap:10px}.row .btn{margin-top:10px}
-input{width:100%;padding:14px 16px;border-radius:16px;border:2px solid transparent;background:#fff;color:#111827;font:600 1.05rem Poppins,system-ui,sans-serif;margin-top:8px}
-input:focus{outline:none;border-color:var(--blue)}
-.code{font-size:clamp(3rem,12vw,6rem);font-weight:800;letter-spacing:.15em;color:var(--blue);margin:0}
-.q{font-size:clamp(1.5rem,4.5vw,2.6rem);font-weight:800;margin:.2em 0}
-.bar{height:10px;background:var(--soft);border-radius:9px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;width:100%;background:var(--org);transition:width 1s linear}
-.slot{display:flex;justify-content:space-between;padding:13px 18px;margin:8px 0;border-radius:16px;background:var(--soft);font-weight:700;font-size:1.15rem}
-.slot.on2{background:var(--blue);color:#fff}
-.pl{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:6px 0;border-radius:16px;background:var(--bg)}
-.pl svg{width:44px;height:44px;flex:0 0 auto}.pl span{flex:1}.pl b{color:var(--blue)}.pl em{font-style:normal;color:var(--mint);font-weight:700}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.grid .pl{margin:0;flex-direction:column;text-align:center}.grid .pl svg{width:64px;height:64px}
-.pick{display:flex;align-items:center;gap:14px}.pick svg{width:110px;height:110px}.pick .btn{margin:6px 0;padding:10px}
-.big{font-size:3.2rem;font-weight:800;margin:.1em 0}
-.gain{font-size:2.4rem;font-weight:800}.ok{color:var(--mint)}.bad{color:var(--org)}
-.msg{color:var(--org);font-weight:600;min-height:1.4em}
-#c3{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none}
-body.g3 main{padding-bottom:42vh}
-body.door3d main{padding-bottom:0}
-body.door3d main>section.on{background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(6px);border-radius:22px;padding:12px 16px}
-body.door3d #hGame{max-width:760px;margin:0 auto}
-body.door3d #hBoard{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-body.door3d .slot{margin:0;padding:6px 8px;font-size:.8rem;flex-direction:column}
-body.door3d #hRank{display:none}
-body.door3d .q{font-size:clamp(1.2rem,3.2vw,1.8rem);margin:.2em 0}
-body.door3d #bNext{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:auto;padding:12px 24px;z-index:5}
-#wFox,#eFox{display:none}
-.sw{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 14px}.dot{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer}.dot.sel{border-color:var(--ink);transform:scale(1.15)}
-.chip{padding:8px 14px;border-radius:99px;border:2px solid var(--blue);background:#fff;color:var(--blue);font:700 .85rem Poppins,system-ui,sans-serif;cursor:pointer}.chip.sel{background:var(--blue);color:#fff}
+:root {
+  --bg: #F4F7FF; /* Fond clair */
+  --ink: #0B1020; /* Texte foncé */
+  --blue: #0033FF; /* Bleu CREATOR */
+  --mint: #00E5A0; /* Vert Menthe */
+  --org: #FF5C35; /* Orange */
+  --yellow: #FFC107; /* Jaune */
+  --card: #FFFFFF;
+  --shadow: 4px 4px 0px var(--ink);
+  --radius: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1020; /* Fond sombre */
+    --ink: #F4F7FF; /* Texte clair */
+    --card: #151D3B;
+    --shadow: 4px 4px 0px var(--blue);
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 600 16px/1.4 Poppins, system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+main { max-width: 1000px; margin: 0 auto; padding: 18px 16px 40px; position: relative; z-index: 2; }
+section { display: none; }
+section.on { display: block; animation: popIn 0.3s ease-out; }
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* --- TYPOGRAPHIE --- */
+h1 { font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.05; margin: .2em 0; font-weight: 900; color: var(--blue); text-transform: uppercase; letter-spacing: -1px; }
+h2 { font-size: 1.5rem; font-weight: 800; margin: 0.5em 0; color: var(--blue); }
+.mute { color: #6b7280; font-weight: 600; }
+.pill { display: inline-block; padding: 6px 14px; border-radius: 99px; background: var(--mint); color: #0B1020; font-weight: 800; font-size: .8rem; border: 2px solid var(--ink); }
+
+/* --- CARTES ET BOUTONS --- */
+.card { background: var(--card); border-radius: var(--radius); padding: 18px; margin: 12px 0; border: 3px solid var(--ink); box-shadow: var(--shadow); }
+.btn {
+  display: block; width: 100%; padding: 16px; margin-top: 12px;
+  border: 3px solid var(--ink); border-radius: var(--radius);
+  font: 800 1rem Poppins, system-ui, sans-serif;
+  cursor: pointer; background: var(--card); color: var(--ink);
+  box-shadow: var(--shadow); transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px var(--ink); }
+.btn.blue { background: var(--blue); color: white; }
+.btn.mint { background: var(--mint); color: #0B1020; }
+.btn.org { background: var(--org); color: white; }
+.btn.ghost { background: transparent; border-color: var(--blue); color: var(--blue); box-shadow: none; }
+.btn.ghost:hover { background: var(--blue); color: white; }
+
+/* --- HERO SECTION --- */
+.hero {
+  background: var(--blue); color: white; border-radius: var(--radius);
+  padding: 26px; margin: 12px 0; display: flex; gap: 16px;
+  align-items: center; justify-content: space-between;
+  border: 3px solid var(--ink); box-shadow: var(--shadow);
+}
+.hero h1 { color: white; }
+.hero p { margin: .3em 0; color: #cfd8ff; font-size: 1.1rem; }
+.hero svg { flex: 0 0 auto; width: min(36vw, 190px); }
+
+/* --- INPUTS --- */
+input {
+  width: 100%; padding: 14px 16px; border-radius: var(--radius);
+  border: 3px solid var(--ink); background: var(--card); color: var(--ink);
+  font: 700 1.05rem Poppins, system-ui, sans-serif; margin-top: 8px; outline: none;
+  box-shadow: var(--shadow);
+}
+input:focus { border-color: var(--blue); }
+
+/* --- CODE DE SALLE --- */
+.code { font-size: clamp(3rem, 12vw, 6rem); font-weight: 900; letter-spacing: .15em; color: var(--blue); margin: 0; text-shadow: 3px 3px 0 var(--mint); }
+
+/* --- QUIZ --- */
+.q { font-size: clamp(1.5rem, 4.5vw, 2.6rem); font-weight: 900; margin: .2em 0; color: var(--ink); }
+.bar { height: 16px; background: var(--card); border-radius: 99px; overflow: hidden; margin: 10px 0; border: 3px solid var(--ink); }
+.bar i { display: block; height: 100%; width: 100%; background: var(--mint); transition: width 1s linear; }
+
+/* --- SLOTS (Le tableau) --- */
+.slot {
+  display: flex; justify-content: space-between; padding: 14px 18px;
+  margin: 8px 0; border-radius: var(--radius); background: var(--card);
+  font-weight: 800; font-size: 1.15rem; border: 3px solid var(--ink); box-shadow: var(--shadow);
+}
+.slot.on2 { background: var(--blue); color: white; }
+.slot.on2 span { color: white; }
+
+/* --- JOUEURS --- */
+.pl {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+  margin: 6px 0; border-radius: var(--radius); background: var(--card);
+  border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.pl svg { width: 44px; height: 44px; flex: 0 0 auto; }
+.pl span { flex: 1; font-weight: 700; }
+.pl b { color: var(--blue); font-size: 1.2rem; }
+.pl em { font-style: normal; color: var(--org); font-weight: 800; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.grid .pl { margin: 0; flex-direction: column; text-align: center; }
+.grid .pl svg { width: 64px; height: 64px; }
+
+/* --- RESULTATS --- */
+.big { font-size: 3.2rem; font-weight: 900; margin: .1em 0; color: var(--blue); }
+.gain { font-size: 2.4rem; font-weight: 900; }
+.ok { color: var(--mint); }
+.bad { color: var(--org); }
+.msg { color: var(--org); font-weight: 800; min-height: 1.4em; }
+
+/* --- SWATCHES --- */
+.sw { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0 14px; }
+.dot { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--ink); cursor: pointer; box-shadow: 2px 2px 0 var(--ink); transition: transform 0.1s; }
+.dot:active { transform: scale(0.9); }
+.dot.sel { border-color: var(--blue); transform: scale(1.15); box-shadow: 0 0 0 3px var(--blue); }
+.chip { padding: 8px 14px; border-radius: 99px; border: 3px solid var(--ink); background: var(--card); color: var(--ink); font: 700 .85rem Poppins, system-ui, sans-serif; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+.chip.sel { background: var(--blue); color: white; }
+
+/* --- 3D --- */
+#c3 { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+body.g3 main { padding-bottom: 42vh; }
+body.door3d main { padding-bottom: 0; }
+body.door3d main>section.on { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 12px 16px; border: 3px solid var(--ink); }
+body.door3d #hGame { max-width: 760px; margin: 0 auto; }
+body.door3d #hBoard { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+body.door3d .slot { margin: 0; padding: 6px 8px; font-size: .8rem; flex-direction: column; }
+body.door3d #hRank { display: none; }
+body.door3d .q { font-size: clamp(1.2rem, 3.2vw, 1.8rem); margin: .2em 0; }
+body.door3d #bNext { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: auto; padding: 12px 24px; z-index: 5; }
+
+#wFox, #eFox { display: none; }
 </style>
 </head>
 <body>
+
 <canvas id="c3"></canvas>
 <main>
 
+<!-- ÉCRAN ACCUEIL -->
 <section id="home" class="on">
- <div class="hero"><div><span class="pill">CREATOR · Epitech Bénin</span><h1>Guess Their Answer</h1><p>Franchis les portes en devinant la réponse la plus populaire. Écran animateur + joueurs sur téléphone.</p></div><div id="heroFox"></div></div>
- <div class="row"><button class="btn mint" id="bHost">Animer (écran projeté)</button><button class="btn" id="bJoin">Rejoindre avec mon téléphone</button></div>
- <button class="btn ghost" id="bDemo">Voir une démo (6 joueurs virtuels, sans téléphone)</button>
+ <div class="hero">
+   <div>
+     <span class="pill">CREATOR · Epitech Bénin</span>
+     <h1>Guess Their Answer</h1>
+     <p>Franchis les portes en devinant la réponse la plus populaire.</p>
+   </div>
+   <div id="heroFox"></div>
+ </div>
+ <div class="row" style="display:flex; gap:10px;">
+   <button class="btn mint" id="bHost">Animer (écran projeté)</button>
+   <button class="btn blue" id="bJoin">Rejoindre avec mon téléphone</button>
+ </div>
+ <button class="btn ghost" id="bDemo">Voir une démo (6 joueurs virtuels)</button>
  <p class="msg" id="homeMsg"></p>
- <h2>Classement général</h2><div class="card" id="lb"><p class="mute">Chargement…</p></div>
+ <h2>Classement général</h2>
+ <div class="card" id="lb"><p class="mute">Chargement…</p></div>
 </section>
 
+
+<!-- ÉCRAN ANIMATEUR -->
 <section id="hLobby">
  <span class="pill">Salle ouverte</span>
- <p class="mute" style="margin:.6em 0 0">Sur ton téléphone, ouvre cette page, appuie sur « Rejoindre » et entre le code :</p>
+ <p class="mute" style="margin:.6em 0 0">Sur ton téléphone, ouvre cette page et entre le code :</p>
  <p class="code" id="hCode"></p>
  <div class="card"><b id="hCount">0 joueur</b><div class="grid" id="hPlayers"></div></div>
  <button class="btn ghost" id="bMode">Mode : Portes</button>
  <button class="btn org" id="bStart">Lancer la partie (10 questions)</button>
 </section>
 
+
 <section id="hGame">
- <div class="row" style="justify-content:space-between"><span class="pill" id="hProg"></span><span class="pill" id="hMult" style="background:var(--org);color:#fff"></span></div>
- <h2 class="q" id="hQ"></h2><div class="bar"><i id="hBar"></i></div>
- <div id="hBoard"></div><p class="mute" id="hStat"></p>
+ <div class="row" style="display:flex; justify-content:space-between">
+   <span class="pill" id="hProg"></span>
+   <span class="pill" id="hMult" style="background:var(--org);color:#fff"></span>
+ </div>
+ <h2 class="q" id="hQ"></h2>
+ <div class="bar"><i id="hBar"></i></div>
+ <div id="hBoard"></div>
+ <p class="mute" id="hStat"></p>
  <div id="hRank"></div>
  <button class="btn mint" id="bNext">Révéler</button>
 </section>
 
+
 <section id="hEnd">
  <span class="pill">Fin de partie</span><h1>Podium</h1>
  <div id="hPodium"></div>
- <button class="btn" id="bHome1">Retour à l’accueil</button>
+ <button class="btn blue" id="bHome1">Retour à l'accueil</button>
 </section>
 
+
+<!-- ÉCRAN JOUEUR -->
 <section id="pJoin">
  <h1>Choisis ton renard</h1>
- <div id="pStage" style="height:36vh;touch-action:none"></div>
+ <div id="pStage" style="height:36vh;touch-action:none; position:relative; z-index:3;"></div>
  <p class="mute" style="text-align:center;margin:0 0 8px">Glisse pour le faire tourner</p>
  <div class="card">
-  <label>Sweat</label><div id="pHoods" class="sw"></div>
-  <label>Accessoire</label><div id="pAccs" class="sw"></div>
-  <label>Visage</label><div id="pFace" class="sw"></div>
-  <label>Costume</label><div id="pCostume" class="sw"></div>
-  <label>Pseudo</label><input id="pName" maxlength="14" autocomplete="off">
-  <label>Code de la salle</label><input id="pCode" maxlength="4" autocapitalize="characters" autocomplete="off" placeholder="ABCD">
-  <p class="msg" id="pMsg"></p>
-  <button class="btn mint" id="bGo">Entrer dans la salle</button>
+   <label>Sweat</label><div id="pHoods" class="sw"></div>
+   <label>Accessoire</label><div id="pAccs" class="sw"></div>
+   <label>Pseudo</label><input id="pName" maxlength="14" autocomplete="off">
+   <label>Code de la salle</label><input id="pCode" maxlength="4" autocapitalize="characters" autocomplete="off" placeholder="ABCD">
+   <p class="msg" id="pMsg"></p>
+   <button class="btn mint" id="bGo">Entrer dans la salle</button>
  </div>
 </section>
 
+
 <section id="pWait"><div class="card" style="text-align:center"><div id="wFox" style="width:120px;margin:auto"></div><h2 id="wName"></h2><p class="mute" id="wTxt">En attente de l’animateur…</p></div></section>
 
+
 <section id="pGame">
- <div class="row" style="justify-content:space-between"><span class="pill" id="pProg"></span><span class="pill" id="pMult" style="background:var(--org);color:#fff"></span></div>
- <h2 class="q" id="pQ"></h2><div class="bar"><i id="pBar"></i></div>
+ <div class="row" style="display:flex; justify-content:space-between">
+   <span class="pill" id="pProg"></span>
+   <span class="pill" id="pMult" style="background:var(--org);color:#fff"></span>
+ </div>
+ <h2 class="q" id="pQ"></h2>
+ <div class="bar"><i id="pBar"></i></div>
  <input id="pAns" placeholder="Ta réponse…" autocomplete="off" autocapitalize="off">
- <button class="btn" id="bSend">Valider</button><p class="mute" id="pInfo"></p>
+ <button class="btn mint" id="bSend">Valider</button><p class="mute" id="pInfo"></p>
 </section>
+
 
 <section id="pRes"><div class="card" style="text-align:center"><p class="gain" id="rGain"></p><p id="rTxt"></p><p class="mute" id="rTot"></p></div></section>
 
-<section id="pEnd"><div class="card" style="text-align:center"><div id="eFox" style="width:130px;margin:auto"></div><p class="big" id="eScore"></p><p id="eRank"></p></div><button class="btn" id="bHome2">Retour à l’accueil</button></section>
+
+<section id="pEnd"><div class="card" style="text-align:center"><div id="eFox" style="width:130px;margin:auto"></div><p class="big" id="eScore"></p><p id="eRank"></p></div><button class="btn blue" id="bHome2">Retour à l'accueil</button></section>
+
 
 </main>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&","<":"<",">":">",'"':"""}[c]));
+
+// --- QUESTIONS ADAPTÉES CREATOR ---
 const QS=[
-["Nomme un fruit tropical",[["mangue",38],["ananas",26],["banane",16],["papaye",12],["noix de coco|coco",8]]],
-["Nomme un plat qu’on mange souvent au Bénin",[["pate|pâte",32],["riz",24],["haricot",16],["igname",14],["alloco|attieke",14]]],
-["Nomme un réseau social",[["whatsapp",34],["facebook",24],["tiktok",18],["instagram",14],["snapchat",10]]],
-["Nomme un langage de programmation",[["python",32],["javascript|js",26],["java",16],["c",14],["php",12]]],
-["Nomme un moyen de transport à Cotonou",[["zem|zemidjan|moto",45],["taxi",20],["voiture",13],["bus",12],["velo",10]]],
-["Nomme un objet dans un sac d’étudiant",[["cahier",30],["stylo",26],["ordinateur|pc|laptop",20],["livre",14],["trousse",10]]],
-["Nomme un métier de la tech",[["developpeur|dev",36],["designer",22],["hacker",16],["community manager",14],["data scientist|data analyst",12]]],
-["Nomme un sport populaire",[["football|foot",55],["basket|basketball",15],["tennis",10],["handball",10],["athletisme|course",10]]],
-["Nomme une boisson quand il fait chaud",[["eau",40],["jus",22],["bissap",16],["soda|coca",14],["the glace",8]]],
-["Nomme une chose qu’on fait avec son téléphone",[["appeler|appel",30],["message|sms|whatsapp",24],["photo|selfie",18],["musique",16],["jeu|jouer",12]]]];
-const HOODS=["#0033FF","#00B87A","#FF5C35","#8B5CF6","#EC4899"],ACCS=["Aucun","Casquette","Bonnet Père Noël","Chapeau Pirate","Chapeau Cowboy","Casque Audio","Bandeau Ninja","Aucun","Lunettes Rondes","Lunettes Soleil","Masque Super-héros","Sweat Normal","Squelette","Zombie","Ninja","Super-héros","Blouse Scientifique"],DUR=20;
+["Qui a écrit : // TODO: réparer ça demain ?",[["humain",60],["ia",40]]],
+["Qui a écrit : // Cette fonction additionne deux nombres entiers.",[["humain",30],["ia",70]]],
+["Qui répond : « Ça marche chez moi. » ?",[["humain",80],["ia",20]]],
+["Qui répond : « Excellente question ! Voici 5 étapes pour débuguer. » ?",[["humain",15],["ia",85]]],
+["Qui est le président de CREATOR ?",[["rayann",45],["will-david",30],["horus",15],["aurel",10]]],
+["Combien de niveaux dans le parcours CREATOR ?",[["4",50],["3",30],["2",20]]],
+["Quel langage stylise une page web ?",[["css",50],["html",30],["javascript",20]]],
+["Que signifie HTML ?",[["hypertext markup language",60],["high tech modern language",25],["home tool markup language",15]]],
+["Quel outil d'IA aide à coder ?",[["chatgpt",40],["copilot",35],["claude",25]]],
+["Que veut dire l'IA dans 'Toi + IA = app' ?",[["intelligence artificielle",90],["internet avancé",5],["interface automatique",5]]]
+];
+
+
+// --- PALETTES CREATOR ---
+const HOODS=["#0033FF","#00B87A","#FF5C35","#8B5CF6","#FFC107"],
+      ACCS=["Aucun","Lunettes","Casquette","Casque"],
+      DUR=20;
+
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
 function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]!==b[j-1]));p=t}}return d[b.length]}
 function find(t,A){const n=norm(t);if(!n)return -1;for(let i=0;i<A.length;i++)for(const k of A[i][0].split("|").map(norm))if(n===k||(k.length>=4&&n.includes(k))||(n.length>=4&&k.startsWith(n))||(k.length>=5&&lev(n,k)<=1))return i;return -1}
-function fox(h=0,a=0){const c=HOODS[h%5];return `<svg viewBox="0 0 100 100"><path d="M16 100Q18 66 50 62Q82 66 84 100Z" fill="${c}"/><path d="M44 66v14M56 66v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M20 10L40 34L16 42Z M80 10L60 34L84 42Z" fill="#FF7A1A"/><path d="M24 18L35 33L22 37Z M76 18L65 33L78 37Z" fill="#FFE6D0"/><ellipse cx="50" cy="46" rx="31" ry="26" fill="#FF7A1A"/><path d="M22 52Q50 82 78 52Q50 44 22 52Z" fill="#FFF3E6"/><circle cx="39" cy="44" r="4.5" fill="#111827"/><circle cx="61" cy="44" r="4.5" fill="#111827"/><circle cx="40.5" cy="42.5" r="1.4" fill="#fff"/><circle cx="62.5" cy="42.5" r="1.4" fill="#fff"/><ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#111827"/><path d="M44 64Q50 69 56 64" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"/><path d="M30 30Q50 10 70 30Z" fill="#FFF3E6" /><path d="M40 45Q50 55 60 45Z" fill="#FF7A1A" /><circle cx="39" cy="44" r="4" fill="#111827"/><circle cx="61" cy="44" r="4" fill="#111827"/><circle cx="40.5" cy="42.5" r="1.2" fill="#fff"/><circle cx="62.5" cy="42.5" r="1.2" fill="#fff"/><ellipse cx="50" cy="58" rx="4" ry="2.5" fill="#ff6b6b"/><path d="M44 62Q50 67 56 62" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"/><path d="M35 30L50 15L65 30Z" fill="#e8daef"/><path d="M65 30L50 15L35 30Z" fill="#e8daef"/></svg>";}
+
+
+function fox(h=0,a=0){
+  const c=HOODS[h%5];
+  let x="";
+  if(a===1)x='<g fill="none" stroke="#111827" stroke-width="2.5"><circle cx="39" cy="44" r="8"/><circle cx="61" cy="44" r="8"/><path d="M47 44h6"/></g>';
+  if(a===2)x='<path d="M22 32Q50 4 78 32Z" fill="#00E5A0"/><rect x="18" y="30" width="64" height="6" rx="3" fill="#00B87A"/>';
+  if(a===3)x='<path d="M20 46Q20 12 50 12Q80 12 80 46" fill="none" stroke="#111827" stroke-width="5"/><rect x="13" y="40" width="10" height="18" rx="5" fill="#FF5C35"/><rect x="77" y="40" width="10" height="18" rx="5" fill="#FF5C35"/>';
+  return `<svg viewBox="0 0 100 100">
+    <path d="M16 100Q18 66 50 62Q82 66 84 100Z" fill="${c}"/>
+    <path d="M44 66v14M56 66v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M20 10L40 34L16 42Z M80 10L60 34L84 42Z" fill="#FF7A1A"/>
+    <path d="M24 18L35 33L22 37Z M76 18L65 33L78 37Z" fill="#FFE6D0"/>
+    <path d="M22 52Q50 82 78 52Q50 44 22 52Z" fill="#FFF3E6"/>
+    <ellipse cx="50" cy="46" rx="31" ry="26" fill="#FF7A1A"/>
+    <path d="M24 18L35 33L22 37Z M76 18L65 33L78 37Z" fill="#FFE6D0"/>
+    <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#111827"/>
+    <circle cx="39" cy="44" r="4.5" fill="#111827"/>
+    <circle cx="61" cy="44" r="4.5" fill="#111827"/>
+    <circle cx="40.5" cy="42.5" r="1.4" fill="#fff"/>
+    <circle cx="62.5" cy="42.5" r="1.4" fill="#fff"/>
+    <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#111827"/>
+    <path d="M44 64Q50 69 56 64" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+  ${x}
+  </svg>`;
+}
 function show(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id))}
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+
+
 let R=null,U=null,DB=null,room=null,me={name:store.get("gta-name")||"",h:+store.get("gta-h")||0,a:+store.get("gta-a")||0};
 $("heroFox").innerHTML=fox(0,1);
 
-/* init capabilities (la page marche sans) */
-(async()=>{try{R=await claude.use("room")}catch(e){}try{U=await claude.use("user")}catch(e){}try{DB=await claude.use("db")}catch(e){}
- if(DB){try{DB.collection("lb").orderBy("doors","desc").limit(10).onSnapshot(s=>{$("lb").innerHTML=s.empty?'<p class="mute">Personne encore. Sois le premier !</p>':s.docs.map((d,i)=>{const v=d.data();return `<div class="pl"><b>${i+1}</b>${fox(v.h,v.a)}<span>${esc(v.name||"?")}</span><b>${v.doors|0} 🚪</b></div>`}).join("")},()=>{$("lb").innerHTML='<p class="mute">Classement indisponible.</p>'})}catch(e){}}
- else $("lb").innerHTML='<p class="mute">Classement indisponible ici.</p>'})();
+/* Initialisation des API (room, user, db) */
+(async()=>{ 
+  try{R=await claude.use("room")}catch(e){}
+  try{U=await claude.use("user")}catch(e){}
+  try{DB=await claude.use("db")}catch(e){}
+  if(DB){try{DB.collection("lb").orderBy("doors","desc").limit(10).onSnapshot(s=>{$("lb").innerHTML=s.empty?'<p class="mute">Personne encore. Sois le premier !</p>':s.docs.map((d,i)=>{const v=d.data();return `<div class="pl"><b>${i+1}</b>${fox(v.h,v.a)}<span>${esc(v.name||"?")}</span><b>${v.doors|0} 🚪</b></div>`}).join("")},()=>{$("lb").innerHTML='<p class="mute">Classement indisponible.</p>'})}catch(e){}}
+  else $("lb").innerHTML='<p class="mute">Classement indisponible ici.</p>'
+})();
+
+
 const need=()=>{if(!R){$("homeMsg").textContent="Le mode multijoueur n’est pas disponible dans ce contexte.";return false}return true};
 $("bHome1").onclick=$("bHome2").onclick=()=>{DEMO=0;clearInterval(tm);if(room)room.leave();room=null;show("home")};
 
@@ -152,52 +322,507 @@ let st={n:0},answers={},scores={},names={},qi=0,tm=null,tOut=null,code="",DM=1,d
 const players=()=>room.peers().filter(p=>p.presence&&p.presence.role==="player"&&!p.isMe);
 const act=()=>players().filter(x=>!(DM&&doors[x.peer]&&doors[x.peer].l<=0));
 function setSt(p){st={...st,n:st.n+1,...p};room.presence({st})}
-$("bHost").onclick=async()=>{if(!need())return;code=Array.from({length:4},()=>"ABCDEFGHJKLMNPQRSTUVWXYZ"[Math.random()*24|0]).join("");
- try{room=await R.join("gta-"+code)}catch(e){$("homeMsg").textContent="Impossible d’ouvrir la salle.";return}
- st={n:0,ph:"lobby"};answers={};scores={};names={};await room.presence({role:"host",st});
- room.onPeers(()=>{players().forEach(p=>names[p.peer]={name:p.presence.name||"?",h:p.presence.h|0,a:p.presence.a|0});if(st.ph==="lobby")lobby();else if(st.ph==="q")stat()});
- room.on("ans",onAns);$("hCode").textContent=code;lobby();show("hLobby")};
+
+
+$("bHost").onclick=async()=>{
+  if(!need())return;
+  code=Array.from({length:4},()=>"ABCDEFGHJKLMNPQRSTUVWXYZ"[Math.random()*24|0]).join("");
+  try{room=await R.join("gta-"+code)}catch(e){$("homeMsg").textContent="Impossible d'ouvrir la salle.";return}
+  st={n:0,ph:"lobby"};answers={};scores={};names={};await room.presence({role:"host",st});
+  room.onPeers(()=>{players().forEach(p=>names[p.peer]={name:p.presence.name||"?",h:p.presence.h|0,a:p.presence.a|0});if(st.ph==="lobby")lobby();else if(st.ph==="q")stat()});
+  room.on("ans",onAns);
+  $("hCode").textContent=code;
+  lobby();
+  show("hLobby")
+};
+
+
 function lobby(){cast3();const p=players();$("hCount").textContent=p.length+(p.length>1?" joueurs":" joueur");$("hPlayers").innerHTML=p.map(x=>`<div class="pl">${fox(x.presence.h,x.presence.a)}<span>${esc(x.presence.name||"?")}</span></div>`).join("")}
-$("bStart").onclick=()=>{if(!players().length){$("hCount").textContent="Attends au moins 1 joueur…";return}scores={};doors={};qi=0;nextQ()};$("bMode").onclick=()=>{DM=DM?0:1;$("bMode").textContent="Mode : "+(DM?"Portes":"Points");stage("hLobby")};
-function nextQ(){answers={};clearTimeout(tOut);clearInterval(tm);setSt({ph:"q",qi,dur:DUR,res:null,dm:DM?1:0});cast3();if(DEMO)bots();
- const[q,A]=QS[qi];$("hProg").textContent=`Question ${qi+1}/10`;$("hMult").textContent=DM?"Top "+(5-(qi>>1))+" ouvre la porte":qi>=8?"Points ×2":"";$("hMult").style.display=DM||qi>=8?"":"none";
- $("hQ").textContent=q;$("hBoard").innerHTML=A.map((_,k)=>`<div class="slot"><span>${k+1}. ?????</span><span>--</span></div>`).join("");$("hRank").innerHTML="";
- $("bNext").textContent="Révéler";$("bNext").onclick=reveal;show("hGame");stat();
- let left=DUR;$("hBar").style.width="100%";tm=setInterval(()=>{left--;$("hBar").style.width=(left/DUR*100)+"%";if(left<=0)reveal()},1000)}
+$("bStart").onclick=()=>{if(!players().length){$("hCount").textContent="Attends au moins 1 joueur…";return}scores={};doors={};qi=0;nextQ()}
+$("bMode").onclick=()=>{DM=DM?0:1;$("bMode").textContent="Mode : "+(DM?"Portes":"Points");stage("hLobby")}
+
+
+function nextQ(){
+  answers={};clearTimeout(tOut);clearInterval(tm);setSt({ph:"q",qi,dur:DUR,res:null,dm:DM?1:0});
+  cast3();if(DEMO)bots();
+  const[q,A]=QS[qi];
+  $("hProg").textContent=`Question ${qi+1}/10`;
+  $("hMult").textContent=DM?"Top "+(5-(qi>>1))+" ouvre la porte":qi>=8?"Points ×2":"";
+  $("hMult").style.display=DM||qi>=8?"":"none";
+  $("hQ").textContent=q;
+  $("hBoard").innerHTML=A.map((_,k)=>`<div class="slot"><span>${k+1}. ?????</span><span>--</span></div>`).join("");
+  $("hRank").innerHTML="";
+  $("bNext").textContent="Révéler";
+  $("bNext").onclick=reveal;
+  show("hGame");
+  stat();
+  let left=DUR;$("hBar").style.width="100%";
+  tm=setInterval(()=>{left--;$("hBar").style.width=(left/DUR*100)+"%";if(left<=0)reveal()},1000)
+}
 function stat(){$("hStat").textContent=`${Object.keys(answers).length}/${act().length} ont répondu`}
+
+
 function onAns(m){if(st.ph!=="q"||!m.data||m.data.qi!==qi||answers[m.peer])return;answers[m.peer]=String(m.data.text||"").slice(0,40);stat();if(Object.keys(answers).length>=act().length)reveal()}
-function reveal(){if(st.ph!=="q")return;clearInterval(tm);const A=QS[qi][1],m=qi>=8?2:1,res={},NN=DM?5-(qi>>1):5;
- if(DM)players().forEach(x=>{const p=x.peer,o=doors[p]||(doors[p]={d:0,l:2});if(o.l<=0)return;const t=answers[p],h=t?find(t,A):-1,ok=h>=0&&h<NN;if(ok)o.d++;else o.l--;scores[p]=o.d;res[p]={h,g:ok?1:0,l:o.l,d:o.d,N:NN}});else Object.entries(answers).forEach(([p,t])=>{const h=find(t,A),g=h>=0?A[h][1]*m:0;scores[p]=(scores[p]||0)+g;res[p]={h,g}});
- setSt({ph:"r",res,sc:scores});cast3(res);
- $("hBoard").innerHTML=A.map((r,k)=>{const w=Object.entries(res).filter(([,v])=>v.h===k).map(([p])=>names[p]?names[p].name:"").join(", ");return `<div class="slot ${k<NN?"on2":""}"><span>${k+1}. ${esc(r[0].split("|")[0])}${w?` <small>· ${esc(w)}</small>`:""}</span><span>${r[1]*m}</span></div>`}).join("");
- $("hRank").innerHTML=ranked().map((r,i)=>`<div class="pl"><b>${i+1}</b>${fox(r.h,r.a)}<span>${esc(r.name)}${DM?" "+"♥".repeat(Math.max(0,r.l)):""}</span>${res[r.p]&&res[r.p].g?`<em>${DM?"🚪":"+"+res[r.p].g}</em>`:""}<b>${r.s}</b></div>`).join("");
- $("bNext").textContent=qi>=9?"Voir le podium":"Question suivante";if(DEMO)setTimeout(()=>{if(DEMO&&st.ph==="r")$("bNext").click()},3500);$("bNext").onclick=()=>{if(qi>=9||(DM&&!act().length))endGame();else{qi++;nextQ()}}}
+
+
+function reveal(){
+  if(st.ph!=="q")return;
+  clearInterval(tm);
+  const A=QS[qi][1],m=qi>=8?2:1,res={},NN=DM?5-(qi>>1):5;
+  if(DM)players().forEach(x=>{
+    const p=x.peer,o=doors[p]||(doors[p]={d:0,l:2});
+    if(o.l<=0)return;
+    const t=answers[p],h=t?find(t,A):-1,ok=h>=0&&h<NN;
+    if(ok)o.d++;else o.l--;
+    scores[p]=o.d;
+    res[p]={h,g:ok?1:0,l:o.l,d:o.d,N:NN}
+  });
+  else Object.entries(answers).forEach(([p,t])=>{
+    const h=find(t,A),g=h>=0?A[h][1]*m:0;
+    scores[p]=(scores[p]||0)+g;
+    res[p]={h,g}
+  });
+  setSt({ph:"r",res,sc:scores});
+  cast3(res);
+  $("hBoard").innerHTML=A.map((r,k)=>{
+    const w=Object.entries(res).filter(([,v])=>v.h===k).map(([p])=>names[p]?names[p].name:"").join(", ");
+    return `<div class="slot ${k<NN?"on2":""}"><span>${k+1}. ${esc(r[0].split("|")[0])}${w?` <small>· ${esc(w)}</small>`:""}</span><span>${r[1]*m}</span></div>`
+  }).join("");
+  $("hRank").innerHTML=ranked().map((r,i)=>`<div class="pl"><b>${i+1}</b>${fox(r.h,r.a)}<span>${esc(r.name)}${DM?" " +"♥".repeat(Math.max(0,r.l)):""}</span>${res[r.p]&&res[r.p].g?`<em>${DM?"🚪":"+"+res[r.p].g}</em>`:""}<b>${r.s}</b></div>`).join("");
+  $("bNext").textContent=qi>=9?"Voir le podium":"Question suivante";
+  if(DEMO)setTimeout(()=>{if(DEMO&&st.ph==="r")$("bNext").click()},3500);
+  $("bNext").onclick=()=>{if(qi>=9||(DM&&!act().length))endGame();else{qi++;nextQ()}}
+}
+
+
 function ranked(){return Object.keys(names).map(p=>({p,...names[p],s:scores[p]||0,l:DM?(doors[p]||{l:2}).l:undefined,d:DM?(doors[p]||{d:0}).d:0})).sort((a,b)=>b.s-a.s||(b.l|0)-(a.l|0))}
+
+
 function endGame(){setSt({ph:"end",sc:scores});$("hPodium").innerHTML=ranked().map((r,i)=>`<div class="pl" style="${i<3?"background:var(--soft);padding:14px":""}"><b>${["🥇","🥈","🥉"][i]||i+1}</b>${fox(r.h,r.a)}<span>${esc(r.name)}</span><b>${r.s}</b></div>`).join("");show("hEnd")}
 
-function bots(){const A=QS[qi][1],q=qi;players().forEach((x,i)=>setTimeout(()=>{if(!DEMO||st.ph!=="q"||qi!==q)return;const sk=[.9,.8,.7,.6,.5,.4][i%6],N=5-(q>>1),k=Math.random()<sk?Math.floor(Math.random()*(N+(Math.random()<.3?1:0))):-1;
- onAns({peer:x.peer,data:{qi:q,text:k>=0&&A[k]?A[k][0].split("|")[0]:"bleu"}})},1000+Math.random()*4500))}
-$("bDemo").onclick=()=>{const B=[["Kossi",0,1],["Aïcha",1,2],["Fifamè",2,0],["Yanick",3,3],["Sènami",4,1],["Rodrigue",0,2]],
- pe=B.map((b,i)=>({peer:"b"+i,isMe:false,presence:{role:"player",name:b[0],h:b[1],a:b[2]}}));
- room={peers:()=>pe,presence:()=>{},onPeers:()=>{},on:()=>{},emit:()=>{},leave:()=>{}};
- DEMO=1;DM=1;code="DEMO";st={n:0,ph:"lobby"};answers={};scores={};doors={};names={};
- pe.forEach(p=>names[p.peer]={name:p.presence.name,h:p.presence.h,a:p.presence.a});
- $("hCode").textContent="DEMO";$("bMode").textContent="Mode : Portes";show("hLobby");lobby();
- setTimeout(()=>{if(DEMO&&st.ph==="lobby")$("bStart").click()},3500)};
+
+function bots(){
+  const A=QS[qi][1],q=qi;
+  players().forEach((x,i)=>setTimeout(()=>{
+    if(!DEMO||st.ph!=="q"||qi!==q)return;
+    const sk=[.9,.8,.7,.6,.5,.4][i%6],N=5-(q>>1),k=Math.random()<sk?Math.floor(Math.random()*(N+(Math.random()<.3?1:0))):-1;
+    onAns({peer:x.peer,data:{qi:q,text:k>=0&&A[k]?A[k][0].split("|")[0]:"bleu"}})
+  },1000+Math.random()*4500))
+}
+
+
+$("bDemo").onclick=()=>{
+  const B=[["Kossi",0,1],["Aïcha",1,2],["Fifamè",2,0],["Yanick",3,3],["Sènami",4,1],["Rodrigue",0,2]],
+  pe=B.map((b,i)=>({peer:"b"+i,isMe:false,presence:{role:"player",name:b[0],h:b[1],a:b[2]}]));
+  room={peers:()=>pe,presence:()=>{},onPeers:()=>{},on:()=>{},emit:()=>{},leave:()=>{}};
+  DEMO=1;DM=1;code="DEMO";
+  st={n:0,ph:"lobby"};answers={};scores={};doors={};names={};
+  pe.forEach(p=>names[p.peer]={name:p.presence.name,h:p.presence.h,a:p.presence.a});
+  $("hCode").textContent="DEMO";
+  $("bMode").textContent="Mode : Portes";
+  show("hLobby");
+  lobby();
+  setTimeout(()=>{if(DEMO&&st.ph==="lobby")$("bStart").click()},3500)
+};
+
+
 /* ===== JOUEUR ===== */
 $("pName").value=me.name;
 function pf(){
-// Sweat colors
-$("pHoods").innerHTML=HOODS.map((c,i)=`<button type="button" class="dot${i===me.h?" sel":""}" style="background:${c}" data-h="${i}" aria-label="Sweat ${i+1}"></button>`).join("");
-// Hats (7 options, indices 0-6)
-$("pAccs").innerHTML=ACCS.slice(0,7).map((n,i)=`<button type="button" class="chip${i===me.a%7?" sel":""}" data-a="${i}">${n}</button>`).join("");
-// Faces (4 options, indices 7-10)
-$("pFace").innerHTML=ACCS.slice(7,11).map((n,i)=`<button type="button" class="chip${i===Math.floor(me.a/7)?" sel":""}" data-a="${i+7}">${n}</button>`).join("");
-// Costumes (6 options, indices 11-16)
-$("pCostume").innerHTML=ACCS.slice(11,17).map((n,i)=`<button type="button" class="chip${i===me.a-11?" sel":""}" data-a="${i+11}">${n}</button>`).join("");
-try{cast3({pick:{g:1}})}catch(e){}pf();
-// onClick handlers for customization
+$("pHoods").innerHTML=HOODS.map((c,i)=`<button type="button" class="dot${i===me.h? " sel":""}" style="background:${c}" data-h="${i}" aria-label="Sweat ${i+1}"></button>`).join("");
+$("pAccs").innerHTML=ACCS.map((n,i)=`<button type="button" class="chip${i===me.a? " sel":""}" data-a="${i}">${n}</button>`).join("");
+try{cast3({pick:{g:1}})}catch(e){}
+pf();
 $("pHoods").onclick=e=>{const b=e.target.closest("[data-h]");if(b){me.h=+b.dataset.h;pf()}};
 $("pAccs").onclick=e=>{const b=e.target.closest("[data-a]");if(b){me.a=+b.dataset.a;pf()}};
-$("pFace").onclick=e=>{const b=e.target.closest("[data-a]");if(b){me.a=+b.dataset.a;pf()}};  // Faces indices 7-10
-$("pCostume").onclick=e=>{const b=e.target.closest("[data-a]");if(b){me.a=+b.dataset.a;pf()}};  // Costumes indices 11-16
+}
+
+
+let seen=-1,myEnd=0,pTm=null,sent=false,curQ=0,out=false;
+$("bGo").onclick=async()=>{
+  me.name=$("pName").value.trim()||"Joueur";
+  const c=$("pCode").value.trim().toUpperCase();
+  if(c.length!==4){$("pMsg").textContent="Le code a 4 lettres.";return}
+  store.set("gta-name",me.name);
+  store.set("gta-h",me.h);
+  store.set("gta-a",me.a);
+  try{room=await R.join("gta-"+c)}catch(e){$("pMsg").textContent="Salle introuvable.";return}
+  await room.presence({role:"player",name:me.name,h:me.h,a:me.a});
+  seen=-1;
+  $("wFox").innerHTML=fox(me.h,me.a);
+  $("wName").textContent=me.name;
+  show("pWait");
+  const chk=()=>{const hp=room.peers().find(p=>p.presence&&p.presence.role==="host");if(!hp){$("wTxt").textContent="Animateur introuvable. Vérifie le code.";return}
+    const s=hp.presence.st;if(s&&s.n!==seen){seen=s.n;onState(s)}};
+  room.onPeers(chk);
+  chk()
+};
+
+
+const mine=()=>{const m=room.peers().find(p=>p.isMe);return m&&m.peer};
+function onState(s){
+  clearInterval(pTm);
+  if(s.ph==="lobby"){$("wTxt").textContent="Tu es dans la salle. La partie va commencer !";show("pWait")}
+  else if(s.ph==="q"){
+    curQ=s.qi;
+    sent=false;
+    $("pProg").textContent=`Question ${s.qi+1}/10`;
+    $("pMult").textContent=s.dm?"Top "+(5-(s.qi>>1)):s.qi>=8?"×2":"";
+    $("pMult").style.display=s.dm||s.qi>=8?"":"none";
+    $("pQ").textContent=QS[s.qi][0];
+    $("pAns").value="";
+    $("pAns").disabled=false;
+    $("bSend").disabled=false;
+    $("pInfo").textContent="";
+    show("pGame");
+    $("pAns").focus();
+    if(s.qi===0)out=false;
+    if(out)lock("Tu es éliminé. Regarde l’écran !");
+    let left=s.dur;
+    $("pBar").style.width="100%";
+    pTm=setInterval(()=>{left--;$("pBar").style.width=(left/s.dur*100)+"%";if(left<=0){clearInterval(pTm);lock("Temps écoulé…")}},1000)
+  }
+  else if(s.ph==="r"){
+    const r=(s.res||{})[mine()],g=r?r.g:0;
+    $("rGain").className="gain "+(g?"ok":"bad");
+    if(s.dm&&r&&r.l<=0)out=true;
+    $("rGain").textContent=s.dm?(g?"Porte ouverte !":"Porte fermée"):g?"+"+g+" pts":"0 point";
+    $("rTxt").textContent=s.dm?(out?"Tu es éliminé.":r?(g?"Dans le top "+r.N+" !":"Hors du top "+r.N+" : il te reste "+r.l+" vie"+(r.l>1?"s":"")+"."):"Pas de réponse."):r?(r.h>=0?"Dans le top 5 !":"Pas dans le top 5."):"Tu n’as pas répondu.";
+    const all=Object.values(s.sc||{}).sort((a,b)=>b-a),t=(s.sc||{})[mine()]||0;
+    $("rTot").textContent=(s.dm?`Portes franchies : ${t}`:`Total : ${t} pts`) + ` · rang ${all.indexOf(t)+1}/${all.length||1}`;
+    show("pRes")
+  }
+  else if(s.ph==="end"){
+    const sc=s.sc||{},t=sc[mine()]||0,all=Object.values(sc).sort((a,b)=>b-a);
+    $("eFox").innerHTML=fox(me.h,me.a);
+    $("eScore").textContent=t+(s.dm?" portes":" pts");
+    $("eRank").textContent=`Tu termines n°${all.indexOf(t)+1} sur ${all.length}`;
+    show("pEnd");
+    save(t,s.dm)
+  }
+}
+function lock(msg){$("pAns").disabled=true;$("bSend").disabled=true;$("pInfo").textContent=msg}
+$("bSend").onclick=()=>{const t=$("pAns").value.trim();if(!t||sent)return;sent=true;room.emit("ans",{qi:curQ,text:t});lock("Réponse envoyée. Regarde l’écran !")}
+$("pAns").addEventListener("keydown",e=>{if(e.key==="Enter")$("bSend").click()});
+
+
+async function save(t,dm){
+  if(!DB||!U||seen<0)return;
+  try{
+    const id=await U.id(),ref=DB.collection("lb").doc(id),d=await ref.get(),v=d.exists?d.data():{};await ref.set({name:me.name,h:me.h,a:me.a,best:dm?(v.best|0):Math.max(v.best|0,t),doors:dm?Math.max(v.doors|0,t):(v.doors|0),games:(v.games|0)+1})
+  }catch(e){}
+}
+
+
+/* ===== 3D ===== */
+let cast3=()=>{},stage=()=>{},mode="home";
+const cast=new Map();
+(function(){
+  if(typeof THREE==="undefined")return;
+  const rd=new THREE.WebGLRenderer({canvas:$("c3"),alpha:true,antialias:true});
+  rd.setPixelRatio(Math.min(devicePixelRatio,2));
+  const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,1,.1,100);
+  cam.position.set(0,3,8);
+  sc.add(new THREE.AmbientLight(0xffffff,.8));
+  const dl=new THREE.DirectionalLight(0xffffff,.9);
+  dl.position.set(4,8,6);
+  sc.add(dl);
+  
+
+  const M=(c,o)=>new THREE.MeshStandardMaterial({color:c,flatShading:true,roughness:.7,...o}),
+  mesh=(g,m,x=0,y=0,z=0)=>{
+    const o=new THREE.Mesh(g,m);
+    o.position.set(x,y,z);
+    return o;
+  }
+  
+
+  const bg=new THREE.Group();
+  sc.add(bg);
+  const G=[new THREE.IcosahedronGeometry(.7,0),new THREE.OctahedronGeometry(.7),new THREE.TorusGeometry(.5,.18,8,14),
+    new THREE.SphereGeometry(.5,12,12)];
+  C4=[0x0033FF,0x00E5A0,0xFF5C35,0xFFC107]; // Couleurs CREATOR
+  
+
+  for(let i=0;i<26;i++){
+    const o=mesh(G[i%4],M(C4[i%4],{transparent:true,opacity:.5}),(Math.random()-.5)*28,Math.random()*12-1,-4-Math.random()*10);
+    o.userData={s:Math.random()*.008+.003,p:Math.random()*6};
+    bg.add(o)
+  }
+
+
+  function mk(h,a){
+    const g=new THREE.Group(),O=M(0xFF7A1A),W=M(0xFFF3E6),D=M(0x111827);
+    g.add(mesh(new THREE.CylinderGeometry(.5,.72,.95,8),M(HOODS[h%5]),0,.48,0));
+    const hd=mesh(new THREE.SphereGeometry(.62,12,10),O,0,1.25,0);
+    hd.scale.set(1.1,.9,1);
+    g.add(hd);
+    const mz=mesh(new THREE.SphereGeometry(.33,10,8),W,0,1.1,.5);
+    mz.scale.z=.8;
+    g.add(mz);
+    g.add(mesh(new THREE.SphereGeometry(.08,8,6),D,0,1.2,.8));
+    [-1,1].forEach(s=>{
+      g.add(mesh(new THREE.SphereGeometry(.075,8,6),D,s*.25,1.38,.52));
+      const e=mesh(new THREE.ConeGeometry(.24,.55,4),O,s*.42,1.8,0);
+      e.rotation.z=-s*.25;
+      g.add(e)
+    });
+    const t=mesh(new THREE.SphereGeometry(.32,8,6),O,0,.45,-.8);
+    t.scale.set(.8,.8,1.6);
+    g.add(t);
+    g.add(mesh(new THREE.SphereGeometry(.2,8,6),W,0,.45,-1.3));
+    if(a===1)[-1,1].forEach(s=>g.add(mesh(new THREE.TorusGeometry(.15,.03,6,12),D,s*.25,1.38,.58)));
+    if(a===2){
+      g.add(mesh(new THREE.SphereGeometry(.66,12,8,0,6.283,0,1.57),M(0x00E5A0),0,1.3,0));
+      g.add(mesh(new THREE.BoxGeometry(.7,.06,.5),M(0x00B87A),0,1.32,.62))
+    }
+    if(a===3){
+      g.add(mesh(new THREE.TorusGeometry(.7,.06,6,14,Math.PI),D,0,1.25,0));
+      [-1,1].forEach(s=>{
+        const c=mesh(new THREE.CylinderGeometry(.18,.18,.16,10),M(0xFF5C35),s*.7,1.25,0);
+        c.rotation.z=Math.PI/2;
+        g.add(c)
+      })
+    }
+    g.userData.ft=[-1,1].map(s=>{
+      const m=mesh(new THREE.SphereGeometry(.2,8,6),D,s*.3,.12,0);
+      m.scale.set(1,.7,1.3);
+      g.add(m);
+      return m
+    });
+    g.userData.hd=[-1,1].map(s=>{
+      const m=mesh(new THREE.SphereGeometry(.17,8,6),O,s*.68,.6,0);
+      g.add(m);
+      return m
+    });
+    return g
+  }
+  
+
+  function lab(t){
+    const c=document.createElement("canvas");
+    c.width=256;
+    c.height=64;
+    const x=c.getContext("2d");
+    x.fillStyle="#0033FF";
+    x.beginPath();
+    if(x.roundRect){x.roundRect(0,8,256,48,24);x.fill()}else x.fillRect(0,8,256,48);
+    x.fillStyle="#fff";
+    x.font="700 30px Poppins,sans-serif";
+    x.textAlign="center";
+    x.fillText(String(t).slice(0,16),128,43);
+    const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true}));
+    s.scale.set(1.6,.4,1);
+    return s
+  }
+  
+
+  const cg=new THREE.Group();
+  sc.add(cg);
+  let cz=8;
+  const sig=x=>x.h+"-"+x.a+"-"+x.name+"-"+x.l;
+  
+
+  /* Portes couleurs CREATOR */
+  const ar=new THREE.Group();
+  lanes=new Map();
+  DC=[0x0033FF,0x00E5A0,0xFF5C35,0xFFC107,0x8B5CF6];
+  let fz=0,arD=12,pt=0,zm=0;
+  sc.add(ar);
+  ar.visible=false;
+  const gnd=mesh(new THREE.PlaneGeometry(300,300),M(0xEAF0FF),0,-.06,0);
+  gnd.rotation.x=-1.5708;
+  ar.add(gnd);
+  addEventListener("wheel",e=>{zm=Math.max(-5,Math.min(8,zm+e.deltaY*.01))},{passive:true});
+
+
+  function lane(p,x){
+    const g=new THREE.Group(),f=mk(x.h,x.a);
+    g.add(mesh(new THREE.BoxGeometry(2.1,.1,36),M(lanes.size%2?0xEAF0FF:0xDCE6FF),0,-.02,-15));
+    const dr=[];
+    for(let k=0;k<10;k++){
+      const c=M(DC[k>>1]),z=-3*(k+1);
+      g.add(mesh(new THREE.BoxGeometry(.14,2.7,.2),c,-.8,1.35,z),mesh(new THREE.BoxGeometry(.14,2.7,.2),c,.8,1.35,z),mesh(new THREE.BoxGeometry(1.8,.25,.25),c,0,2.75,z));
+      const pv=new THREE.Group();
+      pv.position.set(-.7,0,z);
+      pv.add(mesh(new THREE.BoxGeometry(1.4,2.5,.1),M(0x0033FF),.7,1.25,0));
+      g.add(pv);
+      dr.push(pv);
+      const pl=lab("TOP "+(5-(k>>1)));
+      pl.position.set(0,3.3,z);
+      g.add(pl)
+    }
+    g.add(f);
+    const v={g,f,dr,z:-1.6,tz:-1.6,d:0,go:0,sh:0,run:0,ls:-9,lb:null,tx:0};
+    lanes.set(p,v);
+    ar.add(g);
+    return v
+  }
+  
+
+  function arena(res){
+    const L=Object.keys(names).map(p=>({p,...names[p],l:(doors[p]||{l:2}).l,d:(doors[p]||{d:0}).d}),n=L.length||1);
+    L.forEach((x,i)=>{
+      const v=lanes.get(x.p)||lane(x.p,x);
+      v.tx=(i-(n-1)/2)*2.4;
+      if(!v.init){v.g.position.x=v.tx;v.init=1}
+      if(x.d>v.d)v.go=clk.getElapsedTime()+.55;
+      if(x.d<v.d)v.z=-3*x.d-1.6;
+      v.d=x.d;
+      v.tz=-3*x.d-1.6;
+      v.dead=x.l<=0;
+      if(res&&res[x.p]&&!res[x.p].g&&!v.dead)v.sh=1;
+      if(v.ls!==x.l){if(v.lb)v.g.remove(v.lb);v.lb=lab(x.name+" "+"♥".repeat(Math.max(0,x.l)));v.g.add(v.lb);v.ls=x.l}
+    });
+    arD=Math.max(9,((n*2.4+1)/2)/(.364*innerWidth/innerHeight))
+  }
+  
+
+  cast3=res=>{
+    if(mode==="host"&&DM){cg.visible=false;ar.visible=true;return arena(res)}
+    ar.visible=false;cg.visible=true;
+    let L;
+    if(mode==="host")L=st.ph==="end"?ranked():Object.keys(names).map(p=>({p,...names[p],s:scores[p]||0,l:DM?(doors[p]||{l:2}).l:undefined,d:DM?(doors[p]||{d:0}).d:0}));
+    else if(mode==="me")L=[{p:"me",name:me.name,h:me.h,a:me.a,s:0}];
+    else if(mode==="pick")L=[{p:"pick",name:"Toi",h:me.h,a:me.a,s:0}];
+    else L=[{p:"home",name:"CREATOR",h:0,a:1,s:0}];
+    
+    for(const[k,v]of[...cast]){
+      const x=L.find(y=>y.p===k);
+      if(!x||v.sig!==sig(x)){
+        cg.remove(v.g);
+        cast.delete(k)
+      }
+    }
+    L.forEach((x,i)=>{
+      let v=cast.get(x.p);
+      if(!v){
+        const g=new THREE.Group(),f=mk(x.h,x.a),col=mesh(new THREE.BoxGeometry(1.3,1,1.3),M(0x0033FF)),l=lab(x.name+(x.l!=null?" "+"♥".repeat(Math.max(0,x.l)):""));
+        const dp=new THREE.Group();
+        dp.position.set(-.75,1.3,1.1);
+        dp.add(mesh(new THREE.BoxGeometry(1.5,2.6,.14),M(0x0033FF,{transparent:true,opacity:.6}),.75,0,0));
+        g.add(col,f,l,dp);
+        cg.add(g);
+        v={g,f,col,l,dp,sig:sig(x),j:0,tx:0};
+        cast.set(x.p,v);
+        col.scale.y=.3
+      }
+      v.tx=(i-(L.length-1)/2)*1.8;
+      v.tz=x.l!=null?x.d*.3:0;
+      v.dm_=x.l!=null;
+      v.dead=x.l!=null&&x.l<=0;
+      if(res&&res[x.p]&&res[x.p].g)v.j=1
+    });
+    cz=Math.max(7.5,((L.length*1.8*(mode==="host"&&DM?1.4:1)+1.5)/2)/(Math.tan(.349)*innerWidth/innerHeight))
+  };
+  
+
+  stage=id=>{
+    mode={hLobby:1,hGame:1,hEnd:1}[id]?"host":{pWait:1,pGame:1,pRes:1,pEnd:1}[id]?"me":id==="pJoin"?"pick":"home";
+    document.body.classList.toggle("g3",mode==="host"||mode==="me");
+    document.body.classList.toggle("door3d",mode==="host"&&!!DM);
+    cast3(id==="pRes"&&$("rGain").classList.contains("ok")?{me:{g:1}}:null)
+  };
+  
+
+  const _s=show;
+  show=function(id){
+    _s(id);
+    stage(id)
+  };
+  
+  function size(){
+    rd.setSize(innerWidth,innerHeight,false);
+    cam.aspect=innerWidth/innerHeight;
+    cam.updateProjectionMatrix()
+  }
+  addEventListener("resize",()=>{size();cast3()});
+  size();
+  
+
+  let px=0,py=0,ry=0,drag=0,lx=0;
+  const ps=$("pStage");
+  ps.addEventListener("pointerdown",e=>{
+    drag=1;
+    lx=e.clientX
+  });
+  addEventListener("pointerup",()=>drag=0);
+  ps.addEventListener("pointermove",e=>{
+    if(drag){
+      ry+=(e.clientX-lx)*.012;
+      lx=e.clientX
+    }
+  });
+  addEventListener("pointermove",e=>{
+    px=e.clientX/innerWidth-.5;
+    py=e.clientY/innerHeight-.5
+  });
+
+
+  const clk=new THREE.Clock();
+  (function loop(){
+    const t=clk.getElapsedTime(),dt=Math.min(t-pt,.05);
+    pt=t;
+    bg.children.forEach(o=>{
+      o.rotation.x+=o.userData.s;
+      o.rotation.y+=o.userData.s*1.4;
+      o.position.y+=Math.sin(t+o.userData.p)*.002
+    });
+    cam.position.x+=(px*3-cam.position.x)*.03;
+    cam.position.y+=((ar.visible?3.2+arD*.2:3)-py*1.5-cam.position.y)*.03;
+    cam.position.z+=(cz-cam.position.z)*.05;
+    cam.lookAt(0,ar.visible?1.3:mode==="pick"?1.5-.127*cam.position.z:.2*cam.position.z+1.2,ar.visible?fz-3:0);
+    if(!drag)ry+=.012;
+    
+    cast.forEach(v=>{
+      v.g.position.x+=(v.tx-v.g.position.x)*.08;
+      v.g.position.z+=(v.tz-v.g.position.z)*.06;
+      v.dp.visible=!!v.dm_&&!v.dead;
+      v.dp.rotation.y+=((v.open?-1.6:0)-v.dp.rotation.y)*.1;
+      v.f.rotation.z+=((v.dead?1.5:0)-v.f.rotation.z)*.1;
+      v.col.scale.y+=(v.th-v.col.scale.y)*.06;
+      v.col.position.y=v.col.scale.y/2;
+      v.j*=.965;
+      v.f.position.y=v.col.scale.y+Math.abs(Math.sin(v.j*14))*v.j*1.2+Math.sin(t*2+v.tx)*.04;
+      v.f.rotation.y=mode==="pick"?ry:Math.sin(t+v.tx)*.4;
+      v.l.position.y=v.f.position.y+2.3
+    });
+    
+    if(ar.visible){
+      let m=99;
+      lanes.forEach(v=>{
+        const dz=v.tz-v.z;
+        v.run=0;
+        if(t>v.go&&Math.abs(dz)>.03){
+          v.z+=Math.sign(dz)*Math.min(Math.abs(dz),dt*4.8);
+          v.run=1
+        }
+        v.g.position.x+=(v.tx-v.g.position.x)*.1;
+        const f=v.f,u=f.userData,w=Math.sin(t*15)*(v.run?.45:0);
+        f.position.z=v.z;
+        f.position.y=v.dead?.25:v.run?Math.abs(Math.sin(t*15))*.18:Math.sin(t*2+v.tx)*.03;
+        u.ft[0].position.z=w;
+        u.ft[1].position.z=-w;
+        u.hd[0].position.z=-w;
+        u.hd[1].position.z=w;
+        f.rotation.x+=((v.dead?-1.45:0)-f.rotation.x)*.1;
+        f.rotation.y+=((st.ph==="lobby"||st.ph==="end"?0:Math.PI)+Math.sin(t*40)*v.sh*.5-f.rotation.y)*.12;
+        v.sh*=.96;
+        v.lb.position.set(0,2.6,v.z);
+        v.dr.forEach((q,k)=>q.rotation.y+=((k<v.d?-1.6:0)-q.rotation.y)*.12);
+        if(!v.dead)m=Math.min(m,v.z)
+      });
+      if(m<99)fz+=(m-fz)*.05;
+      cz=fz+arD+zm;
+      bg.position.z=fz;
+      gnd.position.z=fz
+    }
+    rd.render(sc,cam);
+    requestAnimationFrame(loop)
+  })();
+  stage("home")
+})();
+</script>
+
+</body>
+</html>
