@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guess Their Answer — CREATOR</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--soft:#EAF0FF;--ink:#111827;--mute:#5b6478;--blue:#0033FF;--mint:#00E5A0;--org:#FF5C35;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1020;--soft:#18203a;--ink:#f3f5ff;--mute:#9aa4c2}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.4 Poppins,system-ui,sans-serif;min-height:100vh}
+main{max-width:1000px;margin:0 auto;padding:18px 16px 40px}
+section{display:none}section.on{display:block}
+h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.05;margin:.2em 0;font-weight:800}
+.blue{color:var(--blue)}.mute{color:var(--mute)}
+.pill{display:inline-block;padding:6px 14px;border-radius:99px;background:var(--mint);color:#111827;font-weight:700;font-size:.8rem}
+.hero{background:var(--blue);color:#fff;border-radius:28px;padding:26px;margin:12px 0;display:flex;gap:16px;align-items:center;justify-content:space-between}
+.hero h1{color:#fff}.hero p{margin:.3em 0;color:#cfd8ff}.hero svg{flex:0 0 auto;width:min(36vw,190px)}
+.card{background:var(--soft);border-radius:22px;padding:18px;margin:12px 0}
+.btn{display:block;width:100%;padding:15px;margin-top:10px;border:0;border-radius:99px;font:700 1rem Poppins,system-ui,sans-serif;cursor:pointer;background:var(--blue);color:#fff}
+.btn.mint{background:var(--mint);color:#111827}.btn.org{background:var(--org)}.btn.ghost{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+.row{display:flex;gap:10px}.row .btn{margin-top:10px}
+input{width:100%;padding:14px 16px;border-radius:16px;border:2px solid transparent;background:#fff;color:#111827;font:600 1.05rem Poppins,system-ui,sans-serif;margin-top:8px}
+input:focus{outline:none;border-color:var(--blue)}
+.code{font-size:clamp(3rem,12vw,6rem);font-weight:800;letter-spacing:.15em;color:var(--blue);margin:0}
+.q{font-size:clamp(1.5rem,4.5vw,2.6rem);font-weight:800;margin:.2em 0}
+.bar{height:10px;background:var(--soft);border-radius:9px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;width:100%;background:var(--org);transition:width 1s linear}
+.slot{display:flex;justify-content:space-between;padding:13px 18px;margin:8px 0;border-radius:16px;background:var(--soft);font-weight:700;font-size:1.15rem}
+.slot.on2{background:var(--blue);color:#fff}
+.pl{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:6px 0;border-radius:16px;background:var(--bg)}
+.pl svg{width:44px;height:44px;flex:0 0 auto}.pl span{flex:1}.pl b{color:var(--blue)}.pl em{font-style:normal;color:var(--mint);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.grid .pl{margin:0;flex-direction:column;text-align:center}.grid .pl svg{width:64px;height:64px}
+.pick{display:flex;align-items:center;gap:14px}.pick svg{width:110px;height:110px}.pick .btn{margin:6px 0;padding:10px}
+.big{font-size:3.2rem;font-weight:800;margin:.1em 0}
+.gain{font-size:2.4rem;font-weight:800}.ok{color:var(--mint)}.bad{color:var(--org)}
+.msg{color:var(--org);font-weight:600;min-height:1.4em}
+#c3{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none}
+body.g3 main{padding-bottom:42vh}
+body.door3d main{padding-bottom:0}
+body.door3d main>section.on{background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(6px);border-radius:22px;padding:12px 16px}
+body.door3d #hGame{max-width:760px;margin:0 auto}
+body.door3d #hBoard{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+body.door3d .slot{margin:0;padding:6px 8px;font-size:.8rem;flex-direction:column}
+body.door3d #hRank{display:none}
+body.door3d .q{font-size:clamp(1.2rem,3.2vw,1.8rem);margin:.2em 0}
+body.door3d #bNext{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:auto;padding:12px 24px;z-index:5}
+#wFox,#eFox{display:none}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 14px}.dot{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer}.dot.sel{border-color:var(--ink);transform:scale(1.15)}
+.chip{padding:8px 14px;border-radius:99px;border:2px solid var(--blue);background:#fff;color:var(--blue);font:700 .85rem Poppins,system-ui,sans-serif;cursor:pointer}.chip.sel{background:var(--blue);color:#fff}
+</style>
+</head>
+<body>
+<canvas id="c3"></canvas>
+<main>
+
+<section id="home" class="on">
+ <div class="hero"><div><span class="pill">CREATOR · Epitech Bénin</span><h1>Guess Their Answer</h1><p>Franchis les portes en devinant la réponse la plus populaire. Écran animateur + joueurs sur téléphone.</p></div><div id="heroFox"></div></div>
+ <div class="row"><button class="btn mint" id="bHost">Animer (écran projeté)</button><button class="btn" id="bJoin">Rejoindre avec mon téléphone</button></div>
+ <button class="btn ghost" id="bDemo">Voir une démo (6 joueurs virtuels, sans téléphone)</button>
+ <p class="msg" id="homeMsg"></p>
+ <h2>Classement général</h2><div class="card" id="lb"><p class="mute">Chargement…</p></div>
+</section>
+
+<section id="hLobby">
+ <span class="pill">Salle ouverte</span>
+ <p class="mute" style="margin:.6em 0 0">Sur ton téléphone, ouvre cette page, appuie sur « Rejoindre » et entre le code :</p>
+ <p class="code" id="hCode"></p>
+ <div class="card"><b id="hCount">0 joueur</b><div class="grid" id="hPlayers"></div></div>
+ <button class="btn ghost" id="bMode">Mode : Portes</button>
+ <button class="btn org" id="bStart">Lancer la partie (10 questions)</button>
+</section>
+
+<section id="hGame">
+ <div class="row" style="justify-content:space-between"><span class="pill" id="hProg"></span><span class="pill" id="hMult" style="background:var(--org);color:#fff"></span></div>
+ <h2 class="q" id="hQ"></h2><div class="bar"><i id="hBar"></i></div>
+ <div id="hBoard"></div><p class="mute" id="hStat"></p>
+ <div id="hRank"></div>
+ <button class="btn mint" id="bNext">Révéler</button>
+</section>
+
+<section id="hEnd">
+ <span class="pill">Fin de partie</span><h1>Podium</h1>
+ <div id="hPodium"></div>
+ <button class="btn" id="bHome1">Retour à l’accueil</button>
+</section>
+
+<section id="pJoin">
+ <h1>Choisis ton renard</h1>
+ <div id="pStage" style="height:36vh;touch-action:none"></div>
+ <p class="mute" style="text-align:center;margin:0 0 8px">Glisse pour le faire tourner</p>
+ <div class="card">
+  <label>Sweat</label><div id="pHoods" class="sw"></div>
+  <label>Accessoire</label><div id="pAccs" class="sw"></div>
+  <label>Visage</label><div id="pFace" class="sw"></div>
+  <label>Costume</label><div id="pCostume" class="sw"></div>
+  <label>Pseudo</label><input id="pName" maxlength="14" autocomplete="off">
+  <label>Code de la salle</label><input id="pCode" maxlength="4" autocapitalize="characters" autocomplete="off" placeholder="ABCD">
+  <p class="msg" id="pMsg"></p>
+  <button class="btn mint" id="bGo">Entrer dans la salle</button>
+ </div>
+</section>
+
+<section id="pWait"><div class="card" style="text-align:center"><div id="wFox" style="width:120px;margin:auto"></div><h2 id="wName"></h2><p class="mute" id="wTxt">En attente de l’animateur…</p></div></section>
+
+<section id="pGame">
+ <div class="row" style="justify-content:space-between"><span class="pill" id="pProg"></span><span class="pill" id="pMult" style="background:var(--org);color:#fff"></span></div>
+ <h2 class="q" id="pQ"></h2><div class="bar"><i id="pBar"></i></div>
+ <input id="pAns" placeholder="Ta réponse…" autocomplete="off" autocapitalize="off">
+ <button class="btn" id="bSend">Valider</button><p class="mute" id="pInfo"></p>
+</section>
+
+<section id="pRes"><div class="card" style="text-align:center"><p class="gain" id="rGain"></p><p id="rTxt"></p><p class="mute" id="rTot"></p></div></section>
+
+<section id="pEnd"><div class="card" style="text-align:center"><div id="eFox" style="width:130px;margin:auto"></div><p class="big" id="eScore"></p><p id="eRank"></p></div><button class="btn" id="bHome2">Retour à l’accueil</button></section>
+
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const QS=[
+["Nomme un fruit tropical",[["mangue",38],["ananas",26],["banane",16],["papaye",12],["noix de coco|coco",8]]],
+["Nomme un plat qu’on mange souvent au Bénin",[["pate|pâte",32],["riz",24],["haricot",16],["igname",14],["alloco|attieke",14]]],
+["Nomme un réseau social",[["whatsapp",34],["facebook",24],["tiktok",18],["instagram",14],["snapchat",10]]],
+["Nomme un langage de programmation",[["python",32],["javascript|js",26],["java",16],["c",14],["php",12]]],
+["Nomme un moyen de transport à Cotonou",[["zem|zemidjan|moto",45],["taxi",20],["voiture",13],["bus",12],["velo",10]]],
+["Nomme un objet dans un sac d’étudiant",[["cahier",30],["stylo",26],["ordinateur|pc|laptop",20],["livre",14],["trousse",10]]],
+["Nomme un métier de la tech",[["developpeur|dev",36],["designer",22],["hacker",16],["community manager",14],["data scientist|data analyst",12]]],
+["Nomme un sport populaire",[["football|foot",55],["basket|basketball",15],["tennis",10],["handball",10],["athletisme|course",10]]],
+["Nomme une boisson quand il fait chaud",[["eau",40],["jus",22],["bissap",16],["soda|coca",14],["the glace",8]]],
+["Nomme une chose qu’on fait avec son téléphone",[["appeler|appel",30],["message|sms|whatsapp",24],["photo|selfie",18],["musique",16],["jeu|jouer",12]]]];
+const HOODS=["#0033FF","#00B87A","#FF5C35","#8B5CF6","#EC4899"],ACCS=["Aucun","Casquette","Bonnet Père Noël","Chapeau Pirate","Chapeau Cowboy","Casque Audio","Bandeau Ninja","Aucun","Lunettes Rondes","Lunettes Soleil","Masque Super-héros","Sweat Normal","Squelette","Zombie","Ninja","Super-héros","Blouse Scientifique"],DUR=20;
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]!==b[j-1]));p=t}}return d[b.length]}
+function find(t,A){const n=norm(t);if(!n)return -1;for(let i=0;i<A.length;i++)for(const k of A[i][0].split("|").map(norm))if(n===k||(k.length>=4&&n.includes(k))||(n.length>=4&&k.startsWith(n))||(k.length>=5&&lev(n,k)<=1))return i;return -1}
+function fox(h=0,a=0){const c=HOODS[h%5];return `<svg viewBox="0 0 100 100"><path d="M16 100Q18 66 50 62Q82 66 84 100Z" fill="${c}"/><path d="M44 66v14M56 66v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M20 10L40 34L16 42Z M80 10L60 34L84 42Z" fill="#FF7A1A"/><path d="M24 18L35 33L22 37Z M76 18L65 33L78 37Z" fill="#FFE6D0"/><ellipse cx="50" cy="46" rx="31" ry="26" fill="#FF7A1A"/><path d="M22 52Q50 82 78 52Q50 44 22 52Z" fill="#FFF3E6"/><circle cx="39" cy="44" r="4.5" fill="#111827"/><circle cx="61" cy="44" r="4.5" fill="#111827"/><circle cx="40.5" cy="42.5" r="1.4" fill="#fff"/><circle cx="62.5" cy="42.5" r="1.4" fill="#fff"/><ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#111827"/><path d="M44 64Q50 69 56 64" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"/><path d="M30 30Q50 10 70 30Z" fill="#FFF3E6" /><path d="M40 45Q50 55 60 45Z" fill="#FF7A1A" /><circle cx="39" cy="44" r="4" fill="#111827"/><circle cx="61" cy="44" r="4" fill="#111827"/><circle cx="40.5" cy="42.5" r="1.2" fill="#fff"/><circle cx="62.5" cy="42.5" r="1.2" fill="#fff"/><ellipse cx="50" cy="58" rx="4" ry="2.5" fill="#ff6b6b"/><path d="M44 62Q50 67 56 62" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"/><path d="M35 30L50 15L65 30Z" fill="#e8daef"/><path d="M65 30L50 15L35 30Z" fill="#e8daef"/></svg>";}
+function show(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id))}
+const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+let R=null,U=null,DB=null,room=null,me={name:store.get("gta-name")||"",h:+store.get("gta-h")||0,a:+store.get("gta-a")||0};
+$("heroFox").innerHTML=fox(0,1);
+
+/* init capabilities (la page marche sans) */
+(async()=>{try{R=await claude.use("room")}catch(e){}try{U=await claude.use("user")}catch(e){}try{DB=await claude.use("db")}catch(e){}
+ if(DB){try{DB.collection("lb").orderBy("doors","desc").limit(10).onSnapshot(s=>{$("lb").innerHTML=s.empty?'<p class="mute">Personne encore. Sois le premier !</p>':s.docs.map((d,i)=>{const v=d.data();return `<div class="pl"><b>${i+1}</b>${fox(v.h,v.a)}<span>${esc(v.name||"?")}</span><b>${v.doors|0} 🚪</b></div>`}).join("")},()=>{$("lb").innerHTML='<p class="mute">Classement indisponible.</p>'})}catch(e){}}
+ else $("lb").innerHTML='<p class="mute">Classement indisponible ici.</p>'})();
+const need=()=>{if(!R){$("homeMsg").textContent="Le mode multijoueur n’est pas disponible dans ce contexte.";return false}return true};
+$("bHome1").onclick=$("bHome2").onclick=()=>{DEMO=0;clearInterval(tm);if(room)room.leave();room=null;show("home")};
+
+/* ===== ANIMATEUR ===== */
+let st={n:0},answers={},scores={},names={},qi=0,tm=null,tOut=null,code="",DM=1,doors={},DEMO=0;
+const players=()=>room.peers().filter(p=>p.presence&&p.presence.role==="player"&&!p.isMe);
+const act=()=>players().filter(x=>!(DM&&doors[x.peer]&&doors[x.peer].l<=0));
+function setSt(p){st={...st,n:st.n+1,...p};room.presence({st})}
+$("bHost").onclick=async()=>{if(!need())return;code=Array.from({length:4},()=>"ABCDEFGHJKLMNPQRSTUVWXYZ"[Math.random()*24|0]).join("");
+ try{room=await R.join("gta-"+code)}catch(e){$("homeMsg").textContent="Impossible d’ouvrir la salle.";return}
+ st={n:0,ph:"lobby"};answers={};scores={};names={};await room.presence({role:"host",st});
+ room.onPeers(()=>{players().forEach(p=>names[p.peer]={name:p.presence.name||"?",h:p.presence.h|0,a:p.presence.a|0});if(st.ph==="lobby")lobby();else if(st.ph==="q")stat()});
+ room.on("ans",onAns);$("hCode").textContent=code;lobby();show("hLobby")};
+function lobby(){cast3();const p=players();$("hCount").textContent=p.length+(p.length>1?" joueurs":" joueur");$("hPlayers").innerHTML=p.map(x=>`<div class="pl">${fox(x.presence.h,x.presence.a)}<span>${esc(x.presence.name||"?")}</span></div>`).join("")}
+$("bStart").onclick=()=>{if(!players().length){$("hCount").textContent="Attends au moins 1 joueur…";return}scores={};doors={};qi=0;nextQ()};$("bMode").onclick=()=>{DM=DM?0:1;$("bMode").textContent="Mode : "+(DM?"Portes":"Points");stage("hLobby")};
+function nextQ(){answers={};clearTimeout(tOut);clearInterval(tm);setSt({ph:"q",qi,dur:DUR,res:null,dm:DM?1:0});cast3();if(DEMO)bots();
+ const[q,A]=QS[qi];$("hProg").textContent=`Question ${qi+1}/10`;$("hMult").textContent=DM?"Top "+(5-(qi>>1))+" ouvre la porte":qi>=8?"Points ×2":"";$("hMult").style.display=DM||qi>=8?"":"none";
+ $("hQ").textContent=q;$("hBoard").innerHTML=A.map((_,k)=>`<div class="slot"><span>${k+1}. ?????</span><span>--</span></div>`).join("");$("hRank").innerHTML="";
+ $("bNext").textContent="Révéler";$("bNext").onclick=reveal;show("hGame");stat();
+ let left=DUR;$("hBar").style.width="100%";tm=setInterval(()=>{left--;$("hBar").style.width=(left/DUR*100)+"%";if(left<=0)reveal()},1000)}
+function stat(){$("hStat").textContent=`${Object.keys(answers).length}/${act().length} ont répondu`}
+function onAns(m){if(st.ph!=="q"||!m.data||m.data.qi!==qi||answers[m.peer])return;answers[m.peer]=String(m.data.text||"").slice(0,40);stat();if(Object.keys(answers).length>=act().length)reveal()}
+function reveal(){if(st.ph!=="q")return;clearInterval(tm);const A=QS[qi][1],m=qi>=8?2:1,res={},NN=DM?5-(qi>>1):5;
+ if(DM)players().forEach(x=>{const p=x.peer,o=doors[p]||(doors[p]={d:0,l:2});if(o.l<=0)return;const t=answers[p],h=t?find(t,A):-1,ok=h>=0&&h<NN;if(ok)o.d++;else o.l--;scores[p]=o.d;res[p]={h,g:ok?1:0,l:o.l,d:o.d,N:NN}});else Object.entries(answers).forEach(([p,t])=>{const h=find(t,A),g=h>=0?A[h][1]*m:0;scores[p]=(scores[p]||0)+g;res[p]={h,g}});
+ setSt({ph:"r",res,sc:scores});cast3(res);
+ $("hBoard").innerHTML=A.map((r,k)=>{const w=Object.entries(res).filter(([,v])=>v.h===k).map(([p])=>names[p]?names[p].name:"").join(", ");return `<div class="slot ${k<NN?"on2":""}"><span>${k+1}. ${esc(r[0].split("|")[0])}${w?` <small>· ${esc(w)}</small>`:""}</span><span>${r[1]*m}</span></div>`}).join("");
+ $("hRank").innerHTML=ranked().map((r,i)=>`<div class="pl"><b>${i+1}</b>${fox(r.h,r.a)}<span>${esc(r.name)}${DM?" "+"♥".repeat(Math.max(0,r.l)):""}</span>${res[r.p]&&res[r.p].g?`<em>${DM?"🚪":"+"+res[r.p].g}</em>`:""}<b>${r.s}</b></div>`).join("");
+ $("bNext").textContent=qi>=9?"Voir le podium":"Question suivante";if(DEMO)setTimeout(()=>{if(DEMO&&st.ph==="r")$("bNext").click()},3500);$("bNext").onclick=()=>{if(qi>=9||(DM&&!act().length))endGame();else{qi++;nextQ()}}}
+function ranked(){return Object.keys(names).map(p=>({p,...names[p],s:scores[p]||0,l:DM?(doors[p]||{l:2}).l:undefined,d:DM?(doors[p]||{d:0}).d:0})).sort((a,b)=>b.s-a.s||(b.l|0)-(a.l|0))}
+function endGame(){setSt({ph:"end",sc:scores});$("hPodium").innerHTML=ranked().map((r,i)=>`<div class="pl" style="${i<3?"background:var(--soft);padding:14px":""}"><b>${["🥇","🥈","🥉"][i]||i+1}</b>${fox(r.h,r.a)}<span>${esc(r.name)}</span><b>${r.s}</b></div>`).join("");show("hEnd")}
+
+function bots(){const A=QS[qi][1],q=qi;players().forEach((x,i)=>setTimeout(()=>{if(!DEMO||st.ph!=="q"||qi!==q)return;const sk=[.9,.8,.7,.6,.5,.4][i%6],N=5-(q>>1),k=Math.random()<sk?Math.floor(Math.random()*(N+(Math.random()<.3?1:0))):-1;
+ onAns({peer:x.peer,data:{qi:q,text:k>=0&&A[k]?A[k][0].split("|")[0]:"bleu"}})},1000+Math.random()*4500))}
+$("bDemo").onclick=()=>{const B=[["Kossi",0,1],["Aïcha",1,2],["Fifamè",2,0],["Yanick",3,3],["Sènami",4,1],["Rodrigue",0,2]],
+ pe=B.map((b,i)=>({peer:"b"+i,isMe:false,presence:{role:"player",name:b[0],h:b[1],a:b[2]}}));
+ room={peers:()=>pe,presence:()=>{},onPeers:()=>{},on:()=>{},emit:()=>{},leave:()=>{}};
+ DEMO=1;DM=1;code="DEMO";st={n:0,ph:"lobby"};answers={};scores={};doors={};names={};
+ pe.forEach(p=>names[p.peer]={name:p.presence.name,h:p.presence.h,a:p.presence.a});
+ $("hCode").textContent="DEMO";$("bMode").textContent="Mode : Portes";show("hLobby");lobby();
+ setTimeout(()=>{if(DEMO&&st.ph==="lobby")$("bStart").click()},3500)};
+/* ===== JOUEUR ===== */
+$("pName").value=me.name;
+function pf(){
+// Sweat colors
+$("pHoods").innerHTML=HOODS.map((c,i)=`<button type="button" class="dot${i===me.h?" sel":""}" style="background:${c}" data-h="${i}" aria-label="Sweat ${i+1}"></button>`).join("");
+// Hats (7 options, indices 0-6)
+$("pAccs").innerHTML=ACCS.slice(0,7).map((n,i)=`<button type="button" class="chip${i===me.a%7?" sel":""}" data-a="${i}">${n}</button>`).join("");
+// Faces (4 options, indices 7-10)
+$("pFace").innerHTML=ACCS.slice(7,11).map((n,i)=`<button type="button" class="chip${i===Math.floor(me.a/7)?" sel":""}" data-a="${i+7}">${n}</button>`).join("");
+// Costumes (6 options, indices 11-16)
+$("pCostume").innerHTML=ACCS.slice(11,17).map((n,i)=`<button type="button" class="chip${i===me.a-11?" sel":""}" data-a="${i+11}">${n}</button>`).join("");
+try{cast3({pick:{g:1}})}catch(e){}pf();
+// onClick handlers for customization
+$("pHoods").onclick=e=>{const b=e.target.closest("[data-h]");if(b){me.h=+b.dataset.h;pf()}};
+$("pAccs").onclick=e=>{const b=e.target.closest("[data-a]");if(b){me.a=+b.dataset.a;pf()}};
+$("pFace").onclick=e=>{const b=e.target.closest("[data-a]");if(b){me.a=+b.dataset.a;pf()}};  // Faces indices 7-10
+$("pCostume").onclick=e=>{const b=e.target.closest("[data-a]");if(b){me.a=+b.dataset.a;pf()}};  // Costumes indices 11-16
