@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lobby 3D</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#5fc8ff;font-family:Arial,Helvetica,sans-serif}
+canvas{display:block}
+#t{position:fixed;left:0;right:0;bottom:9%;text-align:center;color:#fff;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 3px rgba(0,0,0,.45);pointer-events:none;padding:0 20px}
+#b{position:fixed;top:34px;left:0;right:0;text-align:center}#b button{margin:0 4px;padding:8px 18px;border:0;border-radius:20px;font-weight:700;font-size:14px;background:#fff;color:#234}#b button.on{background:#ffb300}
+#h{position:fixed;top:10px;left:0;right:0;text-align:center;color:#fff;font-size:12px;opacity:.8;text-shadow:0 1px 2px rgba(0,0,0,.5);pointer-events:none}
+</style></head><body>
+<div id="h">Touche / clique pour ajouter un joueur</div><div id="b"><button id="b1">Lobby</button><button id="b2">Table</button></div>
+<div id="t">Searching for<br>opponents...<br><span id="c">4/16</span></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x5fc8ff);
+const cam=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,200);
+const ren=new THREE.WebGLRenderer({antialias:true});
+ren.setPixelRatio(Math.min(devicePixelRatio,2));ren.setSize(innerWidth,innerHeight);
+document.body.appendChild(ren.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8899aa,1.1));
+const dl=new THREE.DirectionalLight(0xffffff,.6);dl.position.set(3,10,8);scene.add(dl);
+
+// sol
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(80,60),new THREE.MeshLambertMaterial({color:0x8e959c}));
+floor.rotation.x=-Math.PI/2;scene.add(floor);
+// bandes de sol
+for(let i=0;i<8;i++){const s=new THREE.Mesh(new THREE.PlaneGeometry(80,1.1),new THREE.MeshLambertMaterial({color:i%2?0x949ba2:0x8a9198}));s.rotation.x=-Math.PI/2;s.position.set(0,.01,-4+i*2.2);scene.add(s);}
+
+const L=(c)=>new THREE.MeshLambertMaterial({color:c});
+function cap(r,h,seg=32){
+  const p=[],n=14;
+  for(let i=0;i<=n;i++){const a=i/n*Math.PI/2;p.push(new THREE.Vector2(Math.sin(a)*r,-Math.cos(a)*r));}
+  for(let i=0;i<=n;i++){const a=i/n*Math.PI/2;p.push(new THREE.Vector2(Math.cos(a)*r,h+Math.sin(a)*r));}
+  return new THREE.LatheGeometry(p,seg);
+}
+const shadowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,2,32,32,32);g.addColorStop(0,'rgba(0,0,0,.35)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);})();
+function makeChar(color,s=1,crowd=false){
+  const g=new THREE.Group();
+  const m=new THREE.MeshStandardMaterial({color,roughness:.5,metalness:0});
+  const sh=new THREE.Mesh(new THREE.PlaneGeometry(1.3,1.3),new THREE.MeshBasicMaterial({map:shadowTex,transparent:true,depthWrite:false}));
+  sh.rotation.x=-Math.PI/2;sh.position.y=.02;g.add(sh);
+  const legs=[];
+  [-.17,.17].forEach(x=>{const l=new THREE.Mesh(cap(.15,.32),m);l.position.set(x,.15,0);g.add(l);legs.push(l);});
+  if(crowd){
+    const b=new THREE.Mesh(cap(.36,.3),m);b.position.y=.95;g.add(b);
+    const skin=new THREE.MeshStandardMaterial({color:[0xf2c9a0,0xd9a273,0x8d5a3b,0xf7e0c8][Math.random()*4|0],roughness:.6});
+    const head=new THREE.Mesh(new THREE.SphereGeometry(.42,32,24),skin);head.position.y=1.72;g.add(head);
+    const hc=[0xff7a1a,0x222222,0xe53935,0x3a5a2a,0xf5f5f5,0xf4c430,0xe91e8c,0x1e88e5][Math.random()*8|0];
+    const hat=new THREE.Mesh(new THREE.SphereGeometry(.45,32,16,0,Math.PI*2,0,Math.PI/2.1),new THREE.MeshStandardMaterial({color:hc,roughness:.5}));hat.position.y=1.78;g.add(hat);
+    const gog=Math.random()<.4,ec=gog?0x2ecc71:0x111111;
+    [-.15,.15].forEach(x=>{const e=new THREE.Mesh(new THREE.SphereGeometry(gog?.11:.055,16,12),new THREE.MeshStandardMaterial({color:ec,roughness:.3}));e.position.set(x,1.7,.37);g.add(e);});
+  } else {
+    const b=new THREE.Mesh(cap(.42,.68),m);b.position.y=1.02;g.add(b);
+  }
+  const arms=[];
+  [-1,1].forEach(d=>{const p=new THREE.Group();p.position.set(d*(crowd?.4:.5),1.2,0);
+    const a=new THREE.Mesh(cap(.1,.36),m);a.position.y=-.52;p.add(a);
+    p.rotation.z=d*.1;g.add(p);arms.push(p);});
+  g.scale.setScalar(s);g.userData={arms,legs,ph:Math.random()*6};
+  return g;
+}
+function oldMakeChar(color,s=1,crowd=false){
+  const g=new THREE.Group(),m=L(color);
+  const legs=[];
+  [-.17,.17].forEach(x=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.6,14),m);l.position.set(x,.3,0);g.add(l);legs.push(l);});
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.36,.36,.8,20),m);body.position.y=.95;g.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.36,20,16),m);head.position.y=1.35;g.add(head);
+  const arms=[];
+  [-1,1].forEach(d=>{const p=new THREE.Group();p.position.set(d*.46,1.2,0);
+    const a=new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.6,12),m);a.position.y=-.28;p.add(a);
+    const h=new THREE.Mesh(new THREE.SphereGeometry(.11,12,10),m);h.position.y=-.58;p.add(h);
+    p.rotation.z=d*.12;g.add(p);arms.push(p);});
+  if(crowd){
+    const hc=[0xff7a1a,0x222222,0xe53935,0x3a5a2a,0xffffff,0xf4c430,0xe91e8c][Math.random()*7|0];
+    const hat=new THREE.Mesh(new THREE.SphereGeometry(.4,16,10,0,Math.PI*2,0,Math.PI/2),L(hc));hat.position.y=1.4;g.add(hat);
+    const skin=new THREE.Mesh(new THREE.SphereGeometry(.3,14,10),L(0xf2c9a0));skin.position.set(0,1.32,.14);g.add(skin);
+    [-.1,.1].forEach(x=>{const e=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),L(0x111111));e.position.set(x,1.36,.4);g.add(e);});
+  }
+  g.scale.setScalar(s);g.userData={arms,legs,ph:Math.random()*6};
+  return g;
+}
+function label(txt,col='#fff'){
+  const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');
+  x.font='bold 34px Arial';x.textAlign='center';x.fillStyle=col;x.strokeStyle='rgba(0,0,0,.5)';x.lineWidth=5;
+  x.strokeText(txt,128,42);x.fillText(txt,128,42);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));
+  sp.scale.set(1.8,.45,1);sp.position.y=2.3;return sp;
+}
+
+// gradins
+const stand=new THREE.Group();
+const cols=[0xff7a1a,0x1e88e5,0x222222,0xe53935,0x43a047,0xfdd835,0x8e24aa];
+for(let r=0;r<5;r++){
+  const st=new THREE.Mesh(new THREE.BoxGeometry(15,.5*(r+1),1.3),L(r%2?0x6d7b8d:0x7a8799));
+  st.position.set(0,.25*(r+1),-7-r*1.3);scene.add(st);
+  for(let i=0;i<14;i++){
+    const f=makeChar(cols[Math.random()*7|0],.5,true);
+    f.position.set(-6.5+i*1,.5*(r+1),-7-r*1.3);scene.add(f);
+  }
+}
+[-1,1].forEach(d=>{const w=new THREE.Mesh(new THREE.BoxGeometry(.5,3.4,7.5),L(0xb7c3d6));w.position.set(d*7.8,1.7,-9.5);scene.add(w);});
+
+// joueurs
+const players=[];
+function addPlayer(color,name,x,z,lab){
+  const p=makeChar(color,1.1);p.position.set(x,0,z);
+  const l=label(name,lab||'#fff');p.add(l);scene.add(p);players.push(p);
+  document.getElementById('c').textContent=players.length+'/16';
+}
+addPlayer(0xf0559b,'Charlie',-1.5,0);
+addPlayer(0x34c759,'Aaron',.1,-.4);
+addPlayer(0x2f7bff,'you!',-.1,1.4,'#ffb300');
+addPlayer(0xa98be6,'Dana',1.5,.6);
+
+const names=['Leo','Mia','Zed','Kai','Nora','Max','Ivy','Sam','Eli','Zoe','Tom','Lux'];
+const pal=[0xff7043,0x26c6da,0xffee58,0x9ccc65,0xef5350,0x8d6e63];
+function spawn(){
+  if(players.length>=16)return;
+  const n=players.length;
+  addPlayer(pal[n%6],names[n%12],(Math.random()-.5)*6,-.8+Math.random()*3.2);
+}
+addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('button'))return;if(mode==='lobby')spawn();else reveal();});
+
+let mode='lobby';
+const lobbyObjs=scene.children.filter(o=>!o.isLight);
+const tg=new THREE.Group();tg.visible=false;scene.add(tg);
+const tf=new THREE.Mesh(new THREE.CircleGeometry(14,64),L(0x2d3490));tf.rotation.x=-Math.PI/2;tg.add(tf);
+const ring=new THREE.Mesh(new THREE.RingGeometry(4.7,5.1,64),L(0xffb300));ring.rotation.x=-Math.PI/2;ring.position.y=.02;tg.add(ring);
+const tabTop=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.2,.14,48),new THREE.MeshStandardMaterial({color:0xc58443,roughness:.5}));tabTop.position.y=1.05;tg.add(tabTop);
+const col=new THREE.Mesh(new THREE.CylinderGeometry(.55,.8,1,32),L(0x7a4a22));col.position.y=.5;tg.add(col);
+const tp=[];
+[[0xf0559b,'Charlie'],[0x34c759,'Aaron'],[0x2f7bff,'you!'],[0xa98be6,'Dana'],[0xff7043,'Léo'],[0x26c6da,'Mia']].forEach((d,i)=>{
+  const a=(-125+i*50)*Math.PI/180,sx=Math.sin(a),cz=Math.cos(a);
+  const c=makeChar(d[0],1.1);c.position.set(sx*2.85,0,cz*2.85);c.rotation.y=a+Math.PI;
+  c.add(label(d[1],d[1]==='you!'?'#ffb300':'#fff'));tg.add(c);tp.push(c);
+  const bz=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,.1,24),L(0xe53935));bz.position.set(sx*1.55,1.17,cz*1.55);tg.add(bz);
+});
+const bc=document.createElement('canvas');bc.width=1024;bc.height=512;const bx=bc.getContext('2d');
+const Q='Nomme quelque chose qu’on trouve dans une cuisine';
+const A=[['Frigo',38],['Four',24],['Table',15],['Évier',12],['Casserole',11]];
+let rv=0;const bt=new THREE.CanvasTexture(bc);
+function drawBoard(){
+  bx.fillStyle='#1b2a8f';bx.fillRect(0,0,1024,512);
+  bx.strokeStyle='#ffb300';bx.lineWidth=14;bx.strokeRect(7,7,1010,498);
+  bx.fillStyle='#fff';bx.font='bold 38px Arial';bx.textAlign='center';bx.fillText(Q,512,70);
+  A.forEach((a,i)=>{const y=110+i*76,on=i<rv;
+    bx.fillStyle=on?'#ffb300':'#0d1560';bx.fillRect(80,y,864,62);
+    bx.fillStyle=on?'#1b1b1b':'#7f8cff';bx.font='bold 38px Arial';bx.textAlign='left';
+    bx.fillText(on?a[0]:String(i+1),110,y+44);
+    if(on){bx.textAlign='right';bx.fillText(String(a[1]),914,y+44);}});
+  bt.needsUpdate=true;
+}
+drawBoard();
+const board=new THREE.Mesh(new THREE.PlaneGeometry(9,4.5),new THREE.MeshBasicMaterial({map:bt}));board.position.set(0,4.6,-7);tg.add(board);
+function reveal(){rv=(rv+1)%(A.length+1);drawBoard();tp.forEach(c=>c.userData.up=false);if(rv>0)tp[Math.random()*6|0].userData.up=true;}
+function setMode(m){mode=m;const lb=m==='lobby';
+  lobbyObjs.concat(players).forEach(o=>o.visible=lb);tg.visible=!lb;
+  scene.background.set(lb?0x5fc8ff:0x15195c);
+  document.getElementById('t').style.display=lb?'':'none';
+  document.getElementById('h').textContent=lb?'Touche / clique pour ajouter un joueur':'Touche / clique pour révéler une réponse';
+  document.getElementById('b1').className=lb?'on':'';document.getElementById('b2').className=lb?'':'on';
+  cam.position.set(0,lb?8:7,lb?12.5:11);}
+document.getElementById('b1').onclick=()=>setMode('lobby');
+document.getElementById('b2').onclick=()=>{window.location.href='table.html';};
+setMode('lobby');
+let mx=0;addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2});
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();ren.setSize(innerWidth,innerHeight)});
+const clk=new THREE.Clock();
+(function loop(){
+  const t=clk.getElapsedTime();
+  players.forEach(p=>{const u=p.userData,s=Math.sin(t*3+u.ph);
+    p.position.y=Math.abs(s)*.06;u.arms[0].rotation.x=s*.25;u.arms[1].rotation.x=-s*.25;
+    p.rotation.y=Math.sin(t*.8+u.ph)*.12;});
+  tp.forEach(c=>{const u=c.userData,s=Math.sin(t*2.5+u.ph);c.position.y=Math.abs(s)*.03;
+    u.arms[0].rotation.x=-1.3+s*.05;u.arms[1].rotation.x=u.up?-3+Math.sin(t*8)*.2:-1.3-s*.05;});
+  cam.position.x+=((mx*3)-cam.position.x)*.05;
+  if(mode==='lobby')cam.lookAt(0,1.2,-2);else cam.lookAt(0,2,-1);
+  ren.render(scene,cam);requestAnimationFrame(loop);
+})();
+</script></body></html>

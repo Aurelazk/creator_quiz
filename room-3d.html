@@ -13,6 +13,41 @@
 <!-- Socket.io -->
 <script src="/socket.io/socket.io.js"></script>
 
+<!-- Check if Three.js loaded -->
+<script>
+// Verify Three.js is loaded
+if (typeof THREE === 'undefined') {
+  document.addEventListener('DOMContentLoaded', function() {
+    const errorMsg = document.createElement('div');
+    errorMsg.style.cssText = `
+      position: fixed;
+      inset: 0;
+      background: #0d0e15;
+      color: #ff3355;
+      font: 900 24px/1.5 var(--mono);
+      text-align: center;
+      padding: 50px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+    `;
+    errorMsg.innerHTML = `
+      <h1 style="font-size: 48px;">⚠️ Three.js non chargé</h1>
+      <p>Vérifiez votre connexion internet ou rechargez la page (Ctrl+F5)</p>
+      <p>Si le problème persiste, Three.js peut être bloqué par votre navigateur</p>
+      <button onclick="location.reload()" style="padding: 16px 32px; border: 2px solid #ff3355; color: #ff3355; background: transparent; font: 900 16px/1 var(--mono); cursor: pointer;">RECHARGER</button>
+    `;
+    document.body.prepend(errorMsg);
+    // Hide loading screen
+    const loading = document.getElementById('loading-screen');
+    if (loading) loading.style.display = 'none';
+  });
+}
+</script>
+
 <style>
 :root{
   --bg:#0d0e15;
@@ -73,6 +108,11 @@ body{
   align-items:center;
   justify-content:center;
   padding:20px;
+}
+
+#main-menu {
+  z-index: 100 !important;
+  pointer-events: auto !important;
 }
 
 /* Loading Screen */
@@ -146,7 +186,9 @@ body{
   cursor:pointer;
   box-shadow:0 0 20px rgba(56,232,255,.15),inset 0 0 20px rgba(56,232,255,.05);
   transition:all .3s ease;
-  pointer-events:auto;
+  pointer-events:auto !important;
+  z-index: 100 !important;
+  position: relative !important;
 }
 .menu-btn:hover{
   border-color:var(--cyan);
@@ -163,6 +205,27 @@ body{
   border-color:var(--red);
   background:linear-gradient(180deg,rgba(255,51,85,.15),rgba(255,51,85,.05));
   box-shadow:0 0 30px rgba(255,51,85,.3),inset 0 0 30px rgba(255,51,85,.1);
+}
+.menu-btn.demo-btn{
+  padding: 20px 50px !important;
+  font-size: 16px !important;
+  border: 3px solid rgba(255,209,102,.6) !important;
+  color: var(--gold) !important;
+  background: linear-gradient(180deg, rgba(255,209,102,.15), rgba(255,209,102,.05)) !important;
+  box-shadow: 0 0 30px rgba(255,209,102,.3) !important;
+  animation: pulse 1.5s ease-in-out infinite alternate !important;
+  border-radius: 16px !important;
+  letter-spacing: .3em !important;
+}
+.menu-btn.demo-btn:hover{
+  border-color: var(--gold) !important;
+  background: linear-gradient(180deg, rgba(255,209,102,.25), rgba(255,209,102,.1)) !important;
+  box-shadow: 0 0 50px rgba(255,209,102,.5), 0 0 80px rgba(255,209,102,.3) !important;
+  transform: scale(1.05) !important;
+}
+@keyframes pulse{
+  from{transform:scale(1)}
+  to{transform:scale(1.05)}
 }
 
 /* Join Form */
@@ -374,6 +437,32 @@ body{
   text-shadow:0 0 10px rgba(255,51,85,.5);
   pointer-events:none;
   z-index:20;
+}
+
+#demo-indicator{
+  position:absolute;
+  top:20px;
+  left:20px;
+  pointer-events:none;
+  z-index:20;
+}
+
+.demo-badge{
+  padding:8px 14px;
+  border:2px solid var(--gold);
+  border-radius:8px;
+  background:rgba(255,209,102,.15);
+  color:var(--gold);
+  font:900 11px/1 var(--mono);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  text-shadow:0 0 10px rgba(255,209,102,.5);
+  animation:glowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes glowPulse{
+  0%,100%{box-shadow:0 0 10px rgba(255,209,102,.5)}
+  50%{box-shadow:0 0 20px rgba(255,209,102,.8),0 0 30px rgba(255,209,102,.4)}
 }
 
 .timer-danger{
@@ -711,7 +800,8 @@ body{
 <!-- Loading Screen -->
 <div id="loading-screen">
   <div class="loading-spinner"></div>
-  <div class="loading-text">Chargement 3D...</div>
+  <div class="loading-text">Chargement Three.js...</div>
+  <div style="margin-top: 10px; font: 700 11px/1 var(--mono); letter-spacing: .1em; color: var(--muted);">Création de la salle 3D</div>
   <div id="asset-loader">
     <div class="progress"></div>
   </div>
@@ -722,7 +812,8 @@ body{
   <!-- Main Menu -->
   <div id="main-menu">
     <h1 class="menu-title">CREATOR 3D QUIZ</h1>
-    <p class="menu-subtitle">Rejoins la partie en 3D</p>
+    <p class="menu-subtitle">Teste le mode DEMO pour voir la salle !</p>
+    <button class="menu-btn demo-btn" id="demo-btn" style="margin-bottom: 16px;">✨ TESTER MODE DEMO ✨</button>
     <button class="menu-btn" id="create-btn">CREER UNE SALLE</button>
     <button class="menu-btn secondary" id="join-btn">REJOINDRE</button>
   </div>
@@ -744,6 +835,7 @@ body{
     </div>
     <div id="players-list"></div>
     <button class="menu-btn" id="start-btn">LANCER LA PARTIE</button>
+    <button class="menu-btn secondary" id="exit-lobby-btn" style="margin-top:10px;">RETOUR AU MENU</button>
   </div>
 
   <!-- Question Display -->
@@ -758,12 +850,18 @@ body{
 
   <!-- Timer -->
   <div id="timer-display">30</div>
+  
+  <!-- Demo Mode Indicator -->
+  <div id="demo-indicator" hidden>
+    <span class="demo-badge">🎭 DEMO</span>
+  </div>
 
   <!-- Results Display -->
   <div id="results-display">
     <h2 class="results-title">Resultats</h2>
     <div class="results-list" id="results-list"></div>
     <button class="next-btn" id="next-question-btn">SUIVANT</button>
+    <button class="menu-btn secondary" id="exit-results-btn" style="margin-top:10px;">Quitter Demo</button>
   </div>
 
   <!-- Leaderboard (during game) -->
@@ -777,6 +875,7 @@ body{
     <h1 class="podium-title">Podium Final</h1>
     <div class="podium-stands" id="podium-stands"></div>
     <button class="play-again-btn" id="play-again-btn">Rejouer</button>
+    <button class="menu-btn secondary" id="exit-demo-btn" style="margin-top:10px;">Quitter Demo</button>
   </div>
 </div>
 
@@ -798,6 +897,40 @@ const PLAYER_COLORS = [
   '#E91E63', // Fuchsia
 ];
 
+// Demo Mode Data
+const DEMO_PLAYERS = [
+  { pseudo: 'Alice', color: '#0033FF' },
+  { pseudo: 'Bob', color: '#00E5A0' },
+  { pseudo: 'Charlie', color: '#FF5C35' },
+  { pseudo: 'Diana', color: '#FFD700' },
+];
+
+const DEMO_QUESTIONS = [
+  'Nommez un fruit jaune',
+  'Nommez un super-héros célèbre',
+  'Nommez une capitale africaine',
+  "Nommez un sport qu'on pratique en équipe",
+  'Nommez un plat que tout le monde aime',
+  "Nommez un animal qu'on peut voir en Afrique",
+  'Nommez une application populaire sur téléphone',
+  'Nommez un langage de programmation',
+  "Nommez quelque chose qu'on emmène à la plage",
+  'Nommez une marque de téléphone'
+];
+
+const DEMO_ANSWERS = {
+  'Nommez un fruit jaune': ['banane', 'citron', 'ananas', 'mangue'],
+  'Nommez un super-héros célèbre': ['Spider-Man', 'Batman', 'Superman', 'Iron Man'],
+  'Nommez une capitale africaine': ['Cotonou', 'Dakar', 'Abidjan', 'Lagos'],
+  "Nommez un sport qu'on pratique en équipe": ['football', 'basketball', 'volleyball', 'rugby'],
+  'Nommez un plat que tout le monde aime': ['pizza', 'pâtes', 'riz', 'burger'],
+  "Nommez un animal qu'on peut voir en Afrique": ['lion', 'éléphant', 'girafe', 'zèbre'],
+  'Nommez une application populaire sur téléphone': ['WhatsApp', 'Instagram', 'TikTok', 'Twitter'],
+  'Nommez un langage de programmation': ['JavaScript', 'Python', 'Java', 'C++'],
+  "Nommez quelque chose qu'on emmène à la plage": ['serviette', 'lunettes', 'maillot', 'crème solaire'],
+  'Nommez une marque de téléphone': ['Samsung', 'iPhone', 'Xiaomi', 'Huawei']
+};
+
 // State
 let socket;
 let roomCode = null;
@@ -805,11 +938,14 @@ let playerId = null;
 let playerPseudo = null;
 let playerColor = null;
 let isAnimator = false;
+let isDemoMode = false;
 let currentQuestion = null;
 let timeLeft = 0;
 let players = [];
 let results = [];
 let rankings = [];
+let demoQuestionIndex = 0;
+let demoTimer = null;
 
 // Three.js Variables
 let scene, camera, renderer, room;
@@ -909,6 +1045,11 @@ function initSocket() {
     // Hide results
     document.getElementById('results-display').style.display = 'none';
     document.getElementById('question-display').style.display = 'block';
+    
+    // In demo mode, hide answer section (not needed)
+    if (isDemoMode) {
+      document.getElementById('answer-section').style.display = 'none';
+    }
   });
   
   // Timer tick
@@ -987,6 +1128,7 @@ function initUI() {
   // Menu buttons
   document.getElementById('create-btn').addEventListener('click', createRoom);
   document.getElementById('join-btn').addEventListener('click', showJoinForm);
+  document.getElementById('demo-btn').addEventListener('click', startDemoMode);
   document.getElementById('back-to-menu-btn').addEventListener('click', () => {
     document.getElementById('join-form').hidden = true;
     document.getElementById('main-menu').hidden = false;
@@ -997,6 +1139,7 @@ function initUI() {
   
   // Start button
   document.getElementById('start-btn').addEventListener('click', startGame);
+  document.getElementById('exit-lobby-btn').addEventListener('click', goToMenu);
   
   // Answer submission
   document.getElementById('submit-answer-btn').addEventListener('click', submitAnswer);
@@ -1006,9 +1149,13 @@ function initUI() {
   
   // Next question button
   document.getElementById('next-question-btn').addEventListener('click', nextQuestion);
+  document.getElementById('exit-results-btn').addEventListener('click', goToMenu);
   
   // Play again button
   document.getElementById('play-again-btn').addEventListener('click', playAgain);
+  
+  // Exit demo button
+  document.getElementById('exit-demo-btn').addEventListener('click', goToMenu);
 }
 
 function createRoom() {
@@ -1060,23 +1207,50 @@ function submitAnswer() {
 
 function nextQuestion() {
   document.getElementById('next-question-btn').style.display = 'none';
-  socket.emit('next-question', { code: roomCode });
+  
+  if (isDemoMode) {
+    demoQuestionIndex++;
+    if (demoQuestionIndex >= DEMO_QUESTIONS.length) {
+      // Game over in demo mode
+      showDemoPodium();
+    } else {
+      askDemoQuestion();
+    }
+  } else {
+    socket.emit('next-question', { code: roomCode });
+  }
 }
 
 function playAgain() {
   document.getElementById('podium-display').style.display = 'none';
-  socket.emit('play-again', { code: roomCode });
+  
+  if (isDemoMode) {
+    // Restart demo game
+    startDemoGame();
+  } else {
+    socket.emit('play-again', { code: roomCode });
+  }
 }
 
 function goToMenu() {
   roomCode = null;
   isAnimator = false;
+  isDemoMode = false;
   playerPseudo = null;
   playerColor = null;
   currentQuestion = null;
   players = [];
   results = [];
   rankings = [];
+  
+  // Clear demo timer
+  if (demoTimer) {
+    clearInterval(demoTimer);
+    demoTimer = null;
+  }
+  
+  // Hide demo indicator
+  document.getElementById('demo-indicator').hidden = true;
   
   document.getElementById('main-menu').hidden = false;
   document.getElementById('room-lobby').hidden = true;
@@ -1102,6 +1276,239 @@ function goToMenu() {
   }, 1000);
 }
 
+// ============================================================
+// DEMO MODE FUNCTIONS
+// ============================================================
+
+function startDemoMode() {
+  isDemoMode = true;
+  isAnimator = true;
+  playerPseudo = 'Demo Admin';
+  playerColor = PLAYER_COLORS[0];
+  roomCode = 'DEMO';
+  
+  // Show demo indicator
+  document.getElementById('demo-indicator').hidden = false;
+  
+  // Initialize demo players
+  players = DEMO_PLAYERS.map((p, index) => ({
+    id: `demo-${index}`,
+    pseudo: p.pseudo,
+    color: p.color,
+    score: 0,
+    answered: false
+  }));
+  
+  // Add admin to players list
+  players.unshift({
+    id: 'demo-admin',
+    pseudo: playerPseudo,
+    color: playerColor,
+    score: 0,
+    answered: false
+  });
+  
+  // Hide menu, show room lobby briefly then start game
+  document.getElementById('main-menu').hidden = true;
+  document.getElementById('room-lobby').hidden = false;
+  updateRoomCodeDisplay();
+  updatePlayersList();
+  
+  // Add demo message in lobby
+  const demoLobbyMsg = document.createElement('p');
+  demoLobbyMsg.style.cssText = `
+    margin-top: 20px;
+    font: 700 11px/1 var(--mono);
+    letter-spacing: .2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-align: center;
+    animation: pulse 1.5s ease-in-out infinite;
+  `;
+  demoLobbyMsg.textContent = 'DEMO MODE - Partie automatique dans 2 secondes...';
+  demoLobbyMsg.id = 'demo-lobby-msg';
+  document.getElementById('room-lobby').appendChild(demoLobbyMsg);
+  
+  // Initialize 3D room
+  create3DRoom();
+  updatePlayerAvatars();
+  
+  // Auto-start game after 2 seconds
+  setTimeout(() => {
+    const msg = document.getElementById('demo-lobby-msg');
+    if (msg) msg.remove();
+    startDemoGame();
+  }, 2000);
+}
+
+function startDemoGame() {
+  document.getElementById('room-lobby').hidden = true;
+  document.getElementById('question-display').style.display = 'block';
+  document.getElementById('leaderboard-display').style.display = 'flex';
+  updateLeaderboard();
+  
+  // Start first question
+  demoQuestionIndex = 0;
+  askDemoQuestion();
+}
+
+function askDemoQuestion() {
+  if (demoQuestionIndex >= DEMO_QUESTIONS.length) {
+    showDemoPodium();
+    return;
+  }
+  
+  const questionText = DEMO_QUESTIONS[demoQuestionIndex];
+  currentQuestion = {
+    number: demoQuestionIndex + 1,
+    text: questionText,
+    total: DEMO_QUESTIONS.length
+  };
+  
+  timeLeft = 10; // Shorter timer for demo
+  updateQuestionDisplay();
+  updateTimerDisplay();
+  
+  // Hide results
+  document.getElementById('results-display').style.display = 'none';
+  document.getElementById('question-display').style.display = 'block';
+  document.getElementById('answer-section').style.display = 'none';
+  
+  // Reset answered status
+  players.forEach(p => p.answered = false);
+  
+  // Start demo timer
+  if (demoTimer) clearInterval(demoTimer);
+  
+  // Bots will answer after random delay
+  setTimeout(() => {
+    simulateDemoAnswers(questionText);
+  }, 3000);
+  
+  // Timer countdown
+  demoTimer = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    
+    if (timeLeft <= 0) {
+      clearInterval(demoTimer);
+      showDemoResults(questionText);
+    }
+  }, 1000);
+}
+
+function simulateDemoAnswers(questionText) {
+  const answers = DEMO_ANSWERS[questionText];
+  if (!answers) return;
+  
+  // Each bot answers with a different answer
+  players.slice(1).forEach((player, index) => { // Skip admin
+    if (index < answers.length) {
+      setTimeout(() => {
+        player.answered = true;
+        updatePlayerAvatars();
+      }, index * 500);
+    }
+  });
+  
+  // Admin answers too
+  setTimeout(() => {
+    players[0].answered = true;
+    updatePlayerAvatars();
+    
+    // After all answered, show results
+    setTimeout(() => {
+      if (demoTimer) {
+        clearInterval(demoTimer);
+        showDemoResults(questionText);
+      }
+    }, 1000);
+  }, players.length * 500);
+}
+
+function showDemoResults(questionText) {
+  const answers = DEMO_ANSWERS[questionText];
+  if (!answers) return;
+  
+  // Create results
+  const demoResults = answers.map((answer, index) => {
+    // Calculate how many bots chose this answer
+    const count = Math.min(Math.max(1, Math.floor(Math.random() * 3) + 1), players.length - 1);
+    const percentage = Math.round((count / (players.length - 1)) * 100);
+    const points = percentage * 10;
+    
+    // Assign points to random players
+    const playerIds = [];
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * (players.length - 1)) + 1;
+      playerIds.push(players[randomIndex].id);
+      players[randomIndex].score += points;
+    }
+    
+    return {
+      text: answer,
+      count: count,
+      percentage: percentage,
+      points: points,
+      playerIds: playerIds
+    };
+  });
+  
+  results = demoResults;
+  updateResultsDisplay();
+  updateLeaderboard();
+  updatePlayerAvatars();
+  
+  // Hide question, show results
+  document.getElementById('question-display').style.display = 'none';
+  document.getElementById('results-display').style.display = 'block';
+  document.getElementById('answer-section').style.display = 'none';
+  
+  // Show next button
+  document.getElementById('next-question-btn').style.display = 'block';
+  
+  // Store for demo
+  currentQuestion.results = demoResults;
+}
+
+function showDemoPodium() {
+  // Sort players by score
+  rankings = [...players].sort((a, b) => b.score - a.score);
+  showPodium();
+  updatePlayerAvatars();
+  
+  // Show demo message
+  setTimeout(() => {
+    const demoMsg = document.createElement('div');
+    demoMsg.style.cssText = `
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      background: rgba(15, 19, 32, 0.9);
+      color: var(--gold);
+      font: 900 14px/1 var(--mono);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      z-index: 100;
+      animation: slideIn 0.5s ease;
+    `;
+    demoMsg.textContent = '✨ MODE DEMO - Fin de la partie ✨';
+    demoMsg.classList.add('slide-in');
+    demoMsg.id = 'demo-message';
+    document.getElementById('ui-overlay').appendChild(demoMsg);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+      const msg = document.getElementById('demo-message');
+      if (msg) msg.remove();
+    }, 5000);
+  }, 1000);
+}
+
 function showRoomLobby() {
   document.getElementById('main-menu').hidden = true;
   document.getElementById('join-form').hidden = true;
@@ -1116,7 +1523,11 @@ function showRoomLobby() {
 function updateRoomCodeDisplay() {
   const codeEl = document.getElementById('displayed-room-code');
   if (codeEl && roomCode) {
-    codeEl.textContent = roomCode;
+    if (isDemoMode) {
+      codeEl.textContent = roomCode + ' (DEMO)';
+    } else {
+      codeEl.textContent = roomCode;
+    }
   }
 }
 
@@ -1237,18 +1648,21 @@ function showPodium() {
 // THREE.JS
 // ============================================================
 
+// Global variables for 3D objects
+let roomObjects = [];
+
 function initThreeJS() {
   // Scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x06070c);
-  scene.fog = new THREE.Fog(0x06070c, 1, 100);
+  scene.fog = new THREE.Fog(0x06070c, 5, 50);
   
-  // Camera
+  // Camera - positioned for a good view of the room
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 5, 12);
-  camera.lookAt(0, 0, 0);
+  camera.position.set(0, 5, 25);
+  camera.lookAt(0, 2, 0);
   
-  // Renderer
+  // Renderer with better settings
   const container = document.getElementById('three-container');
   renderer = new THREE.WebGLRenderer({ 
     antialias: true, 
@@ -1258,105 +1672,143 @@ function initThreeJS() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
   container.appendChild(renderer.domElement);
   
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+  // Enhanced Lighting Setup
+  const ambientLight = new THREE.AmbientLight(0x2a2d4a, 0.4);
   scene.add(ambientLight);
   
-  // Cyan light
-  const cyanLight = new THREE.PointLight(0x38e8ff, 2, 50);
-  cyanLight.position.set(-5, 10, -5);
+  // Main directional light (simulating ceiling lights)
+  const mainLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  mainLight.position.set(0, 20, 0);
+  mainLight.castShadow = true;
+  mainLight.shadow.mapSize.width = 2048;
+  mainLight.shadow.mapSize.height = 2048;
+  mainLight.shadow.camera.left = -50;
+  mainLight.shadow.camera.right = 50;
+  mainLight.shadow.camera.top = 50;
+  mainLight.shadow.camera.bottom = -50;
+  scene.add(mainLight);
+  
+  // Cyan neon light - left side
+  const cyanLight = new THREE.PointLight(0x38e8ff, 3, 30);
+  cyanLight.position.set(-8, 8, -5);
   cyanLight.castShadow = true;
   scene.add(cyanLight);
   
-  // Magenta light
-  const magentaLight = new THREE.PointLight(0xff3355, 2, 50);
-  magentaLight.position.set(5, 10, -5);
+  // Magenta neon light - right side
+  const magentaLight = new THREE.PointLight(0xff3355, 3, 30);
+  magentaLight.position.set(8, 8, -5);
   magentaLight.castShadow = true;
   scene.add(magentaLight);
   
-  // Green light
-  const greenLight = new THREE.PointLight(0x00ffa3, 1.5, 50);
-  greenLight.position.set(0, 10, 5);
+  // Green accent light
+  const greenLight = new THREE.PointLight(0x00ffa3, 2, 30);
+  greenLight.position.set(0, 8, 8);
+  greenLight.castShadow = true;
   scene.add(greenLight);
   
-  // Add neon grid floor
-  createGridFloor();
+  // Blue accent light
+  const blueLight = new THREE.PointLight(0x0033ff, 1.5, 25);
+  blueLight.position.set(-6, 5, -8);
+  scene.add(blueLight);
   
-  // Add stars
-  createStars();
+  // Purple accent light
+  const purpleLight = new THREE.PointLight(0x8b5cf6, 1.5, 25);
+  purpleLight.position.set(6, 5, -8);
+  scene.add(purpleLight);
   
-  // Add horizon
-  createHorizon();
+  // Create the complete room
+  createRealisticRoom();
   
-  // Add walls
-  createWalls();
+  // Add floating particles for atmosphere
+  createParticles();
   
   // Handle resize
   window.addEventListener('resize', onWindowResize);
   
+  // Setup mouse controls for navigation
+  setupMouseControls();
+  
   // Start animation loop
   animate();
+  
+  // Hide loading screen after Three.js is ready
+  setTimeout(() => {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.classList.add('hidden');
+    }
+  }, 1000);
 }
 
 function createGridFloor() {
-  const geometry = new THREE.PlaneGeometry(100, 100);
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x1a2034,
-    roughness: 0.8,
-    metalness: 0.2
+  // Main floor - large dark metal surface
+  const floorGeometry = new THREE.PlaneGeometry(100, 100);
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    color: 0x1a1f2e,
+    roughness: 0.4,
+    metalness: 0.6,
+    reflectivity: 0.5
   });
   
-  const floor = new THREE.Mesh(geometry, material);
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
   floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -0.1;
+  floor.position.y = -0.05;
   floor.receiveShadow = true;
   scene.add(floor);
+  roomObjects.push(floor);
   
-  // Grid lines
+  // Grid lines - more pronounced
   const gridGeometry = new THREE.BufferGeometry();
   const gridMaterial = new THREE.LineBasicMaterial({ 
-    color: 0x38e8ff, 
+    color: 0x2a3d5a, 
     transparent: true, 
-    opacity: 0.3 
+    opacity: 0.5 
   });
   
-  const lineCount = 50;
+  const lineCount = 25;
+  const gridSize = 50;
   const lines = [];
   
   for (let i = -lineCount; i <= lineCount; i++) {
     const geometryH = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-lineCount, 0, i),
-      new THREE.Vector3(lineCount, 0, i)
+      new THREE.Vector3(-gridSize, 0.01, i),
+      new THREE.Vector3(gridSize, 0.01, i)
     ]);
     const lineH = new THREE.Line(geometryH, gridMaterial);
     lines.push(lineH);
     
     const geometryV = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(i, 0, -lineCount),
-      new THREE.Vector3(i, 0, lineCount)
+      new THREE.Vector3(i, 0.01, -gridSize),
+      new THREE.Vector3(i, 0.01, gridSize)
     ]);
     const lineV = new THREE.Line(geometryV, gridMaterial);
     lines.push(lineV);
   }
   
-  lines.forEach(line => scene.add(line));
+  lines.forEach(line => {
+    scene.add(line);
+    roomObjects.push(line);
+  });
 }
 
 function createStars() {
+  // Reduced stars for more focus on the room
   const geometry = new THREE.BufferGeometry();
   const material = new THREE.PointsMaterial({
-    color: 0xffffff,
-    size: 0.05,
+    color: 0x38e8ff,
+    size: 0.1,
     transparent: true,
-    opacity: 0.8
+    opacity: 0.6
   });
   
   const vertices = [];
-  for (let i = 0; i < 2000; i++) {
+  for (let i = 0; i < 500; i++) {
     const x = (Math.random() - 0.5) * 200;
-    const y = Math.random() * 100;
+    const y = Math.random() * 80 + 10;
     const z = (Math.random() - 0.5) * 200;
     vertices.push(x, y, z);
   }
@@ -1364,54 +1816,594 @@ function createStars() {
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
   const stars = new THREE.Points(geometry, material);
   scene.add(stars);
+  roomObjects.push(stars);
 }
 
-function createHorizon() {
-  const geometry = new THREE.PlaneGeometry(300, 1);
-  const material = new THREE.MeshBasicMaterial({
+function createParticles() {
+  // Atmospheric particles for cyberpunk effect
+  const particleCount = 100;
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesMaterial = new THREE.PointsMaterial({
     color: 0x38e8ff,
+    size: 0.15,
     transparent: true,
-    opacity: 0.3
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending
   });
   
-  const horizon = new THREE.Mesh(geometry, material);
-  horizon.position.set(0, 0, -50);
-  scene.add(horizon);
+  const particlePositions = [];
+  for (let i = 0; i < particleCount; i++) {
+    particlePositions.push(
+      (Math.random() - 0.5) * 40,
+      Math.random() * 10,
+      (Math.random() - 0.5) * 40
+    );
+  }
+  
+  particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlePositions, 3));
+  const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particles);
+  roomObjects.push(particles);
 }
 
-function createWalls() {
-  // Back wall with gradient
-  const wallGeometry = new THREE.PlaneGeometry(60, 30);
+function createRealisticRoom() {
+  // Room dimensions
+  const roomWidth = 40;
+  const roomDepth = 35;
+  const roomHeight = 12;
+  
+  // Wall material - dark with slight texture
   const wallMaterial = new THREE.MeshStandardMaterial({
-    color: 0x10131f,
+    color: 0x0d1117,
     roughness: 0.7,
-    metalness: 0.1
+    metalness: 0.3
   });
   
-  const backWall = new THREE.Mesh(wallGeometry, wallMaterial);
-  backWall.position.set(0, 15, -30);
+  // Floor material - reflective dark surface
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    color: 0x161b26,
+    roughness: 0.2,
+    metalness: 0.8
+  });
+  
+  // Back wall
+  const backWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(roomWidth, roomHeight),
+    wallMaterial
+  );
+  backWall.position.set(0, roomHeight/2, -roomDepth/2);
   backWall.receiveShadow = true;
   scene.add(backWall);
+  roomObjects.push(backWall);
   
-  // Side walls
-  const sideWallL = new THREE.Mesh(wallGeometry, wallMaterial);
-  sideWallL.rotation.y = Math.PI / 2;
-  sideWallL.position.set(-30, 15, 0);
-  scene.add(sideWallL);
+  // Left wall
+  const leftWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(roomDepth, roomHeight),
+    wallMaterial
+  );
+  leftWall.rotation.y = Math.PI / 2;
+  leftWall.position.set(-roomWidth/2, roomHeight/2, 0);
+  leftWall.receiveShadow = true;
+  scene.add(leftWall);
+  roomObjects.push(leftWall);
   
-  const sideWallR = new THREE.Mesh(wallGeometry, wallMaterial);
-  sideWallR.rotation.y = -Math.PI / 2;
-  sideWallR.position.set(30, 15, 0);
-  scene.add(sideWallR);
+  // Right wall
+  const rightWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(roomDepth, roomHeight),
+    wallMaterial
+  );
+  rightWall.rotation.y = -Math.PI / 2;
+  rightWall.position.set(roomWidth/2, roomHeight/2, 0);
+  rightWall.receiveShadow = true;
+  scene.add(rightWall);
+  roomObjects.push(rightWall);
   
-  // Ceiling
-  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), wallMaterial);
+  // Front wall (partial, to see inside)
+  const frontWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(roomWidth, roomHeight/2),
+    wallMaterial
+  );
+  frontWall.position.set(0, roomHeight/4, roomDepth/2);
+  frontWall.receiveShadow = true;
+  scene.add(frontWall);
+  roomObjects.push(frontWall);
+  
+  // Ceiling with panels
+  createCeiling(roomWidth, roomDepth, roomHeight);
+  
+  // Create the floor
+  createGridFloor();
+  
+  // Add neon lights to walls
+  createNeonLights(roomWidth, roomDepth, roomHeight);
+  
+  // Add structural columns
+  createColumns();
+  
+  // Add central stage/platform
+  createCentralStage();
+  
+  // Add main screen
+  createMainScreen();
+  
+  // Add leaderboard screen
+  createLeaderboardScreen();
+  
+  // Add surveillance cameras
+  createCameras(roomWidth, roomDepth, roomHeight);
+  
+  // Add decorative elements
+  createDecorativeElements();
+  
+  // Add player pods
+  createPlayerPods();
+  
+  // Add ambient effects
+  createStars();
+  createParticles();
+}
+
+function createCeiling(width, depth, height) {
+  // Main ceiling
+  const ceilingGeometry = new THREE.PlaneGeometry(width, depth);
+  const ceilingMaterial = new THREE.MeshStandardMaterial({
+    color: 0x080a0f,
+    roughness: 0.5,
+    metalness: 0.6
+  });
+  
+  const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
   ceiling.rotation.x = Math.PI / 2;
-  ceiling.position.y = 30;
+  ceiling.position.y = height;
+  ceiling.receiveShadow = true;
   scene.add(ceiling);
+  roomObjects.push(ceiling);
   
-  // Add neon trim
-  addNeonTrim();
+  // Ceiling panels (recessed)
+  for (let x = -width/2 + 5; x < width/2; x += 10) {
+    for (let z = -depth/2 + 5; z < depth/2; z += 10) {
+      const panelGeometry = new THREE.BoxGeometry(8.5, 0.2, 8.5);
+      const panelMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1a1f2e,
+        roughness: 0.4,
+        metalness: 0.7
+      });
+      const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+      panel.position.set(x, height - 0.15, z);
+      scene.add(panel);
+      roomObjects.push(panel);
+    }
+  }
+  
+  // Ceiling lights
+  for (let x = -width/2 + 8; x < width/2; x += 16) {
+    for (let z = -depth/2 + 8; z < depth/2; z += 16) {
+      const lightHousing = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.4, 0.3, 0.4, 16),
+        new THREE.MeshStandardMaterial({
+          color: 0x2a2d3a,
+          roughness: 0.5,
+          metalness: 0.8
+        })
+      );
+      lightHousing.position.set(x, height - 0.2, z);
+      scene.add(lightHousing);
+      roomObjects.push(lightHousing);
+      
+      // Light emitter
+      const lightEmitter = new THREE.Mesh(
+        new THREE.CircleGeometry(0.2, 16),
+        new THREE.MeshBasicMaterial({
+          color: 0x38e8ff,
+          emissive: 0x38e8ff,
+          emissiveIntensity: 2
+        })
+      );
+      lightEmitter.position.set(x, height - 0.1, z);
+      lightEmitter.rotation.x = -Math.PI / 2;
+      scene.add(lightEmitter);
+      roomObjects.push(lightEmitter);
+      
+      // Add point light
+      const pointLight = new THREE.PointLight(0x38e8ff, 0.5, 15);
+      pointLight.position.set(x, height - 0.1, z);
+      scene.add(pointLight);
+    }
+  }
+}
+
+function createNeonLights(width, depth, height) {
+  // Neon tubes along the walls
+  const neonMaterial = new THREE.MeshBasicMaterial({
+    color: 0x38e8ff,
+    transparent: true,
+    opacity: 0.9
+  });
+  
+  // Horizontal neon tubes on back wall
+  for (let y = 2; y < height; y += 4) {
+    const tubeGeometry = new THREE.BoxGeometry(width - 2, 0.2, 0.2);
+    const tube = new THREE.Mesh(tubeGeometry, neonMaterial);
+    tube.position.set(0, y, -depth/2 + 0.15);
+    scene.add(tube);
+    roomObjects.push(tube);
+    
+    // Add glow effect
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: 0x38e8ff,
+      transparent: true,
+      opacity: 0.3
+    });
+    const glowGeometry = new THREE.BoxGeometry(width - 1.5, 0.5, 0.5);
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    glow.position.set(0, y, -depth/2 + 0.15);
+    scene.add(glow);
+    roomObjects.push(glow);
+  }
+  
+  // Vertical neon tubes on corners
+  const corners = [
+    {x: -width/2 + 0.15, z: -depth/2 + 0.15},
+    {x: width/2 - 0.15, z: -depth/2 + 0.15},
+    {x: -width/2 + 0.15, z: depth/2 - 0.15},
+    {x: width/2 - 0.15, z: depth/2 - 0.15}
+  ];
+  
+  corners.forEach(corner => {
+    const tubeGeometry = new THREE.BoxGeometry(0.2, height, 0.2);
+    const tube = new THREE.Mesh(tubeGeometry, neonMaterial);
+    tube.position.set(corner.x, height/2, corner.z);
+    scene.add(tube);
+    roomObjects.push(tube);
+  });
+  
+  // Magenta neon accents
+  const magentaMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff3355,
+    transparent: true,
+    opacity: 0.9
+  });
+  
+  // Magenta tubes on side walls
+  const sideTubeGeometry = new THREE.BoxGeometry(0.2, depth - 1, 0.2);
+  const leftTube = new THREE.Mesh(sideTubeGeometry, magentaMaterial);
+  leftTube.position.set(-width/2 + 0.15, depth/2, 0);
+  leftTube.rotation.y = Math.PI / 2;
+  scene.add(leftTube);
+  roomObjects.push(leftTube);
+  
+  const rightTube = new THREE.Mesh(sideTubeGeometry, magentaMaterial);
+  rightTube.position.set(width/2 - 0.15, depth/2, 0);
+  rightTube.rotation.y = Math.PI / 2;
+  scene.add(rightTube);
+  roomObjects.push(rightTube);
+}
+
+function createColumns() {
+  const columnMaterial = new THREE.MeshStandardMaterial({
+    color: 0x1a1f2e,
+    roughness: 0.4,
+    metalness: 0.6
+  });
+  
+  // Four columns at corners of central area
+  const positions = [
+    {x: -8, z: -6},
+    {x: 8, z: -6},
+    {x: -8, z: 6},
+    {x: 8, z: 6}
+  ];
+  
+  positions.forEach(pos => {
+    // Column base
+    const baseGeometry = new THREE.CylinderGeometry(1.2, 1.5, 0.5, 32);
+    const base = new THREE.Mesh(baseGeometry, columnMaterial);
+    base.position.set(pos.x, 0.25, pos.z);
+    base.castShadow = true;
+    base.receiveShadow = true;
+    scene.add(base);
+    roomObjects.push(base);
+    
+    // Column shaft
+    const shaftGeometry = new THREE.CylinderGeometry(1, 1, 10, 32);
+    const shaft = new THREE.Mesh(shaftGeometry, columnMaterial);
+    shaft.position.set(pos.x, 5.5, pos.z);
+    shaft.castShadow = true;
+    scene.add(shaft);
+    roomObjects.push(shaft);
+    
+    // Column capital
+    const capitalGeometry = new THREE.CylinderGeometry(1.5, 1.2, 0.5, 32);
+    const capital = new THREE.Mesh(capitalGeometry, columnMaterial);
+    capital.position.set(pos.x, 10.75, pos.z);
+    capital.castShadow = true;
+    scene.add(capital);
+    roomObjects.push(capital);
+    
+    // LED strip on column
+    const ledMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ffa3,
+      transparent: true,
+      opacity: 0.8
+    });
+    const ledGeometry = new THREE.BoxGeometry(0.1, 10, 0.1);
+    const led = new THREE.Mesh(ledGeometry, ledMaterial);
+    led.position.set(pos.x + 0.6, 5.5, pos.z);
+    scene.add(led);
+    roomObjects.push(led);
+  });
+}
+
+function createCentralStage() {
+  // Main platform
+  const platformGeometry = new THREE.BoxGeometry(12, 0.5, 8);
+  const platformMaterial = new THREE.MeshStandardMaterial({
+    color: 0x1a1f2e,
+    roughness: 0.3,
+    metalness: 0.7
+  });
+  const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+  platform.position.set(0, 0.25, 0);
+  platform.castShadow = true;
+  platform.receiveShadow = true;
+  scene.add(platform);
+  roomObjects.push(platform);
+  
+  // Stage steps
+  for (let i = 1; i <= 3; i++) {
+    const stepGeometry = new THREE.BoxGeometry(14 - i*2, 0.3, 10 - i);
+    const step = new THREE.Mesh(stepGeometry, platformMaterial);
+    step.position.set(0, 0.3 + i*0.3, 0);
+    step.castShadow = true;
+    scene.add(step);
+    roomObjects.push(step);
+  }
+  
+  // Neon edge around platform
+  const neonMaterial = new THREE.MeshBasicMaterial({
+    color: 0x38e8ff,
+    transparent: true,
+    opacity: 0.8
+  });
+  
+  // Platform edge
+  const edgeGeometry = new THREE.BoxGeometry(12.2, 0.1, 8.2);
+  const edge = new THREE.Mesh(edgeGeometry, neonMaterial);
+  edge.position.set(0, 0.75, 0);
+  scene.add(edge);
+  roomObjects.push(edge);
+  
+  // Corner edges
+  const cornerGeometry = new THREE.BoxGeometry(0.1, 0.5, 8.2);
+  const cornerL = new THREE.Mesh(cornerGeometry, neonMaterial);
+  cornerL.position.set(-6.1, 0.5, 0);
+  scene.add(cornerL);
+  roomObjects.push(cornerL);
+  
+  const cornerR = new THREE.Mesh(cornerGeometry, neonMaterial);
+  cornerR.position.set(6.1, 0.5, 0);
+  scene.add(cornerR);
+  roomObjects.push(cornerR);
+  
+  const cornerBackGeometry = new THREE.BoxGeometry(12.2, 0.5, 0.1);
+  const cornerBack = new THREE.Mesh(cornerBackGeometry, neonMaterial);
+  cornerBack.position.set(0, 0.5, 4.1);
+  scene.add(cornerBack);
+  roomObjects.push(cornerBack);
+  
+  room = { platform: platform };
+}
+
+function createMainScreen() {
+  // Large screen frame
+  const frameWidth = 10;
+  const frameHeight = 6;
+  const frameDepth = 0.3;
+  
+  // Frame
+  const frameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x080a0f,
+    roughness: 0.2,
+    metalness: 0.9
+  });
+  
+  const frameGeometry = new THREE.BoxGeometry(frameWidth, frameHeight, frameDepth);
+  const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+  frame.position.set(0, 4, -1);
+  frame.castShadow = true;
+  scene.add(frame);
+  roomObjects.push(frame);
+  
+  // Screen surface - dark with slight glow
+  const screenGeometry = new THREE.PlaneGeometry(frameWidth - 0.2, frameHeight - 0.2);
+  const screenMaterial = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    transparent: true,
+    opacity: 0.95
+  });
+  const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+  screen.position.set(0, 4, -0.85);
+  scene.add(screen);
+  roomObjects.push(screen);
+  
+  // Screen glow
+  const glowMaterial = new THREE.MeshBasicMaterial({
+    color: 0x38e8ff,
+    transparent: true,
+    opacity: 0.1,
+    side: THREE.BackSide
+  });
+  const glowGeometry = new THREE.PlaneGeometry(frameWidth + 2, frameHeight + 2);
+  const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+  glow.position.set(0, 4, -0.95);
+  scene.add(glow);
+  roomObjects.push(glow);
+  
+  // Support legs
+  const legGeometry = new THREE.BoxGeometry(0.5, 3, 0.5);
+  const legMaterial = new THREE.MeshStandardMaterial({
+    color: 0x1a1f2e,
+    roughness: 0.4,
+    metalness: 0.6
+  });
+  
+  const legL = new THREE.Mesh(legGeometry, legMaterial);
+  legL.position.set(-4.5, 1.5, -1);
+  legL.castShadow = true;
+  scene.add(legL);
+  roomObjects.push(legL);
+  
+  const legR = new THREE.Mesh(legGeometry, legMaterial);
+  legR.position.set(4.5, 1.5, -1);
+  legR.castShadow = true;
+  scene.add(legR);
+  roomObjects.push(legR);
+  
+  questionDisplay3D = { frame: frame, screen: screen };
+}
+
+function createLeaderboardScreen() {
+  // Leaderboard screen on the right wall
+  const screenGeometry = new THREE.PlaneGeometry(6, 8);
+  const screenMaterial = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    transparent: true,
+    opacity: 0.9
+  });
+  
+  const leaderboardScreen = new THREE.Mesh(screenGeometry, screenMaterial);
+  leaderboardScreen.position.set(15, 8, -18);
+  scene.add(leaderboardScreen);
+  roomObjects.push(leaderboardScreen);
+  
+  // Frame
+  const frameGeometry = new THREE.BoxGeometry(6.2, 8.2, 0.2);
+  const frameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x080a0f,
+    roughness: 0.2,
+    metalness: 0.8
+  });
+  
+  const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+  frame.position.set(15, 8, -17.9);
+  scene.add(frame);
+  roomObjects.push(frame);
+  
+  leaderboardDisplay3D = { screen: leaderboardScreen, frame: frame };
+}
+
+function createCameras(width, depth, height) {
+  const cameraBodyMaterial = new THREE.MeshStandardMaterial({
+    color: 0x1a1f2e,
+    roughness: 0.5,
+    metalness: 0.7
+  });
+  
+  const cameraLensMaterial = new THREE.MeshBasicMaterial({
+    color: 0x38e8ff,
+    transparent: true,
+    opacity: 0.8
+  });
+  
+  // Camera positions
+  const cameraPositions = [
+    {x: -15, y: 10, z: -10},
+    {x: 15, y: 10, z: -10},
+    {x: -15, y: 10, z: 10},
+    {x: 15, y: 10, z: 10}
+  ];
+  
+  cameraPositions.forEach(pos => {
+    // Camera mount
+    const mountGeometry = new THREE.BoxGeometry(0.3, 0.8, 0.3);
+    const mount = new THREE.Mesh(mountGeometry, cameraBodyMaterial);
+    mount.position.set(pos.x, pos.y, pos.z);
+    scene.add(mount);
+    roomObjects.push(mount);
+    
+    // Camera body
+    const bodyGeometry = new THREE.BoxGeometry(0.8, 0.6, 1.2);
+    const body = new THREE.Mesh(bodyGeometry, cameraBodyMaterial);
+    body.position.set(pos.x, pos.y, pos.z);
+    scene.add(body);
+    roomObjects.push(body);
+    
+    // Camera lens
+    const lensGeometry = new THREE.CylinderGeometry(0.3, 0.2, 0.4, 16);
+    const lens = new THREE.Mesh(lensGeometry, cameraLensMaterial);
+    lens.position.set(pos.x, pos.y, pos.z + 0.7);
+    lens.rotation.x = Math.PI / 2;
+    scene.add(lens);
+    roomObjects.push(lens);
+    
+    // Camera red light
+    const redLightGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+    const redLightMaterial = new THREE.MeshBasicMaterial({
+      color: 0xff3355,
+      emissive: 0xff3355,
+      emissiveIntensity: 2
+    });
+    const redLight = new THREE.Mesh(redLightGeometry, redLightMaterial);
+    redLight.position.set(pos.x + 0.45, pos.y + 0.1, pos.z);
+    scene.add(redLight);
+    roomObjects.push(redLight);
+    
+    // Add blinking animation to red light
+    redLight.userData = { originalIntensity: 2, blink: true };
+  });
+}
+
+function createDecorativeElements() {
+  // Ventilation grilles
+  const grilleMaterial = new THREE.MeshStandardMaterial({
+    color: 0x1a1f2e,
+    roughness: 0.6,
+    metalness: 0.8
+  });
+  
+  for (let i = 0; i < 4; i++) {
+    const grilleGeometry = new THREE.BoxGeometry(2, 0.5, 2);
+    const grille = new THREE.Mesh(grilleGeometry, grilleMaterial);
+    grille.position.set(
+      i < 2 ? -18 : 18,
+      2,
+      i % 2 === 0 ? -18 : 18
+    );
+    scene.add(grille);
+    roomObjects.push(grille);
+  }
+  
+  // Warning signs
+  const signMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff5c35,
+    transparent: true,
+    opacity: 0.9
+  });
+  
+  for (let i = 0; i < 2; i++) {
+    const signGeometry = new THREE.BoxGeometry(1, 0.8, 0.1);
+    const sign = new THREE.Mesh(signGeometry, signMaterial);
+    sign.position.set(i === 0 ? -19 : 19, 6, -19);
+    scene.add(sign);
+    roomObjects.push(sign);
+  }
+}
+
+function addNeonTrim() {
+  // Neon light strips on floor edges
+  const neonMaterial = new THREE.MeshBasicMaterial({
+    color: 0x38e8ff,
+    transparent: true,
+    opacity: 0.8
+  });
+  
+  const floorTrim = new THREE.Mesh(
+    new THREE.BoxGeometry(42, 0.1, 42),
+    neonMaterial
+  );
+  floorTrim.position.y = -0.05;
+  scene.add(floorTrim);
+  roomObjects.push(floorTrim);
 }
 
 function addNeonTrim() {
@@ -1556,35 +2548,73 @@ function createQuestionScreen() {
 
 function createPlayerPods() {
   // Create positions for player avatars
-  // Semi-circle around the table
-  const radius = 8;
-  const count = 6;
+  // Semi-circle around the central stage
+  const radius = 12;
+  const count = 8;
+  const centerZ = 2;
+  
+  if (!room) room = {};
+  room.pods = [];
   
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
+    const angle = (i / count) * Math.PI * 1.5 - Math.PI/4; // 180 degree arc facing the screen
     const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
+    const z = Math.sin(angle) * radius + centerZ;
     
-    const podGeometry = new THREE.CylinderGeometry(0.8, 0.8, 0.1, 32);
-    const podMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1a2034,
-      roughness: 0.5,
-      metalness: 0.3
+    // Create a player platform/pod
+    const baseGeometry = new THREE.CylinderGeometry(1, 1.2, 0.2, 32);
+    const baseMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1a1f2e,
+      roughness: 0.4,
+      metalness: 0.6
     });
+    const base = new THREE.Mesh(baseGeometry, baseMaterial);
+    base.position.set(x, 0.1, z);
+    base.castShadow = true;
+    base.receiveShadow = true;
+    scene.add(base);
+    roomObjects.push(base);
     
-    const pod = new THREE.Mesh(podGeometry, podMaterial);
-    pod.position.set(x, 0.05, z);
-    pod.castShadow = true;
-    pod.receiveShadow = true;
-    scene.add(pod);
+    // Small neon ring around each pod
+    const neonMaterial = new THREE.MeshBasicMaterial({
+      color: 0x38e8ff,
+      transparent: true,
+      opacity: 0.6
+    });
+    const ringGeometry = new THREE.TorusGeometry(1.3, 0.05, 16, 100);
+    const ring = new THREE.Mesh(ringGeometry, neonMaterial);
+    ring.position.set(x, 0.1, z);
+    ring.rotation.x = Math.PI / 2;
+    scene.add(ring);
+    roomObjects.push(ring);
+    
+    // Chair for player
+    const chairGeometry = new THREE.BoxGeometry(0.8, 1, 0.8);
+    const chairMaterial = new THREE.MeshStandardMaterial({
+      color: 0x2a2d3a,
+      roughness: 0.5,
+      metalness: 0.4
+    });
+    const chair = new THREE.Mesh(chairGeometry, chairMaterial);
+    chair.position.set(x, 0.5, z);
+    chair.castShadow = true;
+    scene.add(chair);
+    roomObjects.push(chair);
+    
+    // Chair back
+    const backGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.2);
+    const back = new THREE.Mesh(backGeometry, chairMaterial);
+    back.position.set(x, 1.25, z - 0.3);
+    chair.add(back);
     
     // Store pod position for avatars
-    if (!room) room = {};
-    if (!room.pods) room.pods = [];
     room.pods.push({
-      position: new THREE.Vector3(x, 0.05, z),
-      pod: pod,
-      avatar: null
+      position: new THREE.Vector3(x, 0, z),
+      base: base,
+      chair: chair,
+      ring: ring,
+      avatar: null,
+      nameTag: null
     });
   }
 }
@@ -1630,6 +2660,10 @@ function updatePlayerAvatars() {
       scene.remove(pod.nameTag);
       pod.nameTag = null;
     }
+    if (pod.sittingAvatar) {
+      scene.remove(pod.sittingAvatar);
+      pod.sittingAvatar = null;
+    }
   });
   
   // Create avatars for each player
@@ -1637,25 +2671,63 @@ function updatePlayerAvatars() {
     const pod = room.pods[index % room.pods.length];
     if (!pod) return;
     
-    // Create simple avatar (sphere)
-    const avatarGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-    const avatarMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(player.color || PLAYER_COLORS[index % PLAYER_COLORS.length]),
-      emissive: new THREE.Color(player.color || PLAYER_COLORS[index % PLAYER_COLORS.length]),
-      emissiveIntensity: 0.5,
-      roughness: 0.3,
-      metalness: 0.2
+    // Create humanoid avatar (simple robot-like figure)
+    const playerColor = new THREE.Color(player.color || PLAYER_COLORS[index % PLAYER_COLORS.length]);
+    
+    // Body (torso)
+    const bodyGeometry = new THREE.BoxGeometry(0.4, 0.6, 0.3);
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+      color: playerColor,
+      roughness: 0.4,
+      metalness: 0.3
     });
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    body.position.copy(pod.position);
+    body.position.y = 1.5;
+    body.castShadow = true;
+    scene.add(body);
+    pod.sittingAvatar = body;
     
-    const avatar = new THREE.Mesh(avatarGeometry, avatarMaterial);
-    avatar.position.copy(pod.position);
-    avatar.position.y = 1.2;
-    avatar.castShadow = true;
-    avatar.receiveShadow = true;
-    scene.add(avatar);
-    pod.avatar = avatar;
+    // Head
+    const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+    const headMaterial = new THREE.MeshStandardMaterial({
+      color: playerColor,
+      roughness: 0.3,
+      metalness: 0.4
+    });
+    const head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.set(0, 0.95, 0);
+    body.add(head);
     
-    // Add name tag
+    // Eyes (emissive)
+    const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+    const eyeMaterial = new THREE.MeshBasicMaterial({
+      color: 0x38e8ff,
+      emissive: 0x38e8ff,
+      emissiveIntensity: 1
+    });
+    const eyeL = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    eyeL.position.set(-0.08, 0.05, 0.15);
+    head.add(eyeL);
+    const eyeR = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    eyeR.position.set(0.08, 0.05, 0.15);
+    head.add(eyeR);
+    
+    // Arms
+    const armGeometry = new THREE.BoxGeometry(0.1, 0.3, 0.1);
+    const armMaterial = new THREE.MeshStandardMaterial({
+      color: playerColor,
+      roughness: 0.4,
+      metalness: 0.3
+    });
+    const armL = new THREE.Mesh(armGeometry, armMaterial);
+    armL.position.set(-0.25, 0.15, 0);
+    body.add(armL);
+    const armR = new THREE.Mesh(armGeometry, armMaterial);
+    armR.position.set(0.25, 0.15, 0);
+    body.add(armR);
+    
+    // Add score indicator as floating text
     const canvas = document.createElement('canvas');
     canvas.width = 256;
     canvas.height = 128;
@@ -1665,19 +2737,34 @@ function updatePlayerAvatars() {
     context.font = 'Bold 16px Arial';
     context.fillStyle = '#eaf6ff';
     context.textAlign = 'center';
-    context.fillText(player.pseudo, canvas.width / 2, canvas.height / 2 - 10);
+    context.fillText(player.pseudo, canvas.width / 2, canvas.height / 2 - 15);
     context.font = 'Bold 14px Arial';
     context.fillStyle = '#ffd166';
-    context.fillText(`Score: ${player.score}`, canvas.width / 2, canvas.height / 2 + 10);
+    context.fillText(`Score: ${player.score}`, canvas.width / 2, canvas.height / 2 + 5);
+    context.font = 'Bold 12px Arial';
+    context.fillStyle = player.color || PLAYER_COLORS[index % PLAYER_COLORS.length];
+    context.fillText('Joueur', canvas.width / 2, canvas.height / 2 + 25);
     
     const texture = new THREE.CanvasTexture(canvas);
     const nameTagMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
     const nameTag = new THREE.Sprite(nameTagMaterial);
     nameTag.position.copy(pod.position);
-    nameTag.position.y = 2.2;
+    nameTag.position.y = 2.4;
     nameTag.scale.set(0.5, 0.25, 1);
     scene.add(nameTag);
     pod.nameTag = nameTag;
+    
+    // Add small glow under avatar
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: playerColor,
+      transparent: true,
+      opacity: 0.3
+    });
+    const glowGeometry = new THREE.CircleGeometry(0.3, 16);
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    glow.position.set(0, -0.1, 0);
+    glow.rotation.x = -Math.PI / 2;
+    body.add(glow);
   });
 }
 
@@ -1716,24 +2803,137 @@ function onWindowResize() {
 function animate() {
   requestAnimationFrame(animate);
   
-  // Add subtle animations
-  if (room && room.table) {
-    room.table.rotation.y += 0.001;
-  }
+  const time = Date.now() * 0.001;
   
   // Pulsing effect for neon lights
-  const time = Date.now() * 0.001;
-  const cyanLight = scene.children.find(child => child instanceof THREE.PointLight && child.color.getHex() === 0x38e8ff);
-  const magentaLight = scene.children.find(child => child instanceof THREE.PointLight && child.color.getHex() === 0xff3355);
+  const cyanLights = scene.children.filter(child => 
+    child instanceof THREE.PointLight && child.color.getHex() === 0x38e8ff
+  );
+  const magentaLights = scene.children.filter(child => 
+    child instanceof THREE.PointLight && child.color.getHex() === 0xff3355
+  );
+  const greenLights = scene.children.filter(child => 
+    child instanceof THREE.PointLight && child.color.getHex() === 0x00ffa3
+  );
+  const purpleLights = scene.children.filter(child => 
+    child instanceof THREE.PointLight && child.color.getHex() === 0x8b5cf6
+  );
   
-  if (cyanLight) {
-    cyanLight.intensity = 2 + Math.sin(time * 2) * 0.5;
-  }
-  if (magentaLight) {
-    magentaLight.intensity = 2 + Math.sin(time * 1.5) * 0.5;
+  cyanLights.forEach(light => {
+    light.intensity = 2 + Math.sin(time * 2 + light.position.x * 0.1) * 0.5;
+  });
+  
+  magentaLights.forEach(light => {
+    light.intensity = 2 + Math.sin(time * 1.5 + light.position.x * 0.1) * 0.5;
+  });
+  
+  greenLights.forEach(light => {
+    light.intensity = 1.5 + Math.sin(time * 1.8 + light.position.z * 0.1) * 0.3;
+  });
+  
+  purpleLights.forEach(light => {
+    light.intensity = 1.5 + Math.sin(time * 2.2 + light.position.x * 0.1) * 0.3;
+  });
+  
+  // Blink camera red lights
+  scene.children.forEach(child => {
+    if (child.userData && child.userData.blink) {
+      const blinkIntensity = Math.sin(time * 10) > 0.7 ? 2 : 0.5;
+      child.material.emissiveIntensity = blinkIntensity;
+    }
+  });
+  
+  // Animate particles
+  scene.children.forEach(child => {
+    if (child instanceof THREE.Points) {
+      const positions = child.geometry.attributes.position;
+      for (let i = 0; i < positions.count; i++) {
+        const i3 = i * 3;
+        positions.array[i3 + 1] += Math.sin(time * 0.5 + i * 0.2) * 0.005;
+      }
+      positions.needsUpdate = true;
+    }
+  });
+  
+  // Slow camera orbit for better viewing
+  if (!isDemoMode || demoQuestionIndex >= DEMO_QUESTIONS.length) {
+    // Only orbit when not in active game
   }
   
   renderer.render(scene, camera);
+}
+
+// ============================================================
+// MOUSE CONTROLS
+// ============================================================
+
+let mouseControls = {
+  isDragging: false,
+  previousMousePosition: { x: 0, y: 0 },
+  targetCameraPosition: null,
+  targetLookAt: null
+};
+
+function setupMouseControls() {
+  const container = document.getElementById('three-container');
+  
+  container.addEventListener('mousedown', (event) => {
+    if (event.button === 0 || event.button === 2) { // Left or right click
+      mouseControls.isDragging = true;
+      mouseControls.previousMousePosition = { x: event.clientX, y: event.clientY };
+      container.style.cursor = 'grab';
+    }
+  });
+  
+  container.addEventListener('mousemove', (event) => {
+    if (!mouseControls.isDragging) return;
+    
+    const deltaX = event.clientX - mouseControls.previousMousePosition.x;
+    const deltaY = event.clientY - mouseControls.previousMousePosition.y;
+    
+    // Rotate camera around the scene
+    const radius = camera.position.length();
+    const currentPhi = Math.atan2(camera.position.z, camera.position.x);
+    const currentTheta = Math.atan2(Math.sqrt(camera.position.x * camera.position.x + camera.position.z * camera.position.z), camera.position.y);
+    
+    let newPhi = currentPhi + (deltaX * 0.01);
+    let newTheta = currentTheta + (deltaY * 0.01);
+    
+    // Limit vertical rotation
+    newTheta = Math.max(0.3, Math.min(Math.PI - 0.3, newTheta));
+    
+    // Calculate new camera position
+    const newX = radius * Math.cos(newPhi) * Math.sin(newTheta);
+    const newZ = radius * Math.sin(newPhi) * Math.sin(newTheta);
+    const newY = radius * Math.cos(newTheta);
+    
+    camera.position.set(newX, newY, newZ);
+    camera.lookAt(0, 1.5, 0);
+    
+    mouseControls.previousMousePosition = { x: event.clientX, y: event.clientY };
+  });
+  
+  container.addEventListener('mouseup', () => {
+    mouseControls.isDragging = false;
+    container.style.cursor = 'default';
+  });
+  
+  container.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    const delta = event.deltaY > 0 ? -1.5 : 1.5;
+    const direction = camera.position.clone().sub(new THREE.Vector3(0, 1.5, 0)).normalize();
+    camera.position.addScaledVector(direction, delta);
+    
+    // Clamp distance
+    const distance = camera.position.length();
+    if (distance < 8) camera.position.setLength(8);
+    if (distance > 40) camera.position.setLength(40);
+  });
+  
+  container.addEventListener('mouseleave', () => {
+    mouseControls.isDragging = false;
+    container.style.cursor = 'default';
+  });
 }
 
 // ============================================================
