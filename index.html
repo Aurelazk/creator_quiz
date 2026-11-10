@@ -80,48 +80,53 @@
     font-weight:700;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .3s;opacity:0;pointer-events:none;text-align:center;max-width:90vw}
   #toast.show{opacity:1}
   
+  /* ================= RÉACTIONS VISUELLES (bonne / mauvaise réponse) ================= */
+  #reaction{position:fixed;inset:0;background:rgba(12,26,75,.92);z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+  #reaction.show{display:flex}
+  #reaction .big{font-size:clamp(34px,10vw,72px);font-weight:900;line-height:1;letter-spacing:2px;margin:0 0 12px;text-transform:uppercase}
+  #reaction .big.ok{color:#00E472;text-shadow:0 0 30px rgba(0,228,114,.6)}
+  #reaction .big.bad{color:#FF4E20;text-shadow:0 0 30px rgba(255,78,32,.6)}
+  #reaction .sub{font-size:clamp(14px,3vw,20px);opacity:.9}
+  #reaction .sub.ok{color:#00E472}
+  #reaction .sub.bad{color:#FF4E20}
+  #reaction .pts{font-size:clamp(18px,4vw,28px);font-weight:800;margin-top:8px;color:#ffcf5a}
+  #reaction .ring{position:absolute;inset:0;border:4px solid rgba(255,255,255,.15);border-radius:50%;animation:ring 1.2s ease-out infinite}
+  #reaction .ring.ok{border-color:#00E472;box-shadow:0 0 40px rgba(0,228,114,.35)}
+  #reaction .ring.bad{border-color:#FF4E20;box-shadow:0 0 40px rgba(255,78,32,.35)}
+  @keyframes ring{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.6);opacity:0}}
+
+  
 /* ================= RESPONSIVE MOBILE FORCÉ ================= */
 @media (max-width: 640px) {
   html { font-size: 14px !important; }
-  body { font-size: 14px !important; }
+  body { font-size: 14px !important; overflow-x: hidden !important; }
+  #scene { position: fixed !important; inset: 0 !important; z-index: 0 !important; width: 100vw !important; height: 100vh !important; pointer-events: none !important; }
   .panel { 
-    width: min(98vw, 520px) !important; 
-    padding: 16px !important; 
-    left: 50% !important; 
-    top: 50% !important; 
-    transform: translate(-50%, -50%) !important; 
-    max-height: 90vh !important; 
-    overflow-y: auto !important;
+    position: fixed !important; left: 50% !important; top: 50% !important; 
+    transform: translate(-50%, -50%) !important;
+    width: min(96vw, 520px) !important; max-width: 96vw !important;
+    padding: 16px !important; max-height: 92vh !important; overflow-y: auto !important;
+    z-index: 10 !important;
   }
   h1 { font-size: 20px !important; }
   h2 { font-size: 16px !important; }
   p.sub { font-size: 13px !important; }
   button { 
-    min-height: 48px !important; 
-    padding: 12px 16px !important; 
-    font-size: 15px !important; 
+    min-height: 48px !important; padding: 12px 16px !important; font-size: 15px !important;
     width: 100% !important;
   }
-  input { 
-    font-size: 16px !important; /* évite le zoom iOS au focus */
-    padding: 12px 14px !important;
-  }
-  #topbar { 
-    top: 10px !important; 
-    left: 8px !important; 
-    right: 8px !important; 
-    flex-direction: column !important; 
-    gap: 8px !important;
-  }
+  input { font-size: 16px !important; padding: 12px 14px !important; }
+  #topbar { top: 10px !important; left: 8px !important; right: 8px !important;
+    flex-direction: column !important; gap: 8px !important; z-index: 11 !important; }
   #topbar > * { width: 100% !important; text-align: center !important; }
   .chip { font-size: 12px !important; padding: 6px 10px !important; }
-  #game { width: min(98vw, 560px) !important; bottom: 10px !important; }
-  #end { width: min(98vw, 500px) !important; padding: 18px 14px !important; }
+  #game { width: min(96vw, 560px) !important; bottom: 10px !important; left: 50% !important; transform: translateX(-50%) !important; }
+  #end { width: min(96vw, 500px) !important; padding: 18px 14px !important; }
   table.rank td { padding: 8px 6px !important; font-size: 14px !important; }
   #answers { grid-template-columns: 1fr !important; gap: 8px !important; }
   #answers button { min-height: 44px !important; font-size: 15px !important; }
   #toast { font-size: 13px !important; padding: 10px 14px !important; max-width: 94vw !important; }
-  #scene { position: fixed !important; inset: 0 !important; z-index: 1 !important; pointer-events: none !important; }
+  #help { font-size: 13px !important; padding: 6px 12px !important; max-width: 92vw !important; }
 }
 </style>
 </head>
@@ -196,16 +201,16 @@ const POINTS = 10;
    (ajouter un champ "options" pour passer en QCM plus tard)
    ===================================================================== */
 const QUESTIONS = [
-  { q: "Quel langage donne vie aux pages web (interactions, animations) ?", ans: 0 },
-  { q: "Que signifie le \"H\" de HTML ?", ans: 0 },
-  { q: "Quel langage colore et positionne les éléments d'une page ?", ans: 0 },
-  { q: "Quel symbole ouvre un commentaire en JavaScript ?", ans: 0 },
-  { q: "Quelle bibliothèque JS est créée par Meta (Facebook) ?", ans: 0 },
-  { q: "Que signifie le sigle API ?", ans: 0 },
-  { q: "Quel élément HTML crée un lien cliquable ?", ans: 0 },
-  { q: "Que signifie le \"responsive design\" ?", ans: 0 },
-  { q: "Quel langage sert à gérer les bases de données ?", ans: 0 },
-  { q: "Quel langage développe les applications iPhone natives ?", ans: 0 }
+  { q: "Quelle couleur a le ciel par beau temps ?", options: ["Bleu", "Rouge", "Vert", "Jaune"], ans: 0 },
+  { q: "Combien de jours dans une semaine ?", options: ["7", "5", "10", "6"], ans: 0 },
+  { q: "Quel animal dit \"miaou\" ?", options: ["Chat", "Chien", "Vache", "Oiseau"], ans: 0 },
+  { q: "Quelle boisson est blanche ?", options: ["Lait", "Jus", "Soda", "Eau"], ans: 0 },
+  { q: "Quel fruit est jaune et courbé ?", options: ["Banane", "Pomme", "Raisin", "Kiwi"], ans: 0 },
+  { q: "Combien de pattes a un chat ?", options: ["4", "2", "6", "8"], ans: 0 },
+  { q: "Quelle saison fait froid ?", options: ["Hiver", "Été", "Printemps", "Automne"], ans: 0 },
+  { q: "Quel jour commence la semaine ?", options: ["Lundi", "Mardi", "Mercredi", "Dimanche"], ans: 0 },
+  { q: "Combien de doigts a une main ?", options: ["5", "3", "4", "6"], ans: 0 },
+  { q: "Quelle couleur a l'herbe ?", options: ["Verte", "Bleue", "Rouge", "Jaune"], ans: 0 }
 ];
 const optsOf = (q) => q.options || OPTIONS;
 
