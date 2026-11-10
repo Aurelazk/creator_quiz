@@ -32,6 +32,14 @@ canvas{display:block}
 #playersList .p .tag{float:right;opacity:.6;font-size:10px}
 #startBtn{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#ffb300;color:#111;border:none;padding:15px 30px;border-radius:25px;font-weight:bold;font-size:16px;cursor:pointer;z-index:40;display:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #leaveBtn{position:fixed;top:10px;left:12px;background:rgba(10,15,40,.85);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;z-index:30;display:none}
+#quizPanel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,15,40,.95);padding:26px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,420px);box-shadow:0 20px 60px rgba(0,0,0,.5);display:none}
+#quizPanel h2{margin:0 0 10px;color:#ffb300;font-size:20px}
+#quizPanel #qText{font-size:17px;margin:0 0 16px;line-height:1.4;color:#fff}
+#quizPanel .answers{display:flex;flex-direction:column;gap:8px}
+#quizPanel .answers button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35);padding:12px 16px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-align:left}
+#quizPanel .answers button:hover{border-color:#ffb300;background:rgba(255,179,0,.15)}
+#quizPanel .answers button.selected{background:#ffb300;color:#111;border-color:#ffb300}
+#quizPanel #qStatus{margin-top:12px;font-size:14px;color:#9fe6a0;min-height:20px}
 </style></head><body>
 <div id="h">Quiz 3D Multijoueur</div>
 <div id="b"><button id="b1" class="on">Lobby</button><button id="b2">Table</button></div>
@@ -40,6 +48,12 @@ canvas{display:block}
 <div id="roomInfo">Salle <b id="roomCodeLabel">-----</b><button id="copyBtn">Copier le code</button></div>
 <div id="playersList"><h4>Joueurs</h4><div id="playersItems"></div></div>
 <button id="startBtn">Lancer la partie</button>
+<div id="quizPanel">
+  <h2 id="qTitle">Question</h2>
+  <div id="qText">Chargement...</div>
+  <div class="answers" id="qAnswers"></div>
+  <div id="qStatus">En attente des autres joueurs...</div>
+</div>
 <div id="roomPanel" class="panel">
   <h2>Quiz 3D Multijoueur</h2>
   <p class="sub">Crée une salle et partage le code, ou rejoins une salle existante.</p>
@@ -60,12 +74,26 @@ const ANSWERS = [
   ['JavaScript', 45], ['Python', 38], ['Java', 32], ['C++', 28], ['C#', 25],
   ['PHP', 22], ['Ruby', 18], ['Go', 15], ['Swift', 12], ['Kotlin', 10]
 ];
+
+const QUESTIONS = [
+  { q: "JavaScript est un langage de programmation ?", ans: 0 },
+  { q: "Python a été créé dans les années 1990 ?", ans: 0 },
+  { q: "Le HTML est un langage de programmation ?", ans: 1 },
+  { q: "CSS sert à styliser une page web ?", ans: 0 },
+  { q: "Un serveur peut tourner sans base de données ?", ans: 0 },
+  { q: "Le Wi-Fi est plus rapide que le câble Ethernet ?", ans: 1 },
+  { q: "Un octet fait 8 bits ?", ans: 0 },
+  { q: "Linux est un système d'exploitation ?", ans: 0 },
+  { q: "Une API sert à échanger des données entre logiciels ?", ans: 0 },
+  { q: "Le cloud stocke des données sur votre disque local ?", ans: 1 }
+];
+const OPTIONS = ['Oui', 'Non'];
 const MAX_PLAYERS = 19;
 const TABLE_SEATS = 6;
 const MQTT_URL = 'wss://broker.emqx.io:8084/mqtt';
 const TOPIC_BASE = 'creatorquiz3d/';
 
-const playerColors = [0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080];
+const playerColors = [0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0xff6b6b, 0xff9ff3, 0x54a0ff, 0x5f27cd, 0x48dbfb, 0x1dd1a1, 0x10ac84, 0x52616b, 0xf368e0, 0xff9ff3, 0x2b8cff, 0x4aaaff, 0x0d5bb8];
 
 const lobbyPositions = [
   [-1.5, 0], [0.1, -0.4], [-0.1, 1.4], [1.5, 0.6],
@@ -91,6 +119,8 @@ let isHost = false;
 let state = null;
 let mode = 'lobby';
 let rv = 0;
+let myAnswer = null;
+let answered = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -342,59 +372,56 @@ function makeLabel(text, isMe) {
 
 function makeChar(color, name, isMe) {
   const g = new THREE.Group();
-  const clay = new THREE.MeshPhysicalMaterial({ color: 0x808080, roughness: 0.45, metalness: 0, clearcoat: 0.15, clearcoatRoughness: 0.2 });
+  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.4, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.2 });
 
   const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.05), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2;
   sh.position.y = 0.015;
   g.add(sh);
 
-  // Tete : grande sphère parfaite, sans visage
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 32, 24), clay);
-  head.position.y = 1.62;
+  // Tete ronde et propre, sans visage
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 28, 22), clay);
+  head.position.y = 1.58;
   g.add(head);
 
-  // Cou court et cylindrique
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.17, 16), clay);
-  neck.position.y = 1.48;
+  // Cou court
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.16, 12), clay);
+  neck.position.y = 1.46;
   g.add(neck);
 
-  // Tronc : cylindre adouci qui s'évasant subtilement vers le bas
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.27, 0.72, 24), clay);
+  // Torse cylindre adouci
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.26, 0.68, 20), clay);
   torso.position.y = 1.08;
   g.add(torso);
 
-  // Bras croisés sur la poitrine (avant-bras droit par-dessus le gauche)
+  // Bras le long du corps, propres
   const arms = [];
-  const armY = 1.32;
+  const armY = 1.3;
   [-1, 1].forEach((d) => {
     const p = new THREE.Group();
-    p.position.set(d * 0.26, armY, 0);
-    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.42, 12), clay);
-    arm.position.y = -0.22;
+    p.position.set(d * 0.28, armY, 0);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.055, 0.48, 12), clay);
+    arm.position.y = -0.26;
     p.add(arm);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), clay);
-    hand.position.y = -0.46;
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), clay);
+    hand.position.y = -0.52;
     p.add(hand);
-    // avant-bras droit (d=1) passe par-dessus le gauche
-    p.rotation.z = d > 0 ? 0.85 : -0.75;
-    p.rotation.y = d > 0 ? 0.18 : -0.18;
-    p.position.z = d > 0 ? 0.06 : -0.06;
+    p.rotation.z = d * 0.15;
     g.add(p);
     arms.push(p);
   });
 
-  // Jambes : tubes lisses, droites, légèrement écartées
+  // Jambes droites, pieds plats
   const legs = [];
-  [-0.13, 0.13].forEach((dx) => {
+  [-0.12, 0.12].forEach((dx) => {
     const hip = new THREE.Group();
     hip.position.set(dx, 0.72, 0);
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.07, 0.62, 14), clay);
-    leg.position.y = -0.33;
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.065, 0.6, 12), clay);
+    leg.position.y = -0.32;
     hip.add(leg);
-    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.13, 16), clay);
+    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.12, 14), clay);
     foot.rotation.x = Math.PI / 2;
-    foot.position.set(0, -0.67, 0.05);
+    foot.position.set(0, -0.65, 0.05);
     hip.add(foot);
     g.add(hip);
     legs.push(hip);
@@ -668,6 +695,53 @@ function setMode(m) {
   if (state) layoutPlayers(state.players);
 }
 
+function showQuestion() {
+  const panel = $('quizPanel');
+  if (!state || !state.started) {
+    panel.style.display = 'none';
+    return;
+  }
+  const qi = state.questionIndex || 0;
+  const q = QUESTIONS[qi];
+  if (!q) {
+    panel.style.display = 'none';
+    $('qStatus').textContent = 'Partie terminée !';
+    return;
+  }
+  const already = state.answers && state.answers[playerId] !== undefined;
+  answered = already;
+  myAnswer = already ? state.answers[playerId] : null;
+  $('qTitle').textContent = 'Question ' + (qi + 1) + ' / ' + QUESTIONS.length;
+  $('qText').textContent = q.q;
+  $('qAnswers').innerHTML = '';
+  OPTIONS.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.className = already && myAnswer === i ? 'selected' : '';
+    btn.disabled = already;
+    btn.onclick = () => answer(i);
+    $('qAnswers').appendChild(btn);
+  });
+  if (state.roundClosed) {
+    panel.style.display = 'none';
+    const yes = Object.values(state.answers || {}).filter((a) => a === 0).length;
+    const no = Object.values(state.answers || {}).filter((a) => a === 1).length;
+    $('qStatus').textContent = 'Résultats : Oui ' + yes + ' / Non ' + no;
+  } else {
+    panel.style.display = 'block';
+    $('qStatus').textContent = already ? 'Votre réponse est enregistrée.' : 'Choisissez votre réponse.';
+  }
+}
+
+function answer(i) {
+  if (!isHost && state && state.started && !answered) {
+    answered = true;
+    myAnswer = i;
+    publishEvent({ type: 'answer', id: playerId, ans: i, qi: state.questionIndex || 0 });
+    showQuestion();
+  }
+}
+
 function setStatus(msg, isError) {
   const el = $('status');
   el.textContent = msg || '';
@@ -702,6 +776,7 @@ function applyState(s) {
   $('b1').className = mode === 'lobby' ? 'on' : '';
   $('b2').className = mode === 'table' ? 'on' : '';
   updateHint();
+  showQuestion();
 }
 
 function sanitizeName(v) {
@@ -812,6 +887,13 @@ function handleEvent(msg) {
     applyState(state);
   } else if (msg.type === 'ping') {
     publishState();
+  } else if (msg.type === 'answer') {
+    if (!state.roundClosed && (msg.qi || 0) === (state.questionIndex || 0)) {
+      state.answers = state.answers || {};
+      state.answers[msg.id] = msg.ans;
+      publishState();
+      applyState(state);
+    }
   }
 }
 
@@ -903,6 +985,9 @@ function sendJoin() {
 function startGame() {
   if (!isHost || !state) return;
   state.started = true;
+  state.questionIndex = 0;
+  state.answers = {};
+  state.roundClosed = false;
   state.revealed = 0;
   publishState();
   applyState(state);
@@ -910,9 +995,28 @@ function startGame() {
 
 function reveal() {
   if (!isHost || !state || !state.started) return;
-  state.revealed = (state.revealed + 1) % (ANSWERS.length + 1);
-  publishState();
-  applyState(state);
+  if (state.roundClosed) {
+    const qi = (state.questionIndex || 0) + 1;
+    if (qi >= QUESTIONS.length) {
+      state.started = false;
+      state.questionIndex = 0;
+      state.answers = {};
+      state.roundClosed = false;
+      state.revealed = 0;
+      publishState();
+      applyState(state);
+      return;
+    }
+    state.questionIndex = qi;
+    state.answers = {};
+    state.roundClosed = false;
+    publishState();
+    applyState(state);
+  } else {
+    state.roundClosed = true;
+    publishState();
+    applyState(state);
+  }
 }
 
 function startHeartbeat() {
@@ -972,6 +1076,9 @@ function leaveRoom() {
   $('leaveBtn').style.display = 'none';
   $('startBtn').style.display = 'none';
   $('b').style.display = 'none';
+  $('quizPanel').style.display = 'none';
+  myAnswer = null;
+  answered = false;
   $('playersItems').innerHTML = '';
   $('c').textContent = '0/' + MAX_PLAYERS;
   setStatus('');
@@ -1041,10 +1148,8 @@ const clk = new THREE.Clock();
     p.position.y = Math.abs(Math.sin(t * 1.5 + u.ph)) * 0.012;
     p.rotation.z = Math.sin(t * 0.55 + u.ph) * 0.018;
     if (u.arms) {
-      u.arms[0].rotation.z = 0.85 + Math.sin(t * 1.3 + u.ph) * 0.025;
-      u.arms[0].rotation.y = 0.18;
-      u.arms[1].rotation.z = -0.75 - Math.sin(t * 1.3 + u.ph) * 0.025;
-      u.arms[1].rotation.y = -0.18;
+      u.arms[0].rotation.z = 0.15 + Math.sin(t * 1.3 + u.ph) * 0.025;
+      u.arms[1].rotation.z = -0.15 - Math.sin(t * 1.3 + u.ph) * 0.025;
     }
     if (u.legs) {
       // jambes statiques, bien ancrées au sol
