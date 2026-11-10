@@ -1,14 +1,13 @@
 {
-  "name": "creator-guess-answer",
+  "name": "creator-quiz",
   "version": "1.0.0",
-  "private": true,
-  "description": "Guess Their Answer multijoueur illimité avec Socket.io",
+  "description": "Jeu de quiz multijoueur CREATOR – Guess Their Answer",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "socket.io": "^4.8.1"
+    "express": "^4.21.0",
+    "socket.io": "^4.7.5"
   }
 }

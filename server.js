@@ -1,255 +1,328 @@
-"use strict";
+// ============================================================
+//  CREATOR Quiz – Serveur Node.js (Express + Socket.io)
+//  Jeu multijoueur « Guess Their Answer » en temps réel
+// ============================================================
 
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
-const { Server } = require("socket.io");
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 
-const PORT = Number(process.env.PORT) || 3000;
-const ROOT = __dirname;
-const LEADERBOARD_FILE = path.join(ROOT, "leaderboard.json");
-const MAX_LEADERBOARD = 200;
-
-const MIME = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "text/javascript; charset=utf-8",
-  ".mjs": "text/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".svg": "image/svg+xml",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".gif": "image/gif",
-  ".webp": "image/webp",
-  ".ico": "image/x-icon",
-  ".woff": "font/woff",
-  ".woff2": "font/woff2",
-  ".ttf": "font/ttf",
-  ".txt": "text/plain; charset=utf-8"
-};
-
-function loadLeaderboard() {
-  try {
-    const raw = fs.readFileSync(LEADERBOARD_FILE, "utf8");
-    const data = JSON.parse(raw);
-    return Array.isArray(data) ? data.filter(isValidEntry) : [];
-  } catch (error) {
-    return [];
-  }
-}
-
-function isValidEntry(entry) {
-  return entry && typeof entry.id === "string" && Number.isFinite(Number(entry.score));
-}
-
-let leaderboard = loadLeaderboard();
-let persistTimer = null;
-
-function persistLeaderboard() {
-  clearTimeout(persistTimer);
-  persistTimer = setTimeout(() => {
-    const data = JSON.stringify(leaderboard.slice(0, MAX_LEADERBOARD), null, 2);
-    fs.writeFile(LEADERBOARD_FILE, data, "utf8", () => {});
-  }, 250);
-}
-
-function topLeaderboard() {
-  return leaderboard
-    .slice()
-    .sort((a, b) => Number(b.score) - Number(a.score))
-    .slice(0, 10)
-    .map((entry) => ({
-      id: entry.id,
-      name: entry.name,
-      h: entry.h,
-      a: entry.a,
-      score: Number(entry.score) || 0
-    }));
-}
-
-function broadcastLeaderboard() {
-  io.emit("leaderboard", topLeaderboard());
-}
-
-const server = http.createServer((req, res) => {
-  const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
-  const requested = urlPath === "/" ? "/guess-answer.html" : urlPath;
-  const filePath = path.resolve(ROOT, "." + requested);
-
-  if (!filePath.startsWith(ROOT + path.sep) && filePath !== ROOT) {
-    res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
-    res.end("Accès refusé");
-    return;
-  }
-
-  fs.readFile(filePath, (error, data) => {
-    if (error) {
-      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("Fichier introuvable");
-      return;
-    }
-    const type = MIME[path.extname(filePath).toLowerCase()] || "application/octet-stream";
-    res.writeHead(200, {
-      "Content-Type": type,
-      "Cache-Control": "no-cache"
-    });
-    res.end(data);
-  });
-});
-
+const app = express();
+const server = http.createServer(app);
 const io = new Server(server);
 
-const rooms = new Map();
+// --- Fichiers statiques ------------------------------------------------
+app.use(express.static('public'));
 
-function roomPeers(roomId) {
-  const members = rooms.get(roomId);
-  if (!members) return [];
-  return Array.from(members.entries()).map(([peer, presence]) => ({
-    peer,
-    presence: presence || {}
-  }));
+// === Stockage en mémoire ===============================================
+const rooms = {}; // code → Room
+
+// Couleurs attribuées aux joueurs
+const PLAYER_COLORS = [
+  '#0033FF', // Bleu
+  '#00E5A0', // Vert Menthe
+  '#FF5C35', // Orange
+  '#FFD700', // Jaune
+  '#8B5CF6', // Violet
+  '#FF69B4', // Rose
+  '#00BCD4', // Cyan
+  '#E91E63', // Fuchsia
+];
+
+// Banque de questions (15 ; on en tire 10 aléatoirement)
+const QUESTION_BANK = [
+  'Nommez un fruit jaune',
+  'Nommez un super-héros célèbre',
+  'Nommez une capitale africaine',
+  "Nommez un sport qu'on pratique en équipe",
+  'Nommez un plat que tout le monde aime',
+  "Nommez un animal qu'on peut voir en Afrique",
+  'Nommez une application populaire sur téléphone',
+  'Nommez un langage de programmation',
+  "Nommez quelque chose qu'on emmène à la plage",
+  'Nommez une marque de téléphone',
+  'Nommez un film culte',
+  "Nommez un pays d'Europe",
+  'Nommez un instrument de musique',
+  'Nommez un réseau social',
+  'Nommez une matière enseignée à l\'école',
+];
+
+const ROUND_DURATION = 30; // secondes par question
+
+// === Helpers ============================================================
+
+/** Génère un code de salle à 4 lettres unique */
+function generateRoomCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // pas de I/O pour éviter la confusion
+  let code;
+  do {
+    code = '';
+    for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  } while (rooms[code]);
+  return code;
 }
 
-function broadcastPeers(roomId) {
-  if (!roomId) return;
-  io.to(roomId).emit("peers", roomPeers(roomId));
+/** Normalise une réponse pour faciliter le regroupement */
+function normalizeAnswer(raw) {
+  return raw
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')                       // supprime les accents
+    .replace(/^(le |la |les |l'|l'|un |une |des |du )/i, '') // articles courants
+    .replace(/[^a-z0-9 ]/g, '')                             // caractères spéciaux
+    .trim();
 }
 
-function leaveRoom(socket) {
-  const roomId = socket.data.roomId;
-  if (!roomId) return;
+/** Tire 10 questions au hasard */
+function pickQuestions() {
+  const shuffled = [...QUESTION_BANK].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 10);
+}
 
-  const members = rooms.get(roomId);
-  if (members) {
-    members.delete(socket.id);
-    if (members.size === 0) rooms.delete(roomId);
+// === Socket.io – Logique de jeu =========================================
+
+io.on('connection', (socket) => {
+  console.log(`✦ Connexion : ${socket.id}`);
+
+  // Métadonnées rattachées au socket
+  socket.data = { role: null, roomCode: null };
+
+  // ---- Créer une salle -------------------------------------------------
+  socket.on('create-room', () => {
+    const code = generateRoomCode();
+    rooms[code] = {
+      code,
+      animatorId: socket.id,
+      players: [],
+      questions: pickQuestions(),
+      currentQuestion: -1,
+      answers: {},          // normalized → { original, playerIds[] }
+      state: 'lobby',       // lobby | question | results | podium
+      timer: null,
+      timeLeft: 0,
+    };
+    socket.data.role = 'animator';
+    socket.data.roomCode = code;
+    socket.join(code);
+    socket.emit('room-created', { code });
+    console.log(`✦ Salle créée : ${code}`);
+  });
+
+  // ---- Rejoindre une salle ---------------------------------------------
+  socket.on('join-room', ({ code, pseudo }) => {
+    code = (code || '').toUpperCase().trim();
+    const room = rooms[code];
+
+    if (!room) return socket.emit('error-msg', { message: 'Salle introuvable 😕' });
+    if (room.state !== 'lobby') return socket.emit('error-msg', { message: 'La partie a déjà commencé !' });
+    if (!pseudo || !pseudo.trim()) return socket.emit('error-msg', { message: 'Choisis un pseudo !' });
+
+    const colorIndex = room.players.length % PLAYER_COLORS.length;
+    const player = {
+      id: socket.id,
+      pseudo: pseudo.trim().substring(0, 15),
+      color: PLAYER_COLORS[colorIndex],
+      score: 0,
+      answered: false,
+    };
+
+    room.players.push(player);
+    socket.data.role = 'player';
+    socket.data.roomCode = code;
+    socket.join(code);
+
+    socket.emit('joined-room', { player, code });
+    io.to(code).emit('players-updated', { players: room.players });
+    console.log(`✦ ${player.pseudo} a rejoint ${code}`);
+  });
+
+  // ---- Lancer la partie ------------------------------------------------
+  socket.on('start-game', ({ code }) => {
+    const room = rooms[code];
+    if (!room || socket.id !== room.animatorId) return;
+    if (room.players.length < 1) {
+      return socket.emit('error-msg', { message: 'Il faut au moins 1 joueur !' });
+    }
+
+    room.state = 'question';
+    room.currentQuestion = 0;
+    io.to(code).emit('game-started');
+    sendQuestion(code);
+  });
+
+  // ---- Envoyer la question courante ------------------------------------
+  function sendQuestion(code) {
+    const room = rooms[code];
+    if (!room) return;
+
+    // Réinitialiser les réponses
+    room.answers = {};
+    room.players.forEach((p) => (p.answered = false));
+    room.timeLeft = ROUND_DURATION;
+    room.state = 'question';
+
+    io.to(code).emit('new-question', {
+      number: room.currentQuestion + 1,
+      text: room.questions[room.currentQuestion],
+      total: room.questions.length,
+      timeLeft: room.timeLeft,
+    });
+
+    // Chrono côté serveur (source de vérité)
+    if (room.timer) clearInterval(room.timer);
+    room.timer = setInterval(() => {
+      room.timeLeft--;
+      io.to(code).emit('timer-tick', { timeLeft: room.timeLeft });
+      if (room.timeLeft <= 0) {
+        clearInterval(room.timer);
+        room.timer = null;
+        calculateResults(code);
+      }
+    }, 1000);
   }
 
-  socket.leave(roomId);
-  socket.data.roomId = null;
-  socket.data.presence = null;
-  broadcastPeers(roomId);
-}
+  // ---- Soumettre une réponse -------------------------------------------
+  socket.on('submit-answer', ({ code, answer }) => {
+    const room = rooms[code];
+    if (!room || room.state !== 'question') return;
 
-function sanitizePresence(value) {
-  if (!value || typeof value !== "object") return {};
-  const safe = {};
-  if (value.role === "host" || value.role === "player") safe.role = value.role;
-  if (typeof value.name === "string") safe.name = value.name.slice(0, 20);
-  if (Number.isFinite(Number(value.h))) safe.h = Number(value.h);
-  if (Number.isFinite(Number(value.a))) safe.a = Number(value.a);
-  if (value.st && typeof value.st === "object") safe.st = value.st;
-  return safe;
-}
+    const player = room.players.find((p) => p.id === socket.id);
+    if (!player || player.answered) return;
+    if (!answer || !answer.trim()) return;
 
-io.on("connection", (socket) => {
-  socket.emit("leaderboard", topLeaderboard());
+    player.answered = true;
+    const key = normalizeAnswer(answer);
 
-  socket.on("join", (payload, ack) => {
-    const reply = typeof ack === "function" ? ack : () => {};
-    try {
-      const roomId = String((payload && payload.room) || "").trim().slice(0, 64);
-      if (!roomId) {
-        reply({ ok: false, error: "Salle invalide" });
-        return;
-      }
-
-      if (socket.data.roomId) leaveRoom(socket);
-
-      socket.join(roomId);
-      socket.data.roomId = roomId;
-      socket.data.presence = sanitizePresence(payload.presence);
-
-      let members = rooms.get(roomId);
-      if (!members) {
-        members = new Map();
-        rooms.set(roomId, members);
-      }
-      members.set(socket.id, socket.data.presence);
-
-      reply({ ok: true, id: socket.id });
-      broadcastPeers(roomId);
-    } catch (error) {
-      reply({ ok: false, error: "Impossible de rejoindre la salle" });
+    if (!room.answers[key]) {
+      room.answers[key] = { original: answer.trim(), playerIds: [] };
     }
-  });
+    room.answers[key].playerIds.push(player.id);
 
-  socket.on("presence", (data) => {
-    const roomId = socket.data.roomId;
-    if (!roomId) return;
-    const members = rooms.get(roomId);
-    if (!members) return;
-
-    socket.data.presence = {
-      ...(socket.data.presence || {}),
-      ...sanitizePresence(data)
-    };
-    members.set(socket.id, socket.data.presence);
-    broadcastPeers(roomId);
-  });
-
-  socket.on("emit", (payload) => {
-    const roomId = socket.data.roomId;
-    if (!roomId || !payload) return;
-    const event = String(payload.event || "").slice(0, 40);
-    if (!event) return;
-    socket.to(roomId).emit("event", {
-      event,
-      data: payload.data,
-      peer: socket.id
+    // Prévenir l'animateur
+    io.to(room.animatorId).emit('player-answered', {
+      playerId: player.id,
+      pseudo: player.pseudo,
     });
+    socket.emit('answer-confirmed');
+
+    // Tous ont répondu → on calcule tout de suite
+    if (room.players.every((p) => p.answered)) {
+      if (room.timer) clearInterval(room.timer);
+      room.timer = null;
+      setTimeout(() => calculateResults(code), 800);
+    }
   });
 
-  socket.on("leave", () => leaveRoom(socket));
+  // ---- Calcul des résultats --------------------------------------------
+  function calculateResults(code) {
+    const room = rooms[code];
+    if (!room || room.state === 'results') return; // éviter le doublon
+    room.state = 'results';
 
-  socket.on("score", (payload) => {
-    if (!payload || typeof payload !== "object") return;
+    const totalAnswered = room.players.filter((p) => p.answered).length;
+    const results = [];
 
-    const id = String(payload.id || socket.id).slice(0, 64);
-    const name = String(payload.name || "Joueur").slice(0, 20);
-    const score = Math.max(0, Math.min(1000000000, Math.round(Number(payload.score) || 0)));
-    const h = Math.max(0, Math.min(4, Math.round(Number(payload.h) || 0)));
-    const a = Math.max(0, Math.min(3, Math.round(Number(payload.a) || 0)));
+    for (const [, data] of Object.entries(room.answers)) {
+      const count = data.playerIds.length;
+      const percentage = totalAnswered > 0 ? Math.round((count / totalAnswered) * 100) : 0;
+      const points = percentage * 10; // Score = % × 10
 
-    const existing = leaderboard.find((entry) => entry.id === id);
-    if (existing) {
-      existing.name = name;
-      existing.h = h;
-      existing.a = a;
-      existing.score = Math.max(Number(existing.score) || 0, score);
-      existing.games = (Number(existing.games) || 0) + 1;
-    } else {
-      leaderboard.push({ id, name, h, a, score, games: 1 });
+      // Attribuer les points
+      data.playerIds.forEach((pid) => {
+        const p = room.players.find((pl) => pl.id === pid);
+        if (p) p.score += points;
+      });
+
+      results.push({
+        text: data.original,
+        count,
+        percentage,
+        points,
+        playerIds: data.playerIds,
+      });
     }
 
-    leaderboard = leaderboard
-      .sort((first, second) => Number(second.score) - Number(first.score))
-      .slice(0, MAX_LEADERBOARD);
+    // Trier par popularité décroissante
+    results.sort((a, b) => b.count - a.count);
 
-    persistLeaderboard();
-    broadcastLeaderboard();
+    io.to(code).emit('question-results', {
+      questionText: room.questions[room.currentQuestion],
+      results,
+      scores: room.players.map((p) => ({
+        id: p.id,
+        pseudo: p.pseudo,
+        score: p.score,
+        color: p.color,
+      })),
+    });
+  }
+
+  // ---- Question suivante -----------------------------------------------
+  socket.on('next-question', ({ code }) => {
+    const room = rooms[code];
+    if (!room || socket.id !== room.animatorId) return;
+
+    room.currentQuestion++;
+    if (room.currentQuestion >= room.questions.length) {
+      showPodium(code);
+    } else {
+      sendQuestion(code);
+    }
   });
 
-  socket.on("disconnect", () => leaveRoom(socket));
+  // ---- Podium final ----------------------------------------------------
+  function showPodium(code) {
+    const room = rooms[code];
+    if (!room) return;
+
+    room.state = 'podium';
+    if (room.timer) clearInterval(room.timer);
+
+    const rankings = [...room.players].sort((a, b) => b.score - a.score);
+    io.to(code).emit('show-podium', { rankings });
+  }
+
+  // ---- Rejouer ---------------------------------------------------------
+  socket.on('play-again', ({ code }) => {
+    const room = rooms[code];
+    if (!room || socket.id !== room.animatorId) return;
+
+    room.questions = pickQuestions();
+    room.currentQuestion = -1;
+    room.state = 'lobby';
+    room.answers = {};
+    room.players.forEach((p) => {
+      p.score = 0;
+      p.answered = false;
+    });
+
+    io.to(code).emit('back-to-lobby', { players: room.players });
+  });
+
+  // ---- Déconnexion -----------------------------------------------------
+  socket.on('disconnect', () => {
+    const code = socket.data.roomCode;
+    if (!code || !rooms[code]) return;
+    const room = rooms[code];
+
+    if (socket.data.role === 'animator') {
+      // L'animateur quitte → fin de partie
+      if (room.timer) clearInterval(room.timer);
+      io.to(code).emit('game-ended', { message: "L'animateur a quitté la partie." });
+      delete rooms[code];
+      console.log(`✦ Salle ${code} supprimée (animateur parti)`);
+    } else {
+      room.players = room.players.filter((p) => p.id !== socket.id);
+      io.to(code).emit('players-updated', { players: room.players });
+      console.log(`✦ Joueur déconnecté de ${code}`);
+    }
+  });
 });
 
-function listen(port, attemptsLeft) {
-  const onError = (error) => {
-    if (error.code === "EADDRINUSE" && attemptsLeft > 0) {
-      console.warn(`Port ${port} occupé, tentative sur ${port + 1}…`);
-      setTimeout(() => listen(port + 1, attemptsLeft - 1), 60);
-      return;
-    }
-    console.error(error);
-    process.exit(1);
-  };
-
-  server.once("error", onError);
-  server.listen(port, () => {
-    server.removeListener("error", onError);
-    console.log(`CREATOR Guess Their Answer → http://localhost:${port}`);
-  });
-}
-
-listen(PORT, 10);
+// === Démarrage du serveur ===============================================
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`\n🎮 CREATOR Quiz – Serveur démarré sur http://localhost:${PORT}\n`);
+});
