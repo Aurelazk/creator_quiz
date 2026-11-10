@@ -76,14 +76,6 @@ canvas{display:block}
 #leaderboard .lb-row.me .lb-score{color:var(--text-gold)}
 #leaderboard .lb-close{background:var(--btn-primary);color:var(--creator-white);border:none;padding:11px 22px;border-radius:10px;font-weight:bold;cursor:pointer;width:100%;transition:background .18s}
 #leaderboard .lb-close:hover{background:var(--btn-hover)}
-
-/* ÉCRAN DE CHARGEMENT MODÈLE 3D */
-#loadOverlay{position:fixed;inset:0;background:#080a18;color:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
-#loadOverlay h2{color:var(--text-gold);font-size:24px;margin:0 0 12px;letter-spacing:2px}
-#loadOverlay p{color:#c9d2f0;font-size:15px;margin:0 0 20px}
-#loadBar{width:320px;height:10px;background:rgba(255,255,255,.12);border-radius:5px;overflow:hidden}
-#loadProgress{width:0%;height:100%;background:linear-gradient(90deg,var(--creator-green),var(--creator-fox));border-radius:5px;transition:width .3s}
-#loadPct{margin-top:10px;font-size:14px;color:var(--creator-light-blue);font-weight:700}
 </style></head><body>
 <div id="h">Quiz 3D Multijoueur - CREATOR</div>
 <div id="t">En attente de salle...<br><span id="c">0 joueur</span></div>
@@ -115,17 +107,8 @@ canvas{display:block}
   </div>
   <div id="status"></div>
 </div>
-<div id="loadOverlay">
-  <div style="width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top:4px solid var(--creator-green);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px"></div>
-  <h2>Chargement du modèle 3D</h2>
-  <p>Préparation des personnages CREATOR…</p>
-  <div id="loadBar"><div id="loadProgress"></div></div>
-  <div id="loadPct">0%</div>
-</div>
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 const QUESTIONS = [
   { q: "JavaScript est un langage de programmation ?", ans: 0 },
@@ -189,8 +172,6 @@ let state = null;
 let mode = 'lobby';
 let myAnswer = null;
 let answered = false;
-let baseCharModel = null;
-let glbLoaded = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -465,19 +446,81 @@ function applyCreatorColor(obj, hexColor) {
   });
 }
 
-function makeCharFromGLB(color, name, isMe) {
+function makeChar(color, name, isMe) {
   const g = new THREE.Group();
-  if (!baseCharModel) {
-    g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: null, ready: false };
-    g.add(makeLabel(name, isMe));
-    return g;
+  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.38, metalness: 0.0, clearcoat: 0.45, clearcoatRoughness: 0.4 });
+
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.4), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  sh.rotation.x = -Math.PI / 2;
+  sh.position.y = 0.015;
+  g.add(sh);
+
+  // Grosse tête lisse sans visage
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 48, 40), clay);
+  head.position.y = 1.68;
+  head.scale.y = 1.02;
+  g.add(head);
+
+  // Cou arrondi
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.12, 16), clay);
+  neck.position.y = 1.5;
+  g.add(neck);
+
+  // Torse lathe (épaules étroites, hanches larges)
+  const bodyProfile = [];
+  for (let i = 0; i <= 10; i++) {
+    const t = i / 10;
+    const r = 0.3 - 0.09 * t + 0.05 * Math.sin(t * Math.PI);
+    bodyProfile.push(new THREE.Vector2(r, t * 0.62));
   }
-  const clone = baseCharModel.clone();
-  applyCreatorColor(clone, color);
-  clone.scale.set(0.012, 0.012, 0.012);
-  g.add(clone);
+  for (let i = 0; i <= 8; i++) {
+    const a = i / 8 * Math.PI / 2;
+    bodyProfile.push(new THREE.Vector2(Math.cos(a) * 0.21, 0.62 + Math.sin(a) * 0.21));
+  }
+  const body = new THREE.Mesh(new THREE.LatheGeometry(bodyProfile, 32), clay);
+  body.position.y = 0.86;
+  body.scale.z = 0.82;
+  g.add(body);
+
+  // Bras croisés
+  function crossedArm(side) {
+    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.08, 0.16, 16), clay);
+    upper.position.set(side * 0.24, 1.32, 0.02);
+    upper.rotation.z = side * -0.95;
+    g.add(upper);
+    const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.3, 16), clay);
+    fore.position.set(side * 0.05, 1.14, 0.22);
+    fore.rotation.set(0, 0, Math.PI / 2 + side * 0.12);
+    g.add(fore);
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.11, 20, 16), clay);
+    hand.position.set(-side * 0.18, 1.16, 0.24);
+    g.add(hand);
+  }
+  crossedArm(-1);
+  crossedArm(1);
+
+  // Jambes épaisses
+  const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.1, 0.55, 16), clay);
+  leftLeg.position.set(-0.15, 0.44, 0);
+  leftLeg.rotation.z = 0.05;
+  g.add(leftLeg);
+  const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.1, 0.55, 16), clay);
+  rightLeg.position.set(0.15, 0.44, 0);
+  rightLeg.rotation.z = -0.05;
+  g.add(rightLeg);
+
+  // Gros pieds arrondis
+  const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 20), clay);
+  leftFoot.scale.set(1.05, 0.62, 1.7);
+  leftFoot.position.set(-0.17, 0.1, 0.08);
+  g.add(leftFoot);
+  const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 20), clay);
+  rightFoot.scale.set(1.05, 0.62, 1.7);
+  rightFoot.position.set(0.17, 0.1, 0.08);
+  g.add(rightFoot);
+
   g.add(makeLabel(name, isMe));
-  g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: clone, ready: true };
+  g.userData = { ph: Math.random() * 6, name, baseRot: 0 };
   return g;
 }
 
@@ -670,7 +713,7 @@ function syncPlayerObjects(list) {
     const isMe = p.id === playerId;
     if (!o) {
       const dynamicColor = getDynamicColor(p.colorIndex);
-      const g = makeCharFromGLB(dynamicColor, p.name, isMe);
+      const g = makeChar(dynamicColor, p.name, isMe);
       scene.add(g);
       o = playerObjs[p.id] = { group: g, name: p.name };
     }
@@ -1199,30 +1242,6 @@ if (params.get('room')) $('roomInput').value = params.get('room').toUpperCase();
 
 $('roomPanel').style.display = 'block';
 setMode('lobby');
-
-const loadOverlay = $('loadOverlay');
-const loadProgress = $('loadProgress');
-const loadPct = $('loadPct');
-
-const loader = new THREE.GLTFLoader();
-loader.load('a29c166fc5b8fbde7d818d1e2ec3edbe.glb', (gltf) => {
-  baseCharModel = gltf.scene;
-  glbLoaded = true;
-  loadProgress.style.width = '100%';
-  loadPct.textContent = '100%';
-  setTimeout(() => { loadOverlay.style.display = 'none'; }, 600);
-}, (xhr) => {
-  if (xhr.lengthComputable) {
-    const pct = Math.round((xhr.loaded / xhr.total) * 100);
-    loadProgress.style.width = pct + '%';
-    loadPct.textContent = pct + '%';
-  }
-}, (err) => {
-  console.error('Erreur chargement GLB:', err);
-  loadProgress.style.width = '100%';
-  loadPct.textContent = 'Erreur - modèle par défaut';
-  setTimeout(() => { loadOverlay.style.display = 'none'; }, 1200);
-});
 
 const clk = new THREE.Clock();
 (function loop() {
