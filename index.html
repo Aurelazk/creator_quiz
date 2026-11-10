@@ -65,7 +65,7 @@ const TABLE_SEATS = 6;
 const MQTT_URL = 'wss://broker.emqx.io:8084/mqtt';
 const TOPIC_BASE = 'creatorquiz3d/';
 
-const playerColors = [0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0x2b8cff];
+const playerColors = [0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080, 0x808080];
 
 const lobbyPositions = [
   [-1.5, 0], [0.1, -0.4], [-0.1, 1.4], [1.5, 0.6],
@@ -339,66 +339,60 @@ function makeLabel(text, isMe) {
   return sprite;
 }
 
-const skinTones = [0xf3c6a5, 0xe8b48c, 0xd69a6e, 0xb07a52, 0x8d5a3b, 0xf7dcc0];
-const hairColors = [0x1d1712, 0x3a2a1a, 0x5c4326, 0x7d5a3a, 0x2a2a2e, 0x8a8f96];
 
 function makeChar(color, name, isMe) {
   const g = new THREE.Group();
-  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.4, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.2 });
+  const clay = new THREE.MeshPhysicalMaterial({ color: 0x808080, roughness: 0.45, metalness: 0, clearcoat: 0.15, clearcoatRoughness: 0.2 });
 
   const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.05), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2;
   sh.position.y = 0.015;
   g.add(sh);
 
-  // Tete (lisse, sans visage)
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.17, 24, 20), clay);
-  head.position.y = 1.55;
+  // Tete : grande sphère parfaite, sans visage
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 32, 24), clay);
+  head.position.y = 1.62;
   g.add(head);
 
-  // Col
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.18, 12), clay);
-  neck.position.y = 1.42;
+  // Cou court et cylindrique
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.17, 16), clay);
+  neck.position.y = 1.48;
   g.add(neck);
 
-  // Torse (capsule arrondie)
-  const torso = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 16), clay);
-  torso.scale.set(1, 1.7, 0.8);
-  torso.position.y = 1.05;
+  // Tronc : cylindre adouci qui s'évasant subtilement vers le bas
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.27, 0.72, 24), clay);
+  torso.position.y = 1.08;
   g.add(torso);
 
-  // Bras (epaule + avant-bras + main arrondis)
+  // Bras croisés sur la poitrine (avant-bras droit par-dessus le gauche)
   const arms = [];
+  const armY = 1.32;
   [-1, 1].forEach((d) => {
     const p = new THREE.Group();
-    p.position.set(d * 0.3, 1.25, 0);
-    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), clay);
-    p.add(shoulder);
-    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.5, 12), clay);
-    arm.position.y = -0.28;
+    p.position.set(d * 0.26, armY, 0);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.42, 12), clay);
+    arm.position.y = -0.22;
     p.add(arm);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), clay);
-    hand.position.y = -0.58;
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), clay);
+    hand.position.y = -0.46;
     p.add(hand);
-    p.rotation.z = d * 0.1;
+    p.rotation.z = d > 0 ? 0.92 : -0.92;
+    p.rotation.y = d * 0.12;
     g.add(p);
     arms.push(p);
   });
 
-  // Jambes (cuisse + mollet + pied arrondis)
+  // Jambes : tubes lisses, droites, légèrement écartées
   const legs = [];
-  [-0.11, 0.11].forEach((dx) => {
+  [-0.13, 0.13].forEach((dx) => {
     const hip = new THREE.Group();
     hip.position.set(dx, 0.72, 0);
-    const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.55, 12), clay);
-    thigh.position.y = -0.3;
-    hip.add(thigh);
-    const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.08, 0.55, 12), clay);
-    shin.position.y = -0.85;
-    hip.add(shin);
-    const foot = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), clay);
-    foot.scale.set(1, 0.5, 1.2);
-    foot.position.y = -1.18;
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.07, 0.62, 14), clay);
+    leg.position.y = -0.33;
+    hip.add(leg);
+    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.13, 16), clay);
+    foot.rotation.x = Math.PI / 2;
+    foot.position.set(0, -0.67, 0.05);
     hip.add(foot);
     g.add(hip);
     legs.push(hip);
@@ -1036,7 +1030,6 @@ setMode('lobby');
 const clk = new THREE.Clock();
 (function loop() {
   const t = clk.getElapsedTime();
-  const armRest = mode === 'table' ? -0.5 : 0;
   Object.values(playerObjs).forEach((o) => {
     const p = o.group;
     const u = p.userData;
@@ -1046,12 +1039,11 @@ const clk = new THREE.Clock();
     p.position.y = Math.abs(Math.sin(t * 1.5 + u.ph)) * 0.012;
     p.rotation.z = Math.sin(t * 0.55 + u.ph) * 0.018;
     if (u.arms) {
-      u.arms[0].rotation.x = armRest + Math.sin(t * 1.3 + u.ph) * 0.07;
-      u.arms[1].rotation.x = armRest - Math.sin(t * 1.3 + u.ph) * 0.07;
+      u.arms[0].rotation.z = 0.92 + Math.sin(t * 1.3 + u.ph) * 0.025;
+      u.arms[1].rotation.z = -0.92 - Math.sin(t * 1.3 + u.ph) * 0.025;
     }
     if (u.legs) {
-      u.legs[0].rotation.x = Math.sin(t * 1.1 + u.ph) * 0.03;
-      u.legs[1].rotation.x = -Math.sin(t * 1.1 + u.ph) * 0.03;
+      // jambes statiques, bien ancrées au sol
     }
     p.rotation.y = (u.baseRot || 0) + Math.sin(t * 0.5 + u.ph) * 0.08;
   });
