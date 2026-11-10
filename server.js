@@ -45,9 +45,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 registerGuessRoutes(app);
 
 // ---------- Classement temps réel ----------
-const clients = new Set();
+const streamingClients = new Set();
 const broadcast = (data) => {
-  for (const res of clients) res.write(`data: ${JSON.stringify(data)}\n\n`);
+  const payload = `data: ${JSON.stringify(data)}\n\n`;
+  for (const res of streamingClients) {
+    try {
+      res.write(payload);
+    } catch {
+      streamingClients.delete(res);
+    }
+  }
 };
 
 function addScore(pseudo, score, time) {
@@ -60,6 +67,26 @@ function addScore(pseudo, score, time) {
   const rank = top.indexOf(entry) + 1;
   broadcast({ type: 'new-score', pseudo: entry.pseudo, score: entry.score, rank });
   return rank;
+}
+
+// Sécurité : synchronisation atomique des scores
+const SCORE_LOCK = { value: false };
+function addScoreAtomic(pseudo, score, time) {
+  if (SCORE_LOCK.value) return addScore(pseudo, score, time);
+  SCORE_LOCK.value = true;
+  try {
+    const existing = load();
+    const entry = { pseudo, score: Math.max(0, Math.round(score)), time: Math.max(0, Math.round(time)), date: Date.now() };
+    const newScores = [...existing, entry];
+    newScores.sort((a, b) => b.score - a.score || a.time - b.time);
+    save(newScores.slice(-1000));
+    const sorted = sortScores(newScores);
+    const rank = sorted.indexOf(entry) + 1;
+    broadcast({ type: 'new-score', pseudo: entry.pseudo, score: entry.score, rank });
+    return rank;
+  } finally {
+    SCORE_LOCK.value = false;
+  }
 }
 
 app.get('/api/leaderboard', (req, res) => {
@@ -76,7 +103,7 @@ app.post('/api/score', (req, res) => {
     return res.status(400).json({ error: 'payload invalide' });
   }
 
-  const rank = addScore(
+  const rank = addScoreAtomic(
     cleanPseudo(pseudo),
     Math.max(0, Math.round(score)),
     Math.max(0, Math.round(time))
@@ -102,12 +129,12 @@ app.get('/api/stream', (req, res) => {
   res.flushHeaders();
   res.write(': connected\n\n');
 
-  clients.add(res);
+  streamingClients.add(res);
   const ping = setInterval(() => res.write(': ping\n\n'), 25000);
 
   req.on('close', () => {
     clearInterval(ping);
-    clients.delete(res);
+    streamingClients.delete(res);
   });
 });
 
@@ -689,6 +716,10 @@ wss.on('connection', (ws) => {
     try {
       msg = JSON.parse(raw.toString());
     } catch {
+      return send(ws, { type: 'error', message: 'Message invalide' });
+    }
+
+    if (!msg || typeof msg.type !== 'string') {
       return send(ws, { type: 'error', message: 'Message invalide' });
     }
 
