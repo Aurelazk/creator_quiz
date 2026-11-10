@@ -10,7 +10,6 @@
   --creator-coral: #FF4E20;
   --creator-fox: #FF7A00;
   --creator-light-blue: #2E85FF;
-  --creator-bg-light: #F4F6FC;
   --creator-white: #FFFFFF;
   --bg-dark: #080a18;
   --panel-bg: rgba(12, 26, 75, 0.96);
@@ -51,32 +50,40 @@ canvas{display:block}
 #leaveBtn{position:fixed;top:10px;left:12px;background:var(--panel-bg);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;z-index:30;display:none}
 #leaveBtn:hover{background:rgba(255,255,255,.15)}
 
-#quizPanel{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel-bg);padding:20px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,500px);box-shadow:0 20px 60px rgba(0,0,0,.5);display:none}
-#quizPanel h2{margin:0 0 10px;color:var(--text-gold);font-size:20px}
-#quizPanel #qText{font-size:17px;margin:0 0 16px;line-height:1.4;color:#fff}
-#quizPanel .answers{display:flex;flex-direction:row;justify-content:center;gap:10px;margin-top:10px}
-#quizPanel .answers button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35);padding:12px 16px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-align:center;width:120px}
-#quizPanel .answers button:hover:not(:disabled){border-color:var(--text-gold);background:rgba(255,122,0,.15)}
-#quizPanel .answers button.selected{background:var(--text-gold);color:#111;border-color:var(--text-gold)}
-#quizPanel .answers button:disabled{cursor:default;opacity:0.6}
-#quizPanel #qStatus{margin-top:12px;font-size:14px;color:var(--text-highlight);min-height:20px}
-#revealBtn{background:var(--btn-primary);color:var(--creator-white);border:none;padding:12px 16px;border-radius:8px;font-weight:bold;margin-top:15px;cursor:pointer;width:100%;display:none}
+/* PANNEAU QUESTION - Design moderne et lisible */
+#quizPanel{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel-bg);padding:22px 26px;border-radius:18px;text-align:center;color:#fff;z-index:1000;width:min(94vw,560px);box-shadow:0 24px 80px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.12);display:none;backdrop-filter:blur(8px)}
+#quizPanel h2{margin:0 0 10px;color:var(--text-gold);font-size:20px;letter-spacing:1px}
+#quizPanel #qText{font-size:19px;margin:0 0 18px;line-height:1.5;color:#fff;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+#quizPanel .answers{display:flex;flex-direction:row;justify-content:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+#quizPanel .answers button{background:rgba(255,255,255,.10);color:#fff;border:2px solid rgba(255,255,255,.30);padding:14px 20px;border-radius:12px;font-size:17px;font-weight:800;cursor:pointer;text-align:center;width:130px;transition:all .18s ease}
+#quizPanel .answers button:hover:not(:disabled){border-color:var(--text-gold);background:rgba(255,122,0,.20);transform:translateY(-2px)}
+#quizPanel .answers button.selected{background:var(--text-gold);color:#111;border-color:var(--text-gold);transform:scale(1.05)}
+#quizPanel .answers button:disabled{cursor:default;opacity:0.55;transform:none}
+#quizPanel #qStatus{margin-top:14px;font-size:14px;color:var(--text-highlight);min-height:20px;font-weight:700}
+#revealBtn{background:var(--btn-primary);color:var(--creator-white);border:none;padding:12px 20px;border-radius:10px;font-weight:bold;margin-top:16px;cursor:pointer;width:100%;display:none;transition:background .18s}
 #revealBtn:hover{background:var(--btn-hover)}
 
-#leaderboard{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--panel-bg);padding:26px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1100;width:min(92vw,460px);box-shadow:0 20px 60px rgba(0,0,0,.6);display:none}
-#leaderboard h2{margin:0 0 12px;color:var(--text-gold);font-size:22px}
-#leaderboard .lb-list{max-height:300px;overflow-y:auto;margin:0 0 16px}
-#leaderboard .lb-row{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);font-size:15px;background:rgba(255,255,255,.03);margin-bottom:6px;border-radius:8px}
+/* CLASSMENT FINAL */
+#leaderboard{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--panel-bg);padding:28px 24px;border-radius:18px;text-align:center;color:#fff;z-index:1100;width:min(92vw,500px);box-shadow:0 24px 80px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.12);display:none;backdrop-filter:blur(8px)}
+#leaderboard h2{margin:0 0 14px;color:var(--text-gold);font-size:24px;letter-spacing:1px}
+#leaderboard .lb-list{max-height:320px;overflow-y:auto;margin:0 0 18px;padding-right:6px}
+#leaderboard .lb-row{display:flex;justify-content:space-between;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.08);font-size:15px;background:rgba(255,255,255,.03);margin-bottom:8px;border-radius:10px;align-items:center}
 #leaderboard .lb-row:last-child{border-bottom:none;margin-bottom:0}
-#leaderboard .lb-row.winner{background:rgba(255,179,0,.15);border-color:rgba(255,179,0,.4)}
-#leaderboard .lb-name{text-align:left;color:#fff}
-#leaderboard .lb-score{font-weight:bold;color:var(--text-highlight)}
-#leaderboard .lb-row.me .lb-name{color:var(--text-gold);font-weight:bold}
+#leaderboard .lb-row.winner{background:rgba(255,179,0,.14);border-color:rgba(255,179,0,.4)}
+#leaderboard .lb-name{text-align:left;color:#fff;font-weight:700}
+#leaderboard .lb-score{font-weight:900;color:var(--text-highlight);font-size:17px}
+#leaderboard .lb-row.me .lb-name{color:var(--text-gold)}
 #leaderboard .lb-row.me .lb-score{color:var(--text-gold)}
-#leaderboard .lb-close{background:var(--btn-primary);color:var(--creator-white);border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;width:100%}
+#leaderboard .lb-close{background:var(--btn-primary);color:var(--creator-white);border:none;padding:11px 22px;border-radius:10px;font-weight:bold;cursor:pointer;width:100%;transition:background .18s}
 #leaderboard .lb-close:hover{background:var(--btn-hover)}
 
-#loadMsg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#fff;padding:20px 30px;border-radius:16px;text-align:center;z-index:2000;display:none}
+/* ÉCRAN DE CHARGEMENT MODÈLE 3D */
+#loadOverlay{position:fixed;inset:0;background:#080a18;color:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
+#loadOverlay h2{color:var(--text-gold);font-size:24px;margin:0 0 12px;letter-spacing:2px}
+#loadOverlay p{color:#c9d2f0;font-size:15px;margin:0 0 20px}
+#loadBar{width:320px;height:10px;background:rgba(255,255,255,.12);border-radius:5px;overflow:hidden}
+#loadProgress{width:0%;height:100%;background:linear-gradient(90deg,var(--creator-green),var(--creator-fox));border-radius:5px;transition:width .3s}
+#loadPct{margin-top:10px;font-size:14px;color:var(--creator-light-blue);font-weight:700}
 </style></head><body>
 <div id="h">Quiz 3D Multijoueur - CREATOR</div>
 <div id="t">En attente de salle...<br><span id="c">0 joueur</span></div>
@@ -108,7 +115,14 @@ canvas{display:block}
   </div>
   <div id="status"></div>
 </div>
-<div id="loadMsg">Chargement du modčle 3D…</div>
+<div id="loadOverlay">
+  <div style="width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top:4px solid var(--creator-green);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px"></div>
+  <h2>Chargement du modèle 3D</h2>
+  <p>Préparation des personnages CREATOR…</p>
+  <div id="loadBar"><div id="loadProgress"></div></div>
+  <div id="loadPct">0%</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -121,9 +135,9 @@ const QUESTIONS = [
   { q: "Un serveur peut tourner sans base de données ?", ans: 0 },
   { q: "Le Wi-Fi est plus rapide que le câble Ethernet ?", ans: 1 },
   { q: "Un octet fait 8 bits ?", ans: 0 },
-  { q: "Linux est un systŤme d'exploitation ?", ans: 0 },
-  { q: "Une API sert ŗ ťchanger des donnťes entre logiciels ?", ans: 0 },
-  { q: "Le cloud stocke des donnťes sur votre disque local ?", ans: 1 }
+  { q: "Linux est un système d'exploitation ?", ans: 0 },
+  { q: "Une API sert à échanger des données entre logiciels ?", ans: 0 },
+  { q: "Le cloud stocke des données sur votre disque local ?", ans: 1 }
 ];
 const OPTIONS = ['Oui', 'Non'];
 const MQTT_URL = 'wss://broker.emqx.io:8084/mqtt';
@@ -160,14 +174,7 @@ function getTablePos(i) {
 }
 
 const CREATOR_PALETTE = [
-  0x0B35FE,
-  0x00E472,
-  0xFF4E20,
-  0xFF7A00,
-  0x2E85FF,
-  0x00B85C,
-  0x7A5CFF,
-  0xFF9A4D
+  0x0B35FE, 0x00E472, 0xFF4E20, 0xFF7A00, 0x2E85FF, 0x00B85C, 0x7A5CFF, 0xFF9A4D
 ];
 
 function getDynamicColor(index) {
@@ -182,7 +189,8 @@ let state = null;
 let mode = 'lobby';
 let myAnswer = null;
 let answered = false;
-let baseCharModel = null; // modŤle GLB chargť une fois
+let baseCharModel = null;
+let glbLoaded = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -460,17 +468,16 @@ function applyCreatorColor(obj, hexColor) {
 function makeCharFromGLB(color, name, isMe) {
   const g = new THREE.Group();
   if (!baseCharModel) {
-    g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: null };
+    g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: null, ready: false };
     g.add(makeLabel(name, isMe));
     return g;
   }
   const clone = baseCharModel.clone();
   applyCreatorColor(clone, color);
-  // scale et position pour correspondre ŗ la scŤne
-  clone.scale.set(0.01, 0.01, 0.01); // ajustť selon la taille du GLB
+  clone.scale.set(0.012, 0.012, 0.012);
   g.add(clone);
   g.add(makeLabel(name, isMe));
-  g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: clone };
+  g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: clone, ready: true };
   return g;
 }
 
@@ -620,11 +627,11 @@ function drawBoard() {
   bx.fillStyle = '#ff6b6b'; bx.fillText('Non ' + no, 724, 330);
 
   bx.font = 'bold 22px Arial'; bx.fillStyle = '#9fb0ff';
-  bx.fillText(answeredCount + ' / ' + total + ' ont rťpondu', 512, 400);
+  bx.fillText(answeredCount + ' / ' + total + ' ont répondu', 512, 400);
 
   if (closed) {
     bx.font = 'bold 30px Arial'; bx.fillStyle = '#ffb300';
-    bx.fillText('Bonne rťponse : ' + OPTIONS[q.ans], 512, 465);
+    bx.fillText('Bonne réponse : ' + OPTIONS[q.ans], 512, 465);
   }
   bt.needsUpdate = true;
 }
@@ -701,9 +708,9 @@ function layoutPlayers(list) {
 function updateHint() {
   const started = state && state.started;
   if (!started) {
-    $('h').textContent = isHost ? 'Partage le code de la salle pour inviter des joueurs' : "En attente du lancement par l'hŰte...";
+    $('h').textContent = isHost ? 'Partage le code de la salle pour inviter des joueurs' : "En attente du lancement par l'hôte...";
   } else {
-    $('h').textContent = isHost ? "Tu es l'hŰte - GŤre la partie" : 'Les rťponses apparaissent au fil du jeu';
+    $('h').textContent = isHost ? "Tu es l'hôte - Gère la partie" : 'Les réponses apparaissent au fil du jeu';
   }
 }
 
@@ -740,7 +747,7 @@ function showQuestion() {
   if (!q) {
     panel.style.display = 'none';
     revealBtn.style.display = 'none';
-    $('qStatus').textContent = 'Partie terminťe !';
+    $('qStatus').textContent = 'Partie terminée !';
     return;
   }
   const already = state.answers && state.answers[playerId] !== undefined;
@@ -761,19 +768,19 @@ function showQuestion() {
     panel.style.display = 'block';
     const yes = Object.values(state.answers || {}).filter((a) => a === 0).length;
     const no = Object.values(state.answers || {}).filter((a) => a === 1).length;
-    $('qStatus').textContent = 'Rťsultats : Oui ' + yes + ' / Non ' + no;
+    $('qStatus').textContent = 'Résultats : Oui ' + yes + ' / Non ' + no;
     $('qAnswers').innerHTML = '';
   } else {
     panel.style.display = 'block';
     if (isHost) {
-      $('qStatus').textContent = "Tu es l'hŰte - les joueurs rťpondent...";
+      $('qStatus').textContent = "Tu es l'hôte - les joueurs répondent...";
     } else {
-      $('qStatus').textContent = already ? 'Votre rťponse est enregistrťe.' : 'Choisissez votre rťponse.';
+      $('qStatus').textContent = already ? 'Votre réponse est enregistrée.' : 'Choisissez votre réponse.';
     }
   }
   if (isHost && state.started) {
     revealBtn.style.display = 'block';
-    revealBtn.textContent = state.roundClosed ? 'Question suivante ▶' : 'Rťvťler les rťsultats';
+    revealBtn.textContent = state.roundClosed ? 'Question suivante ▶' : 'Révéler les résultats';
   } else {
     revealBtn.style.display = 'none';
   }
@@ -814,7 +821,7 @@ function setStatus(msg, isError) {
 function updatePlayersList(list) {
   const items = list.map((p) => {
     const me = p.id === playerId ? ' me' : '';
-    const tag = p.id === state.hostId ? 'hŰte' : '';
+    const tag = p.id === state.hostId ? 'hôte' : '';
     return `<div class="p${me}">${escapeHtml(p.name)}<span class="tag">${tag}</span></div>`;
   }).join('');
   $('playersItems').innerHTML = items || '<div class="p">Aucun joueur</div>';
@@ -876,7 +883,7 @@ function publishEvent(ev) {
 function mqttConnect(onReady) {
   if (typeof mqtt === 'undefined') {
     busy = false;
-    setStatus('Impossible de charger la librairie rťseau. Vťrifie ta connexion.', true);
+    setStatus('Impossible de charger la librairie réseau. Vérifie ta connexion.', true);
     return;
   }
   if (client) {
@@ -903,7 +910,7 @@ function mqttConnect(onReady) {
   myClient.on('error', (e) => {
     if (client !== myClient) return;
     busy = false;
-    setStatus('Erreur rťseau : ' + (e && e.message ? e.message : 'connexion impossible'), true);
+    setStatus('Erreur réseau : ' + (e && e.message ? e.message : 'connexion impossible'), true);
   });
   myClient.on('message', (topic, payload) => {
     if (client !== myClient) return;
@@ -921,7 +928,7 @@ function onMessage(topic, payload) {
     if (isHost) {
       handleEvent(msg);
     } else if (msg.type === 'closed') {
-      setStatus("L'hŰte a fermť la salle.", true);
+      setStatus("L'hôte a fermé la salle.", true);
       leaveRoom();
     }
   }
@@ -963,7 +970,7 @@ function handleEvent(msg) {
 function handleIncomingState(msg) {
   if (!msg.players) return;
   if (msg.ts && Date.now() - msg.ts > 60000) {
-    setStatus('Salle expirťe ou hŰte hors ligne.', true);
+    setStatus('Salle expirée ou hôte hors ligne.', true);
     return;
   }
   lastStateTs = Date.now();
@@ -972,7 +979,7 @@ function handleIncomingState(msg) {
     clearInterval(joinTimer);
     joinTimer = null;
   }
-  setStatus('Connectť — salle ' + roomId);
+  setStatus('Connecté — salle ' + roomId);
 }
 
 function enterRoomUI() {
@@ -988,7 +995,7 @@ function createRoom() {
   playerName = sanitizeName($('nameInput').value);
   localStorage.setItem('cq3d_name', playerName);
   busy = true;
-  setStatus('Crťation de la salle...');
+  setStatus('Création de la salle...');
   mqttConnect(() => {
     busy = false;
     isHost = true;
@@ -1009,7 +1016,7 @@ function createRoom() {
       startWatchdog();
     });
     enterRoomUI();
-    setStatus('Salle crťťe. Partage le code ' + roomId + '.');
+    setStatus('Salle créée. Partage le code ' + roomId + '.');
     applyState(state);
     history.replaceState(null, '', '?room=' + roomId);
   });
@@ -1022,7 +1029,7 @@ function joinRoom(code) {
   playerName = sanitizeName($('nameInput').value);
   localStorage.setItem('cq3d_name', playerName);
   busy = true;
-  setStatus('Connexion ŗ la salle ' + clean + '...');
+  setStatus('Connexion à la salle ' + clean + '...');
   mqttConnect(() => {
     busy = false;
     isHost = false;
@@ -1036,7 +1043,7 @@ function joinRoom(code) {
     history.replaceState(null, '', '?room=' + roomId);
     setTimeout(() => {
       if (!state) {
-        setStatus('Salle introuvable ou hŰte hors ligne. Vťrifie le code.', true);
+        setStatus('Salle introuvable ou hôte hors ligne. Vérifie le code.', true);
         if (joinTimer) { clearInterval(joinTimer); joinTimer = null; }
       }
     }, 9000);
@@ -1093,7 +1100,7 @@ function startWatchdog() {
   if (watchdogTimer) clearInterval(watchdogTimer);
   watchdogTimer = setInterval(() => {
     if (!isHost && roomId && lastStateTs && Date.now() - lastStateTs > 12000) {
-      setStatus('HŰte dťconnectť.', true);
+      setStatus('Hôte déconnecté.', true);
     }
   }, 4000);
 }
@@ -1160,7 +1167,7 @@ $('lbClose').onclick = hideLeaderboard;
 $('copyBtn').onclick = () => {
   if (!roomId) return;
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(roomId).then(() => setStatus('Code copiť : ' + roomId)).catch(() => setStatus('Code : ' + roomId));
+    navigator.clipboard.writeText(roomId).then(() => setStatus('Code copié : ' + roomId)).catch(() => setStatus('Code : ' + roomId));
   } else {
     setStatus('Code : ' + roomId);
   }
@@ -1193,16 +1200,28 @@ if (params.get('room')) $('roomInput').value = params.get('room').toUpperCase();
 $('roomPanel').style.display = 'block';
 setMode('lobby');
 
-// Charger le modŤle GLB une seule fois au dťmarrage
-const loadMsg = $('loadMsg');
-loadMsg.style.display = 'block';
+const loadOverlay = $('loadOverlay');
+const loadProgress = $('loadProgress');
+const loadPct = $('loadPct');
+
 const loader = new THREE.GLTFLoader();
 loader.load('a29c166fc5b8fbde7d818d1e2ec3edbe.glb', (gltf) => {
   baseCharModel = gltf.scene;
-  loadMsg.style.display = 'none';
-}, undefined, (err) => {
+  glbLoaded = true;
+  loadProgress.style.width = '100%';
+  loadPct.textContent = '100%';
+  setTimeout(() => { loadOverlay.style.display = 'none'; }, 600);
+}, (xhr) => {
+  if (xhr.lengthComputable) {
+    const pct = Math.round((xhr.loaded / xhr.total) * 100);
+    loadProgress.style.width = pct + '%';
+    loadPct.textContent = pct + '%';
+  }
+}, (err) => {
   console.error('Erreur chargement GLB:', err);
-  loadMsg.style.display = 'none';
+  loadProgress.style.width = '100%';
+  loadPct.textContent = 'Erreur - modèle par défaut';
+  setTimeout(() => { loadOverlay.style.display = 'none'; }, 1200);
 });
 
 const clk = new THREE.Clock();
