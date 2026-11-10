@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz 3D</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#5fc8ff;font-family:Arial,Helvetica,sans-serif}
+canvas{display:block}
+#t{position:fixed;left:0;right:0;bottom:9%;text-align:center;color:#fff;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 3px rgba(0,0,0,.45);pointer-events:none;padding:0 20px}
+#b{position:fixed;top:34px;left:0;right:0;text-align:center}#b button{margin:0 4px;padding:8px 18px;border:0;border-radius:20px;font-weight:700;font-size:14px;background:#fff;color:#234}#b button.on{background:#ffb300}
+#h{position:fixed;top:10px;left:0;right:0;text-align:center;color:#fff;font-size:12px;opacity:.8;text-shadow:0 1px 2px rgba(0,0,0,.5);pointer-events:none}
+</style></head><body>
+<div id="h">Prêt à lancer la partie !</div>
+<div id="b"><button id="b1" class="on">Lobby</button><button id="b2">Table</button></div>
+<div id="t">Joueurs en salle :<br><span id="c">0/19</span></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ========== CONFIGURATION ==========
+const QUESTION = "Nommez un langage de programmation";
+const ANSWERS = [
+  ['JavaScript', 45],
+  ['Python', 38],
+  ['Java', 32],
+  ['C++', 28],
+  ['C#', 25],
+  ['PHP', 22],
+  ['Ruby', 18],
+  ['Go', 15],
+  ['Swift', 12],
+  ['Kotlin', 10]
+];
+
+const MAX_PLAYERS = 19;
+
+// ========== SCENE SETUP ==========
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x5fc8ff);
+const cam = new THREE.PerspectiveCamera(40, innerWidth/innerHeight, 0.1, 200);
+const ren = new THREE.WebGLRenderer({ antialias: true });
+ren.setPixelRatio(Math.min(devicePixelRatio, 2));
+ren.setSize(innerWidth, innerHeight);
+ren.shadowMap.enabled = true;
+ren.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(ren.domElement);
+
+// ========== LIGHTING ==========
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 1.1));
+const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+dl.position.set(3, 10, 8);
+dl.castShadow = true;
+dl.shadow.mapSize.width = 1024;
+dl.shadow.mapSize.height = 1024;
+scene.add(dl);
+
+// Additional lights
+const light1 = new THREE.PointLight(0xffb300, 0.3, 15);
+light1.position.set(5, 8, 5);
+scene.add(light1);
+const light2 = new THREE.PointLight(0xffb300, 0.3, 15);
+light2.position.set(-5, 8, 5);
+scene.add(light2);
+
+// ========== MATERIALS ==========
+const L = (c) => new THREE.MeshLambertMaterial({ color: c });
+const woodDark = new THREE.MeshStandardMaterial({ color: 0x5a3e2b, roughness: 0.7, metalness: 0.1 });
+const woodMedium = new THREE.MeshStandardMaterial({ color: 0xc58443, roughness: 0.6, metalness: 0.15 });
+const metalGold = new THREE.MeshStandardMaterial({ color: 0xffb300, roughness: 0.3, metalness: 0.8 });
+const fabricBlue = new THREE.MeshStandardMaterial({ color: 0x2d3490, roughness: 0.8, metalness: 0.05 });
+
+// ========== FLOOR ==========
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 60), L(0x8e959c));
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Striped floor
+for (let i = 0; i < 8; i++) {
+  const s = new THREE.Mesh(
+    new THREE.PlaneGeometry(80, 1.1),
+    L(i % 2 ? 0x949ba2 : 0x8a9198)
+  );
+  s.rotation.x = -Math.PI / 2;
+  s.position.set(0, 0.01, -4 + i * 2.2);
+  s.receiveShadow = true;
+  scene.add(s);
+}
+
+// ========== CHARACTER FUNCTIONS ==========
+function cap(r, h, seg = 32) {
+  const p = [], n = 14;
+  for (let i = 0; i <= n; i++) {
+    const a = i / n * Math.PI / 2;
+    p.push(new THREE.Vector2(Math.sin(a) * r, -Math.cos(a) * r));
+  }
+  for (let i = 0; i <= n; i++) {
+    const a = i / n * Math.PI / 2;
+    p.push(new THREE.Vector2(Math.cos(a) * r, h + Math.sin(a) * r));
+  }
+  return new THREE.LatheGeometry(p, seg);
+}
+
+const shadowTex = (() => {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(32, 32, 2, 32, 32, 32);
+  g.addColorStop(0, 'rgba(0,0,0,.35)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g;
+  x.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+})();
+
+function makeChar(color, s = 1, crowd = false) {
+  const g = new THREE.Group();
+  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0 });
+  const sh = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.3, 1.3),
+    new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false })
+  );
+  sh.rotation.x = -Math.PI / 2;
+  sh.position.y = 0.02;
+  g.add(sh);
+  const legs = [];
+  [-0.17, 0.17].forEach(x => {
+    const l = new THREE.Mesh(cap(0.15, 0.32), m);
+    l.position.set(x, 0.15, 0);
+    g.add(l);
+    legs.push(l);
+  });
+  if (crowd) {
+    const b = new THREE.Mesh(cap(0.36, 0.3), m);
+    b.position.y = 0.95;
+    g.add(b);
+    const skin = new THREE.MeshStandardMaterial({
+      color: [0xf2c9a0, 0xd9a273, 0x8d5a3b, 0xf7e0c8][Math.random() * 4 | 0],
+      roughness: 0.6
+    });
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, 32, 24), skin);
+    head.position.y = 1.72;
+    g.add(head);
+    const hc = [0xff7a1a, 0x222222, 0xe53935, 0x3a5a2a, 0xf5f5f5, 0xf4c430, 0xe91e8c, 0x1e88e5][Math.random() * 8 | 0];
+    const hat = new THREE.Mesh(
+      new THREE.SphereGeometry(0.45, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2.1),
+      new THREE.MeshStandardMaterial({ color: hc, roughness: 0.5 })
+    );
+    hat.position.y = 1.78;
+    g.add(hat);
+    const gog = Math.random() < 0.4;
+    const ec = gog ? 0x2ecc71 : 0x111111;
+    [-0.15, 0.15].forEach(x => {
+      const e = new THREE.Mesh(
+        new THREE.SphereGeometry(gog ? 0.11 : 0.055, 16, 12),
+        new THREE.MeshStandardMaterial({ color: ec, roughness: 0.3 })
+      );
+      e.position.set(x, 1.7, 0.37);
+      g.add(e);
+    });
+  } else {
+    const b = new THREE.Mesh(cap(0.42, 0.68), m);
+    b.position.y = 1.02;
+    g.add(b);
+  }
+  const arms = [];
+  [-1, 1].forEach(d => {
+    const p = new THREE.Group();
+    p.position.set(d * (crowd ? 0.4 : 0.5), 1.2, 0);
+    const a = new THREE.Mesh(cap(0.1, 0.36), m);
+    a.position.y = -0.52;
+    p.add(a);
+    p.rotation.z = d * 0.1;
+    g.add(p);
+    arms.push(p);
+  });
+  g.scale.setScalar(s);
+  g.userData = { arms, legs, ph: Math.random() * 6, isLobbyPlayer: true };
+  return g;
+}
+
+function label(txt, col = '#fff') {
+  const c = document.createElement('canvas');
+  c.width = 256;
+  c.height = 64;
+  const x = c.getContext('2d');
+  x.font = 'bold 34px Arial';
+  x.textAlign = 'center';
+  x.fillStyle = col;
+  x.strokeStyle = 'rgba(0,0,0,.5)';
+  x.lineWidth = 5;
+  x.strokeText(txt, 128, 42);
+  x.fillText(txt, 128, 42);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: new THREE.CanvasTexture(c),
+    transparent: true,
+    depthTest: false
+  }));
+  sp.scale.set(1.8, 0.45, 1);
+  sp.position.y = 2.3;
+  return sp;
+}
+
+// ========== STANDS / GRADINS ==========
+const stand = new THREE.Group();
+const cols = [0xff7a1a, 0x1e88e5, 0x222222, 0xe53935, 0x43a047, 0xfdd835, 0x8e24aa];
+for (let r = 0; r < 5; r++) {
+  const st = new THREE.Mesh(
+    new THREE.BoxGeometry(15, 0.5 * (r + 1), 1.3),
+    L(r % 2 ? 0x6d7b8d : 0x7a8799)
+  );
+  st.position.set(0, 0.25 * (r + 1), -7 - r * 1.3);
+  scene.add(st);
+  for (let i = 0; i < 14; i++) {
+    const f = makeChar(cols[Math.random() * 7 | 0], 0.5, true);
+    f.position.set(-6.5 + i * 1, 0.5 * (r + 1), -7 - r * 1.3);
+    scene.add(f);
+  }
+}
+[-1, 1].forEach(d => {
+  const w = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3.4, 7.5), L(0xb7c3d6));
+  w.position.set(d * 7.8, 1.7, -9.5);
+  scene.add(w);
+});
+
+// ========== PLAYERS ==========
+const players = [];
+const playerColors = [0xf0559b, 0x34c759, 0x2f7bff, 0xa98be6, 0xff7043, 0x26c6da, 0xffee58, 0x9ccc65, 0xef5350, 0x8d6e63, 0xab47bc, 0x7e57c2, 0x5c6bc0, 0x42a5f5, 0xff9800, 0x673ab7, 0x00bcd4, 0x8bc34a, 0x3f51b5];
+const playerNames = ['Charlie', 'Aaron', 'You!', 'Dana', 'Léo', 'Mia', 'Zed', 'Kai', 'Nora', 'Max', 'Ivy', 'Sam', 'Eli', 'Zoe', 'Tom', 'Lux', 'Jade', 'Noah', 'Emma'];
+
+// Initial positions for lobby (random but spread out)
+const lobbyPositions = [
+  {-1.5, 0}, {0.1, -0.4}, {-0.1, 1.4}, {1.5, 0.6},
+  {2.5, -1}, {-2, 1.5}, {1, -2}, {-3, 0},
+  {2, 1}, {-1.8, -1.5}, {0.5, 2}, {1.8, -0.8},
+  {-2.5, -1.2}, {0.8, 1.8}, {-1.2, -1}, {2.2, 0.5},
+  {-0.8, 2.2}, {1.2, 0.3}, {-2.2, -0.5}
+];
+
+// Create all players in lobby
+playerNames.slice(0, MAX_PLAYERS).forEach((name, i) => {
+  const p = makeChar(playerColors[i % playerColors.length], 1.1);
+  p.position.set(lobbyPositions[i][0], 0, lobbyPositions[i][1]);
+  const l = label(name, name === 'You!' ? '#ffb300' : '#fff');
+  p.add(l);
+  scene.add(p);
+  players.push(p);
+  p.userData.name = name;
+  p.userData.lobbyPosition = new THREE.Vector3(lobbyPositions[i][0], 0, lobbyPositions[i][1]);
+});
+
+// Update player count
+document.getElementById('c').textContent = players.length + '/' + MAX_PLAYERS;
+
+// ========== TABLE GROUP ==========
+const tg = new THREE.Group();
+tg.visible = false;
+scene.add(tg);
+
+// Table
+const tableBase = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.3, 32), woodDark);
+tableBase.position.y = 0.15;
+tableBase.castShadow = true;
+tableBase.receiveShadow = true;
+tg.add(tableBase);
+
+const tableTop = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 0.2, 48), woodMedium);
+tableTop.position.y = 1.35;
+tableTop.castShadow = true;
+tableTop.receiveShadow = true;
+tg.add(tableTop);
+
+const tableEdge = new THREE.Mesh(new THREE.RingGeometry(4.1, 4.2, 48), woodDark);
+tableEdge.rotation.x = -Math.PI / 2;
+tableEdge.position.y = 1.36;
+tableEdge.castShadow = true;
+tg.add(tableEdge);
+
+const goldRing = new THREE.Mesh(new THREE.RingGeometry(4.25, 4.45, 64), metalGold);
+goldRing.rotation.x = -Math.PI / 2;
+goldRing.position.y = 1.37;
+goldRing.castShadow = true;
+tg.add(goldRing);
+
+// Table legs
+const legPositions = [{x: 2.5, z: 2.5}, {x: -2.5, z: 2.5}, {x: 2.5, z: -2.5}, {x: -2.5, z: -2.5}];
+legPositions.forEach(pos => {
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, 1.2, 16), woodDark);
+  leg.position.set(pos.x, 0.6, pos.z);
+  leg.castShadow = true;
+  leg.receiveShadow = true;
+  tg.add(leg);
+
+  const connector = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.08, 16, 32), woodMedium);
+  connector.rotation.x = Math.PI / 2;
+  connector.position.set(pos.x, 1.3, pos.z);
+  connector.castShadow = true;
+  tg.add(connector);
+});
+
+// Central column
+const centralCol = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.7, 1.2, 32), woodDark);
+centralCol.position.y = 0.6;
+centralCol.castShadow = true;
+tg.add(centralCol);
+
+// Table felt
+const tableFelt = new THREE.Mesh(new THREE.CircleGeometry(3.8, 64), fabricBlue);
+tableFelt.rotation.x = -Math.PI / 2;
+tableFelt.position.y = 1.37;
+tableFelt.receiveShadow = true;
+tg.add(tableFelt);
+
+// Chairs
+const chairPositions = [
+  { angle: 0, radius: 5.5 },
+  { angle: Math.PI * 2 / 6, radius: 5.5 },
+  { angle: Math.PI * 4 / 6, radius: 5.5 },
+  { angle: Math.PI * 6 / 6, radius: 5.5 },
+  { angle: Math.PI * 8 / 6, radius: 5.5 },
+  { angle: Math.PI * 10 / 6, radius: 5.5 }
+];
+
+chairPositions.forEach(pos => {
+  const chairGroup = new THREE.Group();
+  const angle = pos.angle;
+  const x = Math.sin(angle) * pos.radius;
+  const z = Math.cos(angle) * pos.radius;
+  chairGroup.position.set(x, 0, z);
+  chairGroup.rotation.y = -angle + Math.PI;
+
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.15, 0.8), woodMedium);
+  seat.position.y = 0.15;
+  seat.castShadow = true;
+  chairGroup.add(seat);
+
+  const back = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 0.1), woodDark);
+  back.position.set(0, 0.55, -0.35);
+  back.castShadow = true;
+  chairGroup.add(back);
+
+  const legGeom = new THREE.CylinderGeometry(0.08, 0.08, 0.3, 8);
+  const legMat = new THREE.MeshStandardMaterial({ color: 0x7a4a22, roughness: 0.7 });
+  [-0.3, 0.3].forEach(dx => {
+    [-0.3, 0.3].forEach(dz => {
+      const leg = new THREE.Mesh(legGeom, legMat);
+      leg.position.set(dx, -0.15, dz);
+      leg.castShadow = true;
+      chairGroup.add(leg);
+    });
+  });
+
+  tg.add(chairGroup);
+});
+
+// Table players positions (around the table)
+const tablePlayerPositions = [
+  { angle: 0, radius: 4.2 },
+  { angle: Math.PI * 2 / 6, radius: 4.2 },
+  { angle: Math.PI * 4 / 6, radius: 4.2 },
+  { angle: Math.PI * 6 / 6, radius: 4.2 },
+  { angle: Math.PI * 8 / 6, radius: 4.2 },
+  { angle: Math.PI * 10 / 6, radius: 4.2 }
+];
+
+// Score board
+const bc = document.createElement('canvas');
+bc.width = 1024;
+bc.height = 512;
+const bx = bc.getContext('2d');
+let rv = 0;
+const bt = new THREE.CanvasTexture(bc);
+
+function drawBoard() {
+  bx.fillStyle = '#1b2a8f';
+  bx.fillRect(0, 0, 1024, 512);
+  bx.strokeStyle = '#ffb300';
+  bx.lineWidth = 14;
+  bx.strokeRect(7, 7, 1010, 498);
+  bx.fillStyle = '#fff';
+  bx.font = 'bold 38px Arial';
+  bx.textAlign = 'center';
+  bx.fillText(QUESTION, 512, 70);
+  
+  ANSWERS.forEach((a, i) => {
+    const y = 110 + i * 76;
+    const on = i < rv;
+    bx.fillStyle = on ? '#ffb300' : '#0d1560';
+    bx.fillRect(80, y, 864, 62);
+    bx.fillStyle = on ? '#1b1b1b' : '#7f8cff';
+    bx.font = 'bold 38px Arial';
+    bx.textAlign = 'left';
+    bx.fillText(on ? a[0] : String(i + 1), 110, y + 44);
+    if (on) {
+      bx.textAlign = 'right';
+      bx.fillText(String(a[1]), 914, y + 44);
+    }
+  });
+  bt.needsUpdate = true;
+}
+
+drawBoard();
+
+const board = new THREE.Mesh(
+  new THREE.PlaneGeometry(9, 4.5),
+  new THREE.MeshBasicMaterial({ map: bt })
+);
+board.position.set(0, 4.6, -7);
+tg.add(board);
+
+// ========== MODE MANAGEMENT ==========
+let mode = 'lobby';
+const lobbyObjs = scene.children.filter(o => !o.isLight && o !== tg);
+
+function reveal() {
+  rv = (rv + 1) % (ANSWERS.length + 1);
+  drawBoard();
+  
+  // Make a random table player raise hand
+  const tablePlayers = players.filter(p => p.parent === tg);
+  if (tablePlayers.length > 0) {
+    tablePlayers.forEach(c => c.userData.up = false);
+    if (rv > 0) tablePlayers[Math.random() * tablePlayers.length | 0].userData.up = true;
+  }
+}
+
+function setMode(m) {
+  mode = m;
+  const lb = m === 'lobby';
+  
+  if (lb) {
+    // Move all players back to lobby positions
+    players.forEach(p => {
+      p.visible = true;
+      p.position.copy(p.userData.lobbyPosition);
+      p.rotation.y = 0;
+      if (p.parent) p.parent.remove(p);
+      scene.add(p);
+    });
+  } else {
+    // Move up to 6 players to table positions
+    players.slice(0, 6).forEach((p, i) => {
+      const pos = tablePlayerPositions[i];
+      const angle = pos.angle;
+      p.position.set(
+        Math.sin(angle) * pos.radius,
+        0,
+        Math.cos(angle) * pos.radius
+      );
+      p.rotation.y = -angle + Math.PI;
+      if (p.parent) p.parent.remove(p);
+      tg.add(p);
+      p.userData.up = false;
+    });
+    
+    // Hide remaining players
+    players.slice(6).forEach(p => {
+      p.visible = false;
+    });
+    
+    // Reset revealed answers
+    rv = 0;
+    drawBoard();
+  }
+  
+  // Hide/show objects
+  lobbyObjs.forEach(o => o.visible = lb);
+  tg.visible = !lb;
+  
+  // Update background
+  scene.background.set(lb ? 0x5fc8ff : 0x15195c);
+  
+  // Update UI
+  document.getElementById('t').style.display = lb ? '' : 'none';
+  document.getElementById('h').textContent = lb 
+    ? 'Prêt à lancer la partie !' 
+    : 'Cliquez pour révéler les réponses';
+  document.getElementById('b1').className = lb ? 'on' : '';
+  document.getElementById('b2').className = lb ? '' : 'on';
+  
+  // Update camera
+  cam.position.set(0, lb ? 8 : 7, lb ? 12.5 : 11);
+  cam.lookAt(0, lb ? 1.2 : 2, lb ? -2 : -1);
+}
+
+// Button handlers
+document.getElementById('b1').onclick = () => setMode('lobby');
+document.getElementById('b2').onclick = () => setMode('table');
+
+// Pointer events - ONLY for revealing answers in table mode
+let mx = 0;
+addEventListener('pointermove', e => {
+  mx = (e.clientX / innerWidth - 0.5) * 2;
+});
+
+addEventListener('pointerdown', e => {
+  if (e.target.closest && e.target.closest('button')) return;
+  if (mode === 'table') {
+    reveal();
+  }
+});
+
+addEventListener('resize', () => {
+  cam.aspect = innerWidth / innerHeight;
+  cam.updateProjectionMatrix();
+  ren.setSize(innerWidth, innerHeight);
+});
+
+// ========== INITIALIZE ==========
+setMode('lobby');
+
+// Animation loop
+const clk = new THREE.Clock();
+(function loop() {
+  const t = clk.getElapsedTime();
+  
+  // Animate all players
+  players.forEach(p => {
+    const u = p.userData;
+    const s = Math.sin(t * 3 + u.ph);
+    p.position.y = Math.abs(s) * 0.06;
+    if (u.arms) {
+      u.arms[0].rotation.x = s * 0.25;
+      u.arms[1].rotation.x = -s * 0.25;
+    }
+    p.rotation.y = Math.sin(t * 0.8 + u.ph) * 0.12;
+    
+    // Table player raising hand animation
+    if (u.up) {
+      if (u.arms) {
+        u.arms[0].rotation.x = -1.5 + Math.sin(t * 10) * 0.1;
+        u.arms[1].rotation.x = -1.5 + Math.sin(t * 10) * 0.1;
+      }
+    }
+  });
+  
+  // Camera movement
+  cam.position.x += ((mx * 3) - cam.position.x) * 0.05;
+  if (mode === 'lobby') {
+    cam.lookAt(0, 1.2, -2);
+  } else {
+    cam.lookAt(0, 2, -1);
+  }
+  
+  ren.render(scene, cam);
+  requestAnimationFrame(loop);
+})();
+</script></body></html>
