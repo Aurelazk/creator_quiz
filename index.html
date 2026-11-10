@@ -65,7 +65,7 @@ const TABLE_SEATS = 6;
 const MQTT_URL = 'wss://broker.emqx.io:8084/mqtt';
 const TOPIC_BASE = 'creatorquiz3d/';
 
-const playerColors = [0x8e3b46, 0x2e6f4e, 0x33507e, 0x6a4f8e, 0xb06a3b, 0x3b6e77, 0x9e8a3b, 0x5a7050, 0x99433e, 0x6e5138, 0x7c4d78, 0x4f5a80, 0x445a80, 0x3f6a8e, 0xa05a28, 0x5d4a78, 0x3f7078, 0x6d7d42, 0x505a80];
+const playerColors = [0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0x2b8cff];
 
 const lobbyPositions = [
   [-1.5, 0], [0.1, -0.4], [-0.1, 1.4], [1.5, 0.6],
@@ -344,82 +344,64 @@ const hairColors = [0x1d1712, 0x3a2a1a, 0x5c4326, 0x7d5a3a, 0x2a2a2e, 0x8a8f96];
 
 function makeChar(color, name, isMe) {
   const g = new THREE.Group();
-  const skin = new THREE.MeshStandardMaterial({ color: skinTones[Math.random() * skinTones.length | 0], roughness: 0.55 });
-  const cloth = new THREE.MeshStandardMaterial({ color, roughness: 0.92 });
-  const pantsM = new THREE.MeshStandardMaterial({ color: 0x2b3040, roughness: 0.95 });
-  const shoeM = new THREE.MeshStandardMaterial({ color: 0x17191f, roughness: 0.3, metalness: 0.15 });
-  const hairM = new THREE.MeshStandardMaterial({ color: hairColors[Math.random() * hairColors.length | 0], roughness: 0.85 });
+  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.4, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.2 });
 
   const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.05), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2;
   sh.position.y = 0.015;
   g.add(sh);
 
-  // Jambes (pivot hanche pour animation)
-  const legs = [];
-  [-0.11, 0.11].forEach((dx) => {
-    const hip = new THREE.Group();
-    hip.position.set(dx, 0.74, 0);
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.1, 0.66, 12), pantsM);
-    leg.position.y = -0.36;
-    leg.castShadow = true;
-    hip.add(leg);
-    const shoe = new THREE.Mesh(new THREE.SphereGeometry(0.095, 12, 8), shoeM);
-    shoe.scale.set(1, 0.6, 1.5);
-    shoe.position.set(0, -0.72, 0.04);
-    hip.add(shoe);
-    g.add(hip);
-    legs.push(hip);
-  });
-
-  // Torse (capsule)
-  const torso = new THREE.Mesh(new THREE.SphereGeometry(0.23, 18, 14), cloth);
-  torso.scale.set(1, 1.55, 0.72);
-  torso.position.y = 1.06;
-  torso.castShadow = true;
-  g.add(torso);
+  // Tete (lisse, sans visage)
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.17, 24, 20), clay);
+  head.position.y = 1.55;
+  g.add(head);
 
   // Col
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.13, 10), skin);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.18, 12), clay);
   neck.position.y = 1.42;
   g.add(neck);
 
-  // Tete
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 22, 18), skin);
-  head.scale.set(1, 1.12, 1.02);
-  head.position.y = 1.58;
-  head.castShadow = true;
-  g.add(head);
+  // Torse (capsule arrondie)
+  const torso = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 16), clay);
+  torso.scale.set(1, 1.7, 0.8);
+  torso.position.y = 1.05;
+  g.add(torso);
 
-  // Cheveux
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.172, 22, 14, 0, Math.PI * 2, 0, Math.PI / 2.05), hairM);
-  hair.scale.set(1, 1.08, 1.03);
-  hair.position.set(0, 1.575, -0.008);
-  hair.rotation.x = -0.12;
-  g.add(hair);
-
-  // Yeux
-  [-0.055, 0.055].forEach((ex) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.019, 10, 8), new THREE.MeshStandardMaterial({ color: 0x14161a, roughness: 0.35 }));
-    eye.position.set(ex, 1.6, 0.142);
-    g.add(eye);
-  });
-
-  // Bras (pivot epaule + main)
+  // Bras (epaule + avant-bras + main arrondis)
   const arms = [];
   [-1, 1].forEach((d) => {
     const p = new THREE.Group();
-    p.position.set(d * 0.27, 1.31, 0);
-    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.06, 0.52, 12), cloth);
-    arm.position.y = -0.27;
-    arm.castShadow = true;
+    p.position.set(d * 0.3, 1.25, 0);
+    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), clay);
+    p.add(shoulder);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.5, 12), clay);
+    arm.position.y = -0.28;
     p.add(arm);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 10), skin);
-    hand.position.y = -0.55;
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), clay);
+    hand.position.y = -0.58;
     p.add(hand);
     p.rotation.z = d * 0.1;
     g.add(p);
     arms.push(p);
+  });
+
+  // Jambes (cuisse + mollet + pied arrondis)
+  const legs = [];
+  [-0.11, 0.11].forEach((dx) => {
+    const hip = new THREE.Group();
+    hip.position.set(dx, 0.72, 0);
+    const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.55, 12), clay);
+    thigh.position.y = -0.3;
+    hip.add(thigh);
+    const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.08, 0.55, 12), clay);
+    shin.position.y = -0.85;
+    hip.add(shin);
+    const foot = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), clay);
+    foot.scale.set(1, 0.5, 1.2);
+    foot.position.y = -1.18;
+    hip.add(foot);
+    g.add(hip);
+    legs.push(hip);
   });
 
   g.add(makeLabel(name, isMe));
