@@ -75,6 +75,8 @@ canvas{display:block}
 #leaderboard .lb-row.me .lb-score{color:var(--text-gold)}
 #leaderboard .lb-close{background:var(--btn-primary);color:var(--creator-white);border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;width:100%}
 #leaderboard .lb-close:hover{background:var(--btn-hover)}
+
+#loadMsg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#fff;padding:20px 30px;border-radius:16px;text-align:center;z-index:2000;display:none}
 </style></head><body>
 <div id="h">Quiz 3D Multijoueur - CREATOR</div>
 <div id="t">En attente de salle...<br><span id="c">0 joueur</span></div>
@@ -106,8 +108,10 @@ canvas{display:block}
   </div>
   <div id="status"></div>
 </div>
+<div id="loadMsg">Chargement du modčle 3D…</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 const QUESTIONS = [
   { q: "JavaScript est un langage de programmation ?", ans: 0 },
@@ -117,9 +121,9 @@ const QUESTIONS = [
   { q: "Un serveur peut tourner sans base de données ?", ans: 0 },
   { q: "Le Wi-Fi est plus rapide que le câble Ethernet ?", ans: 1 },
   { q: "Un octet fait 8 bits ?", ans: 0 },
-  { q: "Linux est un système d'exploitation ?", ans: 0 },
-  { q: "Une API sert à échanger des données entre logiciels ?", ans: 0 },
-  { q: "Le cloud stocke des données sur votre disque local ?", ans: 1 }
+  { q: "Linux est un systŤme d'exploitation ?", ans: 0 },
+  { q: "Une API sert ŗ ťchanger des donnťes entre logiciels ?", ans: 0 },
+  { q: "Le cloud stocke des donnťes sur votre disque local ?", ans: 1 }
 ];
 const OPTIONS = ['Oui', 'Non'];
 const MQTT_URL = 'wss://broker.emqx.io:8084/mqtt';
@@ -170,13 +174,6 @@ function getDynamicColor(index) {
   return CREATOR_PALETTE[index % CREATOR_PALETTE.length];
 }
 
-function cap(r, h, seg = 24) {
-  const p = [], n = 12;
-  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI / 2; p.push(new THREE.Vector2(Math.sin(a) * r, -Math.cos(a) * r)); }
-  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI / 2; p.push(new THREE.Vector2(Math.cos(a) * r, h + Math.sin(a) * r)); }
-  return new THREE.LatheGeometry(p, seg);
-}
-
 let playerId = Math.random().toString(36).slice(2, 11);
 let playerName = 'Joueur-' + playerId.slice(0, 4);
 let roomId = null;
@@ -185,6 +182,7 @@ let state = null;
 let mode = 'lobby';
 let myAnswer = null;
 let answered = false;
+let baseCharModel = null; // modŤle GLB chargť une fois
 
 const $ = (id) => document.getElementById(id);
 
@@ -200,7 +198,6 @@ ren.shadowMap.type = THREE.PCFSoftShadowMap;
 ren.outputEncoding = THREE.sRGBEncoding;
 ren.toneMapping = THREE.ACESFilmicToneMapping;
 ren.toneMappingExposure = 1.22;
-ren.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(ren.domElement);
 
 function canvasTex(w, h, draw) {
@@ -352,53 +349,50 @@ rig.add(truss);
 });
 
 const crowdColors = [0x3a4356, 0x565f6e, 0x6e4638, 0x753d3d, 0x2e4260, 0x4d4d5e, 0x6b5a41, 0x37414f];
-function makeCrowdChar(color, s) {
-  const g = new THREE.Group();
-  const m = new THREE.MeshPhysicalMaterial({ color, roughness: 0.45, metalness: 0.0, clearcoat: 0.35, clearcoatRoughness: 0.45 });
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 20), m);
-  head.position.y = 0.82;
-  head.scale.y = 1.02;
-  g.add(head);
-  const bodyProfile = [];
-  for (let i = 0; i <= 8; i++) {
-    const t = i / 8;
-    bodyProfile.push(new THREE.Vector2(0.16 - 0.05 * t + 0.025 * Math.sin(t * Math.PI), t * 0.3));
-  }
-  for (let i = 0; i <= 6; i++) {
-    const a = i / 6 * Math.PI / 2;
-    bodyProfile.push(new THREE.Vector2(Math.cos(a) * 0.11, 0.3 + Math.sin(a) * 0.11));
-  }
-  const body = new THREE.Mesh(new THREE.LatheGeometry(bodyProfile, 20), m);
-  body.position.y = 0.42;
-  body.scale.z = 0.82;
-  g.add(body);
-  [-1, 1].forEach((side) => {
-    const fore = new THREE.Mesh(cap(0.045, 0.14), m);
-    fore.position.set(side * 0.03, 0.56, 0.11);
-    fore.rotation.set(0, 0, Math.PI / 2 + side * 0.12);
-    g.add(fore);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 14, 12), m);
-    hand.position.set(-side * 0.09, 0.57, 0.12);
-    g.add(hand);
-  });
-  [-1, 1].forEach((side) => {
-    const leg = new THREE.Mesh(cap(0.06, 0.26), m);
-    leg.position.set(side * 0.07, 0.22, 0);
-    g.add(leg);
-    const foot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 12), m);
-    foot.scale.set(1.05, 0.62, 1.7);
-    foot.position.set(side * 0.08, 0.05, 0.04);
-    g.add(foot);
-  });
-  return g;
-}
 for (let r = 0; r < 5; r++) {
   const st = new THREE.Mesh(new THREE.BoxGeometry(15, 0.55 * (r + 1), 1.4), standMat);
   st.position.set(0, 0.275 * (r + 1), -7 - r * 1.4);
   st.receiveShadow = true;
   scene.add(st);
   for (let i = 0; i < 16; i++) {
-    const f = makeCrowdChar(crowdColors[Math.random() * crowdColors.length | 0], 0.55);
+    const c = crowdColors[Math.random() * crowdColors.length | 0];
+    const f = new THREE.Group();
+    const m = new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.45, metalness: 0.0, clearcoat: 0.35, clearcoatRoughness: 0.45 });
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 20), m);
+    head.position.y = 0.82;
+    head.scale.y = 1.02;
+    f.add(head);
+    const bodyProfile = [];
+    for (let ii = 0; ii <= 8; ii++) {
+      const t = ii / 8;
+      bodyProfile.push(new THREE.Vector2(0.16 - 0.05 * t + 0.025 * Math.sin(t * Math.PI), t * 0.3));
+    }
+    for (let ii = 0; ii <= 6; ii++) {
+      const a = ii / 6 * Math.PI / 2;
+      bodyProfile.push(new THREE.Vector2(Math.cos(a) * 0.11, 0.3 + Math.sin(a) * 0.11));
+    }
+    const body = new THREE.Mesh(new THREE.LatheGeometry(bodyProfile, 20), m);
+    body.position.y = 0.42;
+    body.scale.z = 0.82;
+    f.add(body);
+    [-1, 1].forEach((side) => {
+      const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.14, 12), m);
+      fore.position.set(side * 0.03, 0.56, 0.11);
+      fore.rotation.set(0, 0, Math.PI / 2 + side * 0.12);
+      f.add(fore);
+      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 14, 12), m);
+      hand.position.set(-side * 0.09, 0.57, 0.12);
+      f.add(hand);
+    });
+    [-1, 1].forEach((side) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.26, 12), m);
+      leg.position.set(side * 0.07, 0.22, 0);
+      f.add(leg);
+      const foot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 12), m);
+      foot.scale.set(1.05, 0.62, 1.7);
+      foot.position.set(side * 0.08, 0.05, 0.04);
+      f.add(foot);
+    });
     f.position.set(-7.5 + i + (Math.random() - 0.5) * 0.4, 0.55 * (r + 1), -7 - r * 1.4);
     f.rotation.y = (Math.random() - 0.5) * 0.5;
     scene.add(f);
@@ -441,71 +435,42 @@ function makeLabel(text, isMe) {
   return sprite;
 }
 
-function makeChar(color, name, isMe) {
+function applyCreatorColor(obj, hexColor) {
+  obj.traverse((child) => {
+    if (child.isMesh && child.material) {
+      if (Array.isArray(child.material)) {
+        child.material.forEach((m) => {
+          m.color.setHex(hexColor);
+          m.roughness = 0.38;
+          m.metalness = 0;
+          m.clearcoat = 0.45;
+          m.clearcoatRoughness = 0.4;
+        });
+      } else {
+        child.material.color.setHex(hexColor);
+        child.material.roughness = 0.38;
+        child.material.metalness = 0;
+        child.material.clearcoat = 0.45;
+        child.material.clearcoatRoughness = 0.4;
+      }
+    }
+  });
+}
+
+function makeCharFromGLB(color, name, isMe) {
   const g = new THREE.Group();
-  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.38, metalness: 0.0, clearcoat: 0.45, clearcoatRoughness: 0.4 });
-
-  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.4), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
-  sh.rotation.x = -Math.PI / 2;
-  sh.position.y = 0.015;
-  g.add(sh);
-
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 48, 40), clay);
-  head.position.y = 1.68;
-  head.scale.y = 1.02;
-  g.add(head);
-
-  const bodyProfile = [];
-  for (let i = 0; i <= 10; i++) {
-    const t = i / 10;
-    const r = 0.3 - 0.09 * t + 0.05 * Math.sin(t * Math.PI);
-    bodyProfile.push(new THREE.Vector2(r, t * 0.62));
+  if (!baseCharModel) {
+    g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: null };
+    g.add(makeLabel(name, isMe));
+    return g;
   }
-  for (let i = 0; i <= 8; i++) {
-    const a = i / 8 * Math.PI / 2;
-    bodyProfile.push(new THREE.Vector2(Math.cos(a) * 0.21, 0.62 + Math.sin(a) * 0.21));
-  }
-  const body = new THREE.Mesh(new THREE.LatheGeometry(bodyProfile, 32), clay);
-  body.position.y = 0.86;
-  body.scale.z = 0.82;
-  g.add(body);
-
-  function crossedArm(side) {
-    const upper = new THREE.Mesh(cap(0.1, 0.16), clay);
-    upper.position.set(side * 0.24, 1.32, 0.02);
-    upper.rotation.z = side * -0.95;
-    g.add(upper);
-    const fore = new THREE.Mesh(cap(0.085, 0.3), clay);
-    fore.position.set(side * 0.05, 1.14, 0.22);
-    fore.rotation.set(0, 0, Math.PI / 2 + side * 0.12);
-    g.add(fore);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.11, 20, 16), clay);
-    hand.position.set(-side * 0.18, 1.16, 0.24);
-    g.add(hand);
-  }
-  crossedArm(-1);
-  crossedArm(1);
-
-  const leftLeg = new THREE.Mesh(cap(0.13, 0.55), clay);
-  leftLeg.position.set(-0.15, 0.44, 0);
-  leftLeg.rotation.z = 0.05;
-  g.add(leftLeg);
-  const rightLeg = new THREE.Mesh(cap(0.13, 0.55), clay);
-  rightLeg.position.set(0.15, 0.44, 0);
-  rightLeg.rotation.z = -0.05;
-  g.add(rightLeg);
-
-  const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 20), clay);
-  leftFoot.scale.set(1.05, 0.62, 1.7);
-  leftFoot.position.set(-0.17, 0.1, 0.08);
-  g.add(leftFoot);
-  const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 20), clay);
-  rightFoot.scale.set(1.05, 0.62, 1.7);
-  rightFoot.position.set(0.17, 0.1, 0.08);
-  g.add(rightFoot);
-
+  const clone = baseCharModel.clone();
+  applyCreatorColor(clone, color);
+  // scale et position pour correspondre ŗ la scŤne
+  clone.scale.set(0.01, 0.01, 0.01); // ajustť selon la taille du GLB
+  g.add(clone);
   g.add(makeLabel(name, isMe));
-  g.userData = { ph: Math.random() * 6, name, baseRot: 0 };
+  g.userData = { ph: Math.random() * 6, name, baseRot: 0, glb: clone };
   return g;
 }
 
@@ -655,11 +620,11 @@ function drawBoard() {
   bx.fillStyle = '#ff6b6b'; bx.fillText('Non ' + no, 724, 330);
 
   bx.font = 'bold 22px Arial'; bx.fillStyle = '#9fb0ff';
-  bx.fillText(answeredCount + ' / ' + total + ' ont répondu', 512, 400);
+  bx.fillText(answeredCount + ' / ' + total + ' ont rťpondu', 512, 400);
 
   if (closed) {
     bx.font = 'bold 30px Arial'; bx.fillStyle = '#ffb300';
-    bx.fillText('Bonne réponse : ' + OPTIONS[q.ans], 512, 465);
+    bx.fillText('Bonne rťponse : ' + OPTIONS[q.ans], 512, 465);
   }
   bt.needsUpdate = true;
 }
@@ -698,7 +663,7 @@ function syncPlayerObjects(list) {
     const isMe = p.id === playerId;
     if (!o) {
       const dynamicColor = getDynamicColor(p.colorIndex);
-      const g = makeChar(dynamicColor, p.name, isMe);
+      const g = makeCharFromGLB(dynamicColor, p.name, isMe);
       scene.add(g);
       o = playerObjs[p.id] = { group: g, name: p.name };
     }
@@ -736,9 +701,9 @@ function layoutPlayers(list) {
 function updateHint() {
   const started = state && state.started;
   if (!started) {
-    $('h').textContent = isHost ? 'Partage le code de la salle pour inviter des joueurs' : "En attente du lancement par l'hôte...";
+    $('h').textContent = isHost ? 'Partage le code de la salle pour inviter des joueurs' : "En attente du lancement par l'hŰte...";
   } else {
-    $('h').textContent = isHost ? "Tu es l'hôte - Gére la partie" : 'Les réponses apparaissent au fil du jeu';
+    $('h').textContent = isHost ? "Tu es l'hŰte - GŤre la partie" : 'Les rťponses apparaissent au fil du jeu';
   }
 }
 
@@ -775,7 +740,7 @@ function showQuestion() {
   if (!q) {
     panel.style.display = 'none';
     revealBtn.style.display = 'none';
-    $('qStatus').textContent = 'Partie terminée !';
+    $('qStatus').textContent = 'Partie terminťe !';
     return;
   }
   const already = state.answers && state.answers[playerId] !== undefined;
@@ -796,19 +761,19 @@ function showQuestion() {
     panel.style.display = 'block';
     const yes = Object.values(state.answers || {}).filter((a) => a === 0).length;
     const no = Object.values(state.answers || {}).filter((a) => a === 1).length;
-    $('qStatus').textContent = 'Résultats : Oui ' + yes + ' / Non ' + no;
+    $('qStatus').textContent = 'Rťsultats : Oui ' + yes + ' / Non ' + no;
     $('qAnswers').innerHTML = '';
   } else {
     panel.style.display = 'block';
     if (isHost) {
-      $('qStatus').textContent = "Tu es l'hôte - les joueurs répondent...";
+      $('qStatus').textContent = "Tu es l'hŰte - les joueurs rťpondent...";
     } else {
-      $('qStatus').textContent = already ? 'Votre réponse est enregistrée.' : 'Choisissez votre réponse.';
+      $('qStatus').textContent = already ? 'Votre rťponse est enregistrťe.' : 'Choisissez votre rťponse.';
     }
   }
   if (isHost && state.started) {
     revealBtn.style.display = 'block';
-    revealBtn.textContent = state.roundClosed ? 'Question suivante ▶' : 'Révéler les résultats';
+    revealBtn.textContent = state.roundClosed ? 'Question suivante ▶' : 'Rťvťler les rťsultats';
   } else {
     revealBtn.style.display = 'none';
   }
@@ -849,7 +814,7 @@ function setStatus(msg, isError) {
 function updatePlayersList(list) {
   const items = list.map((p) => {
     const me = p.id === playerId ? ' me' : '';
-    const tag = p.id === state.hostId ? 'hôte' : '';
+    const tag = p.id === state.hostId ? 'hŰte' : '';
     return `<div class="p${me}">${escapeHtml(p.name)}<span class="tag">${tag}</span></div>`;
   }).join('');
   $('playersItems').innerHTML = items || '<div class="p">Aucun joueur</div>';
@@ -911,7 +876,7 @@ function publishEvent(ev) {
 function mqttConnect(onReady) {
   if (typeof mqtt === 'undefined') {
     busy = false;
-    setStatus('Impossible de charger la librairie réseau. Vérifie ta connexion.', true);
+    setStatus('Impossible de charger la librairie rťseau. Vťrifie ta connexion.', true);
     return;
   }
   if (client) {
@@ -938,7 +903,7 @@ function mqttConnect(onReady) {
   myClient.on('error', (e) => {
     if (client !== myClient) return;
     busy = false;
-    setStatus('Erreur réseau : ' + (e && e.message ? e.message : 'connexion impossible'), true);
+    setStatus('Erreur rťseau : ' + (e && e.message ? e.message : 'connexion impossible'), true);
   });
   myClient.on('message', (topic, payload) => {
     if (client !== myClient) return;
@@ -956,7 +921,7 @@ function onMessage(topic, payload) {
     if (isHost) {
       handleEvent(msg);
     } else if (msg.type === 'closed') {
-      setStatus("L'hôte a fermé la salle.", true);
+      setStatus("L'hŰte a fermť la salle.", true);
       leaveRoom();
     }
   }
@@ -998,7 +963,7 @@ function handleEvent(msg) {
 function handleIncomingState(msg) {
   if (!msg.players) return;
   if (msg.ts && Date.now() - msg.ts > 60000) {
-    setStatus('Salle expirée ou hôte hors ligne.', true);
+    setStatus('Salle expirťe ou hŰte hors ligne.', true);
     return;
   }
   lastStateTs = Date.now();
@@ -1007,7 +972,7 @@ function handleIncomingState(msg) {
     clearInterval(joinTimer);
     joinTimer = null;
   }
-  setStatus('Connecté — salle ' + roomId);
+  setStatus('Connectť — salle ' + roomId);
 }
 
 function enterRoomUI() {
@@ -1023,7 +988,7 @@ function createRoom() {
   playerName = sanitizeName($('nameInput').value);
   localStorage.setItem('cq3d_name', playerName);
   busy = true;
-  setStatus('Création de la salle...');
+  setStatus('Crťation de la salle...');
   mqttConnect(() => {
     busy = false;
     isHost = true;
@@ -1044,7 +1009,7 @@ function createRoom() {
       startWatchdog();
     });
     enterRoomUI();
-    setStatus('Salle créée. Partage le code ' + roomId + '.');
+    setStatus('Salle crťťe. Partage le code ' + roomId + '.');
     applyState(state);
     history.replaceState(null, '', '?room=' + roomId);
   });
@@ -1057,7 +1022,7 @@ function joinRoom(code) {
   playerName = sanitizeName($('nameInput').value);
   localStorage.setItem('cq3d_name', playerName);
   busy = true;
-  setStatus('Connexion à la salle ' + clean + '...');
+  setStatus('Connexion ŗ la salle ' + clean + '...');
   mqttConnect(() => {
     busy = false;
     isHost = false;
@@ -1071,7 +1036,7 @@ function joinRoom(code) {
     history.replaceState(null, '', '?room=' + roomId);
     setTimeout(() => {
       if (!state) {
-        setStatus('Salle introuvable ou hôte hors ligne. Vérifie le code.', true);
+        setStatus('Salle introuvable ou hŰte hors ligne. Vťrifie le code.', true);
         if (joinTimer) { clearInterval(joinTimer); joinTimer = null; }
       }
     }, 9000);
@@ -1128,7 +1093,7 @@ function startWatchdog() {
   if (watchdogTimer) clearInterval(watchdogTimer);
   watchdogTimer = setInterval(() => {
     if (!isHost && roomId && lastStateTs && Date.now() - lastStateTs > 12000) {
-      setStatus('Hôte déconnecté.', true);
+      setStatus('HŰte dťconnectť.', true);
     }
   }, 4000);
 }
@@ -1195,7 +1160,7 @@ $('lbClose').onclick = hideLeaderboard;
 $('copyBtn').onclick = () => {
   if (!roomId) return;
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(roomId).then(() => setStatus('Code copié : ' + roomId)).catch(() => setStatus('Code : ' + roomId));
+    navigator.clipboard.writeText(roomId).then(() => setStatus('Code copiť : ' + roomId)).catch(() => setStatus('Code : ' + roomId));
   } else {
     setStatus('Code : ' + roomId);
   }
@@ -1227,6 +1192,18 @@ if (params.get('room')) $('roomInput').value = params.get('room').toUpperCase();
 
 $('roomPanel').style.display = 'block';
 setMode('lobby');
+
+// Charger le modŤle GLB une seule fois au dťmarrage
+const loadMsg = $('loadMsg');
+loadMsg.style.display = 'block';
+const loader = new THREE.GLTFLoader();
+loader.load('a29c166fc5b8fbde7d818d1e2ec3edbe.glb', (gltf) => {
+  baseCharModel = gltf.scene;
+  loadMsg.style.display = 'none';
+}, undefined, (err) => {
+  console.error('Erreur chargement GLB:', err);
+  loadMsg.style.display = 'none';
+});
 
 const clk = new THREE.Clock();
 (function loop() {
