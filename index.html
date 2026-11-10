@@ -80,23 +80,49 @@
     font-weight:700;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .3s;opacity:0;pointer-events:none;text-align:center;max-width:90vw}
   #toast.show{opacity:1}
   
-  /* ================= RESPONSIVE MOBILE ================= */
-  @media (max-width: 640px) {
-    html { font-size: 15px; }
-    .panel { padding: 14px 16px; width: min(96vw, 500px); }
-    h1 { font-size: 22px; }
-    h2 { font-size: 17px; }
-    p.sub { font-size: 13px; }
-    button { padding: 12px 16px; font-size: 15px; min-height: 44px; }
-    input { padding: 12px 14px; font-size: 16px; } /* 16px empêche le zoom iOS au focus */
-    .chip { font-size: 12px; padding: 6px 10px; }
-    #topbar { top: calc(60px + var(--safe-t)); left: 8px; right: 8px; }
-    .sep { margin: 10px 0; }
-    #game { width: min(96vw, 500px); }
-    #end { width: min(96vw, 480px); padding: 20px 16px; }
-    table.rank td { padding: 8px 6px; font-size: 14px; }
-    #toast { font-size: 13px; padding: 10px 14px; max-width: 92vw; }
+/* ================= RESPONSIVE MOBILE FORCÉ ================= */
+@media (max-width: 640px) {
+  html { font-size: 14px !important; }
+  body { font-size: 14px !important; }
+  .panel { 
+    width: min(98vw, 520px) !important; 
+    padding: 16px !important; 
+    left: 50% !important; 
+    top: 50% !important; 
+    transform: translate(-50%, -50%) !important; 
+    max-height: 90vh !important; 
+    overflow-y: auto !important;
   }
+  h1 { font-size: 20px !important; }
+  h2 { font-size: 16px !important; }
+  p.sub { font-size: 13px !important; }
+  button { 
+    min-height: 48px !important; 
+    padding: 12px 16px !important; 
+    font-size: 15px !important; 
+    width: 100% !important;
+  }
+  input { 
+    font-size: 16px !important; /* évite le zoom iOS au focus */
+    padding: 12px 14px !important;
+  }
+  #topbar { 
+    top: 10px !important; 
+    left: 8px !important; 
+    right: 8px !important; 
+    flex-direction: column !important; 
+    gap: 8px !important;
+  }
+  #topbar > * { width: 100% !important; text-align: center !important; }
+  .chip { font-size: 12px !important; padding: 6px 10px !important; }
+  #game { width: min(98vw, 560px) !important; bottom: 10px !important; }
+  #end { width: min(98vw, 500px) !important; padding: 18px 14px !important; }
+  table.rank td { padding: 8px 6px !important; font-size: 14px !important; }
+  #answers { grid-template-columns: 1fr !important; gap: 8px !important; }
+  #answers button { min-height: 44px !important; font-size: 15px !important; }
+  #toast { font-size: 13px !important; padding: 10px 14px !important; max-width: 94vw !important; }
+  #scene { position: fixed !important; inset: 0 !important; z-index: 1 !important; pointer-events: none !important; }
+}
 </style>
 </head>
 <body>
@@ -170,26 +196,16 @@ const POINTS = 10;
    (ajouter un champ "options" pour passer en QCM plus tard)
    ===================================================================== */
 const QUESTIONS = [
-  { q: "HTML sert à créer la structure d'une page web ?", ans: 0 },
-  { q: "CSS sert à styliser une page web (couleurs, tailles) ?", ans: 0 },
-  { q: "JavaScript rend une page web interactive ?", ans: 0 },
-  { q: "Le HTML est un langage de programmation ?", ans: 1, info: "C'est un langage de balisage." },
-  { q: "Une balise HTML peut avoir un attribut class ?", ans: 0 },
-  { q: "<img> permet d'afficher une image sur une page ?", ans: 0 },
-  { q: "Une application web peut s'ouvrir dans un navigateur ?", ans: 0 },
-  { q: "Le responsive design adapte un site aux écrans de téléphone ?", ans: 0 },
-  { q: "On a besoin d'un navigateur pour tester un site web ?", ans: 0 },
-  { q: "Une variable sert à stocker une valeur en programmation ?", ans: 0 },
-  { q: "if sert à faire une condition en JavaScript ?", ans: 0 },
-  { q: "Une boucle for répète des instructions ?", ans: 0 },
-  { q: "Une fonction peut recevoir des paramètres ?", ans: 0 },
-  { q: "Un commentaire en JavaScript commence par // ?", ans: 0 },
-  { q: "Le CSS est un langage de base de données ?", ans: 1 },
-  { q: "Une base de données sert à stocker des données ?", ans: 0 },
-  { q: "Une API permet à deux logiciels d'échanger des données ?", ans: 0 },
-  { q: "Git sert à enregistrer l'historique du code ?", ans: 0 },
-  { q: "Une application mobile peut être développée avec du JavaScript ?", ans: 0 },
-  { q: "Il faut payer pour apprendre à coder ?", ans: 1 },
+  { q: "Quel langage donne vie aux pages web (interactions, animations) ?", ans: 0 },
+  { q: "Que signifie le \"H\" de HTML ?", ans: 0 },
+  { q: "Quel langage colore et positionne les éléments d'une page ?", ans: 0 },
+  { q: "Quel symbole ouvre un commentaire en JavaScript ?", ans: 0 },
+  { q: "Quelle bibliothèque JS est créée par Meta (Facebook) ?", ans: 0 },
+  { q: "Que signifie le sigle API ?", ans: 0 },
+  { q: "Quel élément HTML crée un lien cliquable ?", ans: 0 },
+  { q: "Que signifie le \"responsive design\" ?", ans: 0 },
+  { q: "Quel langage sert à gérer les bases de données ?", ans: 0 },
+  { q: "Quel langage développe les applications iPhone natives ?", ans: 0 }
 ];
 const optsOf = (q) => q.options || OPTIONS;
 
