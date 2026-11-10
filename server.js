@@ -13,6 +13,7 @@ const io = new Server(server);
 
 // --- Fichiers statiques ------------------------------------------------
 app.use(express.static('public'));
+app.use(express.static('.')); // Servir aussi les fichiers à la racine
 
 // === Stockage en mémoire ===============================================
 const rooms = {}; // code → Room
@@ -49,6 +50,26 @@ const QUESTION_BANK = [
 ];
 
 const ROUND_DURATION = 30; // secondes par question
+
+// Noms & réponses pour les bots (mode démo)
+const BOT_NAMES = ['Koffi 🔥', 'Amina ✨', 'Yao 💪', 'Fatou 🌟', 'Kodjo 🎯'];
+const BOT_ANSWERS = {
+  'Nommez un fruit jaune':                        ['banane', 'banane', 'citron', 'ananas', 'mangue'],
+  'Nommez un super-héros célèbre':                ['Spider-Man', 'Batman', 'Spider-Man', 'Superman', 'Iron Man'],
+  'Nommez une capitale africaine':                 ['Cotonou', 'Lagos', 'Dakar', 'Cotonou', 'Abidjan'],
+  "Nommez un sport qu'on pratique en équipe":      ['football', 'football', 'basketball', 'football', 'volleyball'],
+  'Nommez un plat que tout le monde aime':         ['pizza', 'pizza', 'riz', 'pâtes', 'pizza'],
+  "Nommez un animal qu'on peut voir en Afrique":   ['lion', 'éléphant', 'lion', 'girafe', 'lion'],
+  'Nommez une application populaire sur téléphone':['WhatsApp', 'TikTok', 'WhatsApp', 'Instagram', 'WhatsApp'],
+  'Nommez un langage de programmation':            ['Python', 'JavaScript', 'Python', 'C', 'Python'],
+  "Nommez quelque chose qu'on emmène à la plage":  ['serviette', 'lunettes', 'serviette', 'ballon', 'crème solaire'],
+  'Nommez une marque de téléphone':                ['Samsung', 'iPhone', 'Samsung', 'iPhone', 'Xiaomi'],
+  'Nommez un film culte':                          ['Titanic', 'Avengers', 'Titanic', 'Black Panther', 'Avengers'],
+  "Nommez un pays d'Europe":                       ['France', 'France', 'Allemagne', 'France', 'Espagne'],
+  'Nommez un instrument de musique':               ['guitare', 'piano', 'guitare', 'batterie', 'piano'],
+  'Nommez un réseau social':                       ['Instagram', 'TikTok', 'Instagram', 'Twitter', 'Instagram'],
+  "Nommez une matière enseignée à l'école":        ['maths', 'maths', 'français', 'maths', 'physique'],
+};
 
 // === Helpers ============================================================
 

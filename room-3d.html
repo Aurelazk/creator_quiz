@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0e15">
+<title>CREATOR 3D — Quiz Room</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2218%22 y=%2210%22 width=%2228%22 height=%2280%22 rx=%226%22 fill=%22%2300ffa3%22/><rect x=%2254%22 y=%2210%22 width=%2228%22 height=%2280%22 rx=%226%22 fill=%22%23ff3355%22/></svg>">
+
+<!-- Three.js from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Socket.io -->
+<script src="/socket.io/socket.io.js"></script>
+
+<style>
+:root{
+  --bg:#0d0e15;
+  --bg-deep:#06070c;
+  --panel:#10131f;
+  --text:#eaf6ff;
+  --muted:#7f8aa3;
+  --green:#00ffa3;
+  --green-soft:rgba(0,255,163,.55);
+  --red:#ff3355;
+  --red-soft:rgba(255,51,85,.55);
+  --gold:#ffd166;
+  --cyan:#38e8ff;
+  --blue:#0033ff;
+  --mint:#00e5a0;
+  --org:#ff5c35;
+  --purple:#8b5cf6;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:"Segoe UI",Inter,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  height:100%;
+  margin:0;
+  overflow:hidden;
+}
+
+body{
+  margin:0;
+  overflow:hidden;
+  background:var(--bg-deep);
+  color:var(--text);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Three.js Canvas */
+#three-container{
+  position:fixed;
+  inset:0;
+  z-index:1;
+}
+
+/* UI Overlay */
+#ui-overlay{
+  position:fixed;
+  inset:0;
+  z-index:10;
+  pointer-events:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+/* Loading Screen */
+#loading-screen{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:rgba(4,5,9,.95);
+  pointer-events:auto;
+  transition:opacity .5s,visibility .5s;
+}
+#loading-screen.hidden{
+  opacity:0;
+  visibility:hidden;
+}
+
+.loading-spinner{
+  width:60px;
+  height:60px;
+  border:3px solid rgba(56,232,255,.3);
+  border-top-color:var(--cyan);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.loading-text{
+  margin-top:16px;
+  font:700 12px/1 var(--mono);
+  letter-spacing:.2em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+/* Main Menu */
+#main-menu{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+  pointer-events:auto;
+}
+
+.menu-title{
+  font:900 clamp(1.8rem,4vw,2.8rem)/1 var(--sans);
+  letter-spacing:.1em;
+  color:#fff;
+  text-shadow:0 0 20px rgba(56,232,255,.6),0 0 60px rgba(56,232,255,.3);
+  text-transform:uppercase;
+}
+
+.menu-subtitle{
+  font:700 11px/1 var(--mono);
+  letter-spacing:.3em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.menu-btn{
+  padding:16px 40px;
+  border:1px solid rgba(56,232,255,.4);
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(15,19,32,.85),rgba(8,10,17,.85));
+  color:var(--cyan);
+  font:900 14px/1 var(--mono);
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 0 20px rgba(56,232,255,.15),inset 0 0 20px rgba(56,232,255,.05);
+  transition:all .3s ease;
+  pointer-events:auto;
+}
+.menu-btn:hover{
+  border-color:var(--cyan);
+  background:linear-gradient(180deg,rgba(0,255,163,.15),rgba(0,255,163,.05));
+  box-shadow:0 0 30px rgba(56,232,255,.3),inset 0 0 30px rgba(56,232,255,.1);
+  transform:translateY(-2px);
+}
+.menu-btn.secondary{
+  border-color:rgba(255,51,85,.4);
+  color:var(--red);
+  box-shadow:0 0 20px rgba(255,51,85,.15),inset 0 0 20px rgba(255,51,85,.05);
+}
+.menu-btn.secondary:hover{
+  border-color:var(--red);
+  background:linear-gradient(180deg,rgba(255,51,85,.15),rgba(255,51,85,.05));
+  box-shadow:0 0 30px rgba(255,51,85,.3),inset 0 0 30px rgba(255,51,85,.1);
+}
+
+/* Join Form */
+#join-form{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-items:center;
+  pointer-events:auto;
+}
+
+.form-input{
+  padding:14px 20px;
+  border:1px solid rgba(56,232,255,.3);
+  border-radius:12px;
+  background:rgba(15,19,32,.85);
+  color:var(--text);
+  font:700 13px/1 var(--mono);
+  letter-spacing:.1em;
+  width:280px;
+  max-width:90vw;
+  transition:all .3s ease;
+}
+.form-input::placeholder{
+  color:var(--muted);
+}
+.form-input:focus{
+  outline:none;
+  border-color:var(--cyan);
+  box-shadow:0 0 20px rgba(56,232,255,.2);
+}
+
+/* Room Code Display */
+#room-code-display{
+  text-align:center;
+  pointer-events:auto;
+}
+
+.code-label{
+  font:700 10px/1 var(--mono);
+  letter-spacing:.3em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.code-value{
+  font:900 clamp(2rem,6vw,3.5rem)/1 var(--mono);
+  letter-spacing:.2em;
+  color:var(--cyan);
+  text-shadow:0 0 20px rgba(56,232,255,.6);
+  padding:12px 24px;
+  border:2px solid rgba(56,232,255,.3);
+  border-radius:16px;
+  background:rgba(0,0,0,.3);
+}
+
+/* Players List */
+#players-list{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:12px;
+  margin-top:16px;
+  pointer-events:auto;
+}
+
+.player-card{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  background:rgba(15,19,32,.7);
+  box-shadow:0 0 12px rgba(0,0,0,.3);
+}
+
+.player-avatar{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:2px solid;
+}
+
+.player-name{
+  font:700 11px/1 var(--mono);
+  letter-spacing:.1em;
+  color:var(--text);
+  text-transform:uppercase;
+}
+
+.player-score{
+  font:900 12px/1 var(--mono);
+  color:var(--gold);
+  text-shadow:0 0 10px rgba(255,209,102,.5);
+}
+
+/* Start Button */
+#start-btn{
+  display:none;
+  padding:16px 40px;
+  border:1px solid var(--green);
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(0,255,163,.2),rgba(0,255,163,.05));
+  color:var(--green);
+  font:900 14px/1 var(--mono);
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 0 20px rgba(0,255,163,.3),inset 0 0 20px rgba(0,255,163,.1);
+  transition:all .3s ease;
+  pointer-events:auto;
+}
+#start-btn:hover{
+  background:linear-gradient(180deg,rgba(0,255,163,.35),rgba(0,255,163,.1));
+  box-shadow:0 0 30px rgba(0,255,163,.5),inset 0 0 30px rgba(0,255,163,.2);
+}
+
+/* Question Display */
+#question-display{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  pointer-events:auto;
+  display:none;
+}
+
+.question-number{
+  font:700 10px/1 var(--mono);
+  letter-spacing:.3em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.question-text{
+  font:900 clamp(1.2rem,3vw,2rem)/1.1 var(--sans);
+  letter-spacing:-.02em;
+  color:#fff;
+  text-shadow:0 0 20px rgba(56,232,255,.5);
+  max-width:600px;
+  padding:20px 30px;
+  border:2px solid rgba(56,232,255,.4);
+  border-radius:16px;
+  background:rgba(15,19,32,.85);
+}
+
+/* Answer Input */
+#answer-section{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  margin-top:20px;
+  pointer-events:auto;
+}
+
+.answer-input{
+  padding:14px 20px;
+  border:1px solid rgba(0,255,163,.4);
+  border-radius:12px;
+  background:rgba(15,19,32,.85);
+  color:var(--text);
+  font:700 13px/1 var(--mono);
+  width:280px;
+  max-width:90vw;
+  transition:all .3s ease;
+}
+.answer-input::placeholder{
+  color:var(--muted);
+}
+.answer-input:focus{
+  outline:none;
+  border-color:var(--green);
+  box-shadow:0 0 20px rgba(0,255,163,.2);
+}
+
+.submit-btn{
+  padding:14px 32px;
+  border:1px solid var(--green);
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(0,255,163,.2),rgba(0,255,163,.05));
+  color:var(--green);
+  font:900 13px/1 var(--mono);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .3s ease;
+}
+.submit-btn:hover{
+  background:linear-gradient(180deg,rgba(0,255,163,.35),rgba(0,255,163,.1));
+  box-shadow:0 0 20px rgba(0,255,163,.3);
+}
+
+/* Timer */
+#timer-display{
+  position:absolute;
+  top:20px;
+  right:20px;
+  padding:10px 16px;
+  border:1px solid rgba(255,51,85,.4);
+  border-radius:10px;
+  background:rgba(15,19,32,.85);
+  color:var(--red);
+  font:900 1.2rem/1 var(--mono);
+  text-shadow:0 0 10px rgba(255,51,85,.5);
+  pointer-events:none;
+  z-index:20;
+}
+
+.timer-danger{
+  animation:timerPulse .5s ease-in-out infinite alternate;
+}
+@keyframes timerPulse{from{filter:brightness(1)}to{filter:brightness(1.55)}}
+
+/* Results Display */
+#results-display{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  pointer-events:auto;
+  display:none;
+  max-width:700px;
+  width:90%;
+}
+
+.results-title{
+  font:900 clamp(1.2rem,3vw,1.8rem)/1 var(--sans);
+  color:var(--cyan);
+  text-shadow:0 0 20px rgba(56,232,255,.5);
+  margin-bottom:16px;
+}
+
+.results-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:20px;
+}
+
+.result-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 16px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  background:rgba(15,19,32,.7);
+  text-align:left;
+}
+
+.result-rank{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:linear-gradient(180deg,var(--gold),#a97400);
+  color:#000;
+  font:900 12px/1 var(--mono);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.result-text{
+  flex:1;
+  font:700 12px/1 var(--mono);
+  letter-spacing:.1em;
+  color:var(--text);
+  text-transform:uppercase;
+}
+
+.result-count{
+  font:900 13px/1 var(--mono);
+  color:var(--green);
+  text-shadow:0 0 10px rgba(0,255,163,.5);
+}
+
+.next-btn{
+  padding:14px 32px;
+  border:1px solid var(--cyan);
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(56,232,255,.2),rgba(56,232,255,.05));
+  color:var(--cyan);
+  font:900 13px/1 var(--mono);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .3s ease;
+  pointer-events:auto;
+}
+.next-btn:hover{
+  background:linear-gradient(180deg,rgba(56,232,255,.35),rgba(56,232,255,.1));
+  box-shadow:0 0 20px rgba(56,232,255,.3);
+}
+
+/* Leaderboard */
+#leaderboard-display{
+  position:absolute;
+  right:20px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  pointer-events:none;
+  max-width:250px;
+}
+
+.leaderboard-title{
+  font:700 10px/1 var(--mono);
+  letter-spacing:.3em;
+  color:var(--muted);
+  text-transform:uppercase;
+  text-align:center;
+  margin-bottom:8px;
+}
+
+.leaderboard-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:8px;
+  background:rgba(15,19,32,.6);
+}
+
+.leaderboard-avatar{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  border:2px solid;
+}
+
+.leaderboard-name{
+  flex:1;
+  font:700 10px/1 var(--mono);
+  letter-spacing:.1em;
+  color:var(--text);
+  text-transform:uppercase;
+}
+
+.leaderboard-score{
+  font:900 11px/1 var(--mono);
+  color:var(--gold);
+  text-shadow:0 0 10px rgba(255,209,102,.5);
+}
+
+/* Podium Display */
+#podium-display{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:rgba(4,5,9,.9);
+  pointer-events:auto;
+  display:none;
+}
+
+.podium-title{
+  font:900 clamp(2rem,5vw,3rem)/1 var(--sans);
+  color:var(--gold);
+  text-shadow:0 0 30px rgba(255,209,102,.6);
+  margin-bottom:40px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+
+.podium-stands{
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:40px;
+  margin-bottom:30px;
+}
+
+.podium-stand{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+
+.podium-base{
+  width:120px;
+  height:20px;
+  border-radius:4px 4px 0 0;
+  background:linear-gradient(180deg,rgba(255,209,102,.3),rgba(255,209,102,.1));
+  border:2px solid var(--gold);
+  border-bottom:none;
+}
+
+.podium-platform{
+  width:100px;
+  padding:16px 8px;
+  border-radius:8px 8px 0 0;
+  background:rgba(15,19,32,.8);
+  border:2px solid var(--gold);
+  border-bottom:none;
+  text-align:center;
+}
+
+.podium-2 .podium-base{height:15px;background:linear-gradient(180deg,rgba(0,255,163,.3),rgba(0,255,163,.1));border-color:var(--green)}
+.podium-2 .podium-platform{padding:12px 8px;border-color:var(--green)}
+.podium-3 .podium-base{height:10px;background:linear-gradient(180deg,rgba(255,51,85,.3),rgba(255,51,85,.1));border-color:var(--red)}
+.podium-3 .podium-platform{padding:8px 8px;border-color:var(--red)}
+
+.podium-place{
+  font:900 1.2rem/1 var(--mono);
+  color:var(--gold);
+  text-shadow:0 0 10px rgba(255,209,102,.5);
+}
+.podium-2 .podium-place{color:var(--green);text-shadow:0 0 10px rgba(0,255,163,.5)}
+.podium-3 .podium-place{color:var(--red);text-shadow:0 0 10px rgba(255,51,85,.5)}
+
+.podium-avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:3px solid;
+}
+
+.podium-name{
+  font:700 12px/1 var(--mono);
+  letter-spacing:.1em;
+  color:var(--text);
+  text-transform:uppercase;
+}
+
+.podium-score{
+  font:900 1.3rem/1 var(--mono);
+  color:var(--gold);
+  text-shadow:0 0 15px rgba(255,209,102,.5);
+}
+
+.play-again-btn{
+  margin-top:30px;
+  padding:16px 40px;
+  border:1px solid var(--cyan);
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(56,232,255,.2),rgba(56,232,255,.05));
+  color:var(--cyan);
+  font:900 14px/1 var(--mono);
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .3s ease;
+  pointer-events:auto;
+}
+.play-again-btn:hover{
+  background:linear-gradient(180deg,rgba(56,232,255,.35),rgba(56,232,255,.1));
+  box-shadow:0 0 30px rgba(56,232,255,.3);
+}
+
+/* Animations */
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes slideIn{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.fade-in{
+  animation:fadeIn .5s ease forwards;
+}
+
+.slide-in{
+  animation:slideIn .4s ease forwards;
+}
+
+/* Responsive */
+@media (max-width:768px){
+  .question-text{
+    font-size:clamp(1rem,4vw,1.5rem);
+    padding:16px 20px;
+  }
+  
+  .results-display{
+    width:95%;
+    max-width:400px;
+  }
+  
+  .result-item{
+    flex-wrap:wrap;
+  }
+  
+  #leaderboard-display{
+    display:none;
+  }
+  
+  .podium-stands{
+    flex-direction:column;
+    align-items:center;
+    gap:20px;
+  }
+  
+  .podium-stand{
+    flex-direction:row;
+    gap:16px;
+  }
+  
+  .podium-platform{
+    width:80px;
+    padding:8px 4px;
+  }
+}
+
+/* Loading bar for assets */
+#asset-loader{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:200px;
+  height:4px;
+  border-radius:2px;
+  background:rgba(255,255,255,.1);
+  overflow:hidden;
+}
+
+#asset-loader .progress{
+  height:100%;
+  background:linear-gradient(90deg,var(--cyan),var(--green));
+  width:0%;
+  transition:width .3s ease;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Three.js Container -->
+<div id="three-container"></div>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Chargement 3D...</div>
+  <div id="asset-loader">
+    <div class="progress"></div>
+  </div>
+</div>
+
+<!-- UI Overlay -->
+<div id="ui-overlay">
+  <!-- Main Menu -->
+  <div id="main-menu">
+    <h1 class="menu-title">CREATOR 3D QUIZ</h1>
+    <p class="menu-subtitle">Rejoins la partie en 3D</p>
+    <button class="menu-btn" id="create-btn">CREER UNE SALLE</button>
+    <button class="menu-btn secondary" id="join-btn">REJOINDRE</button>
+  </div>
+
+  <!-- Join Form -->
+  <div id="join-form" hidden>
+    <h2 class="menu-title">Rejoindre</h2>
+    <input type="text" class="form-input" id="pseudo-input" placeholder="Ton pseudo" maxlength="15">
+    <input type="text" class="form-input" id="room-code-input" placeholder="Code de la salle" maxlength="4">
+    <button class="menu-btn" id="confirm-join-btn">CONTINUER</button>
+    <button class="menu-btn secondary" id="back-to-menu-btn">RETOUR</button>
+  </div>
+
+  <!-- Room Lobby -->
+  <div id="room-lobby" hidden>
+    <div id="room-code-display">
+      <p class="code-label">Code de la salle</p>
+      <div class="code-value" id="displayed-room-code"></div>
+    </div>
+    <div id="players-list"></div>
+    <button class="menu-btn" id="start-btn">LANCER LA PARTIE</button>
+  </div>
+
+  <!-- Question Display -->
+  <div id="question-display">
+    <p class="question-number" id="question-number">Question 1/10</p>
+    <div class="question-text" id="question-text"></div>
+    <div id="answer-section">
+      <input type="text" class="answer-input" id="answer-input" placeholder="Ta reponse..." autocomplete="off">
+      <button class="submit-btn" id="submit-answer-btn">ENVOYER</button>
+    </div>
+  </div>
+
+  <!-- Timer -->
+  <div id="timer-display">30</div>
+
+  <!-- Results Display -->
+  <div id="results-display">
+    <h2 class="results-title">Resultats</h2>
+    <div class="results-list" id="results-list"></div>
+    <button class="next-btn" id="next-question-btn">SUIVANT</button>
+  </div>
+
+  <!-- Leaderboard (during game) -->
+  <div id="leaderboard-display">
+    <p class="leaderboard-title">Classement</p>
+    <div id="leaderboard-list"></div>
+  </div>
+
+  <!-- Podium Display -->
+  <div id="podium-display">
+    <h1 class="podium-title">Podium Final</h1>
+    <div class="podium-stands" id="podium-stands"></div>
+    <button class="play-again-btn" id="play-again-btn">Rejouer</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CREATOR 3D QUIZ - Client
+// ============================================================
+
+// Configuration
+const SERVER_URL = window.location.origin;
+const PLAYER_COLORS = [
+  '#0033FF', // Bleu
+  '#00E5A0', // Vert Menthe
+  '#FF5C35', // Orange
+  '#FFD700', // Jaune
+  '#8B5CF6', // Violet
+  '#FF69B4', // Rose
+  '#00BCD4', // Cyan
+  '#E91E63', // Fuchsia
+];
+
+// State
+let socket;
+let roomCode = null;
+let playerId = null;
+let playerPseudo = null;
+let playerColor = null;
+let isAnimator = false;
+let currentQuestion = null;
+let timeLeft = 0;
+let players = [];
+let results = [];
+let rankings = [];
+
+// Three.js Variables
+let scene, camera, renderer, room;
+let playerAvatars = {};
+let questionDisplay3D = null;
+let timerDisplay3D = null;
+let resultsDisplay3D = null;
+let animations = [];
+
+// ============================================================
+// INITIALISATION
+// ============================================================
+
+function init() {
+  initSocket();
+  initThreeJS();
+  initUI();
+  
+  // Hide loading screen after Three.js is ready
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+  }, 2000);
+}
+
+// ============================================================
+// SOCKET.IO
+// ============================================================
+
+function initSocket() {
+  socket = io(SERVER_URL);
+  
+  socket.on('connect', () => {
+    console.log('Connected to server:', socket.id);
+    playerId = socket.id;
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('Disconnected from server');
+  });
+  
+  // Room created
+  socket.on('room-created', ({ code }) => {
+    roomCode = code;
+    isAnimator = true;
+    showRoomLobby();
+    updateRoomCodeDisplay();
+  });
+  
+  // Joined room
+  socket.on('joined-room', ({ player, code }) => {
+    roomCode = code;
+    playerPseudo = player.pseudo;
+    playerColor = player.color;
+    isAnimator = false;
+    showRoomLobby();
+    updateRoomCodeDisplay();
+  });
+  
+  // Error
+  socket.on('error-msg', ({ message }) => {
+    alert(message);
+  });
+  
+  // Players updated
+  socket.on('players-updated', ({ players: playersList }) => {
+    players = playersList;
+    updatePlayersList();
+    updatePlayerAvatars();
+    if (isAnimator && players.length > 0) {
+      document.getElementById('start-btn').style.display = 'block';
+    }
+  });
+  
+  // Game started
+  socket.on('game-started', () => {
+    document.getElementById('room-lobby').hidden = true;
+    document.getElementById('question-display').style.display = 'block';
+    document.getElementById('leaderboard-display').style.display = 'flex';
+    updateLeaderboard();
+  });
+  
+  // New question
+  socket.on('new-question', ({ number, text, total, timeLeft: serverTimeLeft }) => {
+    currentQuestion = { number, text, total };
+    timeLeft = serverTimeLeft;
+    updateQuestionDisplay();
+    updateTimerDisplay();
+    startTimer();
+    
+    // Show answer section for players
+    if (!isAnimator) {
+      document.getElementById('answer-section').style.display = 'flex';
+      document.getElementById('answer-input').value = '';
+      document.getElementById('answer-input').focus();
+    }
+    
+    // Hide results
+    document.getElementById('results-display').style.display = 'none';
+    document.getElementById('question-display').style.display = 'block';
+  });
+  
+  // Timer tick
+  socket.on('timer-tick', ({ timeLeft: serverTimeLeft }) => {
+    timeLeft = serverTimeLeft;
+    updateTimerDisplay();
+  });
+  
+  // Answer confirmed
+  socket.on('answer-confirmed', () => {
+    document.getElementById('answer-input').disabled = true;
+    document.getElementById('submit-answer-btn').disabled = true;
+  });
+  
+  // Question results
+  socket.on('question-results', ({ questionText, results: serverResults, scores }) => {
+    results = serverResults;
+    players = scores.map(score => ({
+      id: score.id,
+      pseudo: score.pseudo,
+      score: score.score,
+      color: score.color
+    }));
+    
+    updateResultsDisplay();
+    updateLeaderboard();
+    updatePlayerAvatars();
+    
+    // Hide question, show results
+    document.getElementById('question-display').style.display = 'none';
+    document.getElementById('results-display').style.display = 'block';
+    document.getElementById('answer-section').style.display = 'none';
+    
+    // Only animator can go to next question
+    if (isAnimator) {
+      document.getElementById('next-question-btn').style.display = 'block';
+    }
+  });
+  
+  // Show podium
+  socket.on('show-podium', ({ rankings: serverRankings }) => {
+    rankings = serverRankings;
+    showPodium();
+    updatePlayerAvatars();
+  });
+  
+  // Back to lobby
+  socket.on('back-to-lobby', ({ players: playersList }) => {
+    players = playersList;
+    document.getElementById('podium-display').style.display = 'none';
+    document.getElementById('results-display').style.display = 'none';
+    document.getElementById('question-display').style.display = 'none';
+    document.getElementById('room-lobby').hidden = false;
+    updatePlayersList();
+    updatePlayerAvatars();
+    document.getElementById('start-btn').style.display = 'none';
+  });
+  
+  // Game ended
+  socket.on('game-ended', ({ message }) => {
+    alert(message);
+    goToMenu();
+  });
+  
+  // Player answered (for animator)
+  socket.on('player-answered', ({ playerId, pseudo }) => {
+    // Could show notification
+  });
+}
+
+// ============================================================
+// UI FUNCTIONS
+// ============================================================
+
+function initUI() {
+  // Menu buttons
+  document.getElementById('create-btn').addEventListener('click', createRoom);
+  document.getElementById('join-btn').addEventListener('click', showJoinForm);
+  document.getElementById('back-to-menu-btn').addEventListener('click', () => {
+    document.getElementById('join-form').hidden = true;
+    document.getElementById('main-menu').hidden = false;
+  });
+  
+  // Join form
+  document.getElementById('confirm-join-btn').addEventListener('click', joinRoom);
+  
+  // Start button
+  document.getElementById('start-btn').addEventListener('click', startGame);
+  
+  // Answer submission
+  document.getElementById('submit-answer-btn').addEventListener('click', submitAnswer);
+  document.getElementById('answer-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') submitAnswer();
+  });
+  
+  // Next question button
+  document.getElementById('next-question-btn').addEventListener('click', nextQuestion);
+  
+  // Play again button
+  document.getElementById('play-again-btn').addEventListener('click', playAgain);
+}
+
+function createRoom() {
+  const pseudo = prompt('Choisis ton pseudo (admin):', 'Admin');
+  if (!pseudo || !pseudo.trim()) return;
+  
+  playerPseudo = pseudo.trim().substring(0, 15);
+  socket.emit('create-room');
+  document.getElementById('main-menu').hidden = true;
+}
+
+function showJoinForm() {
+  document.getElementById('main-menu').hidden = true;
+  document.getElementById('join-form').hidden = false;
+  document.getElementById('pseudo-input').focus();
+}
+
+function joinRoom() {
+  const pseudo = document.getElementById('pseudo-input').value.trim();
+  const code = document.getElementById('room-code-input').value.trim().toUpperCase();
+  
+  if (!pseudo) {
+    alert('Veuillez entrer un pseudo');
+    return;
+  }
+  
+  if (!code || code.length !== 4) {
+    alert('Veuillez entrer un code de salle valide (4 lettres)');
+    return;
+  }
+  
+  playerPseudo = pseudo;
+  socket.emit('join-room', { code, pseudo });
+  document.getElementById('join-form').hidden = true;
+}
+
+function startGame() {
+  socket.emit('start-game', { code: roomCode });
+}
+
+function submitAnswer() {
+  const answer = document.getElementById('answer-input').value.trim();
+  if (!answer) return;
+  
+  socket.emit('submit-answer', { code: roomCode, answer });
+  document.getElementById('answer-input').disabled = true;
+  document.getElementById('submit-answer-btn').disabled = true;
+}
+
+function nextQuestion() {
+  document.getElementById('next-question-btn').style.display = 'none';
+  socket.emit('next-question', { code: roomCode });
+}
+
+function playAgain() {
+  document.getElementById('podium-display').style.display = 'none';
+  socket.emit('play-again', { code: roomCode });
+}
+
+function goToMenu() {
+  roomCode = null;
+  isAnimator = false;
+  playerPseudo = null;
+  playerColor = null;
+  currentQuestion = null;
+  players = [];
+  results = [];
+  rankings = [];
+  
+  document.getElementById('main-menu').hidden = false;
+  document.getElementById('room-lobby').hidden = true;
+  document.getElementById('join-form').hidden = true;
+  document.getElementById('question-display').style.display = 'none';
+  document.getElementById('results-display').style.display = 'none';
+  document.getElementById('podium-display').style.display = 'none';
+  document.getElementById('leaderboard-display').style.display = 'none';
+  document.getElementById('answer-section').style.display = 'none';
+  
+  // Reset answer input
+  document.getElementById('answer-input').value = '';
+  document.getElementById('answer-input').disabled = false;
+  document.getElementById('submit-answer-btn').disabled = false;
+  
+  // Clear 3D scene
+  clearThreeJSScene();
+  
+  // Show loading briefly
+  document.getElementById('loading-screen').classList.remove('hidden');
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+  }, 1000);
+}
+
+function showRoomLobby() {
+  document.getElementById('main-menu').hidden = true;
+  document.getElementById('join-form').hidden = true;
+  document.getElementById('room-lobby').hidden = false;
+  updatePlayersList();
+  updateRoomCodeDisplay();
+  
+  // Initialize 3D room
+  create3DRoom();
+}
+
+function updateRoomCodeDisplay() {
+  const codeEl = document.getElementById('displayed-room-code');
+  if (codeEl && roomCode) {
+    codeEl.textContent = roomCode;
+  }
+}
+
+function updatePlayersList() {
+  const listEl = document.getElementById('players-list');
+  if (!listEl) return;
+  
+  listEl.innerHTML = '';
+  players.forEach(player => {
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    card.innerHTML = `
+      <div class="player-avatar" style="border-color:${player.color}"></div>
+      <span class="player-name">${player.pseudo}</span>
+      <span class="player-score">${player.score}</span>
+    `;
+    listEl.appendChild(card);
+  });
+}
+
+function updateQuestionDisplay() {
+  const numberEl = document.getElementById('question-number');
+  const textEl = document.getElementById('question-text');
+  
+  if (currentQuestion) {
+    numberEl.textContent = `Question ${currentQuestion.number}/${currentQuestion.total}`;
+    textEl.textContent = currentQuestion.text;
+  }
+}
+
+function updateTimerDisplay() {
+  const timerEl = document.getElementById('timer-display');
+  if (timerEl) {
+    timerEl.textContent = timeLeft;
+    timerEl.classList.toggle('timer-danger', timeLeft <= 5);
+  }
+}
+
+function startTimer() {
+  // Timer is managed by server, but we can have a local fallback
+  if (window.timerInterval) clearInterval(window.timerInterval);
+  
+  window.timerInterval = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      updateTimerDisplay();
+    }
+  }, 1000);
+}
+
+function updateResultsDisplay() {
+  const listEl = document.getElementById('results-list');
+  if (!listEl) return;
+  
+  listEl.innerHTML = '';
+  results.forEach((result, index) => {
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = `
+      <span class="result-rank">${index + 1}</span>
+      <span class="result-text">${result.text}</span>
+      <span class="result-count">${result.count} reponses (${result.percentage}%)</span>
+    `;
+    listEl.appendChild(item);
+  });
+}
+
+function updateLeaderboard() {
+  const listEl = document.getElementById('leaderboard-list');
+  if (!listEl) return;
+  
+  listEl.innerHTML = '';
+  players
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .forEach(player => {
+      const item = document.createElement('div');
+      item.className = 'leaderboard-item';
+      item.innerHTML = `
+        <div class="leaderboard-avatar" style="border-color:${player.color}"></div>
+        <span class="leaderboard-name">${player.pseudo}</span>
+        <span class="leaderboard-score">${player.score}</span>
+      `;
+      listEl.appendChild(item);
+    });
+}
+
+function showPodium() {
+  document.getElementById('results-display').style.display = 'none';
+  document.getElementById('question-display').style.display = 'none';
+  document.getElementById('leaderboard-display').style.display = 'none';
+  document.getElementById('podium-display').style.display = 'block';
+  
+  const standsEl = document.getElementById('podium-stands');
+  if (!standsEl) return;
+  
+  standsEl.innerHTML = '';
+  
+  // Add podium stands for top 3
+  for (let i = 0; i < Math.min(3, rankings.length); i++) {
+    const rank = rankings[i];
+    const stand = document.createElement('div');
+    stand.className = `podium-stand podium-${i + 1}`;
+    stand.innerHTML = `
+      <div class="podium-base"></div>
+      <div class="podium-platform">
+        <span class="podium-place">${i + 1}</span>
+        <div class="podium-avatar" style="border-color:${rank.color}"></div>
+        <span class="podium-name">${rank.pseudo}</span>
+        <span class="podium-score">${rank.score}</span>
+      </div>
+    `;
+    standsEl.appendChild(stand);
+  }
+}
+
+// ============================================================
+// THREE.JS
+// ============================================================
+
+function initThreeJS() {
+  // Scene
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x06070c);
+  scene.fog = new THREE.Fog(0x06070c, 1, 100);
+  
+  // Camera
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 5, 12);
+  camera.lookAt(0, 0, 0);
+  
+  // Renderer
+  const container = document.getElementById('three-container');
+  renderer = new THREE.WebGLRenderer({ 
+    antialias: true, 
+    alpha: true 
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+  
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+  scene.add(ambientLight);
+  
+  // Cyan light
+  const cyanLight = new THREE.PointLight(0x38e8ff, 2, 50);
+  cyanLight.position.set(-5, 10, -5);
+  cyanLight.castShadow = true;
+  scene.add(cyanLight);
+  
+  // Magenta light
+  const magentaLight = new THREE.PointLight(0xff3355, 2, 50);
+  magentaLight.position.set(5, 10, -5);
+  magentaLight.castShadow = true;
+  scene.add(magentaLight);
+  
+  // Green light
+  const greenLight = new THREE.PointLight(0x00ffa3, 1.5, 50);
+  greenLight.position.set(0, 10, 5);
+  scene.add(greenLight);
+  
+  // Add neon grid floor
+  createGridFloor();
+  
+  // Add stars
+  createStars();
+  
+  // Add horizon
+  createHorizon();
+  
+  // Add walls
+  createWalls();
+  
+  // Handle resize
+  window.addEventListener('resize', onWindowResize);
+  
+  // Start animation loop
+  animate();
+}
+
+function createGridFloor() {
+  const geometry = new THREE.PlaneGeometry(100, 100);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x1a2034,
+    roughness: 0.8,
+    metalness: 0.2
+  });
+  
+  const floor = new THREE.Mesh(geometry, material);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.1;
+  floor.receiveShadow = true;
+  scene.add(floor);
+  
+  // Grid lines
+  const gridGeometry = new THREE.BufferGeometry();
+  const gridMaterial = new THREE.LineBasicMaterial({ 
+    color: 0x38e8ff, 
+    transparent: true, 
+    opacity: 0.3 
+  });
+  
+  const lineCount = 50;
+  const lines = [];
+  
+  for (let i = -lineCount; i <= lineCount; i++) {
+    const geometryH = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-lineCount, 0, i),
+      new THREE.Vector3(lineCount, 0, i)
+    ]);
+    const lineH = new THREE.Line(geometryH, gridMaterial);
+    lines.push(lineH);
+    
+    const geometryV = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(i, 0, -lineCount),
+      new THREE.Vector3(i, 0, lineCount)
+    ]);
+    const lineV = new THREE.Line(geometryV, gridMaterial);
+    lines.push(lineV);
+  }
+  
+  lines.forEach(line => scene.add(line));
+}
+
+function createStars() {
+  const geometry = new THREE.BufferGeometry();
+  const material = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.8
+  });
+  
+  const vertices = [];
+  for (let i = 0; i < 2000; i++) {
+    const x = (Math.random() - 0.5) * 200;
+    const y = Math.random() * 100;
+    const z = (Math.random() - 0.5) * 200;
+    vertices.push(x, y, z);
+  }
+  
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  const stars = new THREE.Points(geometry, material);
+  scene.add(stars);
+}
+
+function createHorizon() {
+  const geometry = new THREE.PlaneGeometry(300, 1);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x38e8ff,
+    transparent: true,
+    opacity: 0.3
+  });
+  
+  const horizon = new THREE.Mesh(geometry, material);
+  horizon.position.set(0, 0, -50);
+  scene.add(horizon);
+}
+
+function createWalls() {
+  // Back wall with gradient
+  const wallGeometry = new THREE.PlaneGeometry(60, 30);
+  const wallMaterial = new THREE.MeshStandardMaterial({
+    color: 0x10131f,
+    roughness: 0.7,
+    metalness: 0.1
+  });
+  
+  const backWall = new THREE.Mesh(wallGeometry, wallMaterial);
+  backWall.position.set(0, 15, -30);
+  backWall.receiveShadow = true;
+  scene.add(backWall);
+  
+  // Side walls
+  const sideWallL = new THREE.Mesh(wallGeometry, wallMaterial);
+  sideWallL.rotation.y = Math.PI / 2;
+  sideWallL.position.set(-30, 15, 0);
+  scene.add(sideWallL);
+  
+  const sideWallR = new THREE.Mesh(wallGeometry, wallMaterial);
+  sideWallR.rotation.y = -Math.PI / 2;
+  sideWallR.position.set(30, 15, 0);
+  scene.add(sideWallR);
+  
+  // Ceiling
+  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), wallMaterial);
+  ceiling.rotation.x = Math.PI / 2;
+  ceiling.position.y = 30;
+  scene.add(ceiling);
+  
+  // Add neon trim
+  addNeonTrim();
+}
+
+function addNeonTrim() {
+  // Create neon light strips
+  const neonMaterial = new THREE.MeshBasicMaterial({
+    color: 0x38e8ff,
+    transparent: true,
+    opacity: 0.8
+  });
+  
+  // Floor trim
+  const floorTrim = new THREE.Mesh(
+    new THREE.BoxGeometry(62, 0.1, 62),
+    neonMaterial
+  );
+  floorTrim.position.y = -0.05;
+  scene.add(floorTrim);
+  
+  // Ceiling trim
+  const ceilingTrim = new THREE.Mesh(
+    new THREE.BoxGeometry(62, 0.1, 62),
+    neonMaterial
+  );
+  ceilingTrim.position.y = 30.05;
+  scene.add(ceilingTrim);
+  
+  // Wall trims
+  const wallTrimGeometry = new THREE.BoxGeometry(0.1, 30, 62);
+  
+  const wallTrimL = new THREE.Mesh(wallTrimGeometry, neonMaterial);
+  wallTrimL.position.set(-30.05, 15, 0);
+  scene.add(wallTrimL);
+  
+  const wallTrimR = new THREE.Mesh(wallTrimGeometry, neonMaterial);
+  wallTrimR.position.set(30.05, 15, 0);
+  scene.add(wallTrimR);
+  
+  const wallTrimBack = new THREE.Mesh(
+    new THREE.BoxGeometry(62, 30, 0.1),
+    neonMaterial
+  );
+  wallTrimBack.position.set(0, 15, -30.05);
+  scene.add(wallTrimBack);
+}
+
+function create3DRoom() {
+  // Create a central table for the question display
+  createCentralTable();
+  
+  // Create screen for displaying question
+  createQuestionScreen();
+  
+  // Create player pods
+  createPlayerPods();
+  
+  // Create leaderboard screen
+  createLeaderboardScreen();
+  
+  // Update camera for room view
+  camera.position.set(0, 6, 20);
+  camera.lookAt(0, 2, 0);
+}
+
+function createCentralTable() {
+  // Table base
+  const tableBase = new THREE.Mesh(
+    new THREE.CylinderGeometry(2, 2, 0.5, 32),
+    new THREE.MeshStandardMaterial({
+      color: 0x1a2034,
+      roughness: 0.5,
+      metalness: 0.3
+    })
+  );
+  tableBase.position.y = 0.25;
+  tableBase.castShadow = true;
+  tableBase.receiveShadow = true;
+  scene.add(tableBase);
+  room = { table: tableBase };
+  
+  // Table top
+  const tableTop = new THREE.Mesh(
+    new THREE.CylinderGeometry(3, 3, 0.2, 32),
+    new THREE.MeshStandardMaterial({
+      color: 0x0d0e15,
+      roughness: 0.3,
+      metalness: 0.5
+    })
+  );
+  tableTop.position.y = 0.6;
+  tableTop.castShadow = true;
+  tableTop.receiveShadow = true;
+  scene.add(tableTop);
+  room.tableTop = tableTop;
+  
+  // Neon edge on table
+  const neonEdge = new THREE.Mesh(
+    new THREE.TorusGeometry(3.1, 0.05, 16, 100),
+    new THREE.MeshBasicMaterial({
+      color: 0x38e8ff,
+      transparent: true,
+      opacity: 0.8
+    })
+  );
+  neonEdge.position.y = 0.6;
+  neonEdge.rotation.x = Math.PI / 2;
+  scene.add(neonEdge);
+}
+
+function createQuestionScreen() {
+  // Screen frame
+  const frameWidth = 8;
+  const frameHeight = 4.5;
+  const frameDepth = 0.2;
+  
+  const frameGeometry = new THREE.BoxGeometry(frameWidth, frameHeight, frameDepth);
+  const frameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x000000,
+    roughness: 0.2,
+    metalness: 0.8
+  });
+  
+  const screenFrame = new THREE.Mesh(frameGeometry, frameMaterial);
+  screenFrame.position.set(0, 5, -5);
+  screenFrame.castShadow = true;
+  scene.add(screenFrame);
+  
+  // Screen surface (slightly inside frame)
+  const screenGeometry = new THREE.PlaneGeometry(frameWidth - 0.2, frameHeight - 0.2);
+  const screenMaterial = new THREE.MeshBasicMaterial({
+    color: 0x0d0e15,
+    transparent: true,
+    opacity: 0.9
+  });
+  
+  const screenSurface = new THREE.Mesh(screenGeometry, screenMaterial);
+  screenSurface.position.set(0, 5, -4.9);
+  scene.add(screenSurface);
+  
+  // Store reference for updating text
+  questionDisplay3D = { frame: screenFrame, surface: screenSurface };
+}
+
+function createPlayerPods() {
+  // Create positions for player avatars
+  // Semi-circle around the table
+  const radius = 8;
+  const count = 6;
+  
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    
+    const podGeometry = new THREE.CylinderGeometry(0.8, 0.8, 0.1, 32);
+    const podMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1a2034,
+      roughness: 0.5,
+      metalness: 0.3
+    });
+    
+    const pod = new THREE.Mesh(podGeometry, podMaterial);
+    pod.position.set(x, 0.05, z);
+    pod.castShadow = true;
+    pod.receiveShadow = true;
+    scene.add(pod);
+    
+    // Store pod position for avatars
+    if (!room) room = {};
+    if (!room.pods) room.pods = [];
+    room.pods.push({
+      position: new THREE.Vector3(x, 0.05, z),
+      pod: pod,
+      avatar: null
+    });
+  }
+}
+
+function createLeaderboardScreen() {
+  // Leaderboard screen on the right wall
+  const screenGeometry = new THREE.PlaneGeometry(6, 8);
+  const screenMaterial = new THREE.MeshBasicMaterial({
+    color: 0x0d0e15,
+    transparent: true,
+    opacity: 0.8
+  });
+  
+  const leaderboardScreen = new THREE.Mesh(screenGeometry, screenMaterial);
+  leaderboardScreen.position.set(15, 8, -25);
+  scene.add(leaderboardScreen);
+  
+  // Frame
+  const frameGeometry = new THREE.BoxGeometry(6.2, 8.2, 0.2);
+  const frameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x000000,
+    roughness: 0.2,
+    metalness: 0.8
+  });
+  
+  const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+  frame.position.set(15, 8, -24.9);
+  scene.add(frame);
+  
+  leaderboardDisplay3D = { screen: leaderboardScreen, frame: frame };
+}
+
+function updatePlayerAvatars() {
+  if (!room || !room.pods) return;
+  
+  // Clear existing avatars
+  room.pods.forEach(pod => {
+    if (pod.avatar) {
+      scene.remove(pod.avatar);
+      pod.avatar = null;
+    }
+    if (pod.nameTag) {
+      scene.remove(pod.nameTag);
+      pod.nameTag = null;
+    }
+  });
+  
+  // Create avatars for each player
+  players.forEach((player, index) => {
+    const pod = room.pods[index % room.pods.length];
+    if (!pod) return;
+    
+    // Create simple avatar (sphere)
+    const avatarGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+    const avatarMaterial = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(player.color || PLAYER_COLORS[index % PLAYER_COLORS.length]),
+      emissive: new THREE.Color(player.color || PLAYER_COLORS[index % PLAYER_COLORS.length]),
+      emissiveIntensity: 0.5,
+      roughness: 0.3,
+      metalness: 0.2
+    });
+    
+    const avatar = new THREE.Mesh(avatarGeometry, avatarMaterial);
+    avatar.position.copy(pod.position);
+    avatar.position.y = 1.2;
+    avatar.castShadow = true;
+    avatar.receiveShadow = true;
+    scene.add(avatar);
+    pod.avatar = avatar;
+    
+    // Add name tag
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 128;
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'rgba(15, 19, 32, 0.8)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.font = 'Bold 16px Arial';
+    context.fillStyle = '#eaf6ff';
+    context.textAlign = 'center';
+    context.fillText(player.pseudo, canvas.width / 2, canvas.height / 2 - 10);
+    context.font = 'Bold 14px Arial';
+    context.fillStyle = '#ffd166';
+    context.fillText(`Score: ${player.score}`, canvas.width / 2, canvas.height / 2 + 10);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    const nameTagMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+    const nameTag = new THREE.Sprite(nameTagMaterial);
+    nameTag.position.copy(pod.position);
+    nameTag.position.y = 2.2;
+    nameTag.scale.set(0.5, 0.25, 1);
+    scene.add(nameTag);
+    pod.nameTag = nameTag;
+  });
+}
+
+function clearThreeJSScene() {
+  // Remove all objects except basics
+  while(scene.children.length > 0) {
+    const obj = scene.children[0];
+    if (obj.type === 'Mesh' || obj.type === 'Group' || obj.type === 'Points' || obj.type === 'Line') {
+      scene.remove(obj);
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        if (obj.material.map) obj.material.map.dispose();
+        obj.material.dispose();
+      }
+    } else {
+      break;
+    }
+  }
+  
+  // Recreate basic elements
+  createGridFloor();
+  createStars();
+  createHorizon();
+  createWalls();
+  
+  room = {};
+  playerAvatars = {};
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  
+  // Add subtle animations
+  if (room && room.table) {
+    room.table.rotation.y += 0.001;
+  }
+  
+  // Pulsing effect for neon lights
+  const time = Date.now() * 0.001;
+  const cyanLight = scene.children.find(child => child instanceof THREE.PointLight && child.color.getHex() === 0x38e8ff);
+  const magentaLight = scene.children.find(child => child instanceof THREE.PointLight && child.color.getHex() === 0xff3355);
+  
+  if (cyanLight) {
+    cyanLight.intensity = 2 + Math.sin(time * 2) * 0.5;
+  }
+  if (magentaLight) {
+    magentaLight.intensity = 2 + Math.sin(time * 1.5) * 0.5;
+  }
+  
+  renderer.render(scene, camera);
+}
+
+// ============================================================
+// START
+// ============================================================
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+</script>
+</body>
+</html>
