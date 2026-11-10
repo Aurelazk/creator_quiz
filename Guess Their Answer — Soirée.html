@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F3E8">
+<meta name="description" content="Guess Their Answer — le jeu de soirée CREATOR : devine la réponse la plus populaire, écran animateur et téléphones.">
+<title>Guess Their Answer — CREATOR</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%2310131C%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2260%22 font-family=%22Georgia%22 fill=%22%23F7F3E8%22>C</text></svg>">
+<style>
+:root{
+  --paper:#f7f3e8;--paper-2:#efe7d4;--paper-3:#fffdf7;--ink:#10131c;--ink-soft:#2a2d3a;
+  --blue:#0033ff;--coral:#f05030;--mint:#00a878;--yellow:#ffc107;--violet:#8b5cf6;
+  --muted:#706d64;--line:rgba(16,19,28,.2);
+  --display:Georgia,"Times New Roman","Liberation Serif",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+::selection{background:var(--blue);color:var(--paper)}
+body{
+  min-height:100vh;color:var(--ink);font-family:var(--sans);background-color:var(--paper);
+  background-image:linear-gradient(rgba(16,19,28,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(16,19,28,.035) 1px,transparent 1px);
+  background-size:44px 44px;overflow-x:hidden;
+}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+#stage3d{position:fixed;inset:0;z-index:0;width:100%;height:100%;display:block;pointer-events:none;opacity:.9;transition:opacity .5s}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.055;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.topbar{position:relative;z-index:3;display:flex;align-items:center;gap:24px;width:min(1240px,calc(100% - 48px));margin:0 auto;padding:18px 0 14px;border-bottom:2px solid var(--ink)}
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.brand-mark{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:1.1rem;font-weight:700;transition:transform .25s,background .2s}
+.brand:hover .brand-mark{transform:rotate(-14deg);background:var(--blue)}
+.brand-word{font-family:var(--display);font-size:1.4rem;font-weight:700;letter-spacing:.04em}
+.top-title{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+.top-meta{margin-left:auto;font-family:var(--mono);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.conn{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.conn::before{content:"";width:7px;height:7px;border-radius:50%;background:#b5b0a3}
+.conn.online::before{background:var(--mint);box-shadow:0 0 0 4px rgba(0,168,120,.14)}
+main{position:relative;z-index:2;width:min(1160px,calc(100% - 48px));margin:0 auto;padding:30px 0 64px}
+.view{display:none;min-height:calc(100vh - 210px)}
+.view.active{display:block;animation:viewIn .55s cubic-bezier(.22,1,.36,1) both}
+@keyframes viewIn{from{opacity:0;transform:translateY(18px);clip-path:inset(0 0 5% 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0 0 0 0)}}
+.kicker,.eyebrow,.field-label,.panel-label,.chip,.stat,.hint,.mini,.code-link,.home-facts,.podium-place,.conn,.top-meta,.top-title{font-family:var(--mono);text-transform:uppercase;letter-spacing:.09em}
+.kicker,.eyebrow{font-size:.68rem;font-weight:700;color:var(--blue)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--blue)}
+h1{font-family:var(--display);font-size:clamp(2.8rem,7vw,6.6rem);line-height:.88;letter-spacing:-.055em;font-weight:700}
+h1 em{color:var(--coral);font-weight:400}
+h2{font-family:var(--display);font-size:clamp(1.9rem,4.4vw,3.6rem);line-height:.98;letter-spacing:-.04em;font-weight:700}
+h3{font-family:var(--display);font-size:1.3rem;font-weight:600}
+p{line-height:1.55}
+.lede{max-width:34ch;font-size:1.05rem;color:var(--ink-soft)}
+.panel{background:var(--paper-3);border:2px solid var(--ink);padding:22px;box-shadow:6px 6px 0 var(--ink)}
+.panel.yellow{background:var(--yellow);box-shadow:6px 6px 0 var(--ink)}
+.panel.dark{background:var(--ink);color:var(--paper);box-shadow:6px 6px 0 var(--yellow)}
+.panel-head{display:flex;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase}
+.panel.dark .panel-head{border-color:rgba(247,243,232,.22);color:rgba(247,243,232,.65)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:13px 24px;border:2px solid var(--ink);background:var(--paper-3);color:var(--ink);box-shadow:4px 4px 0 var(--ink);font-size:.82rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;transition:transform .14s,box-shadow .14s,background .14s,color .14s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--ink)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-coral{background:var(--coral);color:#fff}
+.btn-mint{background:var(--mint);color:var(--ink)}
+.btn-outline{background:transparent}
+.btn-light{background:var(--paper);color:var(--ink)}
+.btn-block{width:100%}
+.text-btn{border:0;border-bottom:1px solid currentColor;background:none;padding:0;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.text-btn:hover{color:var(--blue)}
+input{width:100%;min-height:54px;padding:13px 15px;border:2px solid var(--ink);background:var(--paper-3);font-size:1rem;font-weight:600;outline:none;transition:box-shadow .15s,transform .15s}
+input:focus{box-shadow:4px 4px 0 var(--blue);transform:translate(-1px,-1px)}
+input::placeholder{color:#969184}
+.field{margin-top:14px}
+.field-label{display:block;margin-bottom:7px;font-size:.62rem;font-weight:700;color:var(--muted)}
+.message{min-height:1.5em;margin-top:12px;font-size:.85rem;font-weight:700;color:var(--coral)}
+.message.ok{color:var(--mint)}
+.hidden{display:none!important}
+.home-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.74fr);gap:clamp(26px,4vw,58px);align-items:stretch;padding-top:14px}
+.home-copy{display:flex;flex-direction:column;gap:18px;justify-content:center}
+.home-copy h1{margin-top:4px}
+.home-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.home-actions .btn{flex:1 1 220px}
+.home-facts{display:flex;flex-wrap:wrap;gap:8px 20px;padding-top:16px;border-top:1px solid var(--line);font-size:.62rem;color:var(--muted)}
+.home-facts b{font-family:var(--display);font-size:1.35rem;font-weight:400;color:var(--ink);margin-right:4px}
+.stage-card{position:relative;min-height:420px;border:2px solid var(--ink);background:rgba(247,243,232,.05);overflow:hidden}
+.stage-card::before,.stage-card::after{content:"";position:absolute;width:18px;height:18px;border-color:var(--ink);border-style:solid;pointer-events:none}
+.stage-card::before{top:10px;left:10px;border-width:2px 0 0 2px}
+.stage-card::after{right:10px;bottom:10px;border-width:0 2px 2px 0}
+.stage-label{position:absolute;top:12px;left:18px;font-family:var(--mono);font-size:.56rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);z-index:1}
+.stage-tag{position:absolute;right:18px;bottom:14px;padding:6px 10px;background:var(--yellow);border:2px solid var(--ink);font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;z-index:1}
+.home-bottom{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.75fr);gap:22px;margin-top:26px}
+.home-bottom h2{font-size:clamp(1.6rem,3vw,2.3rem)}
+.leaderboard{list-style:none;display:flex;flex-direction:column;gap:7px}
+.leaderboard li{display:grid;grid-template-columns:24px 38px minmax(0,1fr) auto;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.leaderboard li:last-child{border-bottom:0}
+.leaderboard .lb-rank{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.leaderboard svg{width:38px;height:38px;border:2px solid var(--ink);background:var(--paper)}
+.leaderboard strong{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leaderboard b{font-family:var(--display);font-size:1.15rem;color:var(--blue)}
+.how-list{list-style:none;display:flex;flex-direction:column}
+.how-list li{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:14px 0;border-bottom:1px solid rgba(247,243,232,.16)}
+.how-list li:last-child{border-bottom:0}
+.how-list span{font-family:var(--mono);font-size:.66rem;color:var(--yellow);padding-top:3px}
+.how-list strong{font-family:var(--display);font-size:1.1rem;font-weight:400}
+.how-list small{display:block;margin-top:3px;color:rgba(247,243,232,.58);font-size:.72rem;line-height:1.4}
+.code-card{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding:28px;background:var(--yellow);border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);min-height:100%}
+.code-value{font-family:var(--display);font-size:clamp(4rem,11vw,8rem);line-height:.8;letter-spacing:.12em;color:var(--blue);font-weight:700;margin-left:-.06em}
+.code-link{font-size:.64rem;color:var(--muted);word-break:break-all;line-height:1.5}
+.lobby-grid{display:grid;grid-template-columns:minmax(280px,.78fr) minmax(0,1.22fr);gap:22px;padding-top:10px}
+.host-players{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;min-height:110px;margin:12px 0 16px}
+.host-player{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px;border:2px solid var(--ink);background:var(--paper);text-align:center;animation:popIn .35s both}
+.host-player svg{width:58px;height:58px}
+.host-player span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem;font-weight:700}
+.host-player small{font-family:var(--mono);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+@keyframes popIn{from{opacity:0;transform:scale(.84)}to{opacity:1;transform:scale(1)}}
+.count-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;background:var(--blue);color:#fff;font-family:var(--mono);font-size:.6rem;letter-spacing:.06em}
+.game-shell{display:flex;flex-direction:column;gap:18px;padding-top:8px}
+.game-top{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;min-height:30px;padding:5px 11px;border:2px solid var(--ink);background:var(--paper-3);font-size:.58rem;font-weight:700}
+.chip-blue{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip-coral{background:var(--coral);color:#fff;border-color:var(--coral)}
+.chip-mint{background:var(--mint);color:var(--ink);border-color:var(--mint)}
+.chip-yellow{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+.stat{margin-left:auto;font-size:.62rem;color:var(--muted)}
+.question{max-width:22ch;font-size:clamp(2rem,5.5vw,4.6rem);line-height:.94}
+.timer{height:11px;border:2px solid var(--ink);background:var(--paper-3);overflow:hidden}
+.timer i{display:block;height:100%;width:100%;background:var(--coral);transform-origin:left;transition:width .15s linear,background .2s}
+.timer.low i{background:var(--coral);animation:pulse .5s infinite alternate}
+@keyframes pulse{to{opacity:.45}}
+.host-game-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.62fr);gap:20px;align-items:start}
+.answer-list{display:flex;flex-direction:column;gap:8px}
+.answer-slot{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:60px;padding:10px 14px;border:2px solid var(--ink);background:var(--paper-3);transition:transform .3s,background .3s,color .3s}
+.answer-slot .slot-index{font-family:var(--mono);font-size:.65rem;color:var(--muted)}
+.answer-slot .slot-label{font-family:var(--display);font-size:1.2rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.answer-slot .slot-names{display:block;margin-top:2px;font-family:var(--mono);font-size:.52rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.answer-slot .slot-points{font-family:var(--display);font-size:1.35rem;font-weight:700;color:var(--blue)}
+.answer-slot.revealed{background:var(--blue);color:#fff;border-color:var(--blue);animation:slotReveal .45s both}
+.answer-slot.revealed .slot-index,.answer-slot.revealed .slot-names{color:rgba(255,255,255,.65)}
+.answer-slot.revealed .slot-points{color:#fff}
+@keyframes slotReveal{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.rank-list{list-style:none;display:flex;flex-direction:column;gap:5px;max-height:390px;overflow:auto}
+.rank-list li{display:grid;grid-template-columns:20px 34px minmax(0,1fr) auto;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.82rem}
+.rank-list li:last-child{border-bottom:0}
+.rank-list svg{width:34px;height:34px;border:2px solid var(--ink);background:var(--paper)}
+.rank-list .rank-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-list .rank-gain{font-family:var(--mono);font-size:.58rem;color:var(--mint);font-weight:700}
+.rank-list .rank-score{font-family:var(--display);font-size:1rem;color:var(--blue);font-weight:700}
+.game-action{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:6px}
+.hint{font-size:.6rem;color:var(--muted);line-height:1.6}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:14px;margin:18px 0}
+.podium-card{flex:1 1 0;max-width:250px;padding:18px;border:2px solid var(--ink);background:var(--paper-3);text-align:center;box-shadow:6px 6px 0 var(--ink)}
+.podium-card.first{order:2;padding-top:30px;padding-bottom:30px;background:var(--yellow);transform:translateY(-18px)}
+.podium-card.second{order:1;background:var(--paper-3)}
+.podium-card.third{order:3;background:var(--paper-2)}
+.podium-card svg{width:92px;height:92px;display:block;margin:0 auto 8px}
+.podium-card strong{display:block;font-family:var(--display);font-size:1.4rem;font-weight:600;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.podium-card b{display:block;margin-top:4px;font-family:var(--display);font-size:1.5rem;color:var(--blue)}
+.podium-place{display:block;font-size:.58rem;color:var(--muted);margin-bottom:4px}
+.end-list{list-style:none;display:flex;flex-direction:column;margin-top:14px}
+.end-list li{display:grid;grid-template-columns:26px 38px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.end-list svg{width:38px;height:38px;border:2px solid var(--ink);background:var(--paper)}
+.end-list b{font-family:var(--display);font-size:1.1rem;color:var(--blue)}
+.join-grid{display:grid;grid-template-columns:minmax(280px,.78fr) minmax(0,1.22fr);gap:22px;align-items:start;padding-top:8px}
+.fox-preview{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:320px;border:2px solid var(--ink);background:var(--paper-3);box-shadow:6px 6px 0 var(--yellow);padding:18px}
+.fox-preview > svg{width:min(220px,55vw);height:auto;filter:drop-shadow(5px 8px 0 rgba(16,19,28,.12))}
+.fox-preview p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.swatch{width:40px;height:40px;border-radius:50%;border:3px solid transparent;transition:transform .15s,border-color .15s}
+.swatch.sel{border-color:var(--ink);transform:scale(1.12)}
+.accs{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.acc-chip{padding:8px 12px;border:2px solid var(--blue);background:var(--paper-3);color:var(--blue);font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.acc-chip.sel{background:var(--blue);color:#fff}
+.wait-card{max-width:560px;margin:8vh auto 0;text-align:center}
+.wait-card svg{width:150px;height:150px;margin:0 auto 10px}
+.wait-card h2{margin-bottom:6px}
+.wait-card .code-value{font-size:clamp(3rem,8vw,5rem);margin:14px 0;letter-spacing:.18em}
+.player-shell{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-top:8px}
+.player-question{font-size:clamp(1.9rem,7vw,3.2rem);line-height:.98}
+.answer-input{display:flex;gap:8px;flex-wrap:wrap}
+.answer-input input{flex:1 1 220px;font-size:1.2rem;font-weight:700}
+.answer-input .btn{flex:0 0 auto}
+.player-info{min-height:1.5em;font-size:.82rem;color:var(--muted)}
+.result-card{max-width:570px;margin:4vh auto 0;padding:28px;border:2px solid var(--ink);background:var(--paper-3);box-shadow:8px 8px 0 var(--ink);text-align:center}
+.gain{font-family:var(--display);font-size:clamp(3.4rem,11vw,5.8rem);line-height:.9;font-weight:700;color:var(--mint);letter-spacing:-.04em}
+.gain.bad{color:var(--coral)}
+.result-card h2{margin:8px 0 4px;font-size:clamp(1.5rem,4vw,2.2rem)}
+.result-top{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:5px;text-align:left}
+.result-top li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.82rem}
+.result-top li b{color:var(--blue)}
+.result-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+.site-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:16px;width:min(1240px,calc(100% - 48px));margin:0 auto;padding:18px 0 28px;border-top:2px solid var(--ink);font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:22px;z-index:120;transform:translate(-50%,18px);padding:12px 18px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-size:.82rem;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:min(90vw,520px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.intro{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(18px,3vw,34px) clamp(20px,4vw,56px) clamp(24px,4vw,42px);background:var(--paper);clip-path:inset(0 0 0 0);transition:clip-path .9s cubic-bezier(.76,0,.24,1),opacity .25s .65s;animation:introFallback .1s 6s forwards}
+.intro.is-out{clip-path:inset(0 0 100% 0);opacity:0;pointer-events:none;animation:none}
+.intro[hidden]{display:none}
+.intro-meta{display:flex;justify-content:space-between;gap:20px;font-family:var(--mono);font-size:.58rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);opacity:0;animation:fadeIn .5s .4s forwards}
+.intro-lockup{display:flex;align-items:center;gap:clamp(12px,2vw,28px);margin:0 auto;width:fit-content}
+.intro-star{display:grid;place-items:center;width:clamp(48px,7vw,100px);aspect-ratio:1;border-radius:50%;background:var(--ink);color:var(--paper);font-family:var(--display);font-size:clamp(1.7rem,4vw,4rem);font-weight:700;transform:rotate(-18deg) scale(0);animation:introStamp .7s .12s cubic-bezier(.18,1.35,.4,1) forwards}
+.intro-title{font-family:var(--display);font-size:clamp(2.8rem,11.8vw,10rem);line-height:.78;letter-spacing:-.07em;font-weight:700}
+.intro-title span{display:block;clip-path:inset(0 0 105% 0);animation:introType .9s .16s cubic-bezier(.22,1,.36,1) forwards}
+.intro-sub{margin-top:clamp(7px,1.2vw,14px);padding-top:clamp(6px,.9vw,10px);border-top:2px solid var(--ink);font-family:var(--mono);font-size:clamp(.56rem,1.1vw,.85rem);font-weight:700;letter-spacing:.4em;text-transform:uppercase;opacity:0;animation:fadeIn .5s .7s forwards}
+.intro-progress{position:absolute;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--blue) 0 34%,var(--coral) 34% 62%,var(--mint) 62% 82%,var(--yellow) 82%);transform:scaleX(0);transform-origin:left;animation:introLoad 1.2s .25s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes introType{to{clip-path:inset(0 0 0 0)}}
+@keyframes introStamp{to{transform:rotate(0) scale(1)}}
+@keyframes introLoad{to{transform:scaleX(1)}}
+@keyframes introFallback{to{opacity:0;visibility:hidden}}
+@media(max-width:960px){
+  .home-grid,.home-bottom,.lobby-grid,.host-game-grid,.join-grid{grid-template-columns:1fr}
+  .stage-card{min-height:300px;order:-1}
+  .home-copy{order:1}
+  .home-bottom{margin-top:22px}
+  .rank-list{max-height:none}
+  #stage3d{opacity:.35}
+}
+@media(max-width:720px){
+  .topbar,main,.site-foot{width:calc(100% - 32px)}
+  .topbar{gap:12px;padding-top:12px}
+  .top-title,.top-meta{display:none}
+  .conn{margin-left:auto}
+  main{padding-top:20px}
+  h1{font-size:clamp(3rem,15vw,4.6rem)}
+  .home-copy{gap:14px}
+  .home-actions .btn{flex-basis:100%}
+  .stage-card{min-height:230px}
+  .home-bottom{gap:14px}
+  .panel{padding:16px;box-shadow:4px 4px 0 var(--ink)}
+  .panel.dark{box-shadow:4px 4px 0 var(--yellow)}
+  .code-card{padding:18px;box-shadow:4px 4px 0 var(--ink)}
+  .code-value{font-size:clamp(3.4rem,19vw,5.4rem)}
+  .host-players{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}
+  .question{max-width:100%}
+  .answer-slot{grid-template-columns:28px minmax(0,1fr) auto;padding:9px 10px;min-height:54px}
+  .answer-slot .slot-label{font-size:1.05rem}
+  .answer-slot .slot-points{font-size:1.15rem}
+  .game-action .btn{width:100%}
+  .stat{margin-left:0;width:100%}
+  .podium{flex-direction:column;align-items:stretch;gap:8px}
+  .podium-card,.podium-card.first{order:initial;transform:none;max-width:none;padding:12px;display:grid;grid-template-columns:70px minmax(0,1fr) auto;align-items:center;text-align:left;gap:10px}
+  .podium-card svg{width:64px;height:64px;margin:0}
+  .podium-card strong{font-size:1.15rem}
+  .podium-card b{margin:0;font-size:1.1rem}
+  .podium-place{grid-column:2;margin:0}
+  .join-grid .fox-preview{min-height:250px;order:-1}
+  .answer-input .btn{width:100%}
+  .site-foot{flex-direction:column;gap:4px}
+  #stage3d{opacity:.18}
+  .intro-title{font-size:clamp(2.8rem,14.5vw,5rem)}
+  .intro-lockup{gap:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .intro{display:none}
+}
+</style>
+</head>
+<body data-view="home">
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-meta"><span>Epitech Bénin</span><span>Édition 01 — Cotonou</span></div>
+  <div class="intro-lockup">
+    <span class="intro-star">G</span>
+    <div>
+      <p class="intro-title"><span>GUESS</span></p>
+      <p class="intro-sub">Their Answer</p>
+    </div>
+  </div>
+  <div class="intro-meta"><span>Écran animateur + téléphones</span><span>10 questions · 3 secondes</span></div>
+  <span class="intro-progress"></span>
+</div>
+<canvas id="stage3d" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" id="brandHome" href="/">
+    <span class="brand-mark">C</span>
+    <span class="brand-word">CREATOR</span>
+  </a>
+  <span class="top-title">Guess Their Answer</span>
+  <span class="conn" id="connStatus">Hors ligne</span>
+  <span class="top-meta">Jeu de soirée · Cotonou</span>
+</header>
+
+<main>
+  <section class="view active" id="view-home">
+    <div class="home-grid">
+      <div class="home-copy">
+        <p class="eyebrow">Le jeu où la majorité gagne</p>
+        <h1>Guess<br><em>Their Answer</em></h1>
+        <p class="lede">Une question. Cinq réponses possibles. Trouve celle que le plus de personnes vont donner.</p>
+        <div class="home-actions">
+          <button class="btn btn-primary" id="hostBtn" type="button">Créer une partie (admin)</button>
+          <button class="btn btn-outline" id="joinBtn" type="button">Rejoindre une partie</button>
+        </div>
+        <p class="message" id="homeMsg" role="alert"></p>
+        <div class="home-facts">
+          <span><b>10</b> questions</span>
+          <span><b>3s</b> par question</span>
+          <span><b>80</b> joueurs max</span>
+          <span><b>×2</b> sur les 2 dernières</span>
+        </div>
+      </div>
+      <div class="stage-card">
+        <span class="stage-label">Renard 01 · Prêt à jouer</span>
+        <span class="stage-tag">CREATOR Live</span>
+      </div>
+    </div>
+    <div class="home-bottom">
+      <div class="panel">
+        <div class="panel-head"><span>Classement général</span><span>Top 10</span></div>
+        <ol class="leaderboard" id="leaderboard"><li><span class="lb-rank">—</span><span></span><strong>Chargement…</strong><b></b></li></ol>
+      </div>
+      <aside class="panel dark">
+        <div class="panel-head"><span>Comment ça marche</span><span>01—03</span></div>
+        <ol class="how-list">
+          <li><span>01</span><div><strong>L’animateur ouvre l’écran</strong><small>Un code à 4 lettres apparaît pour les téléphones.</small></div></li>
+          <li><span>02</span><div><strong>Les joueurs répondent</strong><small>Chacun tape la réponse qui lui semble la plus populaire.</small></div></li>
+          <li><span>03</span><div><strong>Le plus malin gagne</strong><small>Les 5 réponses rapportent des points, avec un bonus ×2 à la fin.</small></div></li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <section class="view" id="view-hostLobby">
+    <div class="lobby-grid">
+      <div class="code-card">
+        <p class="kicker">Salle ouverte</p>
+        <p class="code-value" id="hostCode">----</p>
+        <p class="code-link" id="hostLink">Le lien apparaîtra ici.</p>
+        <button class="btn btn-light" id="copyLinkBtn" type="button">Copier le lien</button>
+        <p class="hint">Sur téléphone, ouvre le lien ou entre le code à 4 lettres.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span>Joueurs connectés</span><span class="count-badge" id="hostCount">0 / 80</span></div>
+        <div class="host-players" id="hostPlayers"><p class="hint" id="hostEmpty">En attente des premiers joueurs…</p></div>
+        <button class="btn btn-primary btn-block" id="startBtn" type="button">Lancer la partie · 10 questions</button>
+        <p class="message" id="hostLobbyMsg" role="alert"></p>
+      </div>
+    </div>
+    <div class="game-action" style="margin-top:18px"><button class="text-btn" id="hostCancelBtn" type="button">Fermer la salle</button></div>
+  </section>
+
+  <section class="view" id="view-hostGame">
+    <div class="game-shell">
+      <div class="game-top">
+        <span class="chip chip-blue" id="hostProgress">Question 01 / 10</span>
+        <span class="chip chip-coral hidden" id="hostMultiplier">Points ×2</span>
+        <span class="stat" id="hostAnswered">0 / 0 ont répondu</span>
+      </div>
+      <h2 class="question" id="hostQuestion">…</h2>
+      <div class="timer" id="hostTimer"><i id="hostTimerBar"></i></div>
+      <div class="host-game-grid">
+        <div class="answer-list" id="hostAnswers"></div>
+        <aside class="panel">
+          <div class="panel-head"><span>Classement</span><span>Live</span></div>
+          <ol class="rank-list" id="hostRank"></ol>
+        </aside>
+      </div>
+      <div class="game-action">
+        <p class="hint" id="hostHint">Les réponses restent cachées jusqu’à la révélation.</p>
+        <button class="btn btn-primary" id="revealBtn" type="button">Révéler les réponses</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-hostEnd">
+    <p class="kicker">Fin de partie · Guess Their Answer</p>
+    <h1>Podium.</h1>
+    <div class="podium" id="hostPodium"></div>
+    <div class="panel">
+      <div class="panel-head"><span>Classement complet</span><span>Crédits</span></div>
+      <ol class="end-list" id="hostFinalList"></ol>
+    </div>
+    <div class="game-action" style="margin-top:18px">
+      <button class="text-btn" id="hostHomeBtn" type="button">Retour à l’accueil</button>
+      <button class="btn btn-primary" id="hostReplayBtn" type="button">Rejouer avec la salle</button>
+    </div>
+  </section>
+
+  <section class="view" id="view-join">
+    <div class="join-grid">
+      <div class="fox-preview">
+        <div id="foxPreview"></div>
+        <p>Glisse rien, choisis juste ton style.<br>Le renard te suit partout.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span>Rejoindre la salle</span><span>02</span></div>
+        <div class="field">
+          <label class="field-label">Sweat</label>
+          <div class="swatches" id="hoods"></div>
+        </div>
+        <div class="field">
+          <label class="field-label">Accessoire</label>
+          <div class="accs" id="accessories"></div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="playerName">Ton pseudo</label>
+          <input id="playerName" maxlength="14" autocomplete="off" placeholder="Ex. codeuse_cotonou">
+        </div>
+        <div class="field">
+          <label class="field-label" for="roomCode">Code de la salle</label>
+          <input id="roomCode" maxlength="4" autocapitalize="characters" autocomplete="off" placeholder="ABCD">
+        </div>
+        <p class="message" id="joinMsg" role="alert"></p>
+        <button class="btn btn-primary btn-block" id="joinSubmit" type="button">Entrer dans la salle</button>
+        <button class="text-btn" id="joinBackBtn" type="button" style="margin-top:14px">Retour à l’accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-playerWait">
+    <div class="wait-card panel">
+      <div id="waitFox"></div>
+      <p class="kicker">Tu es dans la salle</p>
+      <h2 id="waitName">Joueur</h2>
+      <p class="code-value" id="waitCode">----</p>
+      <p class="hint" id="waitStatus">En attente de l’animateur…</p>
+      <div class="result-actions"><button class="text-btn" id="waitLeaveBtn" type="button">Quitter la salle</button></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-playerGame">
+    <div class="player-shell">
+      <div class="game-top">
+        <span class="chip chip-blue" id="playerProgress">Question 01 / 10</span>
+        <span class="chip chip-coral hidden" id="playerMultiplier">Points ×2</span>
+        <span class="stat" id="playerScore">0 pt</span>
+      </div>
+      <h2 class="player-question" id="playerQuestion">…</h2>
+      <div class="timer" id="playerTimer"><i id="playerTimerBar"></i></div>
+      <div class="answer-input">
+        <input id="playerAnswer" maxlength="40" autocomplete="off" autocapitalize="off" placeholder="Ta réponse la plus populaire…">
+        <button class="btn btn-primary" id="sendAnswerBtn" type="button">Valider</button>
+      </div>
+      <p class="player-info" id="playerInfo">3 secondes pour répondre. Sans réponse, la question est perdue.</p>
+    </div>
+  </section>
+
+  <section class="view" id="view-playerResult">
+    <div class="result-card">
+      <p class="gain" id="resultGain">+0</p>
+      <h2 id="resultTitle">Réponse enregistrée.</h2>
+      <p class="lede" id="resultText" style="margin:6px auto 0"></p>
+      <p class="hint" id="resultRank" style="margin-top:10px"></p>
+      <ol class="result-top" id="resultTop"></ol>
+    </div>
+  </section>
+
+  <section class="view" id="view-playerEnd">
+    <div class="result-card">
+      <div id="endFox" style="width:150px;margin:0 auto 8px"></div>
+      <p class="kicker">Fin de partie</p>
+      <p class="gain" id="endScore">0 pts</p>
+      <h2 id="endRank">Tu termines —</h2>
+      <p class="lede" id="endText" style="margin:8px auto 0">Merci d’avoir joué avec CREATOR.</p>
+      <div class="result-actions"><button class="btn btn-outline" id="playerHomeBtn" type="button">Retour à l’accueil</button></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot"><span>CREATOR · Epitech Bénin · Guess Their Answer</span><span>La majorité a toujours raison.</span></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const API_BASE = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+const WS_URL = API_BASE.replace(/^http/, 'ws') + '/ws/guess';
+const HOODS = ['#0033FF', '#00A878', '#F05030', '#FFC107', '#8B5CF6'];
+const ACCESSORIES = ['Aucun', 'Lunettes', 'Casquette', 'Casque'];
+
+const esc = (value) => String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+const store = {
+  get(key, fallback = '') {
+    try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(key, String(value)); } catch {}
+  },
+};
+
+const state = {
+  ws: null,
+  connecting: null,
+  role: null,
+  code: '',
+  selfId: '',
+  players: [],
+  question: null,
+  phase: 'home',
+  deadline: 0,
+  duration: 3,
+  sent: false,
+  name: store.get('gta-name', ''),
+  hood: clamp(Number(store.get('gta-hood', 0)) || 0, 0, HOODS.length - 1),
+  acc: clamp(Number(store.get('gta-acc', 0)) || 0, 0, ACCESSORIES.length - 1),
+  stage: null,
+  raf: 0,
+  timerTick: 0,
+};
+
+function foxSVG(hood = 0, acc = 0) {
+  const color = HOODS[hood % HOODS.length];
+  let extra = '';
+  if (acc === 1) extra = '<g fill="none" stroke="#111827" stroke-width="2.5"><circle cx="39" cy="44" r="8"/><circle cx="61" cy="44" r="8"/><path d="M47 44h6"/></g>';
+  if (acc === 2) extra = '<path d="M22 32Q50 4 78 32Z" fill="#00A878"/><rect x="18" y="30" width="64" height="6" rx="3" fill="#00855F"/>';
+  if (acc === 3) extra = '<path d="M20 46Q20 12 50 12Q80 12 80 46" fill="none" stroke="#111827" stroke-width="5"/><rect x="13" y="40" width="10" height="18" rx="5" fill="#F05030"/><rect x="77" y="40" width="10" height="18" rx="5" fill="#F05030"/>';
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="Renard ${esc(ACCESSORIES[acc])}"><path d="M16 100Q18 66 50 62Q82 66 84 100Z" fill="${color}"/><path d="M44 66v14M56 66v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M20 10L40 34L16 42Z M80 10L60 34L84 42Z" fill="#F05030"/><path d="M24 18L35 33L22 37Z M76 18L65 33L78 37Z" fill="#FFE6D0"/><ellipse cx="50" cy="46" rx="31" ry="26" fill="#F05030"/><path d="M22 52Q50 82 78 52Q50 44 22 52Z" fill="#FFF3E6"/><circle cx="39" cy="44" r="4.5" fill="#111827"/><circle cx="61" cy="44" r="4.5" fill="#111827"/><circle cx="40.5" cy="42.5" r="1.4" fill="#fff"/><circle cx="62.5" cy="42.5" r="1.4" fill="#fff"/><ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#111827"/><path d="M44 64Q50 69 56 64" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"/>${extra}</svg>`;
+}
+
+let toastTimer = 0;
+function toast(message) {
+  const el = $('toast');
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function setConnection(online) {
+  const el = $('connStatus');
+  el.textContent = online ? 'En ligne' : 'Hors ligne';
+  el.classList.toggle('online', online);
+}
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach((view) => view.classList.toggle('active', view.id === id));
+  document.body.dataset.view = id.replace('view-', '');
+  state.phase = id;
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  updateStage();
+  if (id === 'view-join') $('playerName').focus({ preventScroll: true });
+}
+
+function connect() {
+  if (state.ws?.readyState === WebSocket.OPEN) return Promise.resolve();
+  if (state.connecting) return state.connecting;
+  state.connecting = new Promise((resolve, reject) => {
+    const ws = new WebSocket(WS_URL);
+    state.ws = ws;
+    const timeout = setTimeout(() => {
+      try { ws.close(); } catch {}
+      state.connecting = null;
+      reject(new Error('Connexion trop lente.'));
+    }, 6000);
+    ws.onopen = () => {
+      clearTimeout(timeout);
+      state.connecting = null;
+      setConnection(true);
+      resolve();
+    };
+    ws.onmessage = (event) => {
+      let message;
+      try { message = JSON.parse(event.data); } catch { return; }
+      handleMessage(message);
+    };
+    ws.onerror = () => {
+      clearTimeout(timeout);
+      state.connecting = null;
+      setConnection(false);
+      reject(new Error('Impossible de joindre le serveur. Lance npm start.'));
+    };
+    ws.onclose = () => {
+      clearTimeout(timeout);
+      setConnection(false);
+      if (state.role) {
+        state.role = null;
+        state.code = '';
+        state.selfId = '';
+        toast('Connexion perdue avec la salle.');
+        showView('view-home');
+      }
+    };
+  });
+  return state.connecting;
+}
+
+function send(message) {
+  if (state.ws?.readyState === WebSocket.OPEN) state.ws.send(JSON.stringify(message));
+}
+
+function resetSession() {
+  state.role = null;
+  state.code = '';
+  state.selfId = '';
+  state.players = [];
+  state.question = null;
+  state.sent = false;
+  updateStage();
+}
+
+function shareLink(code = state.code) {
+  const base = location.protocol === 'file:' ? API_BASE + '/guess' : location.origin + '/guess';
+  return `${base}?code=${encodeURIComponent(code)}`;
+}
+
+async function copyLink() {
+  const link = shareLink();
+  try {
+    await navigator.clipboard.writeText(link);
+    toast('Lien copié. Envoie-le aux joueurs.');
+  } catch {
+    const input = document.createElement('input');
+    input.value = link;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    input.remove();
+    toast('Lien copié.');
+  }
+}
+
+function renderLeaderboard(entries) {
+  const list = $('leaderboard');
+  if (!Array.isArray(entries) || !entries.length) {
+    list.innerHTML = '<li><span class="lb-rank">—</span><span></span><strong>Personne encore. Sois le premier.</strong><b></b></li>';
+    return;
+  }
+  list.innerHTML = entries.map((entry, index) => `
+    <li>
+      <span class="lb-rank">${String(index + 1).padStart(2, '0')}</span>
+      ${foxSVG(entry.hood, entry.acc)}
+      <strong>${esc(entry.name || 'Joueur')}</strong>
+      <b>${Number(entry.best) || 0}</b>
+    </li>`).join('');
+}
+
+async function loadLeaderboard() {
+  try {
+    const response = await fetch(API_BASE + '/api/guess/leaderboard', { cache: 'no-store' });
+    if (!response.ok) throw new Error('leaderboard');
+    renderLeaderboard(await response.json());
+  } catch {
+    renderLeaderboard([]);
+  }
+}
+
+function renderHostPlayers(players = state.players) {
+  $('hostCount').textContent = `${players.length} / 80`;
+  $('hostPlayers').innerHTML = players.length
+    ? players.map((player) => `<div class="host-player">${foxSVG(player.hood, player.acc)}<span>${esc(player.name)}</span><small>${ACCESSORIES[player.acc] || 'Aucun'}</small></div>`).join('')
+    : '<p class="hint">En attente des premiers joueurs…</p>';
+}
+
+function sortedPlayers(list = state.players) {
+  return [...list].sort((a, b) => (b.score || 0) - (a.score || 0) || String(a.name).localeCompare(String(b.name)));
+}
+
+function renderRank(list, gains = false) {
+  $('hostRank').innerHTML = sortedPlayers(list).map((player, index) => `
+    <li>
+      <span class="lb-rank">${String(index + 1).padStart(2, '0')}</span>
+      ${foxSVG(player.hood, player.acc)}
+      <span class="rank-name">${esc(player.name)}</span>
+      ${gains && player.gained ? `<em class="rank-gain">+${player.gained}</em>` : '<em class="rank-gain"></em>'}
+      <b class="rank-score">${player.score || 0}</b>
+    </li>`).join('') || '<li class="hint">Aucun joueur.</li>';
+}
+
+function startTimer(barId, timerId, duration) {
+  state.duration = duration;
+  state.deadline = performance.now() + duration * 1000;
+  const bar = $(barId);
+  const timer = $(timerId);
+  timer.classList.remove('low');
+  bar.style.width = '100%';
+  clearInterval(state.timerTick);
+  state.timerTick = setInterval(updateTimer, 100);
+  updateTimer();
+}
+
+function updateTimer() {
+  const active = state.phase === 'view-hostGame' ? 'host' : state.phase === 'view-playerGame' ? 'player' : null;
+  if (!active) {
+    clearInterval(state.timerTick);
+    state.timerTick = 0;
+    return;
+  }
+  const bar = $(active + 'TimerBar');
+  const timer = $(active + 'Timer');
+  if (!bar || !timer) return;
+  const left = Math.max(0, state.deadline - performance.now());
+  const ratio = state.duration ? left / (state.duration * 1000) : 0;
+  bar.style.width = `${clamp(ratio, 0, 1) * 100}%`;
+  timer.classList.toggle('low', left < 1500);
+  if (left <= 0) {
+    clearInterval(state.timerTick);
+    state.timerTick = 0;
+  }
+}
+
+function renderHostQuestion(message) {
+  state.question = message;
+  state.phase = 'view-hostGame';
+  state.deadline = performance.now() + message.duration * 1000;
+  state.duration = message.duration;
+  showView('view-hostGame');
+  $('hostProgress').textContent = `Question ${String(message.index + 1).padStart(2, '0')} / ${message.total}`;
+  $('hostMultiplier').classList.toggle('hidden', message.multiplier === 1);
+  $('hostMultiplier').textContent = 'Points ×2';
+  $('hostAnswered').textContent = `0 / ${message.players.length} ont répondu`;
+  $('hostQuestion').textContent = message.q;
+  $('hostHint').textContent = 'Les réponses restent cachées jusqu’à la révélation.';
+  $('hostAnswers').innerHTML = Array.from({ length: 5 }, (_, index) => `
+    <div class="answer-slot">
+      <span class="slot-index">${String(index + 1).padStart(2, '0')}</span>
+      <span><span class="slot-label">?????</span><span class="slot-names">Réponse mystère</span></span>
+      <span class="slot-points">--</span>
+    </div>`).join('');
+  renderRank(message.players, false);
+  $('revealBtn').textContent = 'Révéler les réponses';
+  $('revealBtn').disabled = false;
+  startTimer('hostTimerBar', 'hostTimer', message.duration);
+  updateStage();
+}
+
+function renderHostReveal(message) {
+  state.players = message.players;
+  showView('view-hostGame');
+  state.phase = 'view-hostReveal';
+  $('hostProgress').textContent = `Question ${String(message.index + 1).padStart(2, '0')} / ${message.total}`;
+  $('hostMultiplier').classList.toggle('hidden', message.multiplier === 1);
+  $('hostAnswered').textContent = 'Réponses révélées';
+  $('hostHint').textContent = message.index >= message.total - 1 ? 'Dernière question : cap sur le podium.' : 'Les points sont ajoutés au classement.';
+  $('hostAnswers').innerHTML = message.distribution.map((answer, index) => `
+    <div class="answer-slot revealed" style="animation-delay:${index * 55}ms">
+      <span class="slot-index">${String(index + 1).padStart(2, '0')}</span>
+      <span><span class="slot-label">${esc(answer.label)}</span><span class="slot-names">${answer.players.length ? esc(answer.players.join(' · ')) : 'Personne'}</span></span>
+      <span class="slot-points">${answer.points}</span>
+    </div>`).join('');
+  renderRank(message.players, true);
+  $('revealBtn').textContent = message.index >= message.total - 1 ? 'Voir le podium' : 'Question suivante';
+  $('revealBtn').disabled = false;
+  $('hostTimerBar').style.width = '0%';
+  updateStage();
+  if (message.players.some((player) => player.gained > 0)) state.stage?.burst?.(0, 1.8, 0.6);
+}
+
+function renderHostEnd(message) {
+  state.phase = 'view-hostEnd';
+  state.players = message.players;
+  showView('view-hostEnd');
+  const podium = message.players.slice(0, 3);
+  $('hostPodium').innerHTML = podium.map((player, index) => `
+    <article class="podium-card ${index === 0 ? 'first' : index === 1 ? 'second' : 'third'}">
+      <span class="podium-place">${index === 0 ? '01 · Champion' : index === 1 ? '02 · Dauphin' : '03 · Podium'}</span>
+      ${foxSVG(player.hood, player.acc)}
+      <strong>${esc(player.name)}</strong>
+      <b>${player.score} pts</b>
+    </article>`).join('') || '<p class="hint">Aucun joueur.</p>';
+  $('hostFinalList').innerHTML = message.players.map((player, index) => `
+    <li>
+      <span class="lb-rank">${String(index + 1).padStart(2, '0')}</span>
+      ${foxSVG(player.hood, player.acc)}
+      <strong>${esc(player.name)}</strong>
+      <b>${player.score} pts</b>
+    </li>`).join('');
+  renderLeaderboard(message.leaderboard || []);
+  updateStage();
+  state.stage?.burst?.(0, 2.4, 0.8);
+}
+
+function renderPlayerQuestion(message) {
+  state.question = message;
+  state.phase = 'view-playerGame';
+  state.sent = false;
+  state.deadline = performance.now() + message.duration * 1000;
+  state.duration = message.duration;
+  showView('view-playerGame');
+  $('playerProgress').textContent = `Question ${String(message.index + 1).padStart(2, '0')} / ${message.total}`;
+  $('playerMultiplier').classList.toggle('hidden', message.multiplier === 1);
+  $('playerQuestion').textContent = message.q;
+  $('playerScore').textContent = `${currentPlayer()?.score || 0} pts`;
+  $('playerAnswer').value = '';
+  $('playerAnswer').disabled = false;
+  $('sendAnswerBtn').disabled = false;
+  $('playerInfo').textContent = '3 secondes pour répondre. Sans réponse, la question est perdue.';
+  startTimer('playerTimerBar', 'playerTimer', message.duration);
+  setTimeout(() => $('playerAnswer').focus({ preventScroll: true }), 150);
+  updateStage();
+}
+
+function currentPlayer() {
+  return state.players.find((player) => player.id === state.selfId);
+}
+
+function renderPlayerResult(message) {
+  state.phase = 'view-playerResult';
+  state.players = message.players;
+  showView('view-playerResult');
+  const player = message.players.find((item) => item.id === state.selfId);
+  const gained = player?.gained || 0;
+  $('resultGain').textContent = gained ? `+${gained}` : '0';
+  $('resultGain').className = 'gain' + (gained ? '' : ' bad');
+  $('resultTitle').textContent = gained ? 'Bien vu !' : 'Pas cette fois.';
+  const ownIndex = message.distribution.findIndex((answer) => answer.players.includes(player?.name));
+  $('resultText').textContent = gained
+    ? `Ta réponse « ${player.answer} » fait partie du top 5.`
+    : player?.answer
+      ? `« ${player.answer} » n’est pas dans le top 5.`
+      : 'Tu n’as pas répondu à temps.';
+  $('resultRank').textContent = player ? `Total : ${player.score} pts · rang ${player.rank} / ${message.players.length}` : '';
+  $('resultTop').innerHTML = message.distribution.map((answer, index) => `
+    <li><span>${String(index + 1).padStart(2, '0')} · ${esc(answer.label)}${index === ownIndex ? ' · toi' : ''}</span><b>${answer.points}</b></li>`).join('');
+  if (gained) state.stage?.burst?.(-2.2, 1.8, 0.9);
+  updateStage();
+}
+
+function renderPlayerEnd(message) {
+  state.phase = 'view-playerEnd';
+  state.players = message.players;
+  showView('view-playerEnd');
+  const player = message.players.find((item) => item.id === state.selfId);
+  $('endFox').innerHTML = foxSVG(state.hood, state.acc);
+  $('endScore').textContent = `${player?.score || 0} pts`;
+  $('endRank').textContent = player ? `Tu termines n°${player.rank} sur ${message.players.length}` : 'Partie terminée';
+  $('endText').textContent = player?.rank === 1 ? 'La meute a parlé : tu lis dans les pensées.' : 'Merci d’avoir joué avec CREATOR.';
+  loadLeaderboard();
+  state.stage?.burst?.(0, 2.1, 0.8);
+  updateStage();
+}
+
+function sendAnswer() {
+  const text = $('playerAnswer').value.trim();
+  if (!text || state.sent) return;
+  state.sent = true;
+  send({ type: 'answer', text });
+  $('playerAnswer').disabled = true;
+  $('sendAnswerBtn').disabled = true;
+  $('playerInfo').textContent = 'Réponse envoyée. Regarde l’écran !';
+}
+
+function handleMessage(message) {
+  switch (message.type) {
+    case 'room-created':
+      state.role = 'host';
+      state.code = message.code;
+      $('hostCode').textContent = message.code;
+      $('hostLink').textContent = shareLink(message.code);
+      $('hostPlayers').innerHTML = '<p class="hint">En attente des premiers joueurs…</p>';
+      $('hostLobbyMsg').textContent = '';
+      showView('view-hostLobby');
+      break;
+    case 'joined':
+      state.role = 'player';
+      state.selfId = message.selfId;
+      state.code = message.code;
+      $('waitCode').textContent = message.code;
+      showView('view-playerWait');
+      break;
+    case 'lobby':
+      state.players = message.players;
+      if (state.role === 'host') {
+        $('hostPlayers').innerHTML = '';
+        renderHostPlayers(message.players);
+        $('hostLobbyMsg').textContent = '';
+        showView('view-hostLobby');
+      } else {
+        const me = message.players.find((player) => player.id === state.selfId);
+        $('waitCode').textContent = message.code;
+        $('waitName').textContent = me?.name || state.name || 'Joueur';
+        $('waitFox').innerHTML = foxSVG(me?.hood ?? state.hood, me?.acc ?? state.acc);
+        $('waitStatus').textContent = `${message.count} joueur${message.count > 1 ? 's' : ''} dans la salle · en attente de l’animateur…`;
+        if (state.phase !== 'view-playerWait') showView('view-playerWait');
+        else updateStage();
+      }
+      break;
+    case 'question':
+      state.players = message.players;
+      if (state.role === 'host') renderHostQuestion(message);
+      else renderPlayerQuestion(message);
+      break;
+    case 'answer-count':
+      $('hostAnswered').textContent = `${message.count} / ${message.total} ont répondu`;
+      if (message.count === message.total) $('hostHint').textContent = 'Tout le monde a répondu. Révélation imminente.';
+      break;
+    case 'answer-accepted':
+      $('playerInfo').textContent = 'Réponse bien reçue. Regarde l’écran !';
+      break;
+    case 'reveal':
+      if (state.role === 'host') renderHostReveal(message);
+      else renderPlayerResult(message);
+      break;
+    case 'end':
+      if (state.role === 'host') renderHostEnd(message);
+      else renderPlayerEnd(message);
+      break;
+    case 'error':
+      toast(message.message || 'Erreur.');
+      $('homeMsg').textContent = message.message || '';
+      $('joinMsg').textContent = message.message || '';
+      $('hostLobbyMsg').textContent = message.message || '';
+      $('joinSubmit').disabled = false;
+      break;
+    case 'room-closed':
+      toast(message.message || 'Salle fermée.');
+      resetSession();
+      showView('view-home');
+      break;
+    case 'left':
+      resetSession();
+      showView('view-home');
+      break;
+  }
+}
+
+function updateStage() {
+  if (!state.stage) return;
+  const view = state.phase.replace('view-', '');
+  const me = currentPlayer() || { name: state.name || 'Toi', hood: state.hood, acc: state.acc, score: 0 };
+  if (view === 'home') state.stage.set({ mode: 'home' });
+  else if (view === 'join') state.stage.set({ mode: 'pick', hood: state.hood, acc: state.acc, name: state.name || 'Toi' });
+  else if (view === 'hostLobby') state.stage.set({ mode: 'host', players: state.players, maxScore: 1 });
+  else if (view === 'hostGame' || view === 'hostReveal') state.stage.set({ mode: 'host', players: sortedPlayers(state.players), maxScore: Math.max(200, ...state.players.map((player) => player.score || 0)) });
+  else if (view === 'hostEnd') state.stage.set({ mode: 'podium', players: sortedPlayers(state.players) });
+  else if (view === 'playerWait') state.stage.set({ mode: 'player', player: me });
+  else if (view === 'playerGame') state.stage.set({ mode: 'player', player: me });
+  else if (view === 'playerResult') state.stage.set({ mode: 'player', player: me });
+  else if (view === 'playerEnd') state.stage.set({ mode: 'player', player: me, end: true });
+  else state.stage.set({ mode: 'home' });
+}
+
+function initUI() {
+  $('playerName').value = state.name;
+  $('hoods').innerHTML = HOODS.map((color, index) => `<button class="swatch${index === state.hood ? ' sel' : ''}" type="button" style="background:${color}" data-hood="${index}" aria-label="Sweat ${index + 1}"></button>`).join('');
+  $('accessories').innerHTML = ACCESSORIES.map((name, index) => `<button class="acc-chip${index === state.acc ? ' sel' : ''}" type="button" data-acc="${index}">${name}</button>`).join('');
+  $('foxPreview').innerHTML = foxSVG(state.hood, state.acc);
+  const query = new URLSearchParams(location.search);
+  if (query.get('code')) $('roomCode').value = query.get('code').toUpperCase().slice(0, 4);
+
+  $('hoods').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-hood]');
+    if (!button) return;
+    state.hood = Number(button.dataset.hood);
+    store.set('gta-hood', state.hood);
+    initFoxControls();
+  });
+  $('accessories').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-acc]');
+    if (!button) return;
+    state.acc = Number(button.dataset.acc);
+    store.set('gta-acc', state.acc);
+    initFoxControls();
+  });
+  $('playerName').addEventListener('input', () => {
+    state.name = $('playerName').value.trim().slice(0, 14);
+    $('foxPreview').innerHTML = foxSVG(state.hood, state.acc);
+    if (state.phase === 'view-join') updateStage();
+  });
+  $('hostBtn').addEventListener('click', async () => {
+    $('homeMsg').textContent = '';
+    try {
+      await connect();
+      send({ type: 'host' });
+    } catch (error) {
+      $('homeMsg').textContent = error.message;
+    }
+  });
+  $('joinBtn').addEventListener('click', () => {
+    $('joinMsg').textContent = '';
+    showView('view-join');
+  });
+  $('joinBackBtn').addEventListener('click', () => showView('view-home'));
+  $('joinSubmit').addEventListener('click', async () => {
+    const name = $('playerName').value.trim().slice(0, 14);
+    const code = $('roomCode').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    if (!name) {
+      $('joinMsg').textContent = 'Choisis un pseudo.';
+      return;
+    }
+    if (code.length !== 4) {
+      $('joinMsg').textContent = 'Le code de la salle a 4 lettres.';
+      return;
+    }
+    state.name = name;
+    store.set('gta-name', name);
+    $('joinSubmit').disabled = true;
+    $('joinMsg').textContent = 'Connexion…';
+    try {
+      await connect();
+      send({ type: 'join', name, code, hood: state.hood, acc: state.acc });
+      $('joinMsg').textContent = '';
+    } catch (error) {
+      $('joinMsg').textContent = error.message;
+      $('joinSubmit').disabled = false;
+    }
+  });
+  $('copyLinkBtn').addEventListener('click', copyLink);
+  $('startBtn').addEventListener('click', () => {
+    $('startBtn').disabled = true;
+    send({ type: 'start' });
+    setTimeout(() => { $('startBtn').disabled = false; }, 1200);
+  });
+  $('revealBtn').addEventListener('click', () => {
+    if (state.phase === 'view-hostReveal') {
+      send({ type: 'next' });
+    } else {
+      send({ type: 'reveal' });
+    }
+    $('revealBtn').disabled = true;
+  });
+  $('hostReplayBtn').addEventListener('click', () => send({ type: 'restart' }));
+  $('hostHomeBtn').addEventListener('click', () => { send({ type: 'leave' }); resetSession(); showView('view-home'); loadLeaderboard(); });
+  $('hostCancelBtn').addEventListener('click', () => { send({ type: 'leave' }); resetSession(); showView('view-home'); });
+  $('waitLeaveBtn').addEventListener('click', () => { send({ type: 'leave' }); resetSession(); showView('view-home'); });
+  $('playerHomeBtn').addEventListener('click', () => { send({ type: 'leave' }); resetSession(); showView('view-home'); loadLeaderboard(); });
+  $('brandHome').addEventListener('click', (event) => {
+    if (!state.role) return;
+    event.preventDefault();
+    send({ type: 'leave' });
+    resetSession();
+    showView('view-home');
+  });
+  $('sendAnswerBtn').addEventListener('click', sendAnswer);
+  $('playerAnswer').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') sendAnswer();
+  });
+
+  function initFoxControls() {
+    $('hoods').querySelectorAll('[data-hood]').forEach((button) => button.classList.toggle('sel', Number(button.dataset.hood) === state.hood));
+    $('accessories').querySelectorAll('[data-acc]').forEach((button) => button.classList.toggle('sel', Number(button.dataset.acc) === state.acc));
+    $('foxPreview').innerHTML = foxSVG(state.hood, state.acc);
+    updateStage();
+  }
+}
+
+async function init3D() {
+  const canvas = $('stage3d');
+  let THREE;
+  try {
+    THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
+  } catch {
+    return;
+  }
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 80);
+  camera.position.set(0, 3, 10);
+
+  scene.add(new THREE.HemisphereLight(0xfff7e5, 0x6f778c, 1.9));
+  const key = new THREE.DirectionalLight(0xffffff, 2.1);
+  key.position.set(5, 8, 7);
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffd9bd, 0.8);
+  fill.position.set(-6, 4, 4);
+  scene.add(fill);
+  const rim = new THREE.DirectionalLight(0x9eb0ff, 0.6);
+  rim.position.set(0, 5, -7);
+  scene.add(rim);
+
+  const castGroup = new THREE.Group();
+  scene.add(castGroup);
+  const burstGroup = new THREE.Group();
+  scene.add(burstGroup);
+  const actors = [];
+  let stageMode = 'home';
+  let targetCamera = { x: 0, y: 3, z: 10, lookY: 1.35 };
+  let pointerX = 0;
+  let pointerY = 0;
+  let burstClock = 0;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const items = {
+    hoods: [0x0033ff, 0x00a878, 0xf05030, 0xffc107, 0x8b5cf6],
+    orange: 0xf05030,
+    orangeDark: 0xc83c24,
+    cream: 0xfff3e6,
+    ink: 0x10131c,
+  };
+  const material = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.78, flatShading: true, ...extra });
+  const mesh = (geometry, mat, x = 0, y = 0, z = 0) => {
+    const object = new THREE.Mesh(geometry, mat);
+    object.position.set(x, y, z);
+    return object;
+  };
+
+  const shapes = [];
+  const shapeMats = [0x0033ff, 0xf05030, 0x00a878, 0xffc107].map((color) => material(color, { transparent: true, opacity: 0.38 }));
+  for (let index = 0; index < 24; index++) {
+    const geometry = index % 2
+      ? new THREE.TetrahedronGeometry(0.09 + Math.random() * 0.1, 0)
+      : new THREE.BoxGeometry(0.12, 0.12, 0.12);
+    const object = new THREE.Mesh(geometry, shapeMats[index % shapeMats.length]);
+    object.position.set((Math.random() - 0.5) * 19, 0.5 + Math.random() * 8, -3 - Math.random() * 8);
+    object.userData = { phase: Math.random() * 6.28, speed: 0.1 + Math.random() * 0.35, baseY: object.position.y };
+    scene.add(object);
+    shapes.push(object);
+  }
+
+  function foxModel(hood, acc) {
+    const group = new THREE.Group();
+    const hoodMat = material(items.hoods[clamp(Number(hood) || 0, 0, 4)]);
+    const fur = material(items.orange);
+    const furDark = material(items.orangeDark);
+    const cream = material(items.cream);
+    const ink = material(items.ink);
+    const blue = material(0x0033ff);
+
+    const body = mesh(new THREE.CylinderGeometry(0.46, 0.68, 0.95, 8), hoodMat, 0, 0.55, 0);
+    group.add(body);
+    const hoodRing = mesh(new THREE.TorusGeometry(0.5, 0.08, 5, 12), hoodMat, 0, 1.03, -0.02);
+    hoodRing.rotation.x = Math.PI / 2;
+    group.add(hoodRing);
+    const drawL = mesh(new THREE.CylinderGeometry(0.027, 0.027, 0.28, 5), cream, -0.15, 0.87, 0.42);
+    const drawR = drawL.clone();
+    drawR.position.x = 0.15;
+    group.add(drawL, drawR);
+
+    const head = mesh(new THREE.IcosahedronGeometry(0.55, 0), fur, 0, 1.38, 0.06);
+    head.scale.set(1.05, 0.9, 1);
+    group.add(head);
+    const muzzle = mesh(new THREE.ConeGeometry(0.29, 0.55, 4), cream, 0, 1.27, 0.53);
+    muzzle.rotation.x = Math.PI / 2;
+    muzzle.rotation.z = Math.PI / 4;
+    group.add(muzzle);
+    const nose = mesh(new THREE.IcosahedronGeometry(0.075, 0), ink, 0, 1.25, 0.82);
+    group.add(nose);
+    const eyeL = mesh(new THREE.IcosahedronGeometry(0.07, 0), ink, -0.2, 1.47, 0.47);
+    const eyeR = eyeL.clone();
+    eyeR.position.x = 0.2;
+    group.add(eyeL, eyeR);
+    const glintGeometry = new THREE.IcosahedronGeometry(0.019, 0);
+    const glintMat = new THREE.MeshBasicMaterial({ color: 0xfffdf5 });
+    const glintL = mesh(glintGeometry, glintMat, -0.185, 1.49, 0.527);
+    const glintR = glintL.clone();
+    glintR.position.x = 0.185;
+    group.add(glintL, glintR);
+    const cheekL = mesh(new THREE.IcosahedronGeometry(0.22, 0), cream, -0.26, 1.28, 0.29);
+    cheekL.scale.set(0.85, 0.7, 0.6);
+    const cheekR = cheekL.clone();
+    cheekR.position.x = 0.26;
+    group.add(cheekL, cheekR);
+
+    for (const side of [-1, 1]) {
+      const ear = mesh(new THREE.ConeGeometry(0.24, 0.58, 4), furDark, side * 0.35, 1.82, 0.02);
+      ear.rotation.z = -side * 0.15;
+      ear.rotation.y = side * 0.15;
+      group.add(ear);
+      const inner = mesh(new THREE.ConeGeometry(0.12, 0.34, 4), cream, side * 0.35, 1.82, 0.09);
+      inner.rotation.z = -side * 0.15;
+      inner.rotation.y = side * 0.15;
+      group.add(inner);
+    }
+
+    const tail = new THREE.Group();
+    tail.position.set(0, 0.58, -0.63);
+    tail.rotation.x = -0.42;
+    tail.rotation.z = 0.25;
+    const tailBody = mesh(new THREE.ConeGeometry(0.24, 1.15, 5), fur, 0, 0.5, 0);
+    const tailTip = mesh(new THREE.ConeGeometry(0.18, 0.38, 5), cream, 0, 1.08, 0);
+    tail.add(tailBody, tailTip);
+    group.add(tail);
+
+    for (const side of [-1, 1]) {
+      const leg = mesh(new THREE.CylinderGeometry(0.075, 0.09, 0.38, 4), furDark, side * 0.27, 0.22, 0.26);
+      const paw = mesh(new THREE.IcosahedronGeometry(0.11, 0), cream, side * 0.27, 0.07, 0.31);
+      paw.scale.set(1.2, 0.55, 1.3);
+      group.add(leg, paw);
+    }
+
+    if (Number(acc) === 1) {
+      for (const side of [-1, 1]) {
+        const lens = mesh(new THREE.TorusGeometry(0.145, 0.024, 6, 14), ink, side * 0.2, 1.46, 0.505);
+        group.add(lens);
+      }
+      group.add(mesh(new THREE.BoxGeometry(0.18, 0.028, 0.028), ink, 0, 1.46, 0.51));
+    }
+    if (Number(acc) === 2) {
+      const cap = mesh(new THREE.SphereGeometry(0.57, 12, 8, 0, 6.283, 0, 1.57), material(0x00a878), 0, 1.57, 0.02);
+      const brim = mesh(new THREE.BoxGeometry(1.05, 0.07, 0.46), material(0x00855f), 0, 1.55, 0.5);
+      brim.rotation.x = -0.1;
+      group.add(cap, brim);
+    }
+    if (Number(acc) === 3) {
+      const band = mesh(new THREE.TorusGeometry(0.63, 0.046, 6, 18, Math.PI), ink, 0, 1.4, 0.02);
+      group.add(band);
+      for (const side of [-1, 1]) {
+        const cup = mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.16, 10), material(0xf05030), side * 0.64, 1.4, 0.02);
+        cup.rotation.z = Math.PI / 2;
+        group.add(cup);
+      }
+    }
+
+    group.add(mesh(new THREE.OctahedronGeometry(0.07, 0), blue, 0, 0.76, 0.48));
+    return { group, tail, eyeL, eyeR, glintL, glintR, head };
+  }
+
+  function makeLabel(name, score = null) {
+    const labelCanvas = document.createElement('canvas');
+    labelCanvas.width = 512;
+    labelCanvas.height = 150;
+    const ctx = labelCanvas.getContext('2d');
+    ctx.clearRect(0, 0, 512, 150);
+    ctx.fillStyle = '#10131C';
+    ctx.font = '700 42px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(name || 'Joueur').slice(0, 16), 256, score === null ? 75 : 55);
+    if (score !== null) {
+      ctx.fillStyle = '#0033FF';
+      ctx.font = '700 34px Georgia, serif';
+      ctx.fillText(String(score), 256, 104);
+    }
+    const texture = new THREE.CanvasTexture(labelCanvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false }));
+    sprite.scale.set(2.9, 0.85, 1);
+    return sprite;
+  }
+
+  function disposeGroup(group) {
+    group.traverse((object) => {
+      object.geometry?.dispose?.();
+      if (Array.isArray(object.material)) object.material.forEach((mat) => mat.dispose?.());
+      else {
+        object.material?.map?.dispose?.();
+        object.material?.dispose?.();
+      }
+    });
+  }
+
+  function placeCast(data) {
+    for (const actor of actors) {
+      castGroup.remove(actor.group);
+      disposeGroup(actor.group);
+    }
+    actors.length = 0;
+    stageMode = data.mode || 'home';
+    const list = data.players || [];
+    const maxScore = Math.max(1, Number(data.maxScore) || 1);
+    const narrow = innerWidth < 800;
+
+    if (data.mode === 'home' || data.mode === 'pick' || data.mode === 'player') {
+      const player = data.player || { name: data.mode === 'home' ? 'CREATOR' : 'Toi', hood: data.hood || 0, acc: data.acc || 0, score: data.mode === 'home' ? null : 0 };
+      const model = foxModel(player.hood, player.acc);
+      const group = new THREE.Group();
+      group.add(model.group);
+      const label = makeLabel(player.name, data.mode === 'home' ? null : Number(player.score) || 0);
+      label.position.y = 2.55;
+      group.add(label);
+      group.position.x = data.mode === 'home' || data.mode === 'pick' ? (narrow ? 0 : 1.45) : 0;
+      group.position.z = data.mode === 'home' || data.mode === 'pick' ? 0.2 : 0.5;
+      if (data.mode === 'home' || data.mode === 'pick') group.scale.setScalar(data.mode === 'pick' ? 1.3 : 1.15);
+      castGroup.add(group);
+      actors.push({ group, model, label, targetX: group.position.x, targetZ: group.position.z, baseY: 0, targetY: 0, score: player.score || 0, mode: data.mode });
+      targetCamera = data.mode === 'home' || data.mode === 'pick'
+        ? { x: 0, y: 2.8, z: narrow ? 11.5 : 9.5, lookY: 1.45 }
+        : { x: 0, y: 2.8, z: data.end ? 10 : 9.5, lookY: 1.45 };
+      return;
+    }
+
+    if (data.mode === 'podium') {
+      const podium = list.slice(0, 3);
+      const heights = [2.1, 1.55, 1.15];
+      const xs = [0, -2.6, 2.6];
+      podium.forEach((player, index) => {
+        const model = foxModel(player.hood, player.acc);
+        const group = new THREE.Group();
+        const height = heights[index] || 0.8;
+        const column = mesh(new THREE.BoxGeometry(1.7, height, 1.7), material(index === 0 ? 0xffc107 : 0xefe7d4), 0, height / 2, 0);
+        group.add(column, model.group);
+        model.group.position.y = height;
+        const label = makeLabel(player.name, player.score);
+        label.position.y = height + 2.55;
+        group.add(label);
+        group.position.set(xs[index] || 0, 0, 0);
+        group.scale.setScalar(index === 0 ? 1.25 : 1.05);
+        castGroup.add(group);
+        actors.push({ group, model, label, targetX: xs[index] || 0, targetZ: 0, baseY: height, targetY: height, score: player.score, mode: 'podium' });
+      });
+      targetCamera = { x: 0, y: 3.5, z: 11.4, lookY: 2.3 };
+      return;
+    }
+
+    const players = list.length ? list : [{ id: 'empty', name: 'Salle vide', hood: 0, acc: 1, score: 0 }];
+    const cols = Math.min(6, Math.max(1, Math.ceil(Math.sqrt(players.length))));
+    const rows = Math.ceil(players.length / cols);
+    players.forEach((player, index) => {
+      const model = foxModel(player.hood, player.acc);
+      const group = new THREE.Group();
+      const height = data.mode === 'host' ? 0.12 + (Math.max(0, player.score || 0) / maxScore) * 1.75 : 0.12;
+      const column = mesh(new THREE.BoxGeometry(1.45, Math.max(0.12, height), 1.45), material(0xf7f3e8), 0, Math.max(0.12, height) / 2, 0);
+      const top = mesh(new THREE.BoxGeometry(1.45, 0.05, 1.45), material(player.hood === 0 ? 0x0033ff : items.hoods[player.hood] || 0x0033ff), 0, Math.max(0.12, height) + 0.025, 0);
+      group.add(column, top, model.group);
+      model.group.position.y = Math.max(0.12, height) + 0.03;
+      const label = makeLabel(player.name, data.mode === 'host' ? player.score || 0 : null);
+      label.position.y = Math.max(0.12, height) + 2.55;
+      group.add(label);
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      const x = (col - (cols - 1) / 2) * (narrow ? 1.85 : 2.25);
+      const z = (row - (rows - 1) / 2) * 1.8;
+      group.position.set(x, 0, z);
+      castGroup.add(group);
+      actors.push({ group, model, label, targetX: x, targetZ: z, baseY: Math.max(0.12, height), targetY: Math.max(0.12, height), score: player.score || 0, mode: 'host' });
+    });
+    targetCamera = {
+      x: 0,
+      y: 2.8 + Math.min(rows, 3) * 0.18,
+      z: clamp(9.2 + Math.max(0, rows - 2) * 1.35 + Math.max(0, cols - 3) * 0.35, 9.2, 16.5),
+      lookY: 1.45,
+    };
+  }
+
+  function burstAt(x = 0, y = 1.5, z = 0.6) {
+    const colors = [0x0033ff, 0xf05030, 0x00a878, 0xffc107];
+    for (let index = 0; index < 26; index++) {
+      const piece = mesh(
+        new THREE.TetrahedronGeometry(0.06 + Math.random() * 0.05, 0),
+        material(colors[index % colors.length]),
+        x + (Math.random() - 0.5) * 0.5,
+        y + Math.random() * 0.4,
+        z + (Math.random() - 0.5) * 0.4
+      );
+      piece.userData = {
+        vx: (Math.random() - 0.5) * 0.085,
+        vy: 0.045 + Math.random() * 0.06,
+        vz: (Math.random() - 0.4) * 0.07,
+        rx: (Math.random() - 0.5) * 0.25,
+        ry: (Math.random() - 0.5) * 0.25,
+        life: 1,
+      };
+      burstGroup.add(piece);
+    }
+  }
+
+  window.addEventListener('pointermove', (event) => {
+    pointerX = (event.clientX / innerWidth - 0.5) * 2;
+    pointerY = (event.clientY / innerHeight - 0.5) * 2;
+  }, { passive: true });
+
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const time = clock.getElapsedTime();
+    if (!reduceMotion) {
+      camera.position.x += (targetCamera.x + pointerX * 0.3 - camera.position.x) * 0.035;
+      camera.position.y += (targetCamera.y + pointerY * 0.12 - camera.position.y) * 0.035;
+      camera.position.z += (targetCamera.z - camera.position.z) * 0.035;
+      camera.lookAt(pointerX * 0.1, targetCamera.lookY + pointerY * 0.06, 0);
+    } else {
+      camera.position.set(targetCamera.x, targetCamera.y, targetCamera.z);
+      camera.lookAt(0, targetCamera.lookY, 0);
+    }
+
+    actors.forEach((actor, index) => {
+      actor.group.position.x += (actor.targetX - actor.group.position.x) * 0.06;
+      actor.group.position.z += (actor.targetZ - actor.group.position.z) * 0.06;
+      const bounce = reduceMotion ? 0 : Math.sin(time * 1.7 + index) * 0.018;
+      if (actor.mode === 'home' || actor.mode === 'pick' || actor.mode === 'player') {
+        actor.model.group.position.y = bounce;
+        actor.model.group.rotation.y = reduceMotion ? 0 : Math.sin(time * 0.7) * 0.18;
+        actor.label.position.y = 2.55 + bounce;
+      } else {
+        const top = actor.targetY + bounce;
+        actor.model.group.position.y = top + 0.03;
+        actor.label.position.y = top + 2.55;
+      }
+      actor.model.tail.rotation.y = Math.sin(time * 1.6 + index) * 0.28;
+      const blink = Math.sin(time * 0.9 + index * 2.1) > 0.995 ? 0.18 : 1;
+      actor.model.eyeL.scale.y = blink;
+      actor.model.eyeR.scale.y = blink;
+      actor.model.glintL.scale.y = blink;
+      actor.model.glintR.scale.y = blink;
+    });
+
+    for (const shape of shapes) {
+      shape.rotation.x += 0.002 * shape.userData.speed * 4;
+      shape.rotation.y += 0.003 * shape.userData.speed * 4;
+      shape.position.y = shape.userData.baseY + Math.sin(time * shape.userData.speed + shape.userData.phase) * 0.14;
+    }
+
+    burstClock++;
+    for (let index = burstGroup.children.length - 1; index >= 0; index--) {
+      const piece = burstGroup.children[index];
+      const data = piece.userData;
+      data.life -= 0.014;
+      if (data.life <= 0) {
+        burstGroup.remove(piece);
+        disposeGroup(piece);
+        continue;
+      }
+      data.vy -= 0.0022;
+      piece.position.x += data.vx;
+      piece.position.y += data.vy;
+      piece.position.z += data.vz;
+      piece.rotation.x += data.rx;
+      piece.rotation.y += data.ry;
+      piece.scale.setScalar(data.life);
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(innerWidth, innerHeight);
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
+  state.stage = { set: placeCast, burst: burstAt };
+  updateStage();
+  animate();
+  window.setTimeout(() => {
+    const intro = $('intro');
+    intro?.classList.add('is-out');
+    setTimeout(() => { if (intro) intro.hidden = true; }, 1100);
+  }, 1400);
+  loadLeaderboard();
+}
+
+initUI();
+loadLeaderboard();
+init3D().catch(() => {
+  const intro = $('intro');
+  intro?.classList.add('is-out');
+  setTimeout(() => { if (intro) intro.hidden = true; }, 1100);
+});
+</script>
+</body>
+</html>

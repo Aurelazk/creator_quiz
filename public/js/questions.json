@@ -1,0 +1,545 @@
+{
+  "levels": [
+    {
+      "id": "web",
+      "number": 1,
+      "name": "Bases du web",
+      "short": "HTML • CSS • JS",
+      "color": "#0033FF",
+      "description": "Les fondations : structurer une page, la styliser et la rendre vivante.",
+      "questions": [
+        {
+          "type": "mcq",
+          "q": "Que signifie HTML ?",
+          "a": [
+            "HyperText Markup Language",
+            "High Tech Modern Language",
+            "Home Tool Markup Language",
+            "Hyper Transfer Markup Language"
+          ],
+          "c": 0,
+          "explain": "HTML est un langage de balisage : il décrit la structure et le sens du contenu."
+        },
+        {
+          "type": "mcq",
+          "q": "Quelle balise définit le titre principal d’une page ?",
+          "a": [
+            "<title>",
+            "<h1>",
+            "<header>",
+            "<main>"
+          ],
+          "c": 1,
+          "explain": "<h1> est le titre principal visible. <title> apparaît dans l’onglet du navigateur."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert principalement CSS ?",
+          "a": [
+            "Stocker les données",
+            "Mettre en page et styliser",
+            "Créer le serveur",
+            "Compiler JavaScript"
+          ],
+          "c": 1,
+          "explain": "CSS gère l’apparence : couleurs, espacements, typographie, responsive."
+        },
+        {
+          "type": "mcq",
+          "q": "Que fait console.log(\"Bonjour\") ?",
+          "a": [
+            "Affiche Bonjour dans la console",
+            "Ouvre une alerte",
+            "Écrit dans le HTML",
+            "Envoie un e-mail"
+          ],
+          "c": 0,
+          "explain": "console.log est l’outil de base pour inspecter une valeur pendant le développement."
+        },
+        {
+          "type": "mcq",
+          "q": "Quel sélecteur CSS cible l’élément avec id=\"menu\" ?",
+          "a": [
+            ".menu",
+            "#menu",
+            "*menu",
+            "menu()"
+          ],
+          "c": 1,
+          "explain": "Le dièse cible un id. Le point cible une classe."
+        },
+        {
+          "type": "mcq",
+          "q": "Quelle balise rend une page lisible sur mobile ?",
+          "a": [
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+            "<meta charset=\"UTF-8\">",
+            "<link rel=\"mobile\">",
+            "<body mobile>"
+          ],
+          "c": 0,
+          "explain": "La meta viewport indique au navigateur d’adapter la largeur de la page à l’écran."
+        },
+        {
+          "type": "mcq",
+          "q": "En JavaScript, quelle valeur est immuable après affectation ?",
+          "a": [
+            "let",
+            "var",
+            "const",
+            "function"
+          ],
+          "c": 2,
+          "explain": "const empêche la réaffectation de la variable, pas la mutation de l’objet qu’elle référence."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert la balise <link rel=\"stylesheet\" href=\"style.css\"> ?",
+          "a": [
+            "Relier une feuille de style à la page",
+            "Créer un paragraphe",
+            "Déclarer une variable",
+            "Démarrer un serveur"
+          ],
+          "c": 0,
+          "explain": "La balise link charge une ressource externe, ici une feuille CSS."
+        },
+        {
+          "type": "mcq",
+          "q": "Que renvoie document.querySelector(\".card\") ?",
+          "a": [
+            "Tous les éléments avec la classe card",
+            "Le premier élément avec la classe card",
+            "Le dernier élément avec l’id card",
+            "Une alerte"
+          ],
+          "c": 1,
+          "explain": "querySelector renvoie le premier élément qui correspond au sélecteur."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi correspond le padding en CSS ?",
+          "a": [
+            "L’espace à l’intérieur de l’élément",
+            "L’espace extérieur à l’élément",
+            "La bordure de l’élément",
+            "La taille de police"
+          ],
+          "c": 0,
+          "explain": "Le padding est l’espace intérieur entre le contenu et la bordure."
+        }
+      ],
+      "prompts": [
+        "Un site vitrine une page pour un restaurant de pâtes à Cotonou, avec menu, horaires et bouton WhatsApp.",
+        "Une page d’accueil pour un club de robotique étudiant, style affiche, avec un appel à l’inscription.",
+        "Un mini-site pour expliquer les bases du web à des débutants, en 3 étapes visuelles."
+      ]
+    },
+    {
+      "id": "data",
+      "number": 2,
+      "name": "Apps & données",
+      "short": "API • base de données",
+      "color": "#F05030",
+      "description": "Faire dialoguer une application avec des données réelles, proprement.",
+      "questions": [
+        {
+          "type": "mcq",
+          "q": "Que signifie API ?",
+          "a": [
+            "Application Programming Interface",
+            "Advanced Program Integration",
+            "Automatic Protocol Interface",
+            "Applied Programming Input"
+          ],
+          "c": 0,
+          "explain": "Une API est un contrat qui permet à deux logiciels de communiquer."
+        },
+        {
+          "type": "mcq",
+          "q": "Que signifie le code HTTP 404 ?",
+          "a": [
+            "Serveur en surchauffe",
+            "Ressource introuvable",
+            "Connexion réussie",
+            "Mot de passe expiré"
+          ],
+          "c": 1,
+          "explain": "404 signale que l’adresse demandée n’existe pas côté serveur."
+        },
+        {
+          "type": "mcq",
+          "q": "Quel format est le plus courant pour échanger des données avec une API web ?",
+          "a": [
+            "JSON",
+            "MP3",
+            "EXE",
+            "PSD"
+          ],
+          "c": 0,
+          "explain": "JSON est lisible par les humains et directement exploitable en JavaScript."
+        },
+        {
+          "type": "mcq",
+          "q": "Quelle requête SQL lit des données ?",
+          "a": [
+            "INSERT",
+            "UPDATE",
+            "SELECT",
+            "DELETE"
+          ],
+          "c": 2,
+          "explain": "SELECT récupère des lignes. Les trois autres modifient la base."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert une clé primaire dans une table ?",
+          "a": [
+            "À identifier chaque ligne de façon unique",
+            "À chiffrer les données",
+            "À créer un fichier CSV",
+            "À accélérer Internet"
+          ],
+          "c": 0,
+          "explain": "La clé primaire garantit qu’une ligne est identifiable sans ambiguïté."
+        },
+        {
+          "type": "mcq",
+          "q": "Que renvoie fetch() en JavaScript moderne ?",
+          "a": [
+            "Directement les données JSON",
+            "Une promesse",
+            "Un fichier texte",
+            "Une alerte"
+          ],
+          "c": 1,
+          "explain": "fetch renvoie une promesse ; il faut souvent attendre la réponse puis appeler .json()."
+        },
+        {
+          "type": "mcq",
+          "q": "Quelle méthode HTTP crée classiquement une ressource ?",
+          "a": [
+            "GET",
+            "POST",
+            "HEAD",
+            "OPTIONS"
+          ],
+          "c": 1,
+          "explain": "POST envoie des données au serveur pour créer ou traiter une ressource."
+        },
+        {
+          "type": "mcq",
+          "q": "Que signifie le code HTTP 201 ?",
+          "a": [
+            "Erreur serveur",
+            "Ressource introuvable",
+            "Ressource créée",
+            "Redirection permanente"
+          ],
+          "c": 2,
+          "explain": "201 Created confirme qu’une nouvelle ressource a bien été créée."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert la clause SQL WHERE ?",
+          "a": [
+            "Filtrer les lignes",
+            "Trier les colonnes",
+            "Créer une table",
+            "Supprimer la base"
+          ],
+          "c": 0,
+          "explain": "WHERE applique une condition pour ne sélectionner que certaines lignes."
+        },
+        {
+          "type": "mcq",
+          "q": "Quel type n’existe pas nativement en JSON ?",
+          "a": [
+            "Date",
+            "Chaîne de caractères",
+            "Nombre",
+            "Booléen"
+          ],
+          "c": 0,
+          "explain": "JSON gère les chaînes, nombres, booléens, tableaux, objets et null, mais pas le type Date."
+        }
+      ],
+      "prompts": [
+        "Une app mobile pour partager les bons plans étudiants à Cotonou, avec carte, filtres et favoris.",
+        "Un tableau de bord pour suivre les présences aux séances CREATOR, avec statistiques simples.",
+        "Une API de réservation de salles pour le campus, avec règles de conflit d’horaires."
+      ]
+    },
+    {
+      "id": "ai",
+      "number": 3,
+      "name": "Développer avec l’IA",
+      "short": "Prompts • code review",
+      "color": "#00A878",
+      "description": "Piloter l’IA sans lui déléguer ta compréhension : prompts, relecture, tests.",
+      "questions": [
+        {
+          "type": "mcq",
+          "q": "Qu’est-ce qu’un bon prompt de développement ?",
+          "a": [
+            "Le plus vague possible",
+            "Un contexte, un objectif et des contraintes claires",
+            "Une seule lettre",
+            "Uniquement le mot « code »"
+          ],
+          "c": 1,
+          "explain": "Plus le contexte, le résultat attendu et les contraintes sont explicites, plus la réponse est exploitable."
+        },
+        {
+          "type": "mcq",
+          "q": "Que fait une « hallucination » d’IA ?",
+          "a": [
+            "Elle accélère le serveur",
+            "Elle invente une information plausible mais fausse",
+            "Elle supprime le cache",
+            "Elle corrige les fautes automatiquement"
+          ],
+          "c": 1,
+          "explain": "Une IA peut produire une réponse fluide et convaincante qui est pourtant incorrecte."
+        },
+        {
+          "type": "mcq",
+          "q": "Quelle est la meilleure pratique après avoir reçu du code d’une IA ?",
+          "a": [
+            "Le déployer immédiatement",
+            "Le lire, le tester et le comprendre",
+            "Le renommer",
+            "Le mettre en capture d’écran"
+          ],
+          "c": 1,
+          "explain": "Tu restes responsable du code : relecture, tests et compréhension sont indispensables."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert un test automatisé ?",
+          "a": [
+            "À vérifier qu’un comportement reste correct",
+            "À remplacer le design",
+            "À écrire la documentation",
+            "À supprimer les bugs par magie"
+          ],
+          "c": 0,
+          "explain": "Un test fige un comportement attendu et prévient les régressions."
+        },
+        {
+          "type": "mcq",
+          "q": "Pourquoi donner du contexte à l’IA sur ton projet ?",
+          "a": [
+            "Pour la faire parler plus longtemps",
+            "Pour obtenir une réponse adaptée à ton stack et tes contraintes",
+            "Pour éviter les tests",
+            "Pour cacher les erreurs"
+          ],
+          "c": 1,
+          "explain": "Sans contexte, l’IA propose une solution générique qui peut ne pas correspondre au projet."
+        },
+        {
+          "type": "mcq",
+          "q": "Que faut-il faire face à une réponse d’IA incertaine ?",
+          "a": [
+            "La croire sur parole",
+            "Vérifier dans la documentation ou par un test",
+            "La copier deux fois",
+            "Changer de police"
+          ],
+          "c": 1,
+          "explain": "La vérification factuelle et l’expérimentation restent les meilleurs garde-fous."
+        },
+        {
+          "type": "mcq",
+          "q": "Quel est le bon réflexe avant de demander une correction à l’IA ?",
+          "a": [
+            "Décrire le bug et coller le message d’erreur",
+            "Dire seulement « répare »",
+            "Fermer l’éditeur",
+            "Changer de langage"
+          ],
+          "c": 0,
+          "explain": "Un message d’erreur, le comportement attendu et le code concerné font gagner beaucoup de temps."
+        },
+        {
+          "type": "mcq",
+          "q": "Quel prompt a le plus de chances de produire un code utilisable ?",
+          "a": [
+            "Un objectif, le stack, les contraintes et le format attendu",
+            "Le mot « code »",
+            "Une capture d’écran seule",
+            "Le texte le plus long possible, sans contexte"
+          ],
+          "c": 0,
+          "explain": "Un prompt précis donne à l’IA le contexte nécessaire pour proposer une réponse adaptée."
+        },
+        {
+          "type": "mcq",
+          "q": "Que faire si l’IA propose une bibliothèque que tu ne connais pas ?",
+          "a": [
+            "L’installer sans regarder",
+            "Vérifier sa documentation et sa nécessité",
+            "Supprimer le projet",
+            "La renommer"
+          ],
+          "c": 1,
+          "explain": "Une dépendance doit être comprise, vérifiée et justifiée avant d’être ajoutée au projet."
+        },
+        {
+          "type": "mcq",
+          "q": "Pourquoi relire le code généré par une IA ?",
+          "a": [
+            "Pour vérifier sa logique, sa sécurité et son adéquation",
+            "Pour changer les couleurs",
+            "Pour éviter les tests",
+            "Pour ralentir le serveur"
+          ],
+          "c": 0,
+          "explain": "L’IA peut se tromper ou inventer : la relecture reste indispensable."
+        }
+      ],
+      "prompts": [
+        "Un prompt pour corriger un bug JavaScript sans réécrire tout le fichier, avec explication et test.",
+        "Un prompt pour faire relire un code de débutant : erreurs, lisibilité et une seule amélioration prioritaire.",
+        "Un prompt pour générer une landing page responsive à partir d’un brief de 5 lignes."
+      ]
+    },
+    {
+      "id": "design",
+      "number": 4,
+      "name": "Design & mise en ligne",
+      "short": "Figma • déploiement",
+      "color": "#FFC107",
+      "description": "Donner une forme claire au produit, puis le mettre entre les mains des utilisateurs.",
+      "questions": [
+        {
+          "type": "mcq",
+          "q": "À quoi sert Figma ?",
+          "a": [
+            "À concevoir des interfaces et des prototypes",
+            "À héberger une base de données",
+            "À compiler du JavaScript",
+            "À gérer les e-mails"
+          ],
+          "c": 0,
+          "explain": "Figma est un outil collaboratif de design d’interface et de prototypage."
+        },
+        {
+          "type": "mcq",
+          "q": "Qu’est-ce qu’un wireframe ?",
+          "a": [
+            "Une version finale colorée",
+            "Une structure schématique de l’interface",
+            "Un composant serveur",
+            "Un fichier de police"
+          ],
+          "c": 1,
+          "explain": "Le wireframe sert à valider la structure et la hiérarchie avant le rendu visuel."
+        },
+        {
+          "type": "mcq",
+          "q": "Que signifie “responsive design” ?",
+          "a": [
+            "Une interface qui s’adapte à la taille de l’écran",
+            "Un site qui répond aux e-mails",
+            "Un serveur plus rapide",
+            "Un design uniquement mobile"
+          ],
+          "c": 0,
+          "explain": "Le responsive adapte la mise en page aux mobiles, tablettes et ordinateurs."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert l’attribut alt sur une image ?",
+          "a": [
+            "À décorer l’image",
+            "À décrire l’image pour l’accessibilité et le fallback",
+            "À compresser l’image",
+            "À changer sa couleur"
+          ],
+          "c": 1,
+          "explain": "alt rend l’image compréhensible par les lecteurs d’écran et si elle ne charge pas."
+        },
+        {
+          "type": "mcq",
+          "q": "Que mesure Lighthouse dans Chrome ?",
+          "a": [
+            "La qualité perçue du design uniquement",
+            "Performance, accessibilité, bonnes pratiques et SEO",
+            "Le nombre de visiteurs",
+            "La taille du dépôt Git"
+          ],
+          "c": 1,
+          "explain": "Lighthouse audite plusieurs dimensions techniques et d’accessibilité d’une page."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert un nom de domaine ?",
+          "a": [
+            "À identifier un site par un nom lisible",
+            "À écrire du CSS",
+            "À stocker des images",
+            "À compiler le serveur"
+          ],
+          "c": 0,
+          "explain": "Le domaine est traduit en adresse IP par le DNS pour joindre le serveur."
+        },
+        {
+          "type": "mcq",
+          "q": "Que fait un déploiement ?",
+          "a": [
+            "Il publie une version de l’application sur un serveur",
+            "Il supprime le code source",
+            "Il dessine les maquettes",
+            "Il crée un compte Figma"
+          ],
+          "c": 0,
+          "explain": "Déployer, c’est rendre l’application accessible depuis son environnement d’hébergement."
+        },
+        {
+          "type": "mcq",
+          "q": "Quel contraste faut-il viser pour du texte ?",
+          "a": [
+            "Un contraste suffisant entre le texte et le fond",
+            "Du texte gris clair sur blanc",
+            "Du texte blanc sur jaune",
+            "Aucun contraste"
+          ],
+          "c": 0,
+          "explain": "Un contraste suffisant garantit que le texte reste lisible, y compris pour les personnes malvoyantes."
+        },
+        {
+          "type": "mcq",
+          "q": "Que vérifier avant de déployer une application ?",
+          "a": [
+            "Les tests, les variables d’environnement et le build",
+            "Uniquement la couleur du logo",
+            "Le nombre d’onglets ouverts",
+            "La police du terminal"
+          ],
+          "c": 0,
+          "explain": "Un déploiement fiable vérifie le build, la configuration et les tests."
+        },
+        {
+          "type": "mcq",
+          "q": "À quoi sert un prototype Figma ?",
+          "a": [
+            "Tester le parcours avant de coder",
+            "Héberger la base de données",
+            "Compiler le CSS",
+            "Payer le nom de domaine"
+          ],
+          "c": 0,
+          "explain": "Le prototype permet de valider les écrans et le parcours utilisateur avant le développement."
+        }
+      ],
+      "prompts": [
+        "Une landing page pour le Demo Day CREATOR : programme, projets, inscription, style affiche.",
+        "Une interface mobile de suivi de projet pour une équipe de 4 étudiants, simple et accessible.",
+        "Un système de design minimal pour CREATOR : couleurs, typographies, boutons et cartes."
+      ]
+    }
+  ],
+  "promptRubric": "Clarté, contexte, contraintes, format de sortie"
+}
