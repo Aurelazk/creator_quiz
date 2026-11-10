@@ -155,8 +155,26 @@ function getTablePos(i) {
   return { x: Math.sin(angle) * radius, z: Math.cos(angle) * radius, rot: -angle + Math.PI };
 }
 
+const CREATOR_PALETTE = [
+  0x0B35FE,
+  0x00E472,
+  0xFF4E20,
+  0xFF7A00,
+  0x2E85FF,
+  0x00B85C,
+  0x7A5CFF,
+  0xFF9A4D
+];
+
 function getDynamicColor(index) {
-  return new THREE.Color().setHSL((index * 0.618033988749895) % 1, 0.7, 0.5).getHex();
+  return CREATOR_PALETTE[index % CREATOR_PALETTE.length];
+}
+
+function cap(r, h, seg = 24) {
+  const p = [], n = 12;
+  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI / 2; p.push(new THREE.Vector2(Math.sin(a) * r, -Math.cos(a) * r)); }
+  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI / 2; p.push(new THREE.Vector2(Math.cos(a) * r, h + Math.sin(a) * r)); }
+  return new THREE.LatheGeometry(p, seg);
 }
 
 let playerId = Math.random().toString(36).slice(2, 11);
@@ -398,64 +416,64 @@ function makeLabel(text, isMe) {
 
 function makeChar(color, name, isMe) {
   const g = new THREE.Group();
-  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.45, metalness: 0.05, clearcoat: 0.2, clearcoatRoughness: 0.4 });
+  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.32, metalness: 0.0, clearcoat: 0.55, clearcoatRoughness: 0.35 });
 
   const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2;
   sh.position.y = 0.015;
   g.add(sh);
 
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, 32, 32), clay);
-  head.position.y = 1.85;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.44, 40, 32), clay);
+  head.position.y = 1.88;
+  head.scale.y = 1.06;
   g.add(head);
 
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.15, 16), clay);
+  const neck = new THREE.Mesh(cap(0.11, 0.1), clay);
   neck.position.y = 1.5;
   g.add(neck);
 
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.28, 0.7, 32), clay);
-  torso.position.y = 1.05;
+  const torso = new THREE.Mesh(cap(0.24, 0.5), clay);
+  torso.position.y = 1.08;
+  torso.scale.set(1, 1, 0.85);
   g.add(torso);
 
-  const leftUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.35, 16), clay);
-  leftUpper.position.set(-0.25, 1.3, 0);
-  leftUpper.rotation.z = -0.1;
+  const leftUpper = new THREE.Mesh(cap(0.085, 0.2), clay);
+  leftUpper.position.set(-0.26, 1.26, 0);
+  leftUpper.rotation.z = -0.16;
   g.add(leftUpper);
-  const leftFore = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.4, 16), clay);
-  leftFore.position.set(-0.05, 1.1, 0.15);
-  leftFore.rotation.z = Math.PI / 2;
-  leftFore.rotation.x = 0.2;
+  const leftFore = new THREE.Mesh(cap(0.07, 0.26), clay);
+  leftFore.position.set(-0.16, 1.02, 0.1);
+  leftFore.rotation.set(0.35, 0, Math.PI / 2.15);
   g.add(leftFore);
-  const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), clay);
-  leftHand.position.set(0.15, 1.1, 0.15);
+  const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 20, 16), clay);
+  leftHand.position.set(0.12, 1.06, 0.16);
   g.add(leftHand);
 
-  const rightUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.35, 16), clay);
-  rightUpper.position.set(0.25, 1.3, 0);
-  rightUpper.rotation.z = 0.1;
+  const rightUpper = new THREE.Mesh(cap(0.085, 0.2), clay);
+  rightUpper.position.set(0.26, 1.26, 0);
+  rightUpper.rotation.z = 0.16;
   g.add(rightUpper);
-  const rightFore = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.4, 16), clay);
-  rightFore.position.set(0.05, 1.15, 0.22);
-  rightFore.rotation.z = -Math.PI / 2;
-  rightFore.rotation.x = 0.2;
+  const rightFore = new THREE.Mesh(cap(0.07, 0.26), clay);
+  rightFore.position.set(0.16, 1.02, 0.1);
+  rightFore.rotation.set(0.35, 0, -Math.PI / 2.15);
   g.add(rightFore);
-  const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), clay);
-  rightHand.position.set(-0.15, 1.15, 0.22);
+  const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 20, 16), clay);
+  rightHand.position.set(-0.12, 1.06, 0.16);
   g.add(rightHand);
 
-  const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.75, 16), clay);
-  leftLeg.position.set(-0.12, 0.37, 0);
+  const leftLeg = new THREE.Mesh(cap(0.095, 0.42), clay);
+  leftLeg.position.set(-0.13, 0.5, 0);
   g.add(leftLeg);
-  const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), clay);
-  leftFoot.scale.set(1, 0.5, 1.4);
-  leftFoot.position.set(-0.12, 0.06, 0.05);
+  const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), clay);
+  leftFoot.scale.set(1, 0.55, 1.5);
+  leftFoot.position.set(-0.13, 0.07, 0.06);
   g.add(leftFoot);
-  const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.75, 16), clay);
-  rightLeg.position.set(0.12, 0.37, 0);
+  const rightLeg = new THREE.Mesh(cap(0.095, 0.42), clay);
+  rightLeg.position.set(0.13, 0.5, 0);
   g.add(rightLeg);
-  const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), clay);
-  rightFoot.scale.set(1, 0.5, 1.4);
-  rightFoot.position.set(0.12, 0.06, 0.05);
+  const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), clay);
+  rightFoot.scale.set(1, 0.55, 1.5);
+  rightFoot.position.set(0.13, 0.07, 0.06);
   g.add(rightFoot);
 
   g.add(makeLabel(name, isMe));
