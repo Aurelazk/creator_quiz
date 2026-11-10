@@ -6,9 +6,6 @@
 html,body{margin:0;height:100%;overflow:hidden;background:#0a0d1f;font-family:Arial,Helvetica,sans-serif}
 canvas{display:block}
 #t{position:fixed;left:0;right:0;bottom:9%;text-align:center;color:#fff;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 3px rgba(0,0,0,.45);pointer-events:none;padding:0 20px}
-#b{position:fixed;top:34px;left:0;right:0;text-align:center;display:none;z-index:20}
-#b button{margin:0 4px;padding:8px 18px;border:0;border-radius:20px;font-weight:700;font-size:14px;background:rgba(255,255,255,.92);color:#234;cursor:pointer}
-#b button.on{background:#ffb300;color:#000}
 #h{position:fixed;top:10px;left:0;right:0;text-align:center;color:#fff;font-size:12px;opacity:.85;text-shadow:0 1px 2px rgba(0,0,0,.5);pointer-events:none;z-index:20}
 .panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,15,40,.94);padding:26px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,380px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .panel h2{margin:0 0 6px;color:#ffb300;font-size:22px}
@@ -32,18 +29,20 @@ canvas{display:block}
 #playersList .p .tag{float:right;opacity:.6;font-size:10px}
 #startBtn{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#ffb300;color:#111;border:none;padding:15px 30px;border-radius:25px;font-weight:bold;font-size:16px;cursor:pointer;z-index:40;display:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #leaveBtn{position:fixed;top:10px;left:12px;background:rgba(10,15,40,.85);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;z-index:30;display:none}
-#quizPanel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,15,40,.95);padding:26px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,420px);box-shadow:0 20px 60px rgba(0,0,0,.5);display:none}
+
+#quizPanel{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(10,15,40,.95);padding:20px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,500px);box-shadow:0 20px 60px rgba(0,0,0,.5);display:none}
 #quizPanel h2{margin:0 0 10px;color:#ffb300;font-size:20px}
 #quizPanel #qText{font-size:17px;margin:0 0 16px;line-height:1.4;color:#fff}
-#quizPanel .answers{display:flex;flex-direction:column;gap:8px}
-#quizPanel .answers button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35);padding:12px 16px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-align:left}
-#quizPanel .answers button:hover{border-color:#ffb300;background:rgba(255,179,0,.15)}
+#quizPanel .answers{display:flex;flex-direction:row;justify-content:center;gap:10px;margin-top:10px}
+#quizPanel .answers button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35);padding:12px 16px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-align:center;width:120px}
+#quizPanel .answers button:hover:not(:disabled){border-color:#ffb300;background:rgba(255,179,0,.15)}
 #quizPanel .answers button.selected{background:#ffb300;color:#111;border-color:#ffb300}
+#quizPanel .answers button:disabled{cursor:default;opacity:0.6}
 #quizPanel #qStatus{margin-top:12px;font-size:14px;color:#9fe6a0;min-height:20px}
+#revealBtn{background:#ffb300;color:#111;border:none;padding:12px 16px;border-radius:8px;font-weight:bold;margin-top:15px;cursor:pointer;width:100%;display:none}
 </style></head><body>
 <div id="h">Quiz 3D Multijoueur</div>
-<div id="b"><button id="b1" class="on">Lobby</button><button id="b2">Table</button></div>
-<div id="t">En attente de salle...<br><span id="c">0/19 joueurs</span></div>
+<div id="t">En attente de salle...<br><span id="c">0 joueur</span></div>
 <button id="leaveBtn">Quitter la salle</button>
 <div id="roomInfo">Salle <b id="roomCodeLabel">-----</b><button id="copyBtn">Copier le code</button></div>
 <div id="playersList"><h4>Joueurs</h4><div id="playersItems"></div></div>
@@ -53,6 +52,7 @@ canvas{display:block}
   <div id="qText">Chargement...</div>
   <div class="answers" id="qAnswers"></div>
   <div id="qStatus">En attente des autres joueurs...</div>
+  <button id="revealBtn">Révéler les résultats</button>
 </div>
 <div id="roomPanel" class="panel">
   <h2>Quiz 3D Multijoueur</h2>
@@ -69,12 +69,6 @@ canvas{display:block}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <script>
-const QUESTION = "Nommez un langage de programmation";
-const ANSWERS = [
-  ['JavaScript', 45], ['Python', 38], ['Java', 32], ['C++', 28], ['C#', 25],
-  ['PHP', 22], ['Ruby', 18], ['Go', 15], ['Swift', 12], ['Kotlin', 10]
-];
-
 const QUESTIONS = [
   { q: "JavaScript est un langage de programmation ?", ans: 0 },
   { q: "Python a été créé dans les années 1990 ?", ans: 0 },
@@ -88,29 +82,46 @@ const QUESTIONS = [
   { q: "Le cloud stocke des données sur votre disque local ?", ans: 1 }
 ];
 const OPTIONS = ['Oui', 'Non'];
-const MAX_PLAYERS = 19;
-const TABLE_SEATS = 6;
 const MQTT_URL = 'wss://broker.emqx.io:8084/mqtt';
 const TOPIC_BASE = 'creatorquiz3d/';
 
-const playerColors = [0x2b8cff, 0x1e7be0, 0x3a9bff, 0x156ad1, 0x4aaaff, 0x0d5bb8, 0xff6b6b, 0xff9ff3, 0x54a0ff, 0x5f27cd, 0x48dbfb, 0x1dd1a1, 0x10ac84, 0x52616b, 0xf368e0, 0xff9ff3, 0x2b8cff, 0x4aaaff, 0x0d5bb8];
+function getLobbyPos(i) {
+  if (i === 0) return { x: 0, z: 0, rot: 0 };
+  const angle = i * 2.39996323;
+  const radius = 1.2 + Math.sqrt(i) * 1.1;
+  return {
+    x: Math.sin(angle) * radius,
+    z: Math.cos(angle) * radius,
+    rot: Math.atan2(-Math.sin(angle), -Math.cos(angle))
+  };
+}
 
-const lobbyPositions = [
-  [-1.5, 0], [0.1, -0.4], [-0.1, 1.4], [1.5, 0.6],
-  [2.5, -1], [-2, 1.5], [1, -2], [-3, 0],
-  [2, 1], [-1.8, -1.5], [0.5, 2], [1.8, -0.8],
-  [-2.5, -1.2], [0.8, 1.8], [-1.2, -1], [2.2, 0.5],
-  [-0.8, 2.2], [1.2, 0.3], [-2.2, -0.5]
-];
+function getTablePos(i) {
+  if (i < 6) {
+    const angle = i * Math.PI / 3;
+    return { x: Math.sin(angle) * 5.5, z: Math.cos(angle) * 5.5, rot: -angle + Math.PI };
+  }
+  let idx = i - 6;
+  let ring = 1;
+  let spots = 10;
+  while (idx >= spots) {
+    idx -= spots;
+    ring++;
+    spots += 6;
+  }
+  const radius = 5.5 + ring * 2.2;
+  const angleOffset = ring * 0.2;
+  const angle = (idx / spots) * Math.PI * 2 + angleOffset;
+  return {
+    x: Math.sin(angle) * radius,
+    z: Math.cos(angle) * radius,
+    rot: -angle + Math.PI
+  };
+}
 
-const tablePlayerPositions = [
-  { angle: 0, radius: 4.2 },
-  { angle: Math.PI * 2 / 6, radius: 4.2 },
-  { angle: Math.PI * 4 / 6, radius: 4.2 },
-  { angle: Math.PI * 6 / 6, radius: 4.2 },
-  { angle: Math.PI * 8 / 6, radius: 4.2 },
-  { angle: Math.PI * 10 / 6, radius: 4.2 }
-];
+function getDynamicColor(index) {
+  return new THREE.Color().setHSL((index * 0.618033988749895) % 1, 0.7, 0.5).getHex();
+}
 
 let playerId = Math.random().toString(36).slice(2, 11);
 let playerName = 'Joueur-' + playerId.slice(0, 4);
@@ -118,13 +129,11 @@ let roomId = null;
 let isHost = false;
 let state = null;
 let mode = 'lobby';
-let rv = 0;
 let myAnswer = null;
 let answered = false;
 
 const $ = (id) => document.getElementById(id);
 
-// ========== RENDERER (rendu physique) ==========
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0d1f);
 scene.fog = new THREE.Fog(0x0a0d1f, 26, 60);
@@ -139,7 +148,6 @@ ren.toneMapping = THREE.ACESFilmicToneMapping;
 ren.toneMappingExposure = 1.12;
 document.body.appendChild(ren.domElement);
 
-// ========== TEXTURES PROCEDURALES ==========
 function canvasTex(w, h, draw) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -162,10 +170,6 @@ const woodTex = canvasTex(512, 512, (x, w, h) => {
     for (let px = 0; px <= w; px += 28) x.lineTo(px, y0 + Math.sin(px * 0.02 + i * 1.7) * (1.5 + Math.random() * 4));
     x.stroke();
   }
-  for (let i = 0; i < 26; i++) {
-    x.fillStyle = `rgba(255,220,170,${0.02 + Math.random() * 0.05})`;
-    x.fillRect(0, Math.random() * h, w, 1 + Math.random() * 4);
-  }
 });
 woodTex.repeat.set(2, 2);
 
@@ -186,10 +190,6 @@ const floorTex = canvasTex(512, 512, (x, w, h) => {
       const ox = tx * tile, oy = ty * tile;
       x.fillStyle = (tx + ty) % 2 ? '#262b36' : '#1d2129';
       x.fillRect(ox + 4, oy + 4, tile - 8, tile - 8);
-      for (let i = 0; i < 240; i++) {
-        x.fillStyle = `rgba(255,255,255,${Math.random() * 0.03})`;
-        x.fillRect(ox + Math.random() * tile, oy + Math.random() * tile, 1, 1);
-      }
     }
   }
 });
@@ -199,9 +199,7 @@ const leatherTex = canvasTex(256, 256, (x, w, h) => {
   x.fillStyle = '#4a2418'; x.fillRect(0, 0, w, h);
   for (let i = 0; i < 1400; i++) {
     x.fillStyle = `rgba(255,190,140,${Math.random() * 0.05})`;
-    x.beginPath();
-    x.arc(Math.random() * w, Math.random() * h, 1 + Math.random() * 2.5, 0, 7);
-    x.fill();
+    x.beginPath(); x.arc(Math.random() * w, Math.random() * h, 1 + Math.random() * 2.5, 0, 7); x.fill();
   }
 });
 
@@ -217,20 +215,18 @@ const glowTex = (() => {
   return new THREE.CanvasTexture(c);
 })();
 
-// ========== MATERIAUX ==========
-const woodDark = new THREE.MeshPhysicalMaterial({ color: 0x4a3320, roughness: 0.55, metalness: 0.05, clearcoat: 0.5, clearcoatRoughness: 0.3 });
-const woodTop = new THREE.MeshPhysicalMaterial({ map: woodTex, roughness: 0.4, metalness: 0.05, clearcoat: 0.6, clearcoatRoughness: 0.25 });
-const metalGold = new THREE.MeshPhysicalMaterial({ color: 0xd9a441, roughness: 0.28, metalness: 1, clearcoat: 0.4, clearcoatRoughness: 0.2 });
+const woodDark = new THREE.MeshPhysicalMaterial({ color: 0x4a3320, roughness: 0.55, metalness: 0.05, clearcoat: 0.5 });
+const woodTop = new THREE.MeshPhysicalMaterial({ map: woodTex, roughness: 0.4, metalness: 0.05, clearcoat: 0.6 });
+const metalGold = new THREE.MeshPhysicalMaterial({ color: 0xd9a441, roughness: 0.28, metalness: 1, clearcoat: 0.4 });
 const metalChrome = new THREE.MeshPhysicalMaterial({ color: 0x9aa4b2, roughness: 0.22, metalness: 1 });
-const fabricFelt = new THREE.MeshStandardMaterial({ map: feltTex, color: 0x9fb0ff, roughness: 1, metalness: 0 });
-const leather = new THREE.MeshPhysicalMaterial({ map: leatherTex, roughness: 0.62, metalness: 0.02, clearcoat: 0.18, clearcoatRoughness: 0.4 });
+const fabricFelt = new THREE.MeshStandardMaterial({ map: feltTex, color: 0x9fb0ff, roughness: 1 });
+const leather = new THREE.MeshPhysicalMaterial({ map: leatherTex, roughness: 0.62, metalness: 0.02, clearcoat: 0.18 });
 const wallMat = new THREE.MeshStandardMaterial({ color: 0x151a30, roughness: 0.92 });
 const wallMat2 = new THREE.MeshStandardMaterial({ color: 0x101528, roughness: 0.92 });
-const floorMat = new THREE.MeshPhysicalMaterial({ map: floorTex, roughness: 0.32, metalness: 0.08, clearcoat: 0.45, clearcoatRoughness: 0.3 });
+const floorMat = new THREE.MeshPhysicalMaterial({ map: floorTex, roughness: 0.32, metalness: 0.08, clearcoat: 0.45 });
 const standMat = new THREE.MeshStandardMaterial({ color: 0x232940, roughness: 0.9 });
 const trussMat = new THREE.MeshStandardMaterial({ color: 0x14161c, roughness: 0.5, metalness: 0.6 });
 
-// ========== ECLAIRAGE STUDIO ==========
 const hemi = new THREE.HemisphereLight(0x8a7ff0, 0x1a1430, 0.55);
 scene.add(hemi);
 
@@ -252,7 +248,6 @@ rim.position.set(0, 11, -14);
 rim.target.position.set(0, 3, 0);
 scene.add(rim); scene.add(rim.target);
 
-// ========== SALLE ==========
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 70), floorMat);
 floor.rotation.x = -Math.PI / 2;
 floor.receiveShadow = true;
@@ -268,7 +263,6 @@ scene.add(backWall);
   scene.add(wall);
 });
 
-// Fond lumineux derrière la table
 const glow = new THREE.Mesh(
   new THREE.PlaneGeometry(30, 13),
   new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })
@@ -276,7 +270,6 @@ const glow = new THREE.Mesh(
 glow.position.set(0, 5.5, -16.8);
 scene.add(glow);
 
-// ====== RAIL DE PROJECTEURS + CÔNES DE LUMIERE ======
 const rig = new THREE.Group();
 scene.add(rig);
 const truss = new THREE.Mesh(new THREE.BoxGeometry(13, 0.28, 0.28), trussMat);
@@ -302,7 +295,6 @@ rig.add(truss);
   rig.add(cone);
 });
 
-// ====== GRADINS + PUBLIC ======
 const crowdColors = [0x3a4356, 0x565f6e, 0x6e4638, 0x753d3d, 0x2e4260, 0x4d4d5e, 0x6b5a41, 0x37414f];
 function makeCrowdChar(color, s) {
   const g = new THREE.Group();
@@ -337,7 +329,6 @@ for (let r = 0; r < 5; r++) {
   scene.add(w);
 });
 
-// ========== PERSONNAGES ==========
 const shadowTex = (() => {
   const c = document.createElement('canvas');
   c.width = c.height = 64;
@@ -364,75 +355,85 @@ function makeLabel(text, isMe) {
   tex.encoding = THREE.sRGBEncoding;
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
   sprite.scale.set(1.6, 0.4, 1);
-  sprite.position.y = 2.02;
+  sprite.position.y = 2.4;
   sprite.name = 'nameLabel';
   return sprite;
 }
 
-
 function makeChar(color, name, isMe) {
   const g = new THREE.Group();
-  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.4, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.2 });
+  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.45, metalness: 0.05, clearcoat: 0.2, clearcoatRoughness: 0.4 });
 
-  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.05), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2;
   sh.position.y = 0.015;
   g.add(sh);
 
-  // Tete ronde et propre, sans visage
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 28, 22), clay);
-  head.position.y = 1.58;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32, 32), clay);
+  head.position.y = 1.8;
   g.add(head);
 
-  // Cou court
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.16, 12), clay);
-  neck.position.y = 1.46;
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.15, 16), clay);
+  neck.position.y = 1.5;
   g.add(neck);
 
-  // Torse cylindre adouci
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.26, 0.68, 20), clay);
-  torso.position.y = 1.08;
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.28, 0.7, 32), clay);
+  torso.position.y = 1.05;
   g.add(torso);
 
-  // Bras le long du corps, propres
-  const arms = [];
-  const armY = 1.3;
-  [-1, 1].forEach((d) => {
-    const p = new THREE.Group();
-    p.position.set(d * 0.28, armY, 0);
-    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.055, 0.48, 12), clay);
-    arm.position.y = -0.26;
-    p.add(arm);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), clay);
-    hand.position.y = -0.52;
-    p.add(hand);
-    p.rotation.z = d * 0.15;
-    g.add(p);
-    arms.push(p);
-  });
+  const leftUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.35, 16), clay);
+  leftUpper.position.set(-0.25, 1.3, 0);
+  leftUpper.rotation.z = -0.1;
+  g.add(leftUpper);
+  
+  const leftFore = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.4, 16), clay);
+  leftFore.position.set(-0.05, 1.1, 0.15);
+  leftFore.rotation.z = Math.PI / 2;
+  leftFore.rotation.x = 0.2;
+  g.add(leftFore);
+  
+  const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), clay);
+  leftHand.position.set(0.15, 1.1, 0.15);
+  g.add(leftHand);
 
-  // Jambes droites, pieds plats
-  const legs = [];
-  [-0.12, 0.12].forEach((dx) => {
-    const hip = new THREE.Group();
-    hip.position.set(dx, 0.72, 0);
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.065, 0.6, 12), clay);
-    leg.position.y = -0.32;
-    hip.add(leg);
-    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.12, 14), clay);
-    foot.rotation.x = Math.PI / 2;
-    foot.position.set(0, -0.65, 0.05);
-    hip.add(foot);
-    g.add(hip);
-    legs.push(hip);
-  });
+  const rightUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.35, 16), clay);
+  rightUpper.position.set(0.25, 1.3, 0);
+  rightUpper.rotation.z = 0.1;
+  g.add(rightUpper);
+
+  const rightFore = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.4, 16), clay);
+  rightFore.position.set(0.05, 1.15, 0.22);
+  rightFore.rotation.z = -Math.PI / 2;
+  rightFore.rotation.x = 0.2;
+  g.add(rightFore);
+
+  const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), clay);
+  rightHand.position.set(-0.15, 1.15, 0.22);
+  g.add(rightHand);
+
+  const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.75, 16), clay);
+  leftLeg.position.set(-0.12, 0.37, 0);
+  g.add(leftLeg);
+
+  const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), clay);
+  leftFoot.scale.set(1, 0.5, 1.4);
+  leftFoot.position.set(-0.12, 0.06, 0.05);
+  g.add(leftFoot);
+
+  const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.75, 16), clay);
+  rightLeg.position.set(0.12, 0.37, 0);
+  g.add(rightLeg);
+
+  const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), clay);
+  rightFoot.scale.set(1, 0.5, 1.4);
+  rightFoot.position.set(0.12, 0.06, 0.05);
+  g.add(rightFoot);
 
   g.add(makeLabel(name, isMe));
-  g.userData = { arms, legs, torso, head, ph: Math.random() * 6, name, baseRot: 0 };
+  g.userData = { ph: Math.random() * 6, name, baseRot: 0 };
   return g;
 }
 
-// ========== TABLE ==========
 const tg = new THREE.Group();
 tg.visible = false;
 scene.add(tg);
@@ -485,7 +486,6 @@ const goldHub = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, 0.1, 24), m
 goldHub.position.y = 1.5;
 tg.add(goldHub);
 
-// ====== CHAISES (cuir + chrome) ======
 const chairPositions = [
   { angle: 0, radius: 5.5 },
   { angle: Math.PI * 2 / 6, radius: 5.5 },
@@ -535,7 +535,6 @@ chairPositions.forEach((pos) => {
   tg.add(chair);
 });
 
-// ====== TABLEAU DES SCORES ======
 const bc = document.createElement('canvas');
 bc.width = 1024;
 bc.height = 512;
@@ -554,46 +553,42 @@ function rr(ctx, x, y, w, h, r) {
 }
 
 function drawBoard() {
-  const bg = bx.createLinearGradient(0, 0, 0, 512);
-  bg.addColorStop(0, '#101a3c');
-  bg.addColorStop(1, '#0a0f24');
-  bx.fillStyle = bg;
-  bx.fillRect(0, 0, 1024, 512);
+  const qi = (state && state.questionIndex) || 0;
+  const q  = QUESTIONS[qi] || { q: 'Bienvenue !', ans: 0 };
+  const closed  = !!(state && state.roundClosed);
+  const answers = (state && state.answers) || {};
+  const yes = Object.values(answers).filter(a => a === 0).length;
+  const no  = Object.values(answers).filter(a => a === 1).length;
+  const total = state && state.players ? state.players.length : 0;
+  const answeredCount = yes + no;
 
-  bx.strokeStyle = '#c99b3f';
-  bx.lineWidth = 6;
-  rr(bx, 8, 8, 1008, 496, 18);
-  bx.stroke();
+  const bg = bx.createLinearGradient(0, 0, 0, 512);
+  bg.addColorStop(0, '#101a3c'); bg.addColorStop(1, '#0a0f24');
+  bx.fillStyle = bg; bx.fillRect(0, 0, 1024, 512);
+  bx.strokeStyle = '#c99b3f'; bx.lineWidth = 6;
+  rr(bx, 8, 8, 1008, 496, 18); bx.stroke();
 
   bx.fillStyle = '#c99b3f';
-  rr(bx, 60, 22, 904, 66, 12);
-  bx.fill();
+  rr(bx, 60, 22, 904, 66, 12); bx.fill();
   bx.fillStyle = '#171204';
-  bx.font = 'bold 36px Arial';
-  bx.textAlign = 'center';
-  bx.fillText(QUESTION, 512, 66);
+  bx.font = 'bold 32px Arial'; bx.textAlign = 'center';
+  bx.fillText('Question ' + (qi + 1) + ' / ' + QUESTIONS.length, 512, 66);
 
-  const maxPts = ANSWERS[0][1];
-  ANSWERS.forEach((a, i) => {
-    const y = 106 + i * 39;
-    const on = i < rv;
-    rr(bx, 60, y, 904, 32, 9);
-    bx.fillStyle = on ? '#ffb300' : '#18234d';
-    bx.fill();
-    if (!on) {
-      bx.fillStyle = '#2a3a7a';
-      rr(bx, 60, y, 904 * 0.98 * (a[1] / maxPts) + 18, 32, 9);
-      bx.fill();
-    }
-    bx.fillStyle = on ? '#1b1b1b' : '#8fa0d8';
-    bx.font = 'bold 24px Arial';
-    bx.textAlign = 'left';
-    bx.fillText(on ? a[0] : String(i + 1), 84, y + 24);
-    if (on) {
-      bx.textAlign = 'right';
-      bx.fillText(String(a[1]), 942, y + 24);
-    }
-  });
+  bx.fillStyle = '#ffffff';
+  bx.font = 'bold 34px Arial';
+  bx.fillText(q.q, 512, 165);
+
+  bx.font = 'bold 88px Arial';
+  bx.fillStyle = '#54d98c'; bx.fillText('Oui ' + yes, 300, 330);
+  bx.fillStyle = '#ff6b6b'; bx.fillText('Non ' + no, 724, 330);
+
+  bx.font = 'bold 22px Arial'; bx.fillStyle = '#9fb0ff';
+  bx.fillText(answeredCount + ' / ' + total + ' ont répondu', 512, 400);
+
+  if (closed) {
+    bx.font = 'bold 30px Arial'; bx.fillStyle = '#ffb300';
+    bx.fillText('Bonne réponse : ' + OPTIONS[q.ans], 512, 465);
+  }
   bt.needsUpdate = true;
 }
 
@@ -615,7 +610,6 @@ boardGroup.add(board);
   boardGroup.add(cable);
 });
 
-// ========== JOUEURS ==========
 const playerObjs = {};
 
 function syncPlayerObjects(list) {
@@ -631,7 +625,8 @@ function syncPlayerObjects(list) {
     let o = playerObjs[p.id];
     const isMe = p.id === playerId;
     if (!o) {
-      const g = makeChar(playerColors[p.colorIndex % playerColors.length], p.name, isMe);
+      const dynamicColor = getDynamicColor(p.colorIndex);
+      const g = makeChar(dynamicColor, p.name, isMe);
       scene.add(g);
       o = playerObjs[p.id] = { group: g, name: p.name };
     }
@@ -650,21 +645,19 @@ function layoutPlayers(list) {
     const o = playerObjs[p.id];
     if (!o) return;
     const g = o.group;
+    
     if (mode === 'lobby') {
       if (g.parent !== scene) scene.add(g);
-      const pos = lobbyPositions[i % lobbyPositions.length];
-      g.position.set(pos[0], 0, pos[1]);
-      g.userData.baseRot = 0;
-      g.visible = true;
-    } else if (i < TABLE_SEATS) {
-      if (g.parent !== tg) tg.add(g);
-      const pos = tablePlayerPositions[i];
-      const a = pos.angle;
-      g.position.set(Math.sin(a) * pos.radius, 0, Math.cos(a) * pos.radius);
-      g.userData.baseRot = -a + Math.PI;
+      const pos = getLobbyPos(i);
+      g.position.set(pos.x, 0, pos.z);
+      g.userData.baseRot = pos.rot;
       g.visible = true;
     } else {
-      g.visible = false;
+      if (g.parent !== tg) tg.add(g);
+      const pos = getTablePos(i);
+      g.position.set(pos.x, 0, pos.z);
+      g.userData.baseRot = pos.rot;
+      g.visible = true;
     }
   });
 }
@@ -674,7 +667,7 @@ function updateHint() {
   if (!started) {
     $('h').textContent = isHost ? 'Partage le code de la salle pour inviter des joueurs' : "En attente du lancement par l'hôte...";
   } else {
-    $('h').textContent = mode === 'lobby' ? 'Vue lobby' : (isHost ? 'Clique pour révéler les réponses' : 'Les réponses apparaissent au fil du jeu');
+    $('h').textContent = isHost ? 'Tu es l\'hôte — Gère la partie' : 'Les réponses apparaissent au fil du jeu';
   }
 }
 
@@ -687,49 +680,74 @@ function setMode(m) {
   hemi.intensity = lb ? 0.85 : 0.5;
   glow.visible = !lb;
   $('t').style.display = lb ? '' : 'none';
-  $('b1').className = lb ? 'on' : '';
-  $('b2').className = lb ? '' : 'on';
   updateHint();
-  cam.position.set(0, lb ? 8 : 7, lb ? 12.5 : 11);
-  cam.lookAt(0, lb ? 1.2 : 2, lb ? -2 : -1);
+  
+  if (lb) {
+    cam.position.set(0, 8, 12.5);
+    cam.lookAt(0, 1.2, -2);
+  } else {
+    cam.position.set(0, 12, 18);
+    cam.lookAt(0, 2, -1);
+  }
+  
   if (state) layoutPlayers(state.players);
 }
 
 function showQuestion() {
   const panel = $('quizPanel');
+  const revealBtn = $('revealBtn');
+  
   if (!state || !state.started) {
     panel.style.display = 'none';
+    revealBtn.style.display = 'none';
     return;
   }
   const qi = state.questionIndex || 0;
   const q = QUESTIONS[qi];
   if (!q) {
     panel.style.display = 'none';
+    revealBtn.style.display = 'none';
     $('qStatus').textContent = 'Partie terminée !';
     return;
   }
+  
   const already = state.answers && state.answers[playerId] !== undefined;
   answered = already;
   myAnswer = already ? state.answers[playerId] : null;
+  
   $('qTitle').textContent = 'Question ' + (qi + 1) + ' / ' + QUESTIONS.length;
   $('qText').textContent = q.q;
   $('qAnswers').innerHTML = '';
+  
   OPTIONS.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.textContent = opt;
     btn.className = already && myAnswer === i ? 'selected' : '';
-    btn.disabled = already;
+    btn.disabled = already || isHost || state.roundClosed; 
     btn.onclick = () => answer(i);
     $('qAnswers').appendChild(btn);
   });
+  
   if (state.roundClosed) {
-    panel.style.display = 'none';
+    panel.style.display = 'block';
     const yes = Object.values(state.answers || {}).filter((a) => a === 0).length;
     const no = Object.values(state.answers || {}).filter((a) => a === 1).length;
     $('qStatus').textContent = 'Résultats : Oui ' + yes + ' / Non ' + no;
+    $('qAnswers').innerHTML = ''; 
   } else {
     panel.style.display = 'block';
-    $('qStatus').textContent = already ? 'Votre réponse est enregistrée.' : 'Choisissez votre réponse.';
+    if (isHost) {
+      $('qStatus').textContent = 'Tu es l\'hôte — les joueurs répondent...';
+    } else {
+      $('qStatus').textContent = already ? 'Votre réponse est enregistrée.' : 'Choisissez votre réponse.';
+    }
+  }
+
+  if (isHost && state.started) {
+    revealBtn.style.display = 'block';
+    revealBtn.textContent = state.roundClosed ? 'Question suivante ▶' : 'Révéler les résultats';
+  } else {
+    revealBtn.style.display = 'none';
   }
 }
 
@@ -755,7 +773,7 @@ function updatePlayersList(list) {
     return `<div class="p${me}">${escapeHtml(p.name)}<span class="tag">${tag}</span></div>`;
   }).join('');
   $('playersItems').innerHTML = items || '<div class="p">Aucun joueur</div>';
-  $('c').textContent = list.length + '/' + MAX_PLAYERS;
+  $('c').textContent = list.length + ' joueur' + (list.length > 1 ? 's' : '');
 }
 
 function escapeHtml(s) {
@@ -764,17 +782,16 @@ function escapeHtml(s) {
 
 function applyState(s) {
   state = s;
-  rv = s.revealed || 0;
   drawBoard();
   updatePlayersList(s.players);
   syncPlayerObjects(s.players);
   $('roomCodeLabel').textContent = roomId || '-----';
+  
   $('startBtn').style.display = (isHost && !s.started) ? 'block' : 'none';
-  $('b').style.display = s.started ? 'block' : 'none';
+  
   if (s.started && mode !== 'table') setMode('table');
   if (!s.started && mode !== 'lobby') setMode('lobby');
-  $('b1').className = mode === 'lobby' ? 'on' : '';
-  $('b2').className = mode === 'table' ? 'on' : '';
+  
   updateHint();
   showQuestion();
 }
@@ -873,16 +890,18 @@ function handleEvent(msg) {
     const existing = state.players.find((p) => p.id === msg.id);
     if (existing) {
       existing.name = sanitizeName(msg.name);
-    } else if (state.players.length < MAX_PLAYERS) {
-      const used = new Set(state.players.map((p) => p.colorIndex));
-      let ci = 0;
-      while (used.has(ci) && ci < playerColors.length) ci++;
-      state.players.push({ id: msg.id, name: sanitizeName(msg.name), colorIndex: ci % playerColors.length });
+    } else {
+      state.players.push({ 
+        id: msg.id, 
+        name: sanitizeName(msg.name), 
+        colorIndex: state.players.length
+      });
     }
     publishState();
     applyState(state);
   } else if (msg.type === 'leave') {
     state.players = state.players.filter((p) => p.id !== msg.id);
+    state.players.forEach((p, i) => p.colorIndex = i); 
     publishState();
     applyState(state);
   } else if (msg.type === 'ping') {
@@ -935,7 +954,9 @@ function createRoom() {
       hostName: playerName,
       players: [{ id: playerId, name: playerName, colorIndex: 0 }],
       started: false,
-      revealed: 0,
+      questionIndex: 0,
+      answers: {},
+      roundClosed: false,
       ts: Date.now()
     };
     client.subscribe(eventsTopic(), { qos: 0 }, () => {
@@ -988,7 +1009,6 @@ function startGame() {
   state.questionIndex = 0;
   state.answers = {};
   state.roundClosed = false;
-  state.revealed = 0;
   publishState();
   applyState(state);
 }
@@ -1002,7 +1022,6 @@ function reveal() {
       state.questionIndex = 0;
       state.answers = {};
       state.roundClosed = false;
-      state.revealed = 0;
       publishState();
       applyState(state);
       return;
@@ -1064,7 +1083,6 @@ function leaveRoom() {
   isHost = false;
   roomId = null;
   state = null;
-  rv = 0;
   Object.keys(playerObjs).forEach((id) => {
     const g = playerObjs[id].group;
     if (g.parent) g.parent.remove(g);
@@ -1075,12 +1093,11 @@ function leaveRoom() {
   $('playersList').style.display = 'none';
   $('leaveBtn').style.display = 'none';
   $('startBtn').style.display = 'none';
-  $('b').style.display = 'none';
   $('quizPanel').style.display = 'none';
   myAnswer = null;
   answered = false;
   $('playersItems').innerHTML = '';
-  $('c').textContent = '0/' + MAX_PLAYERS;
+  $('c').textContent = '0 joueur';
   setStatus('');
   drawBoard();
   setMode('lobby');
@@ -1093,11 +1110,10 @@ $('roomInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') joinR
 $('nameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') createRoom(); });
 $('startBtn').onclick = startGame;
 $('leaveBtn').onclick = leaveRoom;
-$('b1').onclick = () => { if (state && state.started) setMode('lobby'); };
-$('b2').onclick = () => { if (state && state.started) setMode('table'); };
+$('revealBtn').onclick = reveal;
+
 $('copyBtn').onclick = () => {
   if (!roomId) return;
-  const url = location.origin + location.pathname + '?room=' + roomId;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(roomId).then(() => setStatus('Code copié : ' + roomId)).catch(() => setStatus('Code : ' + roomId));
   } else {
@@ -1132,7 +1148,6 @@ if (savedName) $('nameInput').value = savedName;
 const params = new URLSearchParams(location.search);
 if (params.get('room')) $('roomInput').value = params.get('room').toUpperCase();
 
-$('b').style.display = 'none';
 $('roomPanel').style.display = 'block';
 setMode('lobby');
 
@@ -1142,19 +1157,10 @@ const clk = new THREE.Clock();
   Object.values(playerObjs).forEach((o) => {
     const p = o.group;
     const u = p.userData;
-    const br = Math.sin(t * 1.6 + u.ph);
-    if (u.torso) u.torso.scale.set(1 + br * 0.015, 1.55, 0.72 + br * 0.01);
-    if (u.head) u.head.position.y = 1.58 + br * 0.006;
-    p.position.y = Math.abs(Math.sin(t * 1.5 + u.ph)) * 0.012;
-    p.rotation.z = Math.sin(t * 0.55 + u.ph) * 0.018;
-    if (u.arms) {
-      u.arms[0].rotation.z = 0.15 + Math.sin(t * 1.3 + u.ph) * 0.025;
-      u.arms[1].rotation.z = -0.15 - Math.sin(t * 1.3 + u.ph) * 0.025;
-    }
-    if (u.legs) {
-      // jambes statiques, bien ancrées au sol
-    }
-    p.rotation.y = (u.baseRot || 0) + Math.sin(t * 0.5 + u.ph) * 0.08;
+    
+    p.position.y = Math.abs(Math.sin(t * 1.5 + u.ph)) * 0.015;
+    p.rotation.z = Math.sin(t * 0.55 + u.ph) * 0.015;
+    p.rotation.y = (u.baseRot || 0) + Math.sin(t * 0.5 + u.ph) * 0.05;
   });
   cam.position.x += ((mx * 2.5) - cam.position.x) * 0.05;
   if (mode === 'lobby') cam.lookAt(0, 1.2, -2);
