@@ -199,7 +199,8 @@ ren.shadowMap.enabled = true;
 ren.shadowMap.type = THREE.PCFSoftShadowMap;
 ren.outputEncoding = THREE.sRGBEncoding;
 ren.toneMapping = THREE.ACESFilmicToneMapping;
-ren.toneMappingExposure = 1.12;
+ren.toneMappingExposure = 1.22;
+ren.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(ren.domElement);
 
 function canvasTex(w, h, draw) {
@@ -291,6 +292,7 @@ key.castShadow = true;
 key.shadow.mapSize.width = 2048;
 key.shadow.mapSize.height = 2048;
 key.shadow.bias = 0.0002;
+key.shadow.radius = 5;
 scene.add(key); scene.add(key.target);
 
 const fill = new THREE.DirectionalLight(0x6a7ff0, 0.3);
@@ -352,17 +354,42 @@ rig.add(truss);
 const crowdColors = [0x3a4356, 0x565f6e, 0x6e4638, 0x753d3d, 0x2e4260, 0x4d4d5e, 0x6b5a41, 0x37414f];
 function makeCrowdChar(color, s) {
   const g = new THREE.Group();
-  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.9 });
-  const b = new THREE.Mesh(new THREE.CylinderGeometry(0.26 * s, 0.3 * s, 0.55 * s, 12), m);
-  b.position.y = 0.275 * s;
-  g.add(b);
-  const skin = new THREE.MeshStandardMaterial({ color: [0xf2c9a0, 0xd9a273, 0x8d5a3b, 0xf7e0c8, 0xc68e63][Math.random() * 5 | 0], roughness: 0.6 });
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.22 * s, 14, 12), skin);
-  head.position.y = 0.65 * s;
+  const m = new THREE.MeshPhysicalMaterial({ color, roughness: 0.45, metalness: 0.0, clearcoat: 0.35, clearcoatRoughness: 0.45 });
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 20), m);
+  head.position.y = 0.82;
+  head.scale.y = 1.02;
   g.add(head);
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.235 * s, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2.2), new THREE.MeshStandardMaterial({ color: [0x1d1712, 0x3a2a1a, 0x5c4326, 0x2a2a2e][Math.random() * 4 | 0], roughness: 0.85 }));
-  hair.position.y = 0.67 * s;
-  g.add(hair);
+  const bodyProfile = [];
+  for (let i = 0; i <= 8; i++) {
+    const t = i / 8;
+    bodyProfile.push(new THREE.Vector2(0.16 - 0.05 * t + 0.025 * Math.sin(t * Math.PI), t * 0.3));
+  }
+  for (let i = 0; i <= 6; i++) {
+    const a = i / 6 * Math.PI / 2;
+    bodyProfile.push(new THREE.Vector2(Math.cos(a) * 0.11, 0.3 + Math.sin(a) * 0.11));
+  }
+  const body = new THREE.Mesh(new THREE.LatheGeometry(bodyProfile, 20), m);
+  body.position.y = 0.42;
+  body.scale.z = 0.82;
+  g.add(body);
+  [-1, 1].forEach((side) => {
+    const fore = new THREE.Mesh(cap(0.045, 0.14), m);
+    fore.position.set(side * 0.03, 0.56, 0.11);
+    fore.rotation.set(0, 0, Math.PI / 2 + side * 0.12);
+    g.add(fore);
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 14, 12), m);
+    hand.position.set(-side * 0.09, 0.57, 0.12);
+    g.add(hand);
+  });
+  [-1, 1].forEach((side) => {
+    const leg = new THREE.Mesh(cap(0.06, 0.26), m);
+    leg.position.set(side * 0.07, 0.22, 0);
+    g.add(leg);
+    const foot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 12), m);
+    foot.scale.set(1.05, 0.62, 1.7);
+    foot.position.set(side * 0.08, 0.05, 0.04);
+    g.add(foot);
+  });
   return g;
 }
 for (let r = 0; r < 5; r++) {
@@ -416,64 +443,65 @@ function makeLabel(text, isMe) {
 
 function makeChar(color, name, isMe) {
   const g = new THREE.Group();
-  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.32, metalness: 0.0, clearcoat: 0.55, clearcoatRoughness: 0.35 });
+  const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.38, metalness: 0.0, clearcoat: 0.45, clearcoatRoughness: 0.4 });
 
-  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.4), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2;
   sh.position.y = 0.015;
   g.add(sh);
 
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.44, 40, 32), clay);
-  head.position.y = 1.88;
-  head.scale.y = 1.06;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 48, 40), clay);
+  head.position.y = 1.68;
+  head.scale.y = 1.02;
   g.add(head);
 
-  const neck = new THREE.Mesh(cap(0.11, 0.1), clay);
-  neck.position.y = 1.5;
-  g.add(neck);
+  const bodyProfile = [];
+  for (let i = 0; i <= 10; i++) {
+    const t = i / 10;
+    const r = 0.3 - 0.09 * t + 0.05 * Math.sin(t * Math.PI);
+    bodyProfile.push(new THREE.Vector2(r, t * 0.62));
+  }
+  for (let i = 0; i <= 8; i++) {
+    const a = i / 8 * Math.PI / 2;
+    bodyProfile.push(new THREE.Vector2(Math.cos(a) * 0.21, 0.62 + Math.sin(a) * 0.21));
+  }
+  const body = new THREE.Mesh(new THREE.LatheGeometry(bodyProfile, 32), clay);
+  body.position.y = 0.86;
+  body.scale.z = 0.82;
+  g.add(body);
 
-  const torso = new THREE.Mesh(cap(0.24, 0.5), clay);
-  torso.position.y = 1.08;
-  torso.scale.set(1, 1, 0.85);
-  g.add(torso);
+  function crossedArm(side) {
+    const upper = new THREE.Mesh(cap(0.1, 0.16), clay);
+    upper.position.set(side * 0.24, 1.32, 0.02);
+    upper.rotation.z = side * -0.95;
+    g.add(upper);
+    const fore = new THREE.Mesh(cap(0.085, 0.3), clay);
+    fore.position.set(side * 0.05, 1.14, 0.22);
+    fore.rotation.set(0, 0, Math.PI / 2 + side * 0.12);
+    g.add(fore);
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.11, 20, 16), clay);
+    hand.position.set(-side * 0.18, 1.16, 0.24);
+    g.add(hand);
+  }
+  crossedArm(-1);
+  crossedArm(1);
 
-  const leftUpper = new THREE.Mesh(cap(0.085, 0.2), clay);
-  leftUpper.position.set(-0.26, 1.26, 0);
-  leftUpper.rotation.z = -0.16;
-  g.add(leftUpper);
-  const leftFore = new THREE.Mesh(cap(0.07, 0.26), clay);
-  leftFore.position.set(-0.16, 1.02, 0.1);
-  leftFore.rotation.set(0.35, 0, Math.PI / 2.15);
-  g.add(leftFore);
-  const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 20, 16), clay);
-  leftHand.position.set(0.12, 1.06, 0.16);
-  g.add(leftHand);
-
-  const rightUpper = new THREE.Mesh(cap(0.085, 0.2), clay);
-  rightUpper.position.set(0.26, 1.26, 0);
-  rightUpper.rotation.z = 0.16;
-  g.add(rightUpper);
-  const rightFore = new THREE.Mesh(cap(0.07, 0.26), clay);
-  rightFore.position.set(0.16, 1.02, 0.1);
-  rightFore.rotation.set(0.35, 0, -Math.PI / 2.15);
-  g.add(rightFore);
-  const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 20, 16), clay);
-  rightHand.position.set(-0.12, 1.06, 0.16);
-  g.add(rightHand);
-
-  const leftLeg = new THREE.Mesh(cap(0.095, 0.42), clay);
-  leftLeg.position.set(-0.13, 0.5, 0);
+  const leftLeg = new THREE.Mesh(cap(0.13, 0.55), clay);
+  leftLeg.position.set(-0.15, 0.44, 0);
+  leftLeg.rotation.z = 0.05;
   g.add(leftLeg);
-  const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), clay);
-  leftFoot.scale.set(1, 0.55, 1.5);
-  leftFoot.position.set(-0.13, 0.07, 0.06);
-  g.add(leftFoot);
-  const rightLeg = new THREE.Mesh(cap(0.095, 0.42), clay);
-  rightLeg.position.set(0.13, 0.5, 0);
+  const rightLeg = new THREE.Mesh(cap(0.13, 0.55), clay);
+  rightLeg.position.set(0.15, 0.44, 0);
+  rightLeg.rotation.z = -0.05;
   g.add(rightLeg);
-  const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), clay);
-  rightFoot.scale.set(1, 0.55, 1.5);
-  rightFoot.position.set(0.13, 0.07, 0.06);
+
+  const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 20), clay);
+  leftFoot.scale.set(1.05, 0.62, 1.7);
+  leftFoot.position.set(-0.17, 0.1, 0.08);
+  g.add(leftFoot);
+  const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 20), clay);
+  rightFoot.scale.set(1.05, 0.62, 1.7);
+  rightFoot.position.set(0.17, 0.1, 0.08);
   g.add(rightFoot);
 
   g.add(makeLabel(name, isMe));
