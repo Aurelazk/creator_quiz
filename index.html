@@ -1,47 +1,82 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Quiz 3D Multijoueur</title>
+<title>Quiz 3D Multijoueur - CREATOR</title>
 <style>
-html,body{margin:0;height:100%;overflow:hidden;background:#0a0d1f;font-family:Arial,Helvetica,sans-serif}
+:root {
+  --creator-blue: #0B35FE;
+  --creator-navy: #0C1A4B;
+  --creator-green: #00E472;
+  --creator-coral: #FF4E20;
+  --creator-fox: #FF7A00;
+  --creator-light-blue: #2E85FF;
+  --creator-bg-light: #F4F6FC;
+  --creator-white: #FFFFFF;
+  --bg-dark: #080a18;
+  --panel-bg: rgba(12, 26, 75, 0.96);
+  --btn-primary: var(--creator-coral);
+  --btn-hover: #E63C10;
+  --text-highlight: var(--creator-green);
+  --text-gold: var(--creator-fox);
+}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg-dark);font-family:Arial,Helvetica,sans-serif}
 canvas{display:block}
 #t{position:fixed;left:0;right:0;bottom:9%;text-align:center;color:#fff;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 3px rgba(0,0,0,.45);pointer-events:none;padding:0 20px}
 #h{position:fixed;top:10px;left:0;right:0;text-align:center;color:#fff;font-size:12px;opacity:.85;text-shadow:0 1px 2px rgba(0,0,0,.5);pointer-events:none;z-index:20}
-.panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,15,40,.94);padding:26px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,380px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.panel h2{margin:0 0 6px;color:#ffb300;font-size:22px}
-.panel .sub{margin:0 0 18px;font-size:13px;opacity:.7;line-height:1.4}
-.panel input{box-sizing:border-box;width:100%;padding:12px 14px;font-size:16px;border-radius:8px;border:1px solid #33406b;background:#0d1330;color:#fff;margin:6px 0;text-align:center}
-.panel input::placeholder{color:#8a93b5}
+.panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--panel-bg);padding:26px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,380px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.panel h2{margin:0 0 6px;color:var(--text-gold);font-size:22px}
+.panel .sub{margin:0 0 18px;font-size:13px;opacity:.8;line-height:1.4}
+.panel input{box-sizing:border-box;width:100%;padding:12px 14px;font-size:16px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;margin:6px 0;text-align:center}
+.panel input::placeholder{color:rgba(255,255,255,.5)}
 .panel .row{display:flex;gap:8px;margin-top:6px}
-.panel button{background:#ffb300;color:#111;border:none;padding:12px 16px;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;flex:1}
-.panel button.secondary{background:#2a3566;color:#fff}
+.panel button{background:var(--btn-primary);color:var(--creator-white);border:none;padding:12px 16px;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;flex:1}
+.panel button:hover{background:var(--btn-hover)}
+.panel button.secondary{background:var(--creator-blue);color:var(--creator-white)}
+.panel button.secondary:hover{background:#0a2adc}
 .panel button:disabled{opacity:.55;cursor:default}
 .panel .sep{margin:16px 0 6px;font-size:12px;opacity:.5;text-transform:uppercase;letter-spacing:1px}
-#status{margin-top:14px;font-size:13px;min-height:18px;color:#9fe6a0;word-break:break-word}
-#status.err{color:#ff8a80}
-#roomInfo{position:fixed;top:66px;right:12px;background:rgba(10,15,40,.85);color:#fff;padding:10px 12px;border-radius:10px;font-size:13px;display:none;z-index:30;text-align:right}
-#roomInfo b{color:#ffb300;font-size:17px;letter-spacing:2px}
-#roomInfo button{display:block;margin-top:6px;width:100%;background:#2a3566;color:#fff;border:none;padding:6px 8px;border-radius:6px;font-size:12px;cursor:pointer}
-#playersList{position:fixed;top:70px;left:12px;background:rgba(10,15,40,.85);padding:10px 12px;border-radius:10px;color:#fff;font-size:12px;max-width:210px;display:none;z-index:30;max-height:50vh;overflow:auto}
-#playersList h4{margin:0 0 8px;color:#ffb300;font-size:13px}
+#status{margin-top:14px;font-size:13px;min-height:18px;color:var(--text-highlight);word-break:break-word}
+#status.err{color:var(--creator-coral)}
+#roomInfo{position:fixed;top:66px;right:12px;background:var(--panel-bg);color:#fff;padding:10px 12px;border-radius:10px;font-size:13px;display:none;z-index:30;text-align:right}
+#roomInfo b{color:var(--text-gold);font-size:17px;letter-spacing:2px}
+#roomInfo button{display:block;margin-top:6px;width:100%;background:var(--creator-blue);color:#fff;border:none;padding:6px 8px;border-radius:6px;font-size:12px;cursor:pointer}
+#roomInfo button:hover{background:#0a2adc}
+#playersList{position:fixed;top:70px;left:12px;background:var(--panel-bg);padding:10px 12px;border-radius:10px;color:#fff;font-size:12px;max-width:210px;display:none;z-index:30;max-height:50vh;overflow:auto}
+#playersList h4{margin:0 0 8px;color:var(--text-gold);font-size:13px}
 #playersList .p{margin:3px 0;padding:3px 0;color:#c9d2f0;border-bottom:1px solid rgba(255,255,255,.06)}
-#playersList .p.me{color:#ffb300;font-weight:bold}
+#playersList .p.me{color:var(--text-gold);font-weight:bold}
 #playersList .p .tag{float:right;opacity:.6;font-size:10px}
-#startBtn{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#ffb300;color:#111;border:none;padding:15px 30px;border-radius:25px;font-weight:bold;font-size:16px;cursor:pointer;z-index:40;display:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-#leaveBtn{position:fixed;top:10px;left:12px;background:rgba(10,15,40,.85);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;z-index:30;display:none}
+#startBtn{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--btn-primary);color:var(--creator-white);border:none;padding:15px 30px;border-radius:25px;font-weight:bold;font-size:16px;cursor:pointer;z-index:40;display:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#startBtn:hover{background:var(--btn-hover)}
+#leaveBtn{position:fixed;top:10px;left:12px;background:var(--panel-bg);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;z-index:30;display:none}
+#leaveBtn:hover{background:rgba(255,255,255,.15)}
 
-#quizPanel{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(10,15,40,.95);padding:20px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,500px);box-shadow:0 20px 60px rgba(0,0,0,.5);display:none}
-#quizPanel h2{margin:0 0 10px;color:#ffb300;font-size:20px}
+#quizPanel{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel-bg);padding:20px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1000;width:min(92vw,500px);box-shadow:0 20px 60px rgba(0,0,0,.5);display:none}
+#quizPanel h2{margin:0 0 10px;color:var(--text-gold);font-size:20px}
 #quizPanel #qText{font-size:17px;margin:0 0 16px;line-height:1.4;color:#fff}
 #quizPanel .answers{display:flex;flex-direction:row;justify-content:center;gap:10px;margin-top:10px}
 #quizPanel .answers button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35);padding:12px 16px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-align:center;width:120px}
-#quizPanel .answers button:hover:not(:disabled){border-color:#ffb300;background:rgba(255,179,0,.15)}
-#quizPanel .answers button.selected{background:#ffb300;color:#111;border-color:#ffb300}
+#quizPanel .answers button:hover:not(:disabled){border-color:var(--text-gold);background:rgba(255,122,0,.15)}
+#quizPanel .answers button.selected{background:var(--text-gold);color:#111;border-color:var(--text-gold)}
 #quizPanel .answers button:disabled{cursor:default;opacity:0.6}
-#quizPanel #qStatus{margin-top:12px;font-size:14px;color:#9fe6a0;min-height:20px}
-#revealBtn{background:#ffb300;color:#111;border:none;padding:12px 16px;border-radius:8px;font-weight:bold;margin-top:15px;cursor:pointer;width:100%;display:none}
+#quizPanel #qStatus{margin-top:12px;font-size:14px;color:var(--text-highlight);min-height:20px}
+#revealBtn{background:var(--btn-primary);color:var(--creator-white);border:none;padding:12px 16px;border-radius:8px;font-weight:bold;margin-top:15px;cursor:pointer;width:100%;display:none}
+#revealBtn:hover{background:var(--btn-hover)}
+
+#leaderboard{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--panel-bg);padding:26px 24px;border-radius:16px;text-align:center;color:#fff;z-index:1100;width:min(92vw,460px);box-shadow:0 20px 60px rgba(0,0,0,.6);display:none}
+#leaderboard h2{margin:0 0 12px;color:var(--text-gold);font-size:22px}
+#leaderboard .lb-list{max-height:300px;overflow-y:auto;margin:0 0 16px}
+#leaderboard .lb-row{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);font-size:15px;background:rgba(255,255,255,.03);margin-bottom:6px;border-radius:8px}
+#leaderboard .lb-row:last-child{border-bottom:none;margin-bottom:0}
+#leaderboard .lb-row.winner{background:rgba(255,179,0,.15);border-color:rgba(255,179,0,.4)}
+#leaderboard .lb-name{text-align:left;color:#fff}
+#leaderboard .lb-score{font-weight:bold;color:var(--text-highlight)}
+#leaderboard .lb-row.me .lb-name{color:var(--text-gold);font-weight:bold}
+#leaderboard .lb-row.me .lb-score{color:var(--text-gold)}
+#leaderboard .lb-close{background:var(--btn-primary);color:var(--creator-white);border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;width:100%}
+#leaderboard .lb-close:hover{background:var(--btn-hover)}
 </style></head><body>
-<div id="h">Quiz 3D Multijoueur</div>
+<div id="h">Quiz 3D Multijoueur - CREATOR</div>
 <div id="t">En attente de salle...<br><span id="c">0 joueur</span></div>
 <button id="leaveBtn">Quitter la salle</button>
 <div id="roomInfo">Salle <b id="roomCodeLabel">-----</b><button id="copyBtn">Copier le code</button></div>
@@ -54,8 +89,13 @@ canvas{display:block}
   <div id="qStatus">En attente des autres joueurs...</div>
   <button id="revealBtn">Révéler les résultats</button>
 </div>
+<div id="leaderboard">
+  <h2>Classement final</h2>
+  <div class="lb-list" id="lbList"></div>
+  <button id="lbClose" class="lb-close">Fermer</button>
+</div>
 <div id="roomPanel" class="panel">
-  <h2>Quiz 3D Multijoueur</h2>
+  <h2>Quiz 3D Multijoueur - CREATOR</h2>
   <p class="sub">Crée une salle et partage le code, ou rejoins une salle existante.</p>
   <input id="nameInput" maxlength="16" placeholder="Ton pseudo">
   <button id="createBtn">Créer une salle</button>
@@ -112,11 +152,7 @@ function getTablePos(i) {
   const radius = 5.5 + ring * 2.2;
   const angleOffset = ring * 0.2;
   const angle = (idx / spots) * Math.PI * 2 + angleOffset;
-  return {
-    x: Math.sin(angle) * radius,
-    z: Math.cos(angle) * radius,
-    rot: -angle + Math.PI
-  };
+  return { x: Math.sin(angle) * radius, z: Math.cos(angle) * radius, rot: -angle + Math.PI };
 }
 
 function getDynamicColor(index) {
@@ -135,8 +171,8 @@ let answered = false;
 const $ = (id) => document.getElementById(id);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0a0d1f);
-scene.fog = new THREE.Fog(0x0a0d1f, 26, 60);
+scene.background = new THREE.Color(0x080a18);
+scene.fog = new THREE.Fog(0x080a18, 26, 60);
 const cam = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 200);
 const ren = new THREE.WebGLRenderer({ antialias: true });
 ren.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -298,34 +334,34 @@ rig.add(truss);
 const crowdColors = [0x3a4356, 0x565f6e, 0x6e4638, 0x753d3d, 0x2e4260, 0x4d4d5e, 0x6b5a41, 0x37414f];
 function makeCrowdChar(color, s) {
   const g = new THREE.Group();
-  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.92 });
-  const b = new THREE.Mesh(new THREE.CylinderGeometry(0.24 * s, 0.28 * s, 0.52 * s, 12), m);
-  b.position.y = 0.28 * s;
+  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.9 });
+  const b = new THREE.Mesh(new THREE.CylinderGeometry(0.26 * s, 0.3 * s, 0.55 * s, 12), m);
+  b.position.y = 0.275 * s;
   g.add(b);
   const skin = new THREE.MeshStandardMaterial({ color: [0xf2c9a0, 0xd9a273, 0x8d5a3b, 0xf7e0c8, 0xc68e63][Math.random() * 5 | 0], roughness: 0.6 });
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.21 * s, 14, 12), skin);
-  head.position.y = 0.62 * s;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.22 * s, 14, 12), skin);
+  head.position.y = 0.65 * s;
   g.add(head);
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.225 * s, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2.2), new THREE.MeshStandardMaterial({ color: [0x1d1712, 0x3a2a1a, 0x5c4326, 0x2a2a2e][Math.random() * 4 | 0], roughness: 0.85 }));
-  hair.position.y = 0.64 * s;
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.235 * s, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2.2), new THREE.MeshStandardMaterial({ color: [0x1d1712, 0x3a2a1a, 0x5c4326, 0x2a2a2e][Math.random() * 4 | 0], roughness: 0.85 }));
+  hair.position.y = 0.67 * s;
   g.add(hair);
   return g;
 }
 for (let r = 0; r < 5; r++) {
-  const st = new THREE.Mesh(new THREE.BoxGeometry(15, 0.5 * (r + 1), 1.3), standMat);
-  st.position.set(0, 0.25 * (r + 1), -7 - r * 1.3);
+  const st = new THREE.Mesh(new THREE.BoxGeometry(15, 0.55 * (r + 1), 1.4), standMat);
+  st.position.set(0, 0.275 * (r + 1), -7 - r * 1.4);
   st.receiveShadow = true;
   scene.add(st);
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 16; i++) {
     const f = makeCrowdChar(crowdColors[Math.random() * crowdColors.length | 0], 0.55);
-    f.position.set(-6.5 + i + (Math.random() - 0.5) * 0.4, 0.5 * (r + 1), -7 - r * 1.3);
+    f.position.set(-7.5 + i + (Math.random() - 0.5) * 0.4, 0.55 * (r + 1), -7 - r * 1.4);
     f.rotation.y = (Math.random() - 0.5) * 0.5;
     scene.add(f);
   }
 }
 [-1, 1].forEach((d) => {
-  const w = new THREE.Mesh(new THREE.BoxGeometry(0.4, 3.6, 7.5), standMat);
-  w.position.set(d * 7.8, 1.8, -9.5);
+  const w = new THREE.Mesh(new THREE.BoxGeometry(0.4, 3.8, 7.8), standMat);
+  w.position.set(d * 8.2, 1.9, -10);
   scene.add(w);
 });
 
@@ -369,8 +405,8 @@ function makeChar(color, name, isMe) {
   sh.position.y = 0.015;
   g.add(sh);
 
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32, 32), clay);
-  head.position.y = 1.8;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, 32, 32), clay);
+  head.position.y = 1.85;
   g.add(head);
 
   const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.15, 16), clay);
@@ -385,13 +421,11 @@ function makeChar(color, name, isMe) {
   leftUpper.position.set(-0.25, 1.3, 0);
   leftUpper.rotation.z = -0.1;
   g.add(leftUpper);
-  
   const leftFore = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.4, 16), clay);
   leftFore.position.set(-0.05, 1.1, 0.15);
   leftFore.rotation.z = Math.PI / 2;
   leftFore.rotation.x = 0.2;
   g.add(leftFore);
-  
   const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), clay);
   leftHand.position.set(0.15, 1.1, 0.15);
   g.add(leftHand);
@@ -400,13 +434,11 @@ function makeChar(color, name, isMe) {
   rightUpper.position.set(0.25, 1.3, 0);
   rightUpper.rotation.z = 0.1;
   g.add(rightUpper);
-
   const rightFore = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.4, 16), clay);
   rightFore.position.set(0.05, 1.15, 0.22);
   rightFore.rotation.z = -Math.PI / 2;
   rightFore.rotation.x = 0.2;
   g.add(rightFore);
-
   const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), clay);
   rightHand.position.set(-0.15, 1.15, 0.22);
   g.add(rightHand);
@@ -414,16 +446,13 @@ function makeChar(color, name, isMe) {
   const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.75, 16), clay);
   leftLeg.position.set(-0.12, 0.37, 0);
   g.add(leftLeg);
-
   const leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), clay);
   leftFoot.scale.set(1, 0.5, 1.4);
   leftFoot.position.set(-0.12, 0.06, 0.05);
   g.add(leftFoot);
-
   const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.75, 16), clay);
   rightLeg.position.set(0.12, 0.37, 0);
   g.add(rightLeg);
-
   const rightFoot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), clay);
   rightFoot.scale.set(1, 0.5, 1.4);
   rightFoot.position.set(0.12, 0.06, 0.05);
@@ -500,7 +529,6 @@ chairPositions.forEach((pos) => {
   const angle = pos.angle;
   chair.position.set(Math.sin(angle) * pos.radius, 0, Math.cos(angle) * pos.radius);
   chair.rotation.y = -angle + Math.PI;
-
   const seat = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.14, 0.85), leather);
   seat.position.y = 0.44;
   seat.castShadow = true;
@@ -509,7 +537,6 @@ chairPositions.forEach((pos) => {
   cushion.scale.set(1, 0.22, 1);
   cushion.position.y = 0.51;
   chair.add(cushion);
-
   const backC = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.62, 0.13), leather);
   backC.position.set(0, 0.82, -0.36);
   backC.rotation.x = -0.12;
@@ -519,7 +546,6 @@ chairPositions.forEach((pos) => {
   backTop.rotation.z = Math.PI / 2;
   backTop.position.set(0, 1.14, -0.38);
   chair.add(backTop);
-
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.42, 10), metalChrome);
   pole.position.y = 0.22;
   chair.add(pole);
@@ -645,7 +671,6 @@ function layoutPlayers(list) {
     const o = playerObjs[p.id];
     if (!o) return;
     const g = o.group;
-    
     if (mode === 'lobby') {
       if (g.parent !== scene) scene.add(g);
       const pos = getLobbyPos(i);
@@ -667,7 +692,7 @@ function updateHint() {
   if (!started) {
     $('h').textContent = isHost ? 'Partage le code de la salle pour inviter des joueurs' : "En attente du lancement par l'hôte...";
   } else {
-    $('h').textContent = isHost ? 'Tu es l\'hôte — Gère la partie' : 'Les réponses apparaissent au fil du jeu';
+    $('h').textContent = isHost ? "Tu es l'hôte - Gére la partie" : 'Les réponses apparaissent au fil du jeu';
   }
 }
 
@@ -681,7 +706,6 @@ function setMode(m) {
   glow.visible = !lb;
   $('t').style.display = lb ? '' : 'none';
   updateHint();
-  
   if (lb) {
     cam.position.set(0, 8, 12.5);
     cam.lookAt(0, 1.2, -2);
@@ -689,14 +713,12 @@ function setMode(m) {
     cam.position.set(0, 12, 18);
     cam.lookAt(0, 2, -1);
   }
-  
   if (state) layoutPlayers(state.players);
 }
 
 function showQuestion() {
   const panel = $('quizPanel');
   const revealBtn = $('revealBtn');
-  
   if (!state || !state.started) {
     panel.style.display = 'none';
     revealBtn.style.display = 'none';
@@ -710,39 +732,34 @@ function showQuestion() {
     $('qStatus').textContent = 'Partie terminée !';
     return;
   }
-  
   const already = state.answers && state.answers[playerId] !== undefined;
   answered = already;
   myAnswer = already ? state.answers[playerId] : null;
-  
   $('qTitle').textContent = 'Question ' + (qi + 1) + ' / ' + QUESTIONS.length;
   $('qText').textContent = q.q;
   $('qAnswers').innerHTML = '';
-  
   OPTIONS.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.textContent = opt;
     btn.className = already && myAnswer === i ? 'selected' : '';
-    btn.disabled = already || isHost || state.roundClosed; 
+    btn.disabled = already || isHost || state.roundClosed;
     btn.onclick = () => answer(i);
     $('qAnswers').appendChild(btn);
   });
-  
   if (state.roundClosed) {
     panel.style.display = 'block';
     const yes = Object.values(state.answers || {}).filter((a) => a === 0).length;
     const no = Object.values(state.answers || {}).filter((a) => a === 1).length;
     $('qStatus').textContent = 'Résultats : Oui ' + yes + ' / Non ' + no;
-    $('qAnswers').innerHTML = ''; 
+    $('qAnswers').innerHTML = '';
   } else {
     panel.style.display = 'block';
     if (isHost) {
-      $('qStatus').textContent = 'Tu es l\'hôte — les joueurs répondent...';
+      $('qStatus').textContent = "Tu es l'hôte - les joueurs répondent...";
     } else {
       $('qStatus').textContent = already ? 'Votre réponse est enregistrée.' : 'Choisissez votre réponse.';
     }
   }
-
   if (isHost && state.started) {
     revealBtn.style.display = 'block';
     revealBtn.textContent = state.roundClosed ? 'Question suivante ▶' : 'Révéler les résultats';
@@ -758,6 +775,23 @@ function answer(i) {
     publishEvent({ type: 'answer', id: playerId, ans: i, qi: state.questionIndex || 0 });
     showQuestion();
   }
+}
+
+function showLeaderboard() {
+  if (!state || !state.players) return;
+  const sorted = [...state.players].sort((a, b) => (b.score || 0) - (a.score || 0));
+  const html = sorted.map((p, idx) => {
+    const me = p.id === playerId ? ' me' : '';
+    const winner = idx === 0 ? ' winner' : '';
+    const medal = idx === 0 ? '🥇 ' : idx === 1 ? '🥈 ' : idx === 2 ? '🥉 ' : (idx + 1) + '.';
+    return `<div class="lb-row${winner}${me}"><span class="lb-name">${medal} ${escapeHtml(p.name)}</span><span class="lb-score">${p.score || 0} pts</span></div>`;
+  }).join('');
+  $('lbList').innerHTML = html;
+  $('leaderboard').style.display = 'block';
+}
+
+function hideLeaderboard() {
+  $('leaderboard').style.display = 'none';
 }
 
 function setStatus(msg, isError) {
@@ -786,12 +820,10 @@ function applyState(s) {
   updatePlayersList(s.players);
   syncPlayerObjects(s.players);
   $('roomCodeLabel').textContent = roomId || '-----';
-  
   $('startBtn').style.display = (isHost && !s.started) ? 'block' : 'none';
-  
+  if (s.started) $('leaderboard').style.display = 'none';
   if (s.started && mode !== 'table') setMode('table');
   if (!s.started && mode !== 'lobby') setMode('lobby');
-  
   updateHint();
   showQuestion();
 }
@@ -891,17 +923,13 @@ function handleEvent(msg) {
     if (existing) {
       existing.name = sanitizeName(msg.name);
     } else {
-      state.players.push({ 
-        id: msg.id, 
-        name: sanitizeName(msg.name), 
-        colorIndex: state.players.length
-      });
+      state.players.push({ id: msg.id, name: sanitizeName(msg.name), colorIndex: state.players.length, score: 0 });
     }
     publishState();
     applyState(state);
   } else if (msg.type === 'leave') {
     state.players = state.players.filter((p) => p.id !== msg.id);
-    state.players.forEach((p, i) => p.colorIndex = i); 
+    state.players.forEach((p, i) => p.colorIndex = i);
     publishState();
     applyState(state);
   } else if (msg.type === 'ping') {
@@ -910,6 +938,11 @@ function handleEvent(msg) {
     if (!state.roundClosed && (msg.qi || 0) === (state.questionIndex || 0)) {
       state.answers = state.answers || {};
       state.answers[msg.id] = msg.ans;
+      const q = QUESTIONS[state.questionIndex || 0];
+      if (q && msg.ans === q.ans) {
+        const p = state.players.find((pl) => pl.id === msg.id);
+        if (p) p.score = (p.score || 0) + 10;
+      }
       publishState();
       applyState(state);
     }
@@ -952,7 +985,7 @@ function createRoom() {
     state = {
       hostId: playerId,
       hostName: playerName,
-      players: [{ id: playerId, name: playerName, colorIndex: 0 }],
+      players: [{ id: playerId, name: playerName, colorIndex: 0, score: 0 }],
       started: false,
       questionIndex: 0,
       answers: {},
@@ -1009,6 +1042,7 @@ function startGame() {
   state.questionIndex = 0;
   state.answers = {};
   state.roundClosed = false;
+  state.players.forEach((p) => p.score = 0);
   publishState();
   applyState(state);
 }
@@ -1024,6 +1058,7 @@ function reveal() {
       state.roundClosed = false;
       publishState();
       applyState(state);
+      setTimeout(() => showLeaderboard(), 800);
       return;
     }
     state.questionIndex = qi;
@@ -1057,13 +1092,11 @@ function leaveRoom() {
   const oldRoom = roomId;
   const oldHost = isHost;
   const wasConnected = connected;
-
   if (joinTimer) { clearInterval(joinTimer); joinTimer = null; }
   if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
   if (watchdogTimer) { clearInterval(watchdogTimer); watchdogTimer = null; }
   client = null;
   connected = false;
-
   if (oldClient && wasConnected && oldRoom) {
     let ended = false;
     const finish = () => {
@@ -1079,7 +1112,6 @@ function leaveRoom() {
     }
     setTimeout(finish, 1500);
   }
-
   isHost = false;
   roomId = null;
   state = null;
@@ -1094,6 +1126,7 @@ function leaveRoom() {
   $('leaveBtn').style.display = 'none';
   $('startBtn').style.display = 'none';
   $('quizPanel').style.display = 'none';
+  $('leaderboard').style.display = 'none';
   myAnswer = null;
   answered = false;
   $('playersItems').innerHTML = '';
@@ -1111,6 +1144,7 @@ $('nameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') creat
 $('startBtn').onclick = startGame;
 $('leaveBtn').onclick = leaveRoom;
 $('revealBtn').onclick = reveal;
+$('lbClose').onclick = hideLeaderboard;
 
 $('copyBtn').onclick = () => {
   if (!roomId) return;
@@ -1125,18 +1159,15 @@ let mx = 0;
 addEventListener('pointermove', (e) => {
   mx = (e.clientX / innerWidth - 0.5) * 2;
 });
-
 addEventListener('pointerdown', (e) => {
-  if (e.target.closest && e.target.closest('button,input,.panel,#playersList,#roomInfo')) return;
+  if (e.target.closest && e.target.closest('button,input,.panel,#playersList,#roomInfo,#leaderboard')) return;
   if (mode === 'table' && isHost && state && state.started) reveal();
 });
-
 addEventListener('resize', () => {
   cam.aspect = innerWidth / innerHeight;
   cam.updateProjectionMatrix();
   ren.setSize(innerWidth, innerHeight);
 });
-
 addEventListener('pagehide', () => {
   if (client && connected && roomId) {
     if (!isHost) publishEvent({ type: 'leave', id: playerId });
@@ -1157,7 +1188,6 @@ const clk = new THREE.Clock();
   Object.values(playerObjs).forEach((o) => {
     const p = o.group;
     const u = p.userData;
-    
     p.position.y = Math.abs(Math.sin(t * 1.5 + u.ph)) * 0.015;
     p.rotation.z = Math.sin(t * 0.55 + u.ph) * 0.015;
     p.rotation.y = (u.baseRot || 0) + Math.sin(t * 0.5 + u.ph) * 0.05;
