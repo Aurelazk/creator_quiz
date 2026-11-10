@@ -409,58 +409,58 @@ function makeChar(color, name, isMe) {
   const g = new THREE.Group();
   const clay = new THREE.MeshPhysicalMaterial({ color, roughness: 0.4, metalness: 0, clearcoat: 0.3, clearcoatRoughness: 0.25 });
 
-  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.6), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2;
   sh.position.y = 0.02;
   g.add(sh);
 
-  // Tête proportionnée, pas trop grosse
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.17, 32, 24), clay);
-  head.position.y = 1.52;
+  // Tête bien visible
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 32, 24), clay);
+  head.position.y = 1.75;
   head.scale.set(1, 0.95, 1);
   g.add(head);
 
   // Cou
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.14, 12), clay);
-  neck.position.y = 1.41;
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.1, 0.18, 12), clay);
+  neck.position.y = 1.62;
   g.add(neck);
 
-  // Torse évasé
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.24, 0.6, 24), clay);
-  torso.position.y = 1.05;
+  // Torse
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.32, 0.75, 24), clay);
+  torso.position.y = 1.25;
   g.add(torso);
 
-  // Bras : deux cylindres simples le long du corps, pas de torsion bizarre
+  // Bras le long du corps
   const arms = [];
   [-1, 1].forEach((d) => {
     const arm = new THREE.Group();
-    arm.position.set(d * 0.26, 1.25, 0);
-    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.05, 0.3, 12), clay);
-    upper.position.y = -0.16;
+    arm.position.set(d * 0.34, 1.45, 0);
+    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.38, 12), clay);
+    upper.position.y = -0.2;
     arm.add(upper);
-    const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.28, 12), clay);
-    fore.position.y = -0.46;
+    const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.055, 0.35, 12), clay);
+    fore.position.y = -0.55;
     arm.add(fore);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), clay);
-    hand.position.y = -0.66;
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), clay);
+    hand.position.y = -0.78;
     arm.add(hand);
     g.add(arm);
     arms.push(arm);
   });
 
-  // Jambes : deux cylindres simples, pieds plats
+  // Jambes
   const legs = [];
-  [-0.11, 0.11].forEach((dx) => {
+  [-0.14, 0.14].forEach((dx) => {
     const leg = new THREE.Group();
-    leg.position.set(dx, 0.72, 0);
-    const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.07, 0.42, 12), clay);
-    thigh.position.y = -0.22;
+    leg.position.set(dx, 0.85, 0);
+    const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.5, 12), clay);
+    thigh.position.y = -0.26;
     leg.add(thigh);
-    const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.055, 0.42, 12), clay);
-    shin.position.y = -0.66;
+    const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.5, 12), clay);
+    shin.position.y = -0.8;
     leg.add(shin);
-    const foot = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.07, 0.16), clay);
-    foot.position.y = -0.9;
+    const foot = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.09, 0.2), clay);
+    foot.position.y = -1.08;
     leg.add(foot);
     g.add(leg);
     legs.push(leg);
@@ -682,13 +682,13 @@ function layoutPlayers(list) {
     if (mode === 'lobby') {
       if (g.parent !== scene) scene.add(g);
       const pos = getLobbyPos(i);
-      g.position.set(pos.x, 0, pos.z);
+      g.position.set(pos.x, 1.08, pos.z);
       g.userData.baseRot = pos.rot;
       g.visible = true;
     } else {
       if (g.parent !== tg) tg.add(g);
       const pos = getTablePos(i);
-      g.position.set(pos.x, 0, pos.z);
+      g.position.set(pos.x, 1.08, pos.z);
       g.userData.baseRot = pos.rot;
       g.visible = true;
     }
