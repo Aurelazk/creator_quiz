@@ -169,16 +169,21 @@ function shuffle(a) {
 }
 
 const QUESTIONS = [
-  { q: "Quel langage crée la structure d'une page web ?", options: ["HTML", "CSS", "JS", "PHP"], ans: 0 },
-  { q: "Quel langage met en forme (couleurs, polices) une page ?", options: ["CSS", "HTML", "JS", "SQL"], ans: 0 },
-  { q: "Quel langage rend une page web interactive ?", options: ["JavaScript", "HTML", "CSS", "Python"], ans: 0 },
-  { q: "Quelle balise crée un titre principal ?", options: ["<h1>", "<title>", "<p>", "<div>"], ans: 0 },
-  { q: "Quelle balise crée un lien cliquable ?", options: ["<a>", "<link>", "<url>", "<href>"], ans: 0 },
-  { q: "Quelle balise affiche une image ?", options: ["", "", "<pic>", "<photo>"], ans: 0 },
-  { q: "Quelle extension a un fichier HTML ?", options: [".html", ".htm", ".htmlx", ".page"], ans: 0 },
-  { q: "Que signifie le \"H\" de HTML ?", options: ["HyperText", "Home", "Hyperlink", "High"], ans: 0 },
-  { q: "Quel langage s'exécute dans le navigateur ?", options: ["JavaScript", "Python", "Java", "C++"], ans: 0 },
-  { q: "Quelle balise crée un paragraphe ?", options: ["<p>", "<para>", "<text>", "<div>"], ans: 0 }
+  { q: "Quel langage crée la structure d'une page web ?", options: ["HTML", "CSS", "JS", "PHP"], ans: 0, info: "HTML = HyperText Markup Language, c'est le squelette de la page." },
+  { q: "Quel langage met en forme (couleurs, polices) une page ?", options: ["CSS", "HTML", "JS", "SQL"], ans: 0, info: "CSS = Cascading Style Sheets, pour le design et la mise en page." },
+  { q: "Quel langage rend une page web interactive ?", options: ["JavaScript", "HTML", "CSS", "Python"], ans: 0, info: "JavaScript gère les interactions clic, formulaire, animation." },
+  { q: "Quelle balise crée un titre principal ?", options: ["<h1>", "<title>", "<p>", "<div>"], ans: 0, info: "La balise <h1> est le titre le plus important de la page." },
+  { q: "Quelle balise crée un lien cliquable ?", options: ["<a>", "<link>", "<url>", "<href>"], ans: 0, info: "La balise <a> (anchor) crée un hyperlien avec l'attribut href." },
+  { q: "Quelle balise affiche une image ?", options: ["", "", "<pic>", "<photo>"], ans: 0, info: "La balise <img> affiche une image avec l'attribut src." },
+  { q: "Quelle extension a un fichier HTML ?", options: [".html", ".htm", ".htmlx", ".page"], ans: 0, info: "L'extension standard est .html (ou .htm autrefois)." },
+  { q: "Que signifie le \"H\" de HTML ?", options: ["HyperText", "Home", "Hyperlink", "High"], ans: 0, info: "HTML = HyperText Markup Language." },
+  { q: "Quel langage s'exécute dans le navigateur ?", options: ["JavaScript", "Python", "Java", "C++"], ans: 0, info: "JavaScript tourne directement dans le navigateur web." },
+  { q: "Quelle balise crée un paragraphe ?", options: ["<p>", "<para>", "<text>", "<div>"], ans: 0, info: "La balise <p> définit un paragraphe de texte." },
+  { q: "Quelle application est une app mobile ?", options: ["Une app installée sur téléphone", "Un site web", "Un logiciel PC", "Un fichier PDF"], ans: 0, info: "Une app mobile s'installe sur un smartphone ou tablette." },
+  { q: "Que signifie le sigle API ?", options: ["Application Programming Interface", "Advanced Programming Input", "Auto Program Interface", "App Public Internet"], ans: 0, info: "Une API permet à deux logiciels de communiquer." },
+  { q: "Quel outil enregistre l'historique du code ?", options: ["Git", "HTML", "CSS", "JSON"], ans: 0, info: "Git est un gestionnaire de versions pour le code source." },
+  { q: "Qu'est-ce qu'une application web ?", options: ["Un site accessible via navigateur", "Un logiciel à installer", "Un fichier image", "Un base de données"], ans: 0, info: "Une app web se utilise directement dans le navigateur, sans installation." },
+  { q: "Quel langage est utilisé pour créer des apps Android natives ?", options: ["Kotlin", "Swift", "HTML", "SQL"], ans: 0, info: "Kotlin (et Java) est le langage officiel pour le développement Android." }
 ];
 const optsOf = (q) => q.options || OPTIONS;
 
@@ -478,28 +483,45 @@ function hostStart() {
   state.qIndex = 0;
   state.answers = {};
   state.players.forEach((p) => (p.score = 0));
-  const q = QUESTIONS[0];
+  state.questionStartTime = Date.now();
+  state.qOrder = shuffle(QUESTIONS.map((_, i) => i));
+  const q = QUESTIONS[state.qOrder[0]];
   const o = shuffle(q.options || OPTIONS);
   state.qOpts = o;
   state.qAns = o.indexOf(q.options[q.ans]);
   publishState();
 }
 function hostReveal() {
-  const q = QUESTIONS[state.qIndex];
-  state.players.forEach((p) => { if (state.answers[p.id] === state.qAns) p.score += POINTS; });
+  const q = QUESTIONS[state.qOrder[state.qIndex]];
+  const now = Date.now();
+  const elapsed = Math.max(0, now - (state.questionStartTime || now));
+  const base = 100;
+  const speedBonus = Math.max(0, Math.floor(50 * (1 - elapsed / 20000)));
+  state.players.forEach((p) => {
+    if (state.answers[p.id] === state.qAns) {
+      p.score += base + speedBonus;
+      // Bonus de série : 3 bonnes réponses d'affilée
+      const recent = Object.values(state.answers || {}).filter((ans, id) => {
+        const pp = state.players.find((pl) => pl.id === id);
+        return pp && pp.id !== p.id && ans === state.qAns;
+      }).length;
+      if (recent >= 2) p.score += 20;
+    }
+  });
   state.phase = "reveal";
   publishState();
 }
 function hostNext() {
   if (state.qIndex + 1 >= QUESTIONS.length) state.phase = "end";
-  else {
-    state.qIndex++;
-    state.phase = "question";
-    state.answers = {};
-    const q = QUESTIONS[state.qIndex];
-    const o = shuffle(q.options || OPTIONS);
-    state.qOpts = o;
-    state.qAns = o.indexOf(q.options[q.ans]);
+  else { 
+    state.qIndex++; 
+    state.phase = "question"; 
+    state.answers = {}; 
+    state.questionStartTime = Date.now();
+    const q = QUESTIONS[state.qOrder[state.qIndex]]; 
+    const o = shuffle(q.options || OPTIONS); 
+    state.qOpts = o; 
+    state.qAns = o.indexOf(q.options[q.ans]); 
   }
   publishState();
 }
@@ -598,12 +620,18 @@ function render() {
     $("qnum").textContent = `Question ${s.qIndex + 1} / ${QUESTIONS.length}`;
     $("qtext").textContent = q.q;
     const nAns = Object.keys(s.answers || {}).length;
+    const now = Date.now();
+    const elapsed = s.questionStartTime ? Math.max(0, now - s.questionStartTime) : 0;
+    const remaining = Math.max(0, 20 - Math.floor(elapsed / 1000));
+    const allAnswered = cs.length > 0 && cs.every((p) => p.id in (s.answers || {}));
+    const timeUp = remaining === 0;
+    if (isHost && (timeUp || allAnswered) && s.phase === "question") { hostReveal(); }
     if (isHost) {
       $("answers").innerHTML = revealed ? opts.map((o, i) => `<button class="${i === s.qAns ? "good" : "bad"}" disabled>${esc(o)}</button>`).join("") : "";
       show("hostctl");
       $("who").innerHTML = cs.map((p) => `<span class="${p.id in s.answers ? "ok" : ""}">${esc(p.name)}${p.id in s.answers ? " ✓" : ""}</span>`).join("");
       $("btnHost").textContent = revealed ? (s.qIndex + 1 >= QUESTIONS.length ? "Voir le classement" : "Question suivante") : "Révéler les résultats";
-      $("status").textContent = revealed ? `Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}` : `${nAns} / ${cs.length} ont répondu`;
+      $("status").textContent = revealed ? `Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}` : `${nAns} / ${cs.length} ont répondu — ${remaining}s`;
       setHelp(revealed ? "Touche « Question suivante »" : "Tu animes : « Révéler » quand tout le monde a répondu");
     } else {
       show("hostctl", false);
@@ -618,7 +646,7 @@ function render() {
         $("status").textContent = myPick === null ? `Pas de réponse… Bonne réponse : ${opts[s.qAns]}` : ok ? `✅ Bravo ! +${POINTS} pts (total ${meP ? meP.score : 0})` : `❌ Raté ! Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}`;
         setHelp("Résultats révélés — attends la question suivante");
       } else {
-        $("status").textContent = myPick !== null ? `Réponse envoyée · ${nAns} / ${cs.length} ont répondu` : `${nAns} / ${cs.length} ont répondu`;
+        $("status").textContent = myPick !== null ? `Réponse envoyée · ${nAns} / ${cs.length} ont répondu` : `${nAns} / ${cs.length} ont répondu — ${remaining}s`;
         setHelp(myPick !== null ? "Réponse enregistrée, attends la révélation" : "Choisis ta réponse en bas de l'écran");
       }
     }
@@ -702,7 +730,7 @@ function drawBoard() {
     g.font = "800 54px system-ui"; g.fillText(revealed || isHost ? counts[i] : "?", x, y + 32);
   });
   g.fillStyle = "#ffffff"; g.font = "bold 22px Arial";
-  g.fillText(revealed ? `Bonne réponse : ${opts[s.qAns]}` : `${Object.keys(s.answers || {}).length} / ${cs.length} ont répondu`, W / 2, 510);
+  g.fillText(revealed ? `Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}` : `${Object.keys(s.answers || {}).length} / ${cs.length} ont répondu`, W / 2, 510);
   boardTex.needsUpdate = true;
 }
 function wrapText(g, text, x, y, maxW, lh) {
