@@ -245,7 +245,7 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.22;
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
 const camPos = new THREE.Vector3(0, 7, 14), camLook = new THREE.Vector3(0, 1, 0);
@@ -253,8 +253,7 @@ const camTarget = { pos: camPos.clone(), look: camLook.clone() };
 
 const hemi = new THREE.HemisphereLight(0xdfeaff, 0x3a3f60, 0.6); scene.add(hemi);
 const key = new THREE.DirectionalLight(0xffe2b8, 1.5);
-key.position.set(6, 14, 8); key.castShadow = true;
-key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 4; key.shadow.bias = -0.0005;
+key.position.set(6, 14, 8); key.castShadow = true; key.shadow.mapSize.set(512, 512); key.shadow.radius = 2; key.shadow.bias = -0.001;
 Object.assign(key.shadow.camera, { left: -12, right: 12, top: 12, bottom: -12, near: 1, far: 40 });
 scene.add(key);
 const fill = new THREE.DirectionalLight(0x7fa6ff, 0.55); fill.position.set(-8, 6, 4); scene.add(fill);
@@ -1008,7 +1007,7 @@ function letterTex(ch, color) {
 function playIntro(root, onDone) {
   const renderer = new T.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFShadowMap;
   renderer.outputEncoding = T.sRGBEncoding; renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
   root.appendChild(renderer.domElement);
   const scene = new T.Scene(), dark = col('#050B26'), light = col('#E4ECFF');
@@ -1017,7 +1016,7 @@ function playIntro(root, onDone) {
   const fit = () => { camera.aspect = innerWidth / innerHeight; camera.position.set(0, 2.7, Math.max(10.5, 20 / camera.aspect)); camera.lookAt(0, 1.1, 0); camera.updateProjectionMatrix(); };
   fit();
   const hemi = new T.HemisphereLight(0xffffff, 0x4a5fd0, .05), key = new T.DirectionalLight(0xfff3e0, 0);
-  key.position.set(5, 10, 8); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0004;
+  key.position.set(5, 10, 8); key.castShadow = true; key.shadow.mapSize.set(512, 512); key.shadow.bias = -.001;
   Object.assign(key.shadow.camera, { left: -12, right: 12, top: 8, bottom: -8, near: 1, far: 40 });
   scene.add(hemi, key);
 
