@@ -106,9 +106,41 @@
     #toast { font-size: 13px !important; padding: 10px 14px !important; max-width: 94vw !important; }
     #help { font-size: 13px !important; padding: 6px 12px !important; max-width: 92vw !important; }
   }
+
+  /* ===== Design CREATOR v2 (surcouche) ===== */
+  #intro{position:fixed;inset:0;z-index:100;background:#050B26;transition:opacity .6s;cursor:pointer}#intro.fade{opacity:0}
+  #intro::after{content:'Toucher pour passer';position:absolute;bottom:calc(18px + var(--safe-b));left:0;right:0;text-align:center;font-size:12px;color:#fff;opacity:.55}
+  body{font-family:Poppins,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(60vmax 42vmax at 10% 6%,rgba(11,53,254,.8),transparent 62%),
+               radial-gradient(52vmax 38vmax at 98% 100%,rgba(0,228,114,.5),transparent 62%),
+               radial-gradient(28vmax 20vmax at 88% 10%,rgba(255,78,32,.3),transparent 60%)}
+  .panel{border-radius:22px;border:1px solid rgba(255,255,255,.16);box-shadow:0 30px 80px rgba(3,8,35,.55)}
+  .panel::after{content:"";position:absolute;left:22px;right:22px;top:0;height:4px;border-radius:0 0 6px 6px;
+    background:linear-gradient(90deg,var(--green),var(--blue),var(--coral))}
+  h1{font-weight:800;letter-spacing:-.5px}
+  #home h1::after{content:"";display:block;width:64px;height:5px;border-radius:3px;background:var(--green);margin-top:8px}
+  h2{font-weight:800}
+  button,input{font-family:inherit}
+  button{border-radius:999px;box-shadow:0 8px 20px rgba(255,78,32,.32)}
+  button.sec{box-shadow:0 8px 20px rgba(11,53,254,.42)}
+  button.ghost,button:disabled{box-shadow:none}
+  input{border-radius:16px;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.1)}
+  #answers button{background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:18px;
+    text-align:left;font-weight:600;line-height:1.3;padding:14px 18px;box-shadow:none}
+  #answers button:hover:not(:disabled){border-color:var(--green);background:rgba(0,228,114,.14)}
+  #answers button.picked{background:var(--blue);border-color:var(--blue);outline:none}
+  #answers button.good{background:var(--green);border-color:var(--green);color:var(--navy)}
+  #answers button.bad{background:rgba(255,78,32,.25);border-color:var(--coral);color:#fff}
+  .chip{border:1px solid rgba(255,255,255,.14)}
+  ul.pl li button.kick{width:22px!important;min-height:22px!important;height:22px;padding:0!important;font-size:14px!important;line-height:1;border-radius:50%;box-shadow:none;background:rgba(255,78,32,.8)}
+  table.rank tr.win td{background:rgba(0,228,114,.18);color:var(--green)}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+<div id="intro"></div>
 <canvas id="scene"></canvas>
 <div id="help" class="hidden"></div>
 <div id="topbar" class="hidden">
@@ -165,6 +197,9 @@ const PALETTE = ["#0B35FE", "#FF4E20", "#00E472", "#FF7A00", "#2E85FF", "#0C1A4B
 const OPTIONS = ["Oui", "Non"];
 const POINTS = 10;
 const MAX_PLAYERS = 20;
+const GAME_Q = 10; // nombre de questions par partie (tirées au hasard dans la banque)
+const curQ = (s) => QUESTIONS[s.qOrder ? s.qOrder[s.qIndex] : s.qIndex]; // question réellement posée (ordre mélangé)
+const totalQ = (s) => (s && s.qOrder ? s.qOrder.length : Math.min(GAME_Q, QUESTIONS.length));
 
 /* Sauvegarde/restauration de l'état hôte (reprise après refresh) */
 function saveHostState() {
@@ -430,7 +465,7 @@ const chars = new Map();
 const me = { id: localStorage.getItem("cq_id") || uid(), name: "" };
 localStorage.setItem("cq_id", me.id);
 let client = null, room = null, isHost = false, state = null;
-let lastStateAt = 0, joinTimer = null, hbTimer = null, watchTimer = null, joinedAt = 0, hostLostShown = false;
+let wasIn = false, lastStateAt = 0, joinTimer = null, hbTimer = null, watchTimer = null, joinedAt = 0, hostLostShown = false;
 
 /* ================= SONS (Web Audio API) ================= */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -443,7 +478,7 @@ function beep(freq, type = "sine", duration = 0.1) {
     g.gain.setValueAtTime(0.1, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
     o.connect(g); g.connect(audioCtx.destination);
-    o.start(); o.stop(audioContext.currentTime + duration);
+    o.start(); o.stop(audioCtx.currentTime + duration);
   } catch {}
 }
 function soundGood() { beep(800, "sine", 0.15); beep(1000, "sine", 0.15); }
@@ -475,7 +510,10 @@ const sendEvent = (ev) => client && client.connected && client.publish(TOPIC(roo
 function publishState() {
   if (!isHost || !client || !state) return;
   state.ts = Date.now();
-  client.publish(TOPIC(room, "state"), JSON.stringify(state), { qos: 1, retain: true });
+  const pub = state.phase === "question"
+    ? { ...state, answers: Object.fromEntries(Object.keys(state.answers || {}).map((k) => [k, -1])), qAns: undefined }
+    : state;
+  client.publish(TOPIC(room, "state"), JSON.stringify(pub), { qos: 1, retain: true });
   saveHostState();
   render();
 }
@@ -512,7 +550,7 @@ function hostOnEvent(ev) {
   } else if (ev.type === "kick" && p && !p.host && ev.from === state.hostId && ev.target) {
     state.players = state.players.filter((x) => x.id !== ev.target); delete state.answers[ev.target]; publishState();
   } else if (ev.type === "answer" && p && !p.host && state.phase === "question" && ev.q === state.qIndex) {
-    const n = optsOf(QUESTIONS[state.qIndex]).length;
+    const n = (state.qOpts || optsOf(curQ(state))).length;
     if (Number.isInteger(ev.choice) && ev.choice >= 0 && ev.choice < n && !(ev.from in state.answers)) { state.answers[ev.from] = ev.choice; publishState(); }
   }
 }
@@ -522,7 +560,7 @@ function hostStart() {
   state.answers = {};
   state.players.forEach((p) => (p.score = 0));
   state.questionStartTime = Date.now();
-  state.qOrder = shuffle(QUESTIONS.map((_, i) => i));
+  state.qOrder = shuffle(QUESTIONS.map((_, i) => i)).slice(0, GAME_Q);
   const q = QUESTIONS[state.qOrder[0]];
   const o = shuffle(q.options || OPTIONS);
   state.qOpts = o;
@@ -537,14 +575,8 @@ function hostReveal() {
   const base = 100;
   const speedBonus = Math.max(0, Math.floor(50 * (1 - elapsed / 20000)));
   state.players.forEach((p) => {
-    if (state.answers[p.id] === state.qAns) {
-      p.score += base + speedBonus;
-      const recent = Object.values(state.answers || {}).filter((ans, id) => {
-        const pp = state.players.find((pl) => pl.id === id);
-        return pp && pp.id !== p.id && ans === state.qAns;
-      }).length;
-      if (recent >= 2) p.score += 20;
-    }
+    p.gain = 0;
+    if (state.answers[p.id] === state.qAns) { p.gain = base + speedBonus; p.score += p.gain; }
   });
   state.phase = "reveal";
   publishState();
@@ -552,7 +584,7 @@ function hostReveal() {
   if (correctCount > 0) { soundGood(); vibrate(100); } else { soundBad(); vibrate(50); }
 }
 function hostNext() {
-  if (state.qIndex + 1 >= QUESTIONS.length) { state.phase = "end"; soundEnd(); vibrate(200); }
+  if (state.qIndex + 1 >= totalQ(state)) { state.phase = "end"; soundEnd(); vibrate(200); }
   else { 
     state.qIndex++; 
     state.phase = "question"; 
@@ -573,7 +605,7 @@ function hostAdvance() {
 
 /* ---------- JOUEUR ---------- */
 function joinRoom(code) {
-  room = code; isHost = false; state = null; joinedAt = Date.now(); lastStateAt = 0; hostLostShown = false;
+  room = code; isHost = false; state = null; wasIn = false; joinedAt = Date.now(); lastStateAt = 0; hostLostShown = false;
   history.replaceState(null, "", "?room=" + room);
   setHelp("Recherche de la salle " + room + "…");
   connect(() => {
@@ -596,6 +628,8 @@ function onState(s) {
   if (isHost) return;
   if (!s) { if (state) { toast("L'hôte a fermé la salle."); leaveRoom(false); } return; }
   if (s.code !== room) return;
+  if (s.players.some((p) => p.id === me.id)) wasIn = true;
+  else if (wasIn) { wasIn = false; toast("Tu as été retiré de la salle."); leaveRoom(false); return; }
   const fresh = !state;
   state = s; lastStateAt = Date.now(); hostLostShown = false;
   if (fresh && Date.now() - s.ts > 60000) { toast("La salle a expiré."); leaveRoom(false); return; }
@@ -664,10 +698,10 @@ function render() {
   }
 
   if (s.phase === "question" || s.phase === "reveal") {
-    const q = QUESTIONS[s.qIndex], opts = s.qOpts || optsOf(q), revealed = s.phase === "reveal";
+    const q = curQ(s), opts = s.qOpts || optsOf(q), revealed = s.phase === "reveal";
     if (lastQRendered !== s.qIndex) { lastQRendered = s.qIndex; myPick = null; }
-    if (s.answers && me.id in s.answers) myPick = s.answers[me.id];
-    $("qnum").textContent = `Question ${s.qIndex + 1} / ${QUESTIONS.length}`;
+    if (s.answers && me.id in s.answers && myPick === null) myPick = s.answers[me.id];
+    $("qnum").textContent = `Question ${s.qIndex + 1} / ${totalQ(s)}`;
     $("qtext").textContent = q.q;
     const nAns = Object.keys(s.answers || {}).length;
     const now = Date.now();
@@ -680,7 +714,7 @@ function render() {
       $("answers").innerHTML = revealed ? opts.map((o, i) => `<button class="${i === s.qAns ? "good" : "bad"}" disabled>${esc(o)}</button>`).join("") : "";
       show("hostctl");
       $("who").innerHTML = cs.map((p) => `<span class="${p.id in s.answers ? "ok" : ""}">${esc(p.name)}${p.id in s.answers ? " ✓" : ""}</span>`).join("");
-      $("btnHost").textContent = revealed ? (s.qIndex + 1 >= QUESTIONS.length ? "Voir le classement" : "Question suivante") : "Révéler les résultats";
+      $("btnHost").textContent = revealed ? (s.qIndex + 1 >= totalQ(s) ? "Voir le classement" : "Question suivante") : "Révéler les résultats";
       $("status").textContent = revealed ? `Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}` : `${nAns} / ${cs.length} ont répondu — ${remaining}s`;
       setHelp(revealed ? "Touche « Question suivante »" : "Tu animes : « Révéler » quand tout le monde a répondu");
     } else {
@@ -693,7 +727,7 @@ function render() {
       const meP = s.players.find((p) => p.id === me.id);
       if (revealed) {
         const ok = myPick === s.qAns;
-        $("status").textContent = myPick === null ? `Pas de réponse… Bonne réponse : ${opts[s.qAns]}` : ok ? `✅ Bravo ! +${POINTS} pts (total ${meP ? meP.score : 0})` : `❌ Raté ! Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}`;
+        $("status").textContent = myPick === null ? `Pas de réponse… Bonne réponse : ${opts[s.qAns]}` : ok ? `✅ Bravo ! +${meP && meP.gain || 0} pts (total ${meP ? meP.score : 0})` : `❌ Raté ! Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}`;
         setHelp("Résultats révélés — attends la question suivante");
       } else {
         $("status").textContent = myPick !== null ? `Réponse envoyée · ${nAns} / ${cs.length} ont répondu` : `${nAns} / ${cs.length} ont répondu — ${remaining}s`;
@@ -757,7 +791,7 @@ function drawBoard() {
   g.beginPath(); g.roundRect(60, 22, 904, 66, 12); g.fill();
   g.fillStyle = "#171204";
   g.font = "bold 32px Arial"; g.textAlign = "center";
-  g.fillText('Question ' + (s.qIndex + 1) + ' / ' + QUESTIONS.length, W / 2, 66);
+  g.fillText('Question ' + (s.qIndex + 1) + ' / ' + totalQ(s), W / 2, 66);
   if (!s || s.phase === "lobby") { g.fillText("CREATOR QUIZ 3D", W / 2, H / 2); boardTex.needsUpdate = true; return; }
   const cs = contestants();
   if (s.phase === "end") {
@@ -768,22 +802,34 @@ function drawBoard() {
     });
     boardTex.needsUpdate = true; return;
   }
-  const q = QUESTIONS[s.qIndex], opts = s.qOpts || optsOf(q), counts = opts.map(() => 0);
-  Object.values(s.answers || {}).forEach((c) => counts[c]++);
-  g.fillText(`QUESTION ${s.qIndex + 1} / ${QUESTIONS.length}`, W / 2, 50);
+  const q = curQ(s), opts = s.qOpts || optsOf(q), counts = opts.map(() => 0);
+  Object.values(s.answers || {}).forEach((c) => { if (counts[c] !== undefined) counts[c]++; });
+  g.fillText(`QUESTION ${s.qIndex + 1} / ${totalQ(s)}`, W / 2, 50);
   g.fillStyle = "#ffffff"; g.font = "bold 34px Arial";
   wrapText(g, q.q, W / 2, 130, W - 100, 50);
   const revealed = s.phase === "reveal";
+  const n = opts.length, cols = n <= 1 ? 1 : 2, rows = Math.ceil(n / cols), bw = cols === 1 ? 944 : 464, bh = rows === 1 ? 170 : 82;
   opts.forEach((o, i) => {
-    const x = W / 2 + (i - (opts.length - 1) / 2) * 380, y = 360;
-    g.fillStyle = revealed ? (i === s.qAns ? "#00E472" : "rgba(255,255,255,.12)") : i === 0 ? "#FF4E20" : "#2E85FF";
-    g.beginPath(); g.rect(x - 160, y - 70, 320, 140); g.fill();
-    g.fillStyle = revealed && i === s.qAns ? "#0C1A4B" : "#ffffff"; g.font = "800 46px system-ui"; g.fillText(o, x, y - 22);
-    g.font = "800 54px system-ui"; g.fillText(revealed || isHost ? counts[i] : "?", x, y + 32);
+    const cx = 40 + (i % cols) * (bw + 16), cy = 300 + Math.floor(i / cols) * (bh + 12), good = revealed && i === s.qAns;
+    g.fillStyle = revealed ? (good ? "#00E472" : "rgba(255,255,255,.12)") : (i % 2 ? "#2E85FF" : "#FF4E20");
+    g.beginPath(); g.roundRect(cx, cy, bw, bh, 16); g.fill();
+    g.fillStyle = good ? "#0C1A4B" : "#ffffff"; g.textAlign = "left";
+    g.font = "800 30px system-ui"; g.fillText("ABCD"[i] || "", cx + 18, cy + bh / 2 + 11);
+    g.font = "700 20px system-ui";
+    const lines = wrapLines(g, o, bw - 150).slice(0, 2);
+    lines.forEach((l, k) => g.fillText(l, cx + 60, cy + bh / 2 + (k - (lines.length - 1) / 2) * 26 + 7));
+    g.textAlign = "right"; g.font = "800 34px system-ui";
+    g.fillText(revealed || isHost ? counts[i] : "?", cx + bw - 18, cy + bh / 2 + 12);
+    g.textAlign = "center";
   });
   g.fillStyle = "#ffffff"; g.font = "bold 22px Arial";
   g.fillText(revealed ? `Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}` : `${Object.keys(s.answers || {}).length} / ${cs.length} ont répondu`, W / 2, 510);
   boardTex.needsUpdate = true;
+}
+function wrapLines(g, text, maxW) {
+  const words = String(text).split(" "); let line = "", lines = [];
+  words.forEach((w) => { const t = line ? line + " " + w : w; if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; });
+  lines.push(line); return lines;
 }
 function wrapText(g, text, x, y, maxW, lh) {
   const words = text.split(" "); let line = "", lines = [];
@@ -856,9 +902,9 @@ $("btnCopy").onclick = async () => {
 $("btnStart").onclick = () => { initAudio(); hostStart(); };
 $("btnHost").onclick = () => { initAudio(); hostAdvance(); };
 function kickPlayer(id) {
-  if (!isHost) return;
+  if (!isHost || !state) return;
   if (confirm("Exclure ce joueur ?")) {
-    sendEvent({ type: "kick", target: id });
+    state.players = state.players.filter((x) => x.id !== id); delete state.answers[id]; publishState();
   }
 }
 $("answers").addEventListener("click", (e) => {
@@ -892,7 +938,152 @@ if (!params.get("room")) {
   }
 }
 
+setInterval(() => { if (state && state.phase === "question") render(); }, 1000);
 setMode("lobby"); resize(); drawBoard(); loop();
+</script>
+<script>
+/* ===== Intro CREATOR (perso qui écrase le « O ») — jouée une fois par session ===== */
+(function(){
+// Perso "argile" lisse et sans visage, bras croisés (fidèle à la référence). Partagé par l'intro et la scène.
+const T = THREE;
+const col = (hex) => new T.Color(hex).convertSRGBToLinear(); // couleurs de marque exactes
+const cache = {};
+const capGeo = (r, h) => cache['c' + r + h] || (cache['c' + r + h] = (() => {
+  const p = [], n = 14;
+  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI / 2; p.push(new T.Vector2(Math.sin(a) * r, -Math.cos(a) * r)); }
+  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI / 2; p.push(new T.Vector2(Math.cos(a) * r, h + Math.sin(a) * r)); }
+  return new T.LatheGeometry(p, 32);
+})());
+const sphGeo = (r) => cache['s' + r] || (cache['s' + r] = new T.SphereGeometry(r, 36, 28));
+const shadowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+  const g = x.createRadialGradient(32, 32, 2, 32, 32, 32); g.addColorStop(0, 'rgba(0,0,0,.35)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new T.CanvasTexture(c); })();
+
+function makeCharacter(hex) {
+  const group = new T.Group(), rig = new T.Group();
+  const mat = new T.MeshStandardMaterial({ color: col(hex), roughness: 0.72, metalness: 0 });
+  const add = (geo, x, y, z, rotZ = 0, s) => {
+    const m = new T.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.z = rotZ; if (s) m.scale.set(...s);
+    m.castShadow = true; rig.add(m); return m;
+  };
+  [-1, 1].forEach((d) => { add(capGeo(.12, .55), d * .15, .2, 0); add(sphGeo(.17), d * .15, .1, .07, 0, [1, .62, 1.5]); }); // jambes + bottes
+  add(capGeo(.27, .5), 0, .85, 0);                       // torse
+  add(sphGeo(.52), 0, 2.03, 0, 0, [1, 1.1, 1]);          // grosse tête ronde
+  [-1, 1].forEach((d) => {                                // bras croisés
+    const z = d < 0 ? .31 : .38;
+    add(capGeo(.085, .25), d * .33, 1.1, 0);              // bras
+    add(capGeo(.075, .40), d * .305, 1.1, z, d * Math.PI / 2); // avant-bras
+    add(sphGeo(.09), -d * .2, 1.1, z);                    // main
+  });
+  group.add(rig);
+  const sh = new T.Mesh(new T.PlaneGeometry(1.5, 1.5), new T.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  sh.rotation.x = -Math.PI / 2; sh.position.y = 0.015; group.add(sh);
+  return { group, rig };
+}
+
+function makeCrowd(hex) { // version légère pour les gradins
+  const g = new T.Group(), m = new T.MeshStandardMaterial({ color: col(hex), roughness: .8 });
+  const b = new T.Mesh(capGeo(.27, .5), m); b.position.y = .85; const h = new T.Mesh(sphGeo(.52), m); h.position.y = 2.03; h.scale.y = 1.1;
+  g.add(b, h); g.scale.setScalar(.3); return g;
+}
+
+// Intro façon Pixar (Luxo Jr.) : le perso CREATOR arrive en sautillant dans le noir, écrase le "O"
+// de CREATOR, puis la lumière s'allume. Cliquer = passer. Rendu réaliste (ombres douces, tone mapping).
+const WORD = 'CREATOR', GAP = 1.5;
+const clamp = (v) => Math.min(1, Math.max(0, v)), ease = (v) => v * v * (3 - 2 * v), lerp = (a, b, k) => a + (b - a) * k;
+
+function slabGeo(w, h, r, d) {
+  const s = new T.Shape();
+  s.moveTo(-w / 2 + r, 0); s.lineTo(w / 2 - r, 0); s.quadraticCurveTo(w / 2, 0, w / 2, r); s.lineTo(w / 2, h - r);
+  s.quadraticCurveTo(w / 2, h, w / 2 - r, h); s.lineTo(-w / 2 + r, h); s.quadraticCurveTo(-w / 2, h, -w / 2, h - r);
+  s.lineTo(-w / 2, r); s.quadraticCurveTo(-w / 2, 0, -w / 2 + r, 0);
+  return new T.ExtrudeGeometry(s, { depth: d, bevelEnabled: true, bevelSize: .06, bevelThickness: .06, bevelSegments: 4, curveSegments: 10 }).translate(0, 0, -d / 2);
+}
+function letterTex(ch, color) {
+  const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+  x.font = '800 190px Poppins, Arial Black, Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = color; x.fillText(ch, 128, 140);
+  const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; t.anisotropy = 4; return t;
+}
+
+function playIntro(root, onDone) {
+  const renderer = new T.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.outputEncoding = T.sRGBEncoding; renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+  root.appendChild(renderer.domElement);
+  const scene = new T.Scene(), dark = col('#050B26'), light = col('#E4ECFF');
+  scene.background = dark.clone();
+  const camera = new T.PerspectiveCamera(34, innerWidth / innerHeight, .1, 100);
+  const fit = () => { camera.aspect = innerWidth / innerHeight; camera.position.set(0, 2.7, Math.max(10.5, 20 / camera.aspect)); camera.lookAt(0, 1.1, 0); camera.updateProjectionMatrix(); };
+  fit();
+  const hemi = new T.HemisphereLight(0xffffff, 0x4a5fd0, .05), key = new T.DirectionalLight(0xfff3e0, 0);
+  key.position.set(5, 10, 8); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0004;
+  Object.assign(key.shadow.camera, { left: -12, right: 12, top: 8, bottom: -8, near: 1, far: 40 });
+  scene.add(hemi, key);
+
+  const floor = new T.Mesh(new T.PlaneGeometry(60, 40), new T.MeshStandardMaterial({ color: col('#F4F6FC'), roughness: .55, metalness: .02 }));
+  floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+
+  const letters = [...WORD].map((ch, i) => {
+    const o = new T.Group(); o.position.set((i - 3) * GAP, .06, 0);
+    const isO = i === 5;
+    const slab = new T.Mesh(slabGeo(1.15, 1.5, .24, .5), new T.MeshStandardMaterial({ color: col(isO ? '#00E472' : '#FFFFFF'), roughness: .62 }));
+    slab.castShadow = slab.receiveShadow = true; o.add(slab);
+    const face = new T.Mesh(new T.PlaneGeometry(1, 1), new T.MeshBasicMaterial({ map: letterTex(ch, isO ? '#0C1A4B' : '#0B35FE'), transparent: true }));
+    face.position.set(0, .75, .32); o.add(face); scene.add(o); return o;
+  });
+  const O = letters[5];
+  const bar = new T.Mesh(new T.PlaneGeometry(10.4, .14), new T.MeshBasicMaterial({ color: col('#00E472') }));
+  bar.rotation.x = -Math.PI / 2; bar.position.set(0, .012, 1.1); bar.scale.x = 0.001; scene.add(bar);
+
+  const hero = makeCharacter('#0B35FE'); hero.group.scale.setScalar(.8); scene.add(hero.group);
+  const lamp = new T.PointLight(0xbcd0ff, 1.6, 9, 1.6); lamp.position.set(0, 2.3, 1); hero.group.add(lamp); // la "lampe" du perso
+
+  const HOP = .55, DIST = 1.73, X0 = -9, JUMP_T = 6 * HOP, LAND_T = JUMP_T + .7, XJ = X0 + 6 * DIST, TOP = 1.62;
+  let t = 0, last = performance.now(), done = false, raf = 0;
+
+  const frame = (now) => {
+    const dt = Math.min(.05, (now - last) / 1000); last = now; t += dt; let s = t - LAND_T;
+    let x, y = 0, sq = 1, ry = Math.PI / 2;
+    if (t < JUMP_T) {                                  // petits sauts
+      const i = Math.floor(t / HOP), u = (t - i * HOP) / HOP;
+      x = X0 + (i + u) * DIST; y = 4 * .8 * u * (1 - u); sq = (u < .12 || u > .88) ? .86 : 1;
+    } else if (t < LAND_T) {                           // grand saut sur le "O"
+      const u = (t - JUMP_T) / .7; x = lerp(XJ, 3, u); y = TOP * u * 1 + 4 * 1.1 * u * (1 - u);
+    } else {                                           // atterrissage : le "O" s'écrase puis rebondit
+      const sy = s < .12 ? 1 - .55 * (s / .12) : 1 - .55 * Math.exp(-(s - .12) * 5) * Math.cos((s - .12) * 16);
+      O.scale.set(1 + (1 - sy) * .45, sy, 1 + (1 - sy) * .45);
+      x = 3; y = 1.5 * sy + .12; ry = lerp(Math.PI / 2, 0, ease(clamp((s - .3) / .6)));
+      if (s > 1.6) y += Math.abs(Math.sin((s - 1.6) * 7)) * .35 * clamp(2.6 - s);
+    }
+    hero.group.position.set(x, y, 0); hero.group.rotation.y = ry; hero.rig.scale.set(1 / Math.sqrt(sq), sq, 1 / Math.sqrt(sq));
+    const L = ease(clamp((s - .3) / 1.2));             // la lumière s'allume
+    hemi.intensity = lerp(.05, .95, L); key.intensity = lerp(0, 1.05, L); lamp.intensity = lerp(1.6, 0, L);
+    scene.background.copy(dark).lerp(light, L);
+    bar.scale.x = Math.max(.001, ease(clamp((s - .8) / .9)));
+    renderer.render(scene, camera);
+    if (s > 2.7) return finish();
+    raf = requestAnimationFrame(frame);
+  };
+  function finish() {
+    if (done) return; done = true; cancelAnimationFrame(raf);
+    root.classList.add('fade');
+    setTimeout(() => { renderer.dispose(); root.remove(); onDone(); }, 600);
+  }
+  root.addEventListener('pointerdown', finish);
+  addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); fit(); });
+  raf = requestAnimationFrame(frame);
+}
+
+window.playCreatorIntro = playIntro;
+})();
+(function(){
+  var root=document.getElementById("intro");
+  if(sessionStorage.getItem("cq_intro")||!window.THREE){root.remove();return;}
+  sessionStorage.setItem("cq_intro","1");
+  var go=function(){window.playCreatorIntro(root,function(){});};
+  (document.fonts&&document.fonts.load?document.fonts.load("800 100px Poppins"):Promise.resolve()).catch(function(){}).then(go);
+})();
 </script>
 </body>
 </html>
