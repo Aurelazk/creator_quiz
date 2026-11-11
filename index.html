@@ -7,7 +7,6 @@
 <meta name="description" content="Quiz 3D multijoueur en temps réel autour du développement web et mobile — CREATOR, Epitech Bénin." />
 <meta name="theme-color" content="#0C1A4B" />
 <style>
-  /* ================= CHARTE CREATOR ================= */
   :root{
     --blue:#0B35FE; --navy:#0C1A4B; --green:#00E472; --coral:#FF4E20; --coral-h:#E63C10;
     --orange:#FF7A00; --light:#2E85FF; --bg:#F4F6FC; --white:#FFFFFF; --gold:#ffcf5a;
@@ -35,9 +34,7 @@
   button:disabled{opacity:.45;cursor:default}
   .row{display:flex;gap:10px}.row>*{flex:1}
   .sep{text-align:center;opacity:.5;font-size:13px;margin:12px 0}
-  /* Accueil */
   #home{left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,380px)}
-  /* Barre d'aide en haut */
   #help{position:fixed;top:calc(10px + var(--safe-t));left:50%;transform:translateX(-50%);z-index:6;
     background:var(--glass);border-radius:999px;padding:8px 16px;font-size:14px;max-width:92vw;text-align:center;
     box-shadow:0 10px 30px rgba(0,0,0,.35)}
@@ -46,7 +43,6 @@
   .chip{background:var(--glass);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700}
   .chip .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px}
   #leave{width:auto;padding:7px 12px;font-size:13px;border-radius:999px}
-  /* Lobby */
   #lobby{left:50%;bottom:calc(14px + var(--safe-b));transform:translateX(-50%);width:min(94vw,420px);max-height:48vh;overflow:auto}
   .codebox{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .codebox .c{flex:1;font-size:30px;font-weight:800;letter-spacing:6px;text-align:center;background:rgba(255,255,255,.08);
@@ -57,7 +53,6 @@
   ul.pl li i{width:14px;height:14px;border-radius:50%;display:inline-block}
   ul.pl li.me{outline:2px solid var(--gold)}
   .tag{background:var(--orange);border-radius:6px;padding:1px 6px;font-size:10px;text-transform:uppercase;font-weight:800}
-  /* Jeu */
   #game{left:50%;bottom:calc(14px + var(--safe-b));transform:translateX(-50%);width:min(94vw,520px)}
   #qnum{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:800}
   #qtext{font-size:19px;font-weight:700;margin:6px 0 14px;line-height:1.3}
@@ -69,7 +64,6 @@
   #hostctl .who{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
   #hostctl .who span{font-size:12px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.08);opacity:.55}
   #hostctl .who span.ok{opacity:1;background:var(--green);color:var(--navy);font-weight:700}
-  /* Fin */
   #end{left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,420px);max-height:80vh;overflow:auto}
   table.rank{width:100%;border-collapse:collapse;margin:8px 0 14px}
   table.rank td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.08);font-size:15px}
@@ -79,8 +73,6 @@
   #toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:var(--coral);padding:12px 18px;border-radius:12px;
     font-weight:700;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .3s;opacity:0;pointer-events:none;text-align:center;max-width:90vw}
   #toast.show{opacity:1}
-  
-  /* ================= RÉACTIONS VISUELLES (bonne / mauvaise réponse) ================= */
   #reaction{position:fixed;inset:0;background:rgba(12,26,75,.92);z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
   #reaction.show{display:flex}
   #reaction .big{font-size:clamp(34px,10vw,72px);font-weight:900;line-height:1;letter-spacing:2px;margin:0 0 12px;text-transform:uppercase}
@@ -94,52 +86,34 @@
   #reaction .ring.ok{border-color:#00E472;box-shadow:0 0 40px rgba(0,228,114,.35)}
   #reaction .ring.bad{border-color:#FF4E20;box-shadow:0 0 40px rgba(255,78,32,.35)}
   @keyframes ring{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.6);opacity:0}}
-
-  
-/* ================= RESPONSIVE MOBILE FORCÉ ================= */
-@media (max-width: 640px) {
-  html { font-size: 14px !important; }
-  body { font-size: 14px !important; overflow-x: hidden !important; }
-  #scene { position: fixed !important; inset: 0 !important; z-index: 0 !important; width: 100vw !important; height: 100vh !important; pointer-events: none !important; }
-  .panel { 
-    position: fixed !important; left: 50% !important; top: 50% !important; 
-    transform: translate(-50%, -50%) !important;
-    width: min(96vw, 520px) !important; max-width: 96vw !important;
-    padding: 16px !important; max-height: 92vh !important; overflow-y: auto !important;
-    z-index: 10 !important;
+  @media (max-width: 640px) {
+    html { font-size: 14px !important; }
+    body { font-size: 14px !important; overflow-x: hidden !important; }
+    #scene { position: fixed !important; inset: 0 !important; z-index: 0 !important; width: 100vw !important; height: 100vh !important; pointer-events: none !important; }
+    .panel { position: fixed !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; width: min(96vw, 520px) !important; max-width: 96vw !important; padding: 16px !important; max-height: 92vh !important; overflow-y: auto !important; z-index: 10 !important; }
+    h1 { font-size: 20px !important; } h2 { font-size: 16px !important; } p.sub { font-size: 13px !important; }
+    button { min-height: 48px !important; padding: 12px 16px !important; font-size: 15px !important; width: 100% !important; }
+    input { font-size: 16px !important; padding: 12px 14px !important; }
+    #topbar { top: 10px !important; left: 8px !important; right: 8px !important; flex-direction: column !important; gap: 8px !important; z-index: 11 !important; }
+    #topbar > * { width: 100% !important; text-align: center !important; }
+    .chip { font-size: 12px !important; padding: 6px 10px !important; }
+    #game { width: min(96vw, 560px) !important; bottom: 10px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    #end { width: min(96vw, 500px) !important; padding: 18px 14px !important; }
+    table.rank td { padding: 8px 6px !important; font-size: 14px !important; }
+    #answers { grid-template-columns: 1fr !important; gap: 8px !important; }
+    #answers button { min-height: 44px !important; font-size: 15px !important; }
+    #toast { font-size: 13px !important; padding: 10px 14px !important; max-width: 94vw !important; }
+    #help { font-size: 13px !important; padding: 6px 12px !important; max-width: 92vw !important; }
   }
-  h1 { font-size: 20px !important; }
-  h2 { font-size: 16px !important; }
-  p.sub { font-size: 13px !important; }
-  button { 
-    min-height: 48px !important; padding: 12px 16px !important; font-size: 15px !important;
-    width: 100% !important;
-  }
-  input { font-size: 16px !important; padding: 12px 14px !important; }
-  #topbar { top: 10px !important; left: 8px !important; right: 8px !important;
-    flex-direction: column !important; gap: 8px !important; z-index: 11 !important; }
-  #topbar > * { width: 100% !important; text-align: center !important; }
-  .chip { font-size: 12px !important; padding: 6px 10px !important; }
-  #game { width: min(96vw, 560px) !important; bottom: 10px !important; left: 50% !important; transform: translateX(-50%) !important; }
-  #end { width: min(96vw, 500px) !important; padding: 18px 14px !important; }
-  table.rank td { padding: 8px 6px !important; font-size: 14px !important; }
-  #answers { grid-template-columns: 1fr !important; gap: 8px !important; }
-  #answers button { min-height: 44px !important; font-size: 15px !important; }
-  #toast { font-size: 13px !important; padding: 10px 14px !important; max-width: 94vw !important; }
-  #help { font-size: 13px !important; padding: 6px 12px !important; max-width: 92vw !important; }
-}
 </style>
 </head>
 <body>
 <canvas id="scene"></canvas>
-
 <div id="help" class="hidden"></div>
 <div id="topbar" class="hidden">
   <div class="chip"><span class="dot"></span><span id="count">0</span> joueur(s) · <span id="roomchip"></span></div>
   <button id="leave" class="ghost">Quitter la salle</button>
 </div>
-
-<!-- Écran d'accueil -->
 <div id="home" class="panel">
   <h1>QUIZ <b>3D</b> CREATOR</h1>
   <p class="sub">Web &amp; mobile pour débutants · Epitech Bénin</p>
@@ -151,8 +125,6 @@
     <button id="btnJoin" class="sec" style="flex:.8">Rejoindre</button>
   </div>
 </div>
-
-<!-- Lobby -->
 <div id="lobby" class="panel hidden">
   <h2 id="lobbyTitle">Salle</h2>
   <div class="codebox"><div class="c" id="lobbyCode">-----</div><button id="btnCopy" class="sec">Copier le code</button></div>
@@ -160,8 +132,6 @@
   <button id="btnStart" class="hidden">Lancer la partie</button>
   <div id="lobbyWait" class="sub" style="text-align:center;margin:0">En attente du lancement par l'hôte…</div>
 </div>
-
-<!-- Partie -->
 <div id="game" class="panel hidden">
   <div id="qnum"></div>
   <div id="qtext"></div>
@@ -172,41 +142,39 @@
   </div>
   <div id="status"></div>
 </div>
-
-<!-- Fin -->
 <div id="end" class="panel hidden">
   <h2>🏆 Classement final</h2>
   <table class="rank" id="rank"></table>
   <button id="btnHome" class="sec">Retour à l'accueil</button>
 </div>
-
 <div id="toast"></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <script>
 "use strict";
-/* =====================================================================
-   CONFIGURATION & CHARTE
-   ===================================================================== */
+/* ================= CONFIGURATION & CHARTE ================= */
 const BROKER = "wss://broker.emqx.io:8084/mqtt";
 const TOPIC = (code, t) => `creatorquiz3d/${code}/${t}`;
-// Couleurs des joueurs : palette CREATOR, dans l'ordre d'arrivée
 const PALETTE = ["#0B35FE", "#FF4E20", "#00E472", "#FF7A00", "#2E85FF", "#0C1A4B", "#F4F6FC"];
 const OPTIONS = ["Oui", "Non"];
 const POINTS = 10;
 
-/* =====================================================================
-   BANQUE DE QUESTIONS  —  { q, ans } avec ans = index dans options
-   (ajouter un champ "options" pour passer en QCM plus tard)
-   ===================================================================== */
+function shuffle(a) {
+  const r = [...a];
+  for (let i = r.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+
 const QUESTIONS = [
   { q: "Quel langage crée la structure d'une page web ?", options: ["HTML", "CSS", "JS", "PHP"], ans: 0 },
   { q: "Quel langage met en forme (couleurs, polices) une page ?", options: ["CSS", "HTML", "JS", "SQL"], ans: 0 },
   { q: "Quel langage rend une page web interactive ?", options: ["JavaScript", "HTML", "CSS", "Python"], ans: 0 },
   { q: "Quelle balise crée un titre principal ?", options: ["<h1>", "<title>", "<p>", "<div>"], ans: 0 },
   { q: "Quelle balise crée un lien cliquable ?", options: ["<a>", "<link>", "<url>", "<href>"], ans: 0 },
-  { q: "Quelle balise affiche une image ?", options: ["<img>", "<image>", "<pic>", "<photo>"], ans: 0 },
+  { q: "Quelle balise affiche une image ?", options: ["", "", "<pic>", "<photo>"], ans: 0 },
   { q: "Quelle extension a un fichier HTML ?", options: [".html", ".htm", ".htmlx", ".page"], ans: 0 },
   { q: "Que signifie le \"H\" de HTML ?", options: ["HyperText", "Home", "Hyperlink", "High"], ans: 0 },
   { q: "Quel langage s'exécute dans le navigateur ?", options: ["JavaScript", "Python", "Java", "C++"], ans: 0 },
@@ -214,15 +182,12 @@ const QUESTIONS = [
 ];
 const optsOf = (q) => q.options || OPTIONS;
 
-/* =====================================================================
-   OUTILS
-   ===================================================================== */
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const sanitizeName = (s) => String(s || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 16);
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 function makeCode() {
-  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // sans I, O, 0, 1
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let c = ""; for (let i = 0; i < 5; i++) c += A[Math.floor(Math.random() * A.length)];
   return c;
 }
@@ -233,9 +198,7 @@ function toast(msg, ms = 2600) {
 }
 const show = (id, on = true) => $(id).classList.toggle("hidden", !on);
 
-/* =====================================================================
-   SCÈNE  —  rendu, lumières, décors
-   ===================================================================== */
+/* ================= SCÈNE 3D ================= */
 const canvas = $("scene");
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -244,13 +207,11 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.22;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
 const camPos = new THREE.Vector3(0, 7, 14), camLook = new THREE.Vector3(0, 1, 0);
 const camTarget = { pos: camPos.clone(), look: camLook.clone() };
 
-// Lumières cinéma
 const hemi = new THREE.HemisphereLight(0xdfeaff, 0x3a3f60, 0.6); scene.add(hemi);
 const key = new THREE.DirectionalLight(0xffe2b8, 1.5);
 key.position.set(6, 14, 8); key.castShadow = true;
@@ -260,13 +221,11 @@ scene.add(key);
 const fill = new THREE.DirectionalLight(0x7fa6ff, 0.55); fill.position.set(-8, 6, 4); scene.add(fill);
 const rim = new THREE.DirectionalLight(0xff8fc0, 0.7); rim.position.set(0, 7, -10); scene.add(rim);
 
-// Texture utilitaire canvas
 function canvasTex(w, h, draw) {
   const c = document.createElement("canvas"); c.width = w; c.height = h;
   draw(c.getContext("2d"), w, h);
   const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; return t;
 }
-// Ombre de contact douce (texture radiale)
 const shadowTex = canvasTex(128, 128, (g, w, h) => {
   const gr = g.createRadialGradient(64, 64, 4, 64, 64, 62);
   gr.addColorStop(0, "rgba(0,0,0,.55)"); gr.addColorStop(1, "rgba(0,0,0,0)");
@@ -274,30 +233,21 @@ const shadowTex = canvasTex(128, 128, (g, w, h) => {
 });
 const shadowMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false });
 
-/* ---------- Décor commun : gradins + foule (InstancedMesh pour la perf) ---------- */
 const common = new THREE.Group(); scene.add(common);
 const standMat = new THREE.MeshStandardMaterial({ color: 0x1b2a66, roughness: 0.8 });
 const crowdSpots = [];
 for (let row = 0; row < 4; row++) {
   const r = 13 + row * 1.4, y = row * 0.7;
   const step = new THREE.Mesh(new THREE.CylinderGeometry(r + 0.7, r + 0.7, 0.7, 64, 1, true, Math.PI * 0.62, Math.PI * 1.76), standMat);
-  // marches pleines : on dessine un anneau plat
-  const ring = new THREE.Mesh(new THREE.RingGeometry(r - 0.7, r + 0.7, 64, 1, Math.PI * 1.12, Math.PI * 0.76 * 1.0 + Math.PI * 0.0), standMat);
-  ring.rotation.x = -Math.PI / 2; ring.position.y = y + 0.35; ring.receiveShadow = true;
-  // on garde un arc derrière la table (de -150° à -30° environ)
-  ring.geometry.dispose();
-  ring.geometry = new THREE.RingGeometry(r - 0.7, r + 0.7, 48, 1, Math.PI * 0.12, Math.PI * 0.76);
   step.position.y = y; step.visible = false;
-  common.add(ring);
+  common.add(step);
   const n = 18 + row * 3;
   for (let i = 0; i < n; i++) {
     const a = Math.PI * 0.14 + (Math.PI * 0.72) * (i + 0.5) / n;
     crowdSpots.push({ x: Math.cos(a) * r, z: -Math.sin(a) * r, y: y + 1.45, a });
   }
 }
-/* ---------- Silhouette de référence (géométrie fusionnée, partagée joueurs + foule) ----------
-   Figurine claymation : tête en œuf, cou fin, torse droit, bras croisés haut sur la poitrine,
-   longues jambes fines légèrement en "A", pieds bottes arrondis. */
+
 function buildFigureGeometry(d = 1) {
   const R = (x) => Math.max(6, Math.round(x * d));
   const parts = [], UPV = new THREE.Vector3(0, 1, 0);
@@ -305,7 +255,6 @@ function buildFigureGeometry(d = 1) {
     const m = new THREE.Matrix4().compose(pos || new THREE.Vector3(), quat || new THREE.Quaternion(), scale || new THREE.Vector3(1, 1, 1));
     const g = (geo.index ? geo.toNonIndexed() : geo.clone()); g.applyMatrix4(m); parts.push(g);
   };
-  // Capsule effilée entre a (rayon ra) et b (rayon rb)
   const limb = (a, b, ra, rb) => {
     const dir = new THREE.Vector3().subVectors(b, a), len = dir.length();
     const q = new THREE.Quaternion().setFromUnitVectors(UPV, dir.clone().normalize());
@@ -313,23 +262,17 @@ function buildFigureGeometry(d = 1) {
     add(new THREE.SphereGeometry(ra, R(18), R(12)), a); add(new THREE.SphereGeometry(rb, R(18), R(12)), b);
   };
   const V = (x, y, z) => new THREE.Vector3(x, y, z);
-  // Pieds bottes
   [-1, 1].forEach((sd) => add(new THREE.SphereGeometry(0.18, R(22), R(14)), V(sd * 0.17, 0.09, 0.08), V(1, 0.6, 1.7)));
-  // Jambes longues et fines, légèrement écartées
   [-1, 1].forEach((sd) => limb(V(sd * 0.12, 1.22, 0), V(sd * 0.17, 0.15, 0.0), 0.125, 0.1));
-  // Torse monobloc (Lathe) : droit, épaules arrondies, cou fin
   const prof = [[0, 1.08], [0.2, 1.1], [0.255, 1.2], [0.25, 1.45], [0.265, 1.7], [0.25, 1.86], [0.18, 1.96], [0.11, 2.0], [0.1, 2.1], [0, 2.14]]
     .map(([x, y]) => new THREE.Vector2(x, y));
   add(new THREE.LatheGeometry(prof, R(36)), null, V(1, 1, 0.82));
-  // Bras croisés haut sur la poitrine
   [-1, 1].forEach((sd) => limb(V(sd * 0.24, 1.84, 0), V(sd * 0.3, 1.56, 0.17), 0.08, 0.075));
-  limb(V(0.3, 1.56, 0.17), V(-0.17, 1.7, 0.28), 0.075, 0.07);   // avant-bras droit (dessous)
-  limb(V(-0.3, 1.56, 0.17), V(0.18, 1.66, 0.33), 0.075, 0.07);  // avant-bras gauche (dessus)
+  limb(V(0.3, 1.56, 0.17), V(-0.17, 1.7, 0.28), 0.075, 0.07);
+  limb(V(-0.3, 1.56, 0.17), V(0.18, 1.66, 0.33), 0.075, 0.07);
   add(new THREE.SphereGeometry(0.085, R(16), R(12)), V(-0.21, 1.72, 0.27), V(1, 0.85, 1.1));
   add(new THREE.SphereGeometry(0.085, R(16), R(12)), V(0.22, 1.68, 0.33), V(1, 0.85, 1.1));
-  // Grosse tête lisse en forme d'œuf, sans visage
   add(new THREE.SphereGeometry(0.34, R(40), R(28)), V(0, 2.42, 0), V(0.95, 1.12, 0.97));
-  // Fusion manuelle (pas de BufferGeometryUtils en r128 core)
   let n = 0; parts.forEach((g) => (n += g.attributes.position.count));
   const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3); let o = 0;
   parts.forEach((g) => { pos.set(g.attributes.position.array, o * 3); nor.set(g.attributes.normal.array, o * 3); o += g.attributes.position.count; g.dispose(); });
@@ -338,10 +281,9 @@ function buildFigureGeometry(d = 1) {
   out.computeBoundingSphere(); return out;
 }
 const FIGURE_GEO = buildFigureGeometry(1);
-const CROWD_GEO = buildFigureGeometry(0.4); // version allégée pour la foule
+const CROWD_GEO = buildFigureGeometry(0.4);
 const FIG_H = 2.8;
 
-// Spectateurs : exactement la même silhouette, en plus petit, couleurs sobres (1 seul draw call)
 const CROWD_COLORS = ["#0B35FE", "#00E472", "#FF4E20", "#FF7A00", "#2E85FF", "#0C1A4B", "#ffcf5a"];
 const N = crowdSpots.length, CROWD_S = 0.62;
 const crowdMesh = new THREE.InstancedMesh(CROWD_GEO, new THREE.MeshPhysicalMaterial({ roughness: 0.55, clearcoat: 0.2 }), N);
@@ -359,7 +301,6 @@ function updateCrowd(t) {
 crowdSpots.forEach((c, i) => crowdMesh.setColorAt(i, new THREE.Color(CROWD_COLORS[i % CROWD_COLORS.length])));
 crowdMesh.instanceColor.needsUpdate = true;
 
-/* ---------- Mode LOBBY : ciel clair, sol à bandes ---------- */
 const lobby = new THREE.Group(); scene.add(lobby);
 const stripeTex = canvasTex(512, 512, (g, w, h) => {
   for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? "#DDE6FA" : "#F4F6FC"; g.fillRect(0, (h / 8) * i, w, h / 8); }
@@ -370,11 +311,9 @@ lobbyFloor.rotation.x = -Math.PI / 2; lobbyFloor.receiveShadow = true; lobby.add
 const pad = new THREE.Mesh(new THREE.CylinderGeometry(5, 5.2, 0.15, 64), new THREE.MeshStandardMaterial({ color: 0x0B35FE, roughness: 0.6 }));
 pad.position.y = 0.07; pad.receiveShadow = true; lobby.add(pad);
 
-/* ---------- Mode TABLE : studio TV sombre ---------- */
 const studio = new THREE.Group(); scene.add(studio);
 const darkFloor = new THREE.Mesh(new THREE.CircleGeometry(30, 64), new THREE.MeshStandardMaterial({ color: 0x0f1636, roughness: 0.55, metalness: 0.1 }));
 darkFloor.rotation.x = -Math.PI / 2; darkFloor.receiveShadow = true; studio.add(darkFloor);
-// Bois procédural
 const woodTex = canvasTex(512, 64, (g, w, h) => {
   g.fillStyle = "#6b3f22"; g.fillRect(0, 0, w, h);
   for (let i = 0; i < 40; i++) { g.strokeStyle = `rgba(${40 + Math.random() * 40},${20 + Math.random() * 15},10,.5)`; g.lineWidth = 1 + Math.random() * 2;
@@ -391,7 +330,6 @@ const goldRing = new THREE.Mesh(new THREE.TorusGeometry(TABLE_R - 0.33, 0.04, 8,
 goldRing.rotation.x = -Math.PI / 2; goldRing.position.y = TABLE_Y + 0.12; table.add(goldRing);
 const tFoot = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1.1, TABLE_Y, 32), new THREE.MeshStandardMaterial({ color: 0x3a2414, roughness: 0.6 }));
 tFoot.position.y = TABLE_Y / 2; tFoot.castShadow = true; table.add(tFoot);
-// Logo sur le feutre
 const logoTex = canvasTex(512, 512, (g, w) => {
   g.fillStyle = "rgba(0,0,0,0)"; g.clearRect(0, 0, w, w);
   g.fillStyle = "#ffffff"; g.font = "800 84px system-ui,sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
@@ -400,7 +338,6 @@ const logoTex = canvasTex(512, 512, (g, w) => {
 const logo = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, opacity: 0.85 }));
 logo.rotation.x = -Math.PI / 2; logo.position.y = TABLE_Y + 0.125; table.add(logo);
 
-// Chaises de bureau en cuir (créées à la demande)
 const leather = new THREE.MeshPhysicalMaterial({ color: 0x1a1a22, roughness: 0.45, clearcoat: 0.6 });
 const chromeMat = new THREE.MeshStandardMaterial({ color: 0xaab0c0, metalness: 0.9, roughness: 0.3 });
 function makeChair() {
@@ -414,7 +351,6 @@ function makeChair() {
 }
 const chairs = [];
 
-// Tableau de score géant (texture canvas)
 const boardCanvas = document.createElement("canvas"); boardCanvas.width = 1024; boardCanvas.height = 576;
 const boardTex = new THREE.CanvasTexture(boardCanvas); boardTex.encoding = THREE.sRGBEncoding;
 const board = new THREE.Group(); studio.add(board);
@@ -424,7 +360,6 @@ boardScreen.position.z = 0.16; board.add(boardFrame, boardScreen);
 board.position.set(0, 5.6, -10.5);
 const boardLegs = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3, 0.3), chromeMat); boardLegs.position.set(0, -4.1, 0); board.add(boardLegs);
 
-// Structure de projecteurs (truss + faisceaux)
 const trussMat = new THREE.MeshStandardMaterial({ color: 0x333a52, metalness: 0.8, roughness: 0.35 });
 const truss = new THREE.Mesh(new THREE.TorusGeometry(7, 0.12, 8, 64), trussMat);
 truss.rotation.x = Math.PI / 2; truss.position.y = 9.5; studio.add(truss);
@@ -441,7 +376,6 @@ for (let i = 0; i < 6; i++) {
 const spot = new THREE.SpotLight(0xfff0d8, 0.7, 30, 0.55, 0.6); spot.position.set(0, 12, 2); spot.target.position.set(0, 0, 0);
 studio.add(spot, spot.target);
 
-// Bascule de mode
 let mode = "lobby";
 function setMode(m) {
   mode = m;
@@ -461,13 +395,10 @@ function frameCamera() {
   else { camTarget.pos.set(0, 8.5 * k, 11.5 * k); camTarget.look.set(0, 1.6, -1.5); }
 }
 
-/* =====================================================================
-   PERSONNAGES  —  figurine "claymation" faceless
-   ===================================================================== */
+/* ================= PERSONNAGES ================= */
 function clayMat(color) {
   return new THREE.MeshPhysicalMaterial({ color, roughness: 0.38, clearcoat: 0.45, clearcoatRoughness: 0.5, metalness: 0 });
 }
-// Étiquette de pseudo (sprite canvas)
 function makeLabel(text, isMe) {
   const c = document.createElement("canvas"); c.width = 256; c.height = 64;
   const g = c.getContext("2d");
@@ -484,18 +415,14 @@ function makeCharacter(color, name, isMe) {
   const root = new THREE.Group(), fig = new THREE.Group(); root.add(fig);
   const mat = clayMat(color);
   const body = new THREE.Mesh(FIGURE_GEO, mat); body.castShadow = true; fig.add(body);
-  // Ombre de contact
   const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.3), shadowMat); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.02; root.add(sh);
-  // Pseudo
   const label = makeLabel(name, isMe); label.position.y = FIG_H + 0.35; root.add(label);
   root.userData = { fig, mat, label, color, name, isMe, phase: Math.random() * 6.28, target: new THREE.Vector3(), yaw: 0 };
   root.scale.setScalar(0.15); scene.add(root); return root;
 }
-const chars = new Map(); // id → groupe
+const chars = new Map();
 
-/* =====================================================================
-   RÉSEAU  —  MQTT over WebSocket, hôte autoritaire
-   ===================================================================== */
+/* ================= RÉSEAU ================= */
 const me = { id: localStorage.getItem("cq_id") || uid(), name: "" };
 localStorage.setItem("cq_id", me.id);
 let client = null, room = null, isHost = false, state = null;
@@ -524,22 +451,20 @@ function publishState() {
   render();
 }
 
-/* ---------- Côté HÔTE ---------- */
+/* ---------- HÔTE ---------- */
 function createRoom() {
   room = makeCode(); isHost = true;
   state = { v: 1, code: room, hostId: me.id, phase: "lobby", qIndex: 0, answers: {}, players: [{ id: me.id, name: me.name, color: PALETTE[0], score: 0, host: true }] };
   history.replaceState(null, "", "?room=" + room);
   connect(() => { publishState(); enterRoom(); });
-  hbTimer = setInterval(publishState, 3000); // heartbeat
+  hbTimer = setInterval(publishState, 3000);
 }
 function hostOnEvent(ev) {
   const p = state.players.find((x) => x.id === ev.from);
   if (ev.type === "join") {
     const name = sanitizeName(ev.name) || "Joueur";
-    if (!p) {
-      state.players.push({ id: ev.from, name, color: PALETTE[state.players.length % PALETTE.length], score: 0 });
-      toast(name + " a rejoint la salle", 1500);
-    } else p.name = name;
+    if (!p) { state.players.push({ id: ev.from, name, color: PALETTE[state.players.length % PALETTE.length], score: 0 }); toast(name + " a rejoint la salle", 1500); }
+    else p.name = name;
     publishState();
   } else if (ev.type === "leave" && p && !p.host) {
     state.players = state.players.filter((x) => x.id !== ev.from); delete state.answers[ev.from]; publishState();
@@ -548,20 +473,43 @@ function hostOnEvent(ev) {
     if (Number.isInteger(ev.choice) && ev.choice >= 0 && ev.choice < n && !(ev.from in state.answers)) { state.answers[ev.from] = ev.choice; publishState(); }
   }
 }
-function hostStart() { state.phase = "question"; state.qIndex = 0; state.answers = {}; state.players.forEach((p) => (p.score = 0)); publishState(); }
+function hostStart() {
+  state.phase = "question";
+  state.qIndex = 0;
+  state.answers = {};
+  state.players.forEach((p) => (p.score = 0));
+  const q = QUESTIONS[0];
+  const o = shuffle(q.options || OPTIONS);
+  state.qOpts = o;
+  state.qAns = o.indexOf(q.options[q.ans]);
+  publishState();
+}
 function hostReveal() {
   const q = QUESTIONS[state.qIndex];
-  state.players.forEach((p) => { if (state.answers[p.id] === q.ans) p.score += POINTS; });
-  state.phase = "reveal"; publishState();
+  state.players.forEach((p) => { if (state.answers[p.id] === state.qAns) p.score += POINTS; });
+  state.phase = "reveal";
+  publishState();
 }
 function hostNext() {
   if (state.qIndex + 1 >= QUESTIONS.length) state.phase = "end";
-  else { state.qIndex++; state.phase = "question"; state.answers = {}; }
+  else {
+    state.qIndex++;
+    state.phase = "question";
+    state.answers = {};
+    const q = QUESTIONS[state.qIndex];
+    const o = shuffle(q.options || OPTIONS);
+    state.qOpts = o;
+    state.qAns = o.indexOf(q.options[q.ans]);
+  }
   publishState();
 }
-function hostAdvance() { if (!isHost || !state) return; if (state.phase === "question") hostReveal(); else if (state.phase === "reveal") hostNext(); }
+function hostAdvance() {
+  if (!isHost || !state) return;
+  if (state.phase === "question") hostReveal();
+  else if (state.phase === "reveal") hostNext();
+}
 
-/* ---------- Côté JOUEUR ---------- */
+/* ---------- JOUEUR ---------- */
 function joinRoom(code) {
   room = code; isHost = false; state = null; joinedAt = Date.now(); lastStateAt = 0; hostLostShown = false;
   history.replaceState(null, "", "?room=" + room);
@@ -571,9 +519,8 @@ function joinRoom(code) {
       if (state && state.players.some((p) => p.id === me.id)) { clearInterval(joinTimer); joinTimer = null; return; }
       sendEvent({ type: "join", name: me.name });
     };
-    sendJoin(); joinTimer = setInterval(sendJoin, 2500); // join répété jusqu'à confirmation
+    sendJoin(); joinTimer = setInterval(sendJoin, 2500);
   });
-  // Watchdog : hôte perdu après 12 s, salle expirée après 60 s
   watchTimer = setInterval(() => {
     const ref = lastStateAt || joinedAt, idle = Date.now() - ref;
     if (!lastStateAt && idle > 15000) { toast("Salle introuvable : vérifie le code."); leaveRoom(false); return; }
@@ -584,7 +531,7 @@ function joinRoom(code) {
 
 /* ---------- Réception ---------- */
 function onState(s) {
-  if (isHost) return; // l'hôte est la source de vérité
+  if (isHost) return;
   if (!s) { if (state) { toast("L'hôte a fermé la salle."); leaveRoom(false); } return; }
   if (s.code !== room) return;
   const fresh = !state;
@@ -598,7 +545,7 @@ function onEvent(ev) {
   if (ev.type === "closed") { toast("L'hôte a fermé la salle."); leaveRoom(false); }
 }
 
-/* ---------- Quitter / fermeture propre ---------- */
+/* ---------- Quitter ---------- */
 function cleanupNetwork() {
   if (!client) return;
   try {
@@ -618,16 +565,11 @@ function leaveRoom(notify = true) {
 }
 window.addEventListener("pagehide", () => cleanupNetwork());
 
-/* =====================================================================
-   JEU  —  rendu de l'état (UI + 3D)
-   ===================================================================== */
+/* ================= JEU — RENDU ================= */
 let lastQRendered = -1, myPick = null;
-// N'actualise le DOM que si le contenu change (évite de casser un tap en cours)
 function setHTML(id, html) { const el = $(id); if (el._h !== html) { el._h = html; el.innerHTML = html; } }
 function setHelp(t) { const h = $("help"); h.textContent = t; show("help", !!t); }
-function enterRoom() {
-  show("home", false); show("topbar"); $("roomchip").textContent = room; render();
-}
+function enterRoom() { show("home", false); show("topbar"); $("roomchip").textContent = room; render(); }
 const contestants = () => state.players.filter((p) => !p.host);
 
 function render() {
@@ -638,7 +580,6 @@ function render() {
   if (mode !== (inGame ? "table" : "lobby")) setMode(inGame ? "table" : "lobby");
   show("lobby", s.phase === "lobby"); show("game", s.phase === "question" || s.phase === "reveal"); show("end", s.phase === "end");
 
-  // ---- Lobby ----
   if (s.phase === "lobby") {
     $("lobbyTitle").textContent = isHost ? "Partage le code de la salle" : "En attente du lancement";
     $("lobbyCode").textContent = room;
@@ -650,32 +591,31 @@ function render() {
     setHelp(isHost ? "Fais scanner l'URL ou donne le code, puis lance la partie" : "Tu es dans la salle ! L'hôte va bientôt lancer la partie");
   }
 
-  // ---- Question / révélation ----
   if (s.phase === "question" || s.phase === "reveal") {
-    const q = QUESTIONS[s.qIndex], opts = optsOf(q), revealed = s.phase === "reveal";
+    const q = QUESTIONS[s.qIndex], opts = s.qOpts || optsOf(q), revealed = s.phase === "reveal";
     if (lastQRendered !== s.qIndex) { lastQRendered = s.qIndex; myPick = null; }
     if (s.answers && me.id in s.answers) myPick = s.answers[me.id];
     $("qnum").textContent = `Question ${s.qIndex + 1} / ${QUESTIONS.length}`;
     $("qtext").textContent = q.q;
     const nAns = Object.keys(s.answers || {}).length;
     if (isHost) {
-      $("answers").innerHTML = revealed ? opts.map((o, i) => `<button class="${i === q.ans ? "good" : "bad"}" disabled>${esc(o)}</button>`).join("") : "";
+      $("answers").innerHTML = revealed ? opts.map((o, i) => `<button class="${i === s.qAns ? "good" : "bad"}" disabled>${esc(o)}</button>`).join("") : "";
       show("hostctl");
-      $("who").innerHTML = cs.map((p) => `<span class="${p.id in s.answers ? "ok" : ""}">${esc(p.name)}</span>`).join("");
+      $("who").innerHTML = cs.map((p) => `<span class="${p.id in s.answers ? "ok" : ""}">${esc(p.name)}${p.id in s.answers ? " ✓" : ""}</span>`).join("");
       $("btnHost").textContent = revealed ? (s.qIndex + 1 >= QUESTIONS.length ? "Voir le classement" : "Question suivante") : "Révéler les résultats";
-      $("status").textContent = revealed ? `Bonne réponse : ${opts[q.ans]}${q.info ? " — " + q.info : ""}` : `${nAns} / ${cs.length} ont répondu`;
-      setHelp(revealed ? "Touche la scène ou « Question suivante »" : "Tu animes : touche la scène ou « Révéler » quand tout le monde a répondu");
+      $("status").textContent = revealed ? `Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}` : `${nAns} / ${cs.length} ont répondu`;
+      setHelp(revealed ? "Touche « Question suivante »" : "Tu animes : « Révéler » quand tout le monde a répondu");
     } else {
       show("hostctl", false);
       setHTML("answers", opts.map((o, i) => {
         let cls = myPick === i ? "picked" : "";
-        if (revealed) cls += i === q.ans ? " good" : " bad";
+        if (revealed) cls += i === s.qAns ? " good" : " bad";
         return `<button data-i="${i}" class="${i === 0 ? "" : "sec"} ${cls}" ${myPick !== null || revealed ? "disabled" : ""}>${esc(o)}</button>`;
       }).join(""));
       const meP = s.players.find((p) => p.id === me.id);
       if (revealed) {
-        const ok = myPick === q.ans;
-        $("status").textContent = myPick === null ? `Pas de réponse… Bonne réponse : ${opts[q.ans]}` : ok ? `✅ Bravo ! +${POINTS} pts (total ${meP ? meP.score : 0})` : `❌ Raté ! Bonne réponse : ${opts[q.ans]}${q.info ? " — " + q.info : ""}`;
+        const ok = myPick === s.qAns;
+        $("status").textContent = myPick === null ? `Pas de réponse… Bonne réponse : ${opts[s.qAns]}` : ok ? `✅ Bravo ! +${POINTS} pts (total ${meP ? meP.score : 0})` : `❌ Raté ! Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}`;
         setHelp("Résultats révélés — attends la question suivante");
       } else {
         $("status").textContent = myPick !== null ? `Réponse envoyée · ${nAns} / ${cs.length} ont répondu` : `${nAns} / ${cs.length} ont répondu`;
@@ -684,7 +624,6 @@ function render() {
     }
   }
 
-  // ---- Fin ----
   if (s.phase === "end") {
     const ranked = [...cs].sort((a, b) => b.score - a.score), medals = ["🥇", "🥈", "🥉"];
     $("rank").innerHTML = ranked.map((p, i) =>
@@ -695,7 +634,6 @@ function render() {
   syncCharacters(); drawBoard();
 }
 
-/* ---------- Synchronisation des personnages 3D ---------- */
 function seatPositions(n) {
   const out = []; let ring = 0, placed = 0;
   while (placed < n) {
@@ -709,7 +647,6 @@ function syncCharacters() {
   const ids = new Set(state.players.map((p) => p.id));
   chars.forEach((c, id) => { if (!ids.has(id)) { scene.remove(c); chars.delete(id); } });
   const seats = seatPositions(state.players.length);
-  // chaises
   while (chairs.length < seats.length) { const ch = makeChair(); studio.add(ch); chairs.push(ch); }
   chairs.forEach((ch, i) => { ch.visible = i < seats.length && seats[i].ring === 0; if (seats[i]) { const sp = seats[i], d = Math.hypot(sp.x, sp.z), f = (d + 0.75) / d; ch.position.set(sp.x * f, 0, sp.z * f); ch.lookAt(0, 0, 0); } });
   state.players.forEach((p, i) => {
@@ -719,24 +656,28 @@ function syncCharacters() {
       c = makeCharacter(p.color, p.name, p.id === me.id); chars.set(p.id, c);
     }
     const u = c.userData;
-    if (mode === "lobby") { // spirale phyllotaxie
+    if (mode === "lobby") {
       const a = i * 2.39996, r = i === 0 ? 0 : 1.25 * Math.sqrt(i);
       u.target.set(Math.cos(a) * r, 0.15, Math.sin(a) * r); u.yaw = Math.atan2(camPos.x - u.target.x, camPos.z - u.target.z);
     } else {
       const sp = seats[i]; u.target.set(sp.x, 0, sp.z); u.yaw = Math.atan2(-sp.x, -sp.z);
     }
-    // Pendant la révélation : sautille si bonne réponse
-    u.happy = state.phase === "reveal" && state.answers[p.id] === QUESTIONS[state.qIndex].ans;
+    u.happy = state.phase === "reveal" && state.answers[p.id] === state.qAns;
     u.answered = state.phase === "question" && p.id in (state.answers || {});
   });
 }
 
-/* ---------- Tableau de score géant ---------- */
 function drawBoard() {
   const g = boardCanvas.getContext("2d"), W = 1024, H = 576, s = state;
   const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "#0C1A4B"); gr.addColorStop(1, "#0B35FE");
   g.fillStyle = gr; g.fillRect(0, 0, W, H);
-  g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = "#00E472"; g.font = "800 38px system-ui,sans-serif";
+  g.fillStyle = "#c99b3f"; g.lineWidth = 6;
+  g.beginPath(); g.roundRect(8, 8, 1008, 496, 18); g.stroke();
+  g.fillStyle = "#c99b3f";
+  g.beginPath(); g.roundRect(60, 22, 904, 66, 12); g.fill();
+  g.fillStyle = "#171204";
+  g.font = "bold 32px Arial"; g.textAlign = "center";
+  g.fillText('Question ' + (s.qIndex + 1) + ' / ' + QUESTIONS.length, W / 2, 66);
   if (!s || s.phase === "lobby") { g.fillText("CREATOR QUIZ 3D", W / 2, H / 2); boardTex.needsUpdate = true; return; }
   const cs = contestants();
   if (s.phase === "end") {
@@ -747,21 +688,21 @@ function drawBoard() {
     });
     boardTex.needsUpdate = true; return;
   }
-  const q = QUESTIONS[s.qIndex], opts = optsOf(q), counts = opts.map(() => 0);
+  const q = QUESTIONS[s.qIndex], opts = s.qOpts || optsOf(q), counts = opts.map(() => 0);
   Object.values(s.answers || {}).forEach((c) => counts[c]++);
   g.fillText(`QUESTION ${s.qIndex + 1} / ${QUESTIONS.length}`, W / 2, 50);
-  g.fillStyle = "#ffffff"; g.font = "700 40px system-ui";
+  g.fillStyle = "#ffffff"; g.font = "bold 34px Arial";
   wrapText(g, q.q, W / 2, 130, W - 100, 50);
   const revealed = s.phase === "reveal";
   opts.forEach((o, i) => {
     const x = W / 2 + (i - (opts.length - 1) / 2) * 380, y = 360;
-    g.fillStyle = revealed ? (i === q.ans ? "#00E472" : "rgba(255,255,255,.12)") : i === 0 ? "#FF4E20" : "#2E85FF";
+    g.fillStyle = revealed ? (i === s.qAns ? "#00E472" : "rgba(255,255,255,.12)") : i === 0 ? "#FF4E20" : "#2E85FF";
     g.beginPath(); g.rect(x - 160, y - 70, 320, 140); g.fill();
-    g.fillStyle = revealed && i === q.ans ? "#0C1A4B" : "#ffffff"; g.font = "800 46px system-ui"; g.fillText(o, x, y - 22);
+    g.fillStyle = revealed && i === s.qAns ? "#0C1A4B" : "#ffffff"; g.font = "800 46px system-ui"; g.fillText(o, x, y - 22);
     g.font = "800 54px system-ui"; g.fillText(revealed || isHost ? counts[i] : "?", x, y + 32);
   });
-  g.fillStyle = "#ffffff"; g.font = "600 32px system-ui";
-  g.fillText(revealed ? `Bonne réponse : ${opts[q.ans]}` : `${Object.keys(s.answers || {}).length} / ${cs.length} ont répondu`, W / 2, 510);
+  g.fillStyle = "#ffffff"; g.font = "bold 22px Arial";
+  g.fillText(revealed ? `Bonne réponse : ${opts[s.qAns]}` : `${Object.keys(s.answers || {}).length} / ${cs.length} ont répondu`, W / 2, 510);
   boardTex.needsUpdate = true;
 }
 function wrapText(g, text, x, y, maxW, lh) {
@@ -770,9 +711,6 @@ function wrapText(g, text, x, y, maxW, lh) {
   lines.push(line); lines.forEach((l, i) => g.fillText(l, x, y + i * lh));
 }
 
-/* =====================================================================
-   BOUCLE D'ANIMATION
-   ===================================================================== */
 const clock = new THREE.Clock();
 function resize() {
   const w = window.innerWidth, h = window.innerHeight;
@@ -789,15 +727,13 @@ function loop() {
     c.position.lerp(u.target, 1 - Math.exp(-4 * dt));
     c.scale.setScalar(THREE.MathUtils.lerp(c.scale.x, 1, 1 - Math.exp(-6 * dt)));
     c.rotation.y += (u.yaw - c.rotation.y) * (1 - Math.exp(-5 * dt));
-    // Rebond léger + balancement doux
     const bob = u.happy ? Math.abs(Math.sin(t * 7 + u.phase)) * 0.35 : Math.abs(Math.sin(t * 2 + u.phase)) * 0.05;
     u.fig.position.y = bob; u.fig.rotation.z = Math.sin(t * 1.4 + u.phase) * 0.04;
     u.fig.rotation.x = u.answered ? 0.08 : 0;
     u.label.position.y = FIG_H + 0.35 + bob;
-    // Bras qui bougent doucement
     if (u.fig.children) {
       u.fig.children.forEach((child, ci) => {
-        if (ci >= 4 && ci <= 9) { // bras et mains
+        if (ci >= 4 && ci <= 9) {
           child.rotation.y = Math.sin(t * 2 + u.phase + ci) * 0.15;
           child.rotation.z = Math.cos(t * 1.8 + u.phase) * 0.08;
         }
@@ -809,9 +745,7 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-/* =====================================================================
-   ÉVÉNEMENTS UI
-   ===================================================================== */
+/* ================= UI ================= */
 const pseudoIn = $("pseudo"), codeIn = $("codeIn");
 pseudoIn.value = localStorage.getItem("cq_name") || "";
 const params = new URLSearchParams(location.search);
@@ -842,12 +776,7 @@ $("answers").addEventListener("click", (e) => {
 });
 $("leave").onclick = () => { if (!isHost || confirm("Fermer la salle pour tout le monde ?")) leaveRoom(true); };
 $("btnHome").onclick = () => leaveRoom(true);
-// Tap sur la scène = action hôte (sans glisser)
-let downAt = null;
-canvas.addEventListener("pointerdown", (e) => (downAt = { x: e.clientX, y: e.clientY }));
-canvas.addEventListener("pointerup", (e) => { if (downAt && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) < 10) hostAdvance(); downAt = null; });
 
-/* ---------- Démarrage ---------- */
 setMode("lobby"); resize(); drawBoard(); loop();
 </script>
 </body>
