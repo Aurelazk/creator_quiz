@@ -448,6 +448,9 @@ function soundTick() { beep(600, "sine", 0.05); }
 function soundStart() { beep(400, "sine", 0.1); beep(500, "sine", 0.1); beep(600, "sine", 0.2); }
 function soundEnd() { beep(500, "sine", 0.2); beep(600, "sine", 0.2); beep(800, "sine", 0.4); }
 function vibrate(ms = 100) { if (navigator.vibrate) navigator.vibrate(ms); }
+function initAudio() {
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
 
 function connect(onReady) {
   if (client) { client.end(true); client = null; }
@@ -735,7 +738,9 @@ function syncCharacters() {
 }
 
 function drawBoard() {
-  const g = boardCanvas.getContext("2d"), W = 1024, H = 576, s = state;
+  const s = state;
+  if (!s) return;
+  const g = boardCanvas.getContext("2d"), W = 1024, H = 576;
   const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "#0C1A4B"); gr.addColorStop(1, "#0B35FE");
   g.fillStyle = gr; g.fillRect(0, 0, W, H);
   g.fillStyle = "#c99b3f"; g.lineWidth = 6;
@@ -840,8 +845,8 @@ $("btnCopy").onclick = async () => {
   const url = location.origin + location.pathname + "?room=" + room;
   try { await navigator.clipboard.writeText(room); toast("Code copié : " + room); } catch { toast("Code : " + room + "\n" + url, 4000); }
 };
-$("btnStart").onclick = () => hostStart();
-$("btnHost").onclick = () => hostAdvance();
+$("btnStart").onclick = () => { initAudio(); hostStart(); };
+$("btnHost").onclick = () => { initAudio(); hostAdvance(); };
 function kickPlayer(id) {
   if (!isHost) return;
   if (confirm("Exclure ce joueur ?")) {
