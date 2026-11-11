@@ -1,6 +1,6 @@
 /* =====================================================================
    BANQUE DE QUESTIONS  —  Quiz 3D CREATOR — Epitech Bénin
-   10 questions niveau débutant, culture informatique générale
+   30 questions de culture informatique générale (niveau débutant)
    ===================================================================== */
 
 function shuffle(a) {
@@ -13,16 +13,38 @@ function shuffle(a) {
 }
 
 const QUESTIONS = [
-  { q: "Quel est le rôle principal d'un compilateur ou d'un interpréteur en informatique ?", options: ["Traduire le code écrit par le développeur en langage machine (0 et 1) compréhensible par l'ordinateur", "Corriger automatiquement toutes les fautes d'orthographe du texte", "Sauvegarder le projet sur un serveur distant"], ans: 0, info: "Un compilateur ou interprète traduit le code source humain en instructions que la machine peut exécuter." },
-  { q: "Le langage Python est très populaire aujourd'hui. Dans quel domaine est-il particulièrement le leader incontesté ?", options: ["La création de jeux vidéo en 3D pour consoles", "L'intelligence artificielle, la science des données (Data Science) et les scripts d'automatisation", "La mise en page visuelle et le design des sites web"], ans: 1, info: "Python excelle en IA, data science et automatisation grâce à ses nombreuses bibliothèques." },
-  { q: "En programmation, qu'est-ce qu'une condition de type \"If / Else\" (Si / Sinon) ?", options: ["Une structure qui permet à l'ordinateur de faire un choix et d'exécuter un code plutôt qu'un autre selon une règle", "Une erreur qui bloque le fonctionnement du programme", "Une fonction qui sert à effacer la mémoire"], ans: 0, info: "Une condition if/else permet de choisir entre deux blocs de code selon qu'une condition est vraie ou fausse." },
-  { q: "Quelle est la différence majeure entre les langages HTML et JavaScript sur un site web ?", options: ["HTML gère la base de données, JavaScript gère la sécurité du serveur", "HTML crée la structure fixe de la page (textes, images), tandis que JavaScript gère la logique et les éléments dynamiques (calculs, animations)", "HTML est fait pour les ordinateurs, JavaScript est uniquement pour les smartphones"], ans: 1, info: "HTML structure la page, JavaScript la rend vivante et interactive." },
-  { q: "Dans la plupart des langages de programmation, à quoi sert une \"fonction\" ?", options: ["À donner un nom au site internet", "À regrouper un bloc d'instructions réutilisable plusieurs fois dans le programme pour éviter de le réécrire", "À changer la couleur de l'écran de développement"], ans: 1, info: "Une fonction permet de réutiliser un bloc de code plusieurs fois sans le réécrire." },
-  { q: "Qu'est-ce qu'un langage de programmation dit de \"Haut Niveau\" (comme Python ou JavaScript) ?", options: ["Un langage très proche de la logique humaine et facile à lire, qui nécessite une traduction pour la machine", "Un langage ultra-complexe réservé uniquement aux ingénieurs de la NASA", "Un langage qui ne fonctionne que sur les ordinateurs les plus puissants du marché"], ans: 0, info: "Un langage de haut niveau est proche de l'anglais et facile à lire pour les humains." },
-  { q: "Quel caractère ou symbole est presque universellement utilisé pour attribuer une valeur à une variable (par exemple : stocker le chiffre 5 dans la variable \"score\") ?", options: ["Le signe égal (=)", "Le point d'interrogation (?)", "Le symbole dièse (#)"], ans: 0, info: "Le signe égal = sert à assigner une valeur à une variable." },
-  { q: "Qu'appelle-t-on la \"syntaxe\" d'un langage de programmation ?", options: ["La vitesse d'exécution du code par le processeur", "L'ensemble des règles d'écriture et de grammaire strictes que le développeur doit respecter pour que le code soit compris", "Le choix des couleurs utilisées dans le logiciel de code"], ans: 1, info: "La syntaxe est l'ensemble des règles d'écriture du langage." },
-  { q: "À quoi sert le langage SQL (Structured Query Language) ?", options: ["À sécuriser les connexions Wi-Fi d'un site web", "À communiquer avec des bases de données pour rechercher, ajouter ou modifier des informations", "À programmer des applications mobiles sur iPhone et Android"], ans: 1, info: "SQL sert à interroger et gérer des bases de données relationnelles." },
-  { q: "Qu'est-ce qu'un \"tableau\" (ou une \"Array / List\") en programmation ?", options: ["Une structure de données qui permet de stocker plusieurs éléments ou valeurs ensemble dans une seule variable", "Un écran de contrôle qui affiche la météo du serveur", "Un outil pour dessiner des graphiques sur l'écran"], ans: 0, info: "Un tableau (array/list) regroupe plusieurs valeurs sous un seul nom de variable." }
+  // --- Informatique générale ---
+  { q: "Quel langage crée la structure d'une page web ?", options: ["HTML", "CSS", "JS", "PHP"], ans: 0, info: "HTML = HyperText Markup Language, le squelette de la page." },
+  { q: "Quel langage met en forme (couleurs, polices) une page ?", options: ["CSS", "HTML", "JS", "SQL"], ans: 0, info: "CSS = Cascading Style Sheets, pour le design et la mise en page." },
+  { q: "Quel langage rend une page web interactive ?", options: ["JavaScript", "HTML", "CSS", "Python"], ans: 0, info: "JavaScript gère les interactions clic, formulaire, animation." },
+  { q: "Quelle balise crée un titre principal ?", options: ["<h1>", "<title>", "<p>", "<div>"], ans: 0, info: "La balise <h1> est le titre le plus important de la page." },
+  { q: "Quelle balise crée un lien cliquable ?", options: ["<a>", "<link>", "<url>", "<href>"], ans: 0, info: "La balise <a> (anchor) crée un hyperlien avec l'attribut href." },
+  { q: "Quelle balise affiche une image ?", options: ["<img>", "<image>", "<pic>", "<photo>"], ans: 0, info: "La balise  tags affiche une image avec l'attribut src." },
+  { q: "Quelle extension a un fichier HTML ?", options: [".html", ".htm", ".htmlx", ".page"], ans: 0, info: "L'extension standard est .html (ou .htm autrefois)." },
+  { q: "Que signifie le \"H\" de HTML ?", options: ["HyperText", "Home", "Hyperlink", "High"], ans: 0, info: "HTML = HyperText Markup Language." },
+  { q: "Quel langage s'exécute dans le navigateur ?", options: ["JavaScript", "Python", "Java", "C++"], ans: 0, info: "JavaScript tourne directement dans le navigateur web." },
+  { q: "Quelle balise crée un paragraphe ?", options: ["<p>", "<para>", "<text>", "<div>"], ans: 0, info: "La balise <p> définit un paragraphe de texte." },
+  { q: "Quelle application est une app mobile ?", options: ["Une app installée sur téléphone", "Un site web", "Un logiciel PC", "Un fichier PDF"], ans: 0, info: "Une app mobile s'installe sur un smartphone ou tablette." },
+  { q: "Que signifie le sigle API ?", options: ["Application Programming Interface", "Advanced Programming Input", "Auto Program Interface", "App Public Internet"], ans: 0, info: "Une API permet à deux logiciels de communiquer." },
+  { q: "Quel outil enregistre l'historique du code ?", options: ["Git", "HTML", "CSS", "JSON"], ans: 0, info: "Git est un gestionnaire de versions pour le code source." },
+  { q: "Qu'est-ce qu'une application web ?", options: ["Un site accessible via navigateur", "Un logiciel à installer", "Un fichier image", "Un base de données"], ans: 0, info: "Une app web s'utilise directement dans le navigateur, sans installation." },
+  { q: "Quel langage crée des apps Android natives ?", options: ["Kotlin", "Swift", "HTML", "SQL"], ans: 0, info: "Kotlin (et Java) est le langage officiel pour le développement Android." },
+  { q: "Quel langage crée des apps iPhone natives ?", options: ["Swift", "Kotlin", "HTML", "Java"], ans: 0, info: "Swift est le langage officiel d'Apple pour iOS." },
+  { q: "Qu'est-ce qu'un compilateur ?", options: ["Traduit le code en langage machine", "Stocke des données", "Affiche des pages web", "Sécurise le réseau"], ans: 0, info: "Un compilateur traduit le code source en langage machine." },
+  { q: "Qu'est-ce qu'un interpréteur ?", options: ["Exécute le code ligne par ligne", "Stocke des fichiers", "Compile des images", "Gère le réseau"], ans: 0, info: "Un interpréteur exécute le code source directement, ligne par ligne." },
+  { q: "Quelle structure permet de faire un choix (oui/non) ?", options: ["If / Else", "Boucle for", "Fonction", "Variable"], ans: 0, info: "Une condition if/else permet de choisir entre deux blocs de code." },
+  { q: "Qu'est-ce qu'une fonction ?", options: ["Un bloc d'instructions réutilisable", "Un fichier texte", "Une image", "Un serveur"], ans: 0, info: "Une fonction regroupe un bloc de code réutilisable plusieurs fois." },
+  { q: "Qu'est-ce qu'une variable ?", options: ["Un conteneur qui stocke une valeur", "Un langage", "Un serveur", "Une image"], ans: 0, info: "Une variable stocke une valeur qui peut changer pendant l'exécution." },
+  { q: "À quoi sert une boucle ?", options: ["Répéter des instructions plusieurs fois", "Effacer la mémoire", "Créer des fichiers", "Styliser une page"], ans: 0, info: "Une boucle exécute plusieurs fois le même bloc de code." },
+  { q: "À quoi sert SQL ?", options: ["Gérer des bases de données", "Créer des sites web", "Styliser des pages", "Créer des apps mobiles"], ans: 0, info: "SQL sert à interroger et gérer des bases de données relationnelles." },
+  { q: "Qu'est-ce qu'un tableau (array) ?", options: ["Une structure qui stocke plusieurs valeurs", "Un écran de contrôle", "Un outil de dessin", "Un serveur"], ans: 0, info: "Un tableau regroupe plusieurs valeurs sous un seul nom de variable." },
+  { q: "Qu'est-ce qu'un objet en programmation ?", options: ["Une structure qui regroupe données et fonctions", "Un fichier image", "Un serveur web", "Un langage"], ans: 0, info: "Un objet regroupe des données (propriétés) et des actions (méthodes)." },
+  { q: "Qu'est-ce qu'une API REST ?", options: ["Une interface pour échanger des données entre logiciels", "Un langage de programmation", "Un système de fichiers", "Un navigateur"], ans: 0, info: "Une API REST permet à deux logiciels de communiquer via HTTP." },
+  { q: "Quel est le rôle d'un serveur web ?", options: ["Héberger et servir des pages web", "Créer des images", "Écrire du code", "Styliser des pages"], ans: 0, info: "Un serveur web stocke et envoie des pages aux navigateurs qui les demandent." },
+  { q: "Qu'est-ce que le cloud ?", options: ["Des serveurs distants qui stockent des données", "Un nuage informatique", "Un logiciel de bureau", "Un navigateur"], ans: 0, info: "Le cloud désigne des serveurs distants qui stockent et traitent des données." },
+  { q: "Quelle est la différence entre HTTP et HTTPS ?", options: ["HTTPS est sécurisé (chiffré)", "HTTPS est plus lent", "HTTP est plus sécurisé", "Aucune différence"], ans: 0, info: "HTTPS = HTTP Secure, il chiffre les données échangées." },
+  { q: "Qu'est-ce qu'un bug en informatique ?", options: ["Une erreur dans le code", "Un matériel cassé", "Un virus", "Un écran noir"], ans: 0, info: "Un bug est une erreur ou une faute dans le code source." },
+  { q: "Quel est le rôle d'un navigateur web ?", options: ["Afficher des pages web", "Créer des sites web", "Stocker des fichiers", "Programmer des apps"], ans: 0, info: "Un navigateur lit et affiche les pages web (HTML, CSS, JS)." }
 ];
 
 const optsOf = (q) => q.options || OPTIONS;
