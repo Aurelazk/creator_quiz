@@ -117,7 +117,7 @@
 </div>
 <div id="home" class="panel">
   <h1>QUIZ <b>3D</b> CREATOR</h1>
-  <p class="sub">Web &amp; mobile pour débutants · Epitech Bénin</p>
+  <p class="sub">Quiz multijoueur en temps réel · Epitech Bénin</p>
   <input id="pseudo" maxlength="16" placeholder="Ton pseudo" autocomplete="off" />
   <button id="btnCreate">Créer une salle</button>
   <div class="sep">— ou —</div>
@@ -644,7 +644,10 @@ window.addEventListener("pagehide", () => cleanupNetwork());
 let lastQRendered = -1, myPick = null;
 function setHTML(id, html) { const el = $(id); if (el._h !== html) { el._h = html; el.innerHTML = html; } }
 function setHelp(t) { const h = $("help"); h.textContent = t; show("help", !!t); }
-function enterRoom() { show("home", false); show("topbar"); $("roomchip").textContent = room; render(); }
+function enterRoom() {
+  show("home", false); show("topbar"); $("roomchip").textContent = room; render();
+  if (isHost) updateQRCode();
+}
 const contestants = () => state.players.filter((p) => !p.host);
 
 function render() {
@@ -666,6 +669,7 @@ function render() {
     $("btnStart").disabled = cs.length < 1;
     $("btnStart").textContent = cs.length < 1 ? "En attente de joueurs…" : `Lancer la partie (${cs.length} joueur${cs.length > 1 ? "s" : ""})`;
     setHelp(isHost ? "Fais scanner l'URL ou donne le code, puis lance la partie" : "Tu es dans la salle ! L'hôte va bientôt lancer la partie");
+    if (isHost) updateQRCode();
   }
 
   if (s.phase === "question" || s.phase === "reveal") {
