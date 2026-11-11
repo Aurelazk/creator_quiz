@@ -482,18 +482,6 @@ function publishState() {
 
 /* ---------- HÔTE ---------- */
 function createRoom() {
-  const saved = loadHostState();
-  if (saved) {
-    state = saved;
-    room = saved.code;
-    isHost = true;
-    history.replaceState(null, "", "?room=" + room);
-    connect(() => { publishState(); enterRoom(); });
-    hbTimer = setInterval(publishState, 3000);
-    canvas.classList.add("host-3d");
-    toast("Salle restaurée : " + room, 2000);
-    return;
-  }
   room = makeCode(); isHost = true;
   state = { v: 1, code: room, hostId: me.id, phase: "lobby", qIndex: 0, answers: {}, players: [{ id: me.id, name: me.name, color: PALETTE[0], score: 0, host: true }] };
   history.replaceState(null, "", "?room=" + room);
@@ -637,6 +625,7 @@ function leaveRoom(notify = true) {
   ["lobby", "game", "end", "help", "topbar"].forEach((id) => show(id, false)); show("home");
   setMode("lobby");
   canvas.classList.remove("host-3d");
+  clearHostState();
 }
 window.addEventListener("pagehide", () => cleanupNetwork());
 
@@ -887,6 +876,21 @@ $("leave").onclick = () => {
   }
 };
 $("btnHome").onclick = () => leaveRoom(true);
+
+// Restauration automatique : si on arrive sans code de salle mais qu'une salle est sauvegardée
+if (!params.get("room")) {
+  const saved = loadHostState();
+  if (saved) {
+    state = saved;
+    room = saved.code;
+    isHost = true;
+    history.replaceState(null, "", "?room=" + room);
+    connect(() => { publishState(); enterRoom(); });
+    hbTimer = setInterval(publishState, 3000);
+    canvas.classList.add("host-3d");
+    toast("Salle restaurée : " + room, 2000);
+  }
+}
 
 setMode("lobby"); resize(); drawBoard(); loop();
 </script>
