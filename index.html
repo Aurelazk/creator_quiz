@@ -455,6 +455,27 @@ localStorage.setItem("cq_id", me.id);
 let client = null, room = null, isHost = false, state = null;
 let lastStateAt = 0, joinTimer = null, hbTimer = null, watchTimer = null, joinedAt = 0, hostLostShown = false;
 
+/* ================= SONS (Web Audio API) ================= */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function beep(freq, type = "sine", duration = 0.1) {
+  try {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioContext.currentTime + duration);
+  } catch {}
+}
+function soundGood() { beep(800, "sine", 0.15); beep(1000, "sine", 0.15); }
+function soundBad() { beep(200, "sawtooth", 0.3); }
+function soundTick() { beep(600, "sine", 0.05); }
+function soundStart() { beep(400, "sine", 0.1); beep(500, "sine", 0.1); beep(600, "sine", 0.2); }
+function soundEnd() { beep(500, "sine", 0.2); beep(600, "sine", 0.2); beep(800, "sine", 0.4); }
+function vibrate(ms = 100) { if (navigator.vibrate) navigator.vibrate(ms); }
+
 function connect(onReady) {
   if (client) { client.end(true); client = null; }
   client = mqtt.connect(BROKER, { clientId: "cq_" + me.id + "_" + Math.random().toString(16).slice(2, 6), clean: true, reconnectPeriod: 2000, connectTimeout: 8000, keepalive: 20 });
@@ -530,6 +551,7 @@ function hostStart() {
   state.qOpts = o;
   state.qAns = o.indexOf(q.options[q.ans]);
   publishState();
+  soundStart();
 }
 function hostReveal() {
   const q = QUESTIONS[state.qOrder[state.qIndex]];
@@ -540,7 +562,6 @@ function hostReveal() {
   state.players.forEach((p) => {
     if (state.answers[p.id] === state.qAns) {
       p.score += base + speedBonus;
-      // Bonus de série : 3 bonnes réponses d'affilée
       const recent = Object.values(state.answers || {}).filter((ans, id) => {
         const pp = state.players.find((pl) => pl.id === id);
         return pp && pp.id !== p.id && ans === state.qAns;
@@ -550,9 +571,11 @@ function hostReveal() {
   });
   state.phase = "reveal";
   publishState();
+  const correctCount = Object.values(state.answers || {}).filter((ans) => ans === state.qAns).length;
+  if (correctCount > 0) { soundGood(); vibrate(100); } else { soundBad(); vibrate(50); }
 }
 function hostNext() {
-  if (state.qIndex + 1 >= QUESTIONS.length) state.phase = "end";
+  if (state.qIndex + 1 >= QUESTIONS.length) { state.phase = "end"; soundEnd(); vibrate(200); }
   else { 
     state.qIndex++; 
     state.phase = "question"; 
@@ -855,6 +878,7 @@ function kickPlayer(id) {
 $("answers").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-i]"); if (!b || isHost || !state || state.phase !== "question" || myPick !== null) return;
   myPick = +b.dataset.i; sendEvent({ type: "answer", q: state.qIndex, choice: myPick }); render();
+  soundTick(); vibrate(50);
 });
 $("leave").onclick = () => { if (!isHost || confirm("Fermer la salle pour tout le monde ?")) leaveRoom(true); };
 $("btnHome").onclick = () => leaveRoom(true);
