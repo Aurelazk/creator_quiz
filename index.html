@@ -129,6 +129,10 @@
 <div id="lobby" class="panel hidden">
   <h2 id="lobbyTitle">Salle</h2>
   <div class="codebox"><div class="c" id="lobbyCode">-----</div><button id="btnCopy" class="sec">Copier le code</button></div>
+  <div id="qrCode" class="hidden" style="margin-top:12px;text-align:center;">
+    <img id="qrImg" src="" alt="QR Code salle" style="width:180px;height:180px;background:#fff;border-radius:8px;padding:6px;display:block;margin:0 auto;">
+    <div class="sub" style="margin-top:8px;font-size:13px;">Scannez pour rejoindre</div>
+  </div>
   <ul class="pl" id="lobbyList"></ul>
   <button id="btnStart" class="hidden">Lancer la partie</button>
   <div id="lobbyWait" class="sub" style="text-align:center;margin:0">En attente du lancement par l'hôte…</div>
@@ -496,6 +500,15 @@ function createRoom() {
   connect(() => { publishState(); enterRoom(); });
   hbTimer = setInterval(publishState, 3000);
   canvas.classList.add("host-3d");
+  updateQRCode();
+}
+function updateQRCode() {
+  const roomUrl = location.origin + location.pathname + "?room=" + room;
+  const qrImg = $("qrImg");
+  const qrPanel = $("qrCode");
+  if (!qrImg || !qrPanel) return;
+  qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(roomUrl);
+  qrPanel.classList.remove("hidden");
 }
 function hostOnEvent(ev) {
   const p = state.players.find((x) => x.id === ev.from);
