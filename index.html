@@ -156,6 +156,10 @@
     <button id="btnJoin" class="sec" style="flex:.8">Rejoindre</button>
   </div>
 </div>
+<div id="introBubble" class="panel" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:6;background:var(--glass);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px 20px;backdrop-filter:blur(14px);display:none;">
+  <button id="btnIntroBubble" class="sec" style="width:100%;font-size:16px;">Afficher l'intro bubble</button>
+</div>
+
 <div id="lobby" class="panel hidden">
   <h2 id="lobbyTitle">Salle</h2>
   <div class="codebox"><div class="c" id="lobbyCode">-----</div><button id="btnCopy" class="sec">Copier le code</button></div>
@@ -186,6 +190,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <script src="questions.js"></script>
+<script src="intro_bubble/js/main.js"></script>
 <script>
 "use strict";
 /* ================= CONFIGURATION & CHARTE ================= */
@@ -898,6 +903,18 @@ $("btnCopy").onclick = async () => {
 };
 $("btnStart").onclick = () => { initAudio(); hostStart(); };
 $("btnHost").onclick = () => { initAudio(); hostAdvance(); };
+// Intro bubble
+$("btnIntroBubble").onclick = () => {
+  // Remove existing intro bubble if any
+  var existing = document.getElementById("introBubble");
+  if (existing) existing.remove();
+  // Create new intro bubble
+  var root = document.getElementById("introBubble");
+  root.style.display = "block";
+  if (window.playCreatorIntroBubble) {
+    window.playCreatorIntroBubble(root, () => { root.style.display = "none"; });
+  }
+};
 function kickPlayer(id) {
   if (!isHost || !state) return;
   if (confirm("Exclure ce joueur ?")) {
