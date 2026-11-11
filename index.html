@@ -1079,9 +1079,10 @@ window.playCreatorIntro = playIntro;
 })();
 (function(){
   var root=document.getElementById("intro");
-  if(sessionStorage.getItem("cq_intro")||!window.THREE){root.remove();return;}
-  sessionStorage.setItem("cq_intro","1");
-  var go=function(){window.playCreatorIntro(root,function(){});};
+  if(!window.THREE||/[?&]nointro/.test(location.search)){root.remove();return;}
+  var kill=function(){root.classList.add("fade");setTimeout(function(){root.remove();},600);};
+  var go=function(){try{window.playCreatorIntro(root,function(){});}catch(e){console.warn("intro",e);kill();}};
+  setTimeout(function(){if(root.isConnected)kill();},16000); /* sécurité : l'intro ne bloque jamais le jeu */
   (document.fonts&&document.fonts.load?document.fonts.load("800 100px Poppins"):Promise.resolve()).catch(function(){}).then(go);
 })();
 </script>
