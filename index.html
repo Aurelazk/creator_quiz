@@ -1054,7 +1054,7 @@ function playIntro(root, onDone) {
   const lamp = new T.PointLight(0xbcd0ff, 1.6, 9, 1.6); lamp.position.set(0, 2.3, 1); hero.group.add(lamp); // la "lampe" du perso
 
   const HOP = .55, DIST = 1.73, X0 = -9, JUMP_T = 6 * HOP, LAND_T = JUMP_T + .7, XJ = X0 + 6 * DIST, TOP = 1.62;
-  let t = 0, last = performance.now(), done = false, raf = 0, loopCount = 0;
+  let t = 0, last = performance.now(), done = false, raf = 0;
 
   const frame = (now) => {
     const dt = Math.min(.05, (now - last) / 1000); last = now; t += dt; let s = t - LAND_T;
@@ -1076,7 +1076,7 @@ function playIntro(root, onDone) {
     scene.background.copy(dark).lerp(light, L);
     bar.scale.x = Math.max(.001, ease(clamp((s - .8) / .9)));
     renderer.render(scene, camera);
-    if (s > 2.7) { t = 0; last = performance.now(); done = false; loopCount++; if (loopCount >= 3) return finish(); }
+    if (s > 2.7) { t = 0; last = performance.now(); done = false; }
     raf = requestAnimationFrame(frame);
   };
   function finish() {
