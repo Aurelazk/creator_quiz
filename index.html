@@ -342,7 +342,7 @@ const CROWD_GEO = buildFigureGeometry(0.4); // version allégée pour la foule
 const FIG_H = 2.8;
 
 // Spectateurs : exactement la même silhouette, en plus petit, couleurs sobres (1 seul draw call)
-const CROWD_COLORS = ["#3b4a7a", "#5b6b99", "#2E85FF", "#8a93b5", "#46557f", "#FF7A00", "#c9cfe3"];
+const CROWD_COLORS = ["#0B35FE", "#00E472", "#FF4E20", "#FF7A00", "#2E85FF", "#0C1A4B", "#ffcf5a"];
 const N = crowdSpots.length, CROWD_S = 0.62;
 const crowdMesh = new THREE.InstancedMesh(CROWD_GEO, new THREE.MeshPhysicalMaterial({ roughness: 0.55, clearcoat: 0.2 }), N);
 crowdMesh.castShadow = true; common.add(crowdMesh);
