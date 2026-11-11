@@ -289,6 +289,31 @@ for (let row = 0; row < 4; row++) {
   ring.geometry = new THREE.RingGeometry(r - 0.7, r + 0.7, 48, 1, Math.PI * 0.12, Math.PI * 0.76);
   step.position.y = y; step.visible = false;
   common.add(ring);
+  // Bancs le long des gradins
+  const benchMat = new THREE.MeshStandardMaterial({ color: 0x2a3d5c, roughness: 0.7 });
+  const nBench = 6 + row * 2;
+  for (let i = 0; i < nBench; i++) {
+    const a = Math.PI * 0.2 + (Math.PI * 0.7) * (i / nBench);
+    const bx = Math.cos(a) * r;
+    const bz = -Math.sin(a) * r;
+    const bench = new THREE.Group();
+    // Assise
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.12, 0.5), benchMat);
+    seat.position.y = y + 0.42; seat.receiveShadow = true;
+    // Dossier
+    const back = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 0.12), benchMat);
+    back.position.set(0, y + 0.85, -0.18); back.receiveShadow = true;
+    // Jambes
+    const legL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.42, 0.12), benchMat);
+    legL.position.set(-0.55, y + 0.21, 0.25); legL.receiveShadow = true;
+    const legR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.42, 0.12), benchMat);
+    legR.position.set(0.55, y + 0.21, 0.25); legR.receiveShadow = true;
+    bench.add(seat, back, legL, legR);
+    bench.position.set(bx, y + 0.7, bz);
+    bench.lookAt(0, y + 0.7, 0);
+    bench.rotateY(Math.PI); // faire face vers l'intérieur de l'arène
+    common.add(bench);
+  }
   const n = 18 + row * 3;
   for (let i = 0; i < n; i++) {
     const a = Math.PI * 0.14 + (Math.PI * 0.72) * (i + 0.5) / n;
