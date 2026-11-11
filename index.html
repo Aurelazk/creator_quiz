@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Quiz 3D CREATOR</title>
+<meta name="theme-color" content="#0C1A4B">
 <style>
 :root{
   --creator-blue:#0B35FE; --creator-navy:#0C1A4B; --creator-green:#00E472; --creator-coral:#FF4E20; --creator-fox:#FF7A00; --creator-light-blue:#2E85FF; --creator-white:#FFFFFF; --bg-dark:#080a18; --panel-bg:rgba(12,26,75,0.96); --btn-primary:var(--creator-coral); --btn-hover:#E63C10; --text-highlight:var(--creator-green); --text-gold:var(--creator-fox);
@@ -37,7 +38,7 @@ canvas{display:block;position:fixed;inset:0;z-index:0}
 #quizPanel h2{margin:0 0 10px;color:var(--text-gold);font-size:20px}
 #quizPanel #qText{font-size:17px;margin:0 0 16px;line-height:1.4;color:#fff}
 #quizPanel .answers{display:flex;flex-direction:row;justify-content:center;gap:10px;margin-top:10px}
-#quizPanel .answers button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35);padding:12px 16px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-align:center;width:120px}
+#quizPanel .answers button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35);padding:10px 14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-align:center;width:130px;line-height:1.2}
 #quizPanel .answers button:hover:not(:disabled){border-color:var(--text-gold);background:rgba(255,122,0,.15)}
 #quizPanel .answers button.selected{background:var(--text-gold);color:#111;border-color:var(--text-gold)}
 #quizPanel .answers button:disabled{cursor:default;opacity:0.6}
@@ -133,12 +134,14 @@ canvas{display:block;position:fixed;inset:0;z-index:0}
 <script src="questions.js"></script>
 <script>
 "use strict";
+/* ================= CONFIGURATION ================= */
 const BROKER = "wss://broker.emqx.io:8084/mqtt";
 const TOPIC = (code, t) => `creatorquiz3d/${code}/${t}`;
 const PALETTE = ["#0B35FE", "#FF4E20", "#00E472", "#FF7A00", "#2E85FF", "#0C1A4B", "#F4F6FC"];
 const OPTIONS = ["Oui", "Non"];
 const POINTS = 10;
 const MAX_PLAYERS = 20;
+const QUESTIONS_PER_GAME = 10;
 function shuffle(a) { const r = [...a]; for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; }
 const QUESTIONS = [
   { q: "Quel langage crée la structure d'une page web ?", options: ["HTML", "CSS", "JS", "PHP"], ans: 0, info: "HTML = HyperText Markup Language, c'est le squelette de la page." },
@@ -174,7 +177,6 @@ const QUESTIONS = [
   { q: "Qu'est-ce que Git ?", options: ["Un système de gestion de versions pour le code source", "Un langage de programmation", "Un système de fichiers", "Un navigateur web"], ans: 0, info: "Git est un système de gestion de versions qui permet de suivre les modifications apportées au code source." },
   { q: "Qu'est-ce que GitHub ?", options: ["Une plateforme d'hébergement de dépôts Git", "Un langage de programmation", "Un système de fichiers", "Un navigateur web"], ans: 0, info: "GitHub est une plateforme d'hébergement de dépôts Git qui permet de partager et collaborer sur du code source." }
 ];
-const optsOf = (q) => q.options || OPTIONS;
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const sanitizeName = (s) => String(s || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 16);
@@ -194,7 +196,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
 const camPos = new THREE.Vector3(0, 7, 14), camLook = new THREE.Vector3(0, 1, 0);
 const camTarget = { pos: camPos.clone(), look: camLook.clone() };
-const hemi = new THREE.HemisphereLight(0xdfeaff, 0.3a3f60, 0.6); scene.add(hemi);
+const hemi = new THREE.HemisphereLight(0xdfeaff, 0.55); scene.add(hemi);
 const key = new THREE.SpotLight(0xffefe0, 1.7, 50, 0.6, 0.55, 1); key.position.set(0, 13, 3); key.target.position.set(0, 1.2, -1); key.castShadow = true; key.shadow.mapSize.width = 2048; key.shadow.mapSize.height = 2048; key.shadow.bias = 0.0002; scene.add(key); scene.add(key.target);
 const fill = new THREE.DirectionalLight(0x6a7ff0, 0.3); fill.position.set(-9, 7, 9); scene.add(fill);
 const rim = new THREE.SpotLight(0xff6b9d, 0.95, 45, 0.8, 0.9, 1); rim.position.set(0, 11, -14); rim.target.position.set(0, 3, 0); scene.add(rim); scene.add(rim.target);
@@ -245,6 +247,263 @@ let mode = "lobby";
 let myAnswer = null;
 let answered = false;
 const syncCharacters = () => {
+  const ids = new Set(state.players.map(p => p.id));
+  chars.forEach((c, id) => { if (!ids.has(id)) { scene.remove(c); chars.delete(id); } });
+  const seats = seatPositions(state.players.length);
+  while (chairs.length < seats.length) { const ch = makeChair(); studio.add(ch); chairs.push(ch); }
+  chairs.forEach((ch, i) => { ch.visible = i < seats.length && seats[i].ring === 0; if (seats[i]) { const sp = seats[i], d = Math.hypot(sp.x, sp.z), f = (d + 0.75) / d; ch.position.set(sp.x * f, 0, sp.z * f); ch.lookAt(0, 0, 0); } });
+  state.players.forEach((p, i) => {
+    let c = chars.get(p.id);
+    if (!c || c.userData.color !== p.color || c.userData.name !== p.name) {
+      if (c) scene.remove(c);
+      c = makeChar(p.color, p.name, p.id === playerId); chars.set(p.id, c);
+    }
+    const u = c.userData;
+    if (mode === "lobby") {
+      const a = i * 2.39996, r = i === 0 ? 0 : 1.25 * Math.sqrt(i);
+      u.target.set(Math.cos(a) * r, 0.15, Math.sin(a) * r); u.yaw = Math.atan2(camPos.x - u.target.x, camPos.z - u.target.z);
+    } else {
+      const sp = seats[i]; u.target.set(sp.x, 0, sp.z); u.yaw = Math.atan2(-sp.x, -sp.z);
+    }
+    u.happy = state.phase === "reveal" && state.answers[p.id] === state.qAns;
+    u.answered = state.phase === "question" && p.id in (state.answers || {});
+  });
+};
+/* ================= RÉSEAU ================= */
+let client = null, roomId = null, isHost = false, state = null;
+let lastStateAt = 0, joinTimer = null, hbTimer = null, watchTimer = null, joinedAt = 0, hostLostShown = false;
+function connect(onReady) {
+  if (client) { client.end(true); client = null; }
+  client = mqtt.connect(BROKER, { clientId: "cq_" + Math.random().toString(16).slice(2, 6), clean: true, reconnectPeriod: 2000, connectTimeout: 8000, keepalive: 20 });
+  let first = true;
+  client.on("connect", () => {
+    client.subscribe([TOPIC(roomId, "state"), TOPIC(roomId, "events")], { qos: 1 }, () => { if (first) { first = false; onReady(); } else if (isHost) publishState(); });
+  });
+  client.on("message", (topic, buf) => {
+    const txt = buf.toString(); let msg = null;
+    if (txt) { try { msg = JSON.parse(txt); } catch { return; } }
+    if (topic.endsWith("/state")) onState(msg); else if (msg) onEvent(msg);
+  });
+}
+const sendEvent = (ev) => client && client.connected && client.publish(TOPIC(roomId, "events"), JSON.stringify({ ...ev, from: playerId }), { qos: 1 });
+function publishState() {
+  if (!isHost || !client || !state) return;
+  state.ts = Date.now();
+  client.publish(TOPIC(roomId, "state"), JSON.stringify(state), { qos: 1, retain: true });
+}
+function createRoom() {
+  roomId = makeCode(); isHost = true;
+  state = { v: 1, code: roomId, hostId: playerId, phase: "lobby", qIndex: 0, answers: {}, players: [{ id: playerId, name: playerName, color: PALETTE[0], score: 0, host: true }], questionStartTime: Date.now() };
+  history.replaceState(null, "", "?room=" + roomId);
+  connect(() => { publishState(); enterRoom(); });
+  hbTimer = setInterval(publishState, 3000);
+  canvas.classList.add("host-3d");
+  updateQRCode();
+}
+function hostOnEvent(ev) {
+  const p = state.players.find((x) => x.id === ev.from);
+  if (ev.type === "join") {
+    const name = sanitizeName(ev.name) || "Joueur";
+    if (!p) {
+      if (state.players.length >= MAX_PLAYERS) { toast("Salle pleine (" + MAX_PLAYERS + " max)", 1500); return; }
+      state.players.push({ id: ev.from, name, color: PALETTE[state.players.length % PALETTE.length], score: 0 }); toast(name + " a rejoint la salle", 1500);
+    } else p.name = name;
+    publishState();
+  } else if (ev.type === "leave" && p && !p.host) {
+    state.players = state.players.filter((x) => x.id !== ev.from); delete state.answers[ev.from]; publishState();
+  } else if (ev.type === "kick" && p && !p.host && ev.from === state.hostId && ev.target) {
+    state.players = state.players.filter((x) => x.id !== ev.target); delete state.answers[ev.target]; publishState();
+  } else if (ev.type === "answer" && p && !p.host && state.phase === "question" && ev.q === state.qIndex) {
+    const n = optsOf(QUESTIONS[state.qOrder[state.qIndex]]).length;
+    if (Number.isInteger(ev.choice) && ev.choice >= 0 && ev.choice < n && !(ev.from in state.answers)) { state.answers[ev.from] = ev.choice; publishState(); }
+  }
+}
+function hostStart() {
+  state.phase = "question";
+  state.qIndex = 0;
+  state.answers = {};
+  state.players.forEach((p) => (p.score = 0));
+  state.qOrder = shuffle(QUESTIONS.map((_, i) => i));
+  const q = QUESTIONS[state.qOrder[state.qIndex]];
+  const o = shuffle(q.options || OPTIONS);
+  state.qOpts = o;
+  state.qAns = o.indexOf(q.options[q.ans]);
+  state.questionStartTime = Date.now();
+  publishState();
+  soundStart();
+}
+function hostReveal() {
+  const q = QUESTIONS[state.qOrder[state.qIndex]];
+  const now = Date.now();
+  const elapsed = Math.max(0, now - (state.questionStartTime || now));
+  const base = 100;
+  const speedBonus = Math.max(0, Math.floor(50 * (1 - elapsed / 20000)));
+  state.players.forEach((p) => {
+    if (state.answers[p.id] === state.qAns) {
+      p.score += base + speedBonus;
+      const consecutive = state.players.filter((pl) => p.id !== pl.id && state.answers[pl.id] === state.qAns).length;
+      if (consecutive >= 2) p.score += 20;
+    }
+  });
+  state.phase = "reveal";
+  publishState();
+  const correctCount = Object.values(state.answers || {}).filter((ans) => ans === state.qAns).length;
+  if (correctCount > 0) { soundGood(); vibrate(100); } else { soundBad(); vibrate(50); }
+}
+function hostNext() {
+  if (state.qIndex + 1 >= QUESTIONS.length) { state.phase = "end"; soundEnd(); vibrate(200); }
+  else {
+    state.qIndex++;
+    state.phase = "question";
+    state.answers = {};
+    state.questionStartTime = Date.now();
+    const q = QUESTIONS[state.qOrder[state.qIndex]];
+    const o = shuffle(q.options || OPTIONS);
+    state.qOpts = o;
+    state.qAns = o.indexOf(q.options[q.ans]);
+  }
+  publishState();
+}
+function hostAdvance() {
+  if (!isHost || !state) return;
+  if (state.phase === "question") hostReveal();
+  else if (state.phase === "reveal") hostNext();
+}
+function joinRoom(code) {
+  roomId = code; isHost = false; state = null; joinedAt = Date.now(); lastStateAt = 0; hostLostShown = false;
+  history.replaceState(null, "", "?room=" + roomId);
+  setHelp("Recherche de la salle " + roomId + "…");
+  connect(() => {
+    const sendJoin = () => {
+      if (state && state.players.some((p) => p.id === playerId)) { clearInterval(joinTimer); joinTimer = null; return; }
+      sendEvent({ type: "join", name: playerName });
+    };
+    sendJoin(); joinTimer = setInterval(sendJoin, 2500);
+  });
+  watchTimer = setInterval(() => {
+    const ref = lastStateAt || joinedAt, idle = Date.now() - ref;
+    if (!lastStateAt && idle > 15000) { toast("Salle introuvable : vérifie le code."); leaveRoom(false); return; }
+    if (idle > 60000) { toast("La salle a expiré."); leaveRoom(false); return; }
+    if (lastStateAt && idle > 12000) { if (!hostLostShown) { hostLostShown = true; setHelp("⚠️ Hôte déconnecté… en attente de son retour"); } }
+  }, 1000);
+}
+function onState(s) {
+  if (isHost) return;
+  if (!s) { if (state) { toast("L'hôte a fermé la salle."); leaveRoom(false); } return; }
+  if (s.code !== roomId) return;
+  const fresh = !state;
+  state = s; lastStateAt = Date.now(); hostLostShown = false;
+  if (fresh && Date.now() - s.ts > 60000) { toast("La salle a expiré."); leaveRoom(false); return; }
+  if ($("topbar").classList.contains("hidden")) enterRoom();
+  render();
+}
+function onEvent(ev) {
+  if (isHost) { if (ev.from !== playerId) hostOnEvent(ev); return; }
+  if (ev.type === "closed") { toast("L'hôte a fermé la salle."); leaveRoom(false); }
+}
+function cleanupNetwork() {
+  if (!client) return;
+  try {
+    if (isHost) { client.publish(TOPIC(roomId, "state"), "", { qos: 0, retain: true }); client.publish(TOPIC(roomId, "events"), JSON.stringify({ type: "closed", from: playerId })); }
+    else sendEvent({ type: "leave" });
+  } catch {}
+  const c = client; client = null; setTimeout(() => c.end(true), 300);
+}
+function leaveRoom(notify = true) {
+  if (notify) cleanupNetwork(); else if (client) { const c = client; client = null; c.end(true); }
+  [joinTimer, hbTimer, watchTimer].forEach((t) => t && clearInterval(t));
+  joinTimer = hbTimer = watchTimer = null; state = null; roomId = null; isHost = false;
+  history.replaceState(null, "", location.pathname);
+  chars.forEach((c) => scene.remove(c)); chars.clear();
+  ["lobby", "game", "end", "help", "topbar"].forEach((id) => show(id, false)); show("home");
+  setMode("lobby");
+  canvas.classList.remove("host-3d");
+  clearHostState();
+}
+window.addEventListener("pagehide", () => cleanupNetwork());
+function enterRoom() {
+  show("home", false); show("topbar"); $("roomchip").textContent = roomId; render();
+  if (isHost) updateQRCode();
+}
+const contestants = () => state.players.filter((p) => !p.host);
+function render() {
+  if (!state) return;
+  const s = state, cs = contestants();
+  $("count").textContent = s.players.length;
+  const inGame = s.phase !== "lobby";
+  if (mode !== (inGame ? "table" : "lobby")) setMode(inGame ? "table" : "lobby");
+  show("lobby", s.phase === "lobby"); show("game", s.phase === "question" || s.phase === "reveal"); show("end", s.phase === "end");
+  if (s.phase === "lobby") {
+    $("lobbyTitle").textContent = isHost ? "Partage le code de la salle" : "En attente du lancement";
+    $("lobbyCode").textContent = roomId;
+    $("lobbyList").innerHTML = s.players.map((p) => {
+      const kickBtn = (isHost && !p.host && p.id !== playerId) ? `<button class="kick" onclick="kickPlayer('${esc(p.id)}')">×</button>` : "";
+      return `<li class="${p.id === playerId ? "me" : ""}"><i style="background:${esc(p.color)}"></i>${esc(p.name)}${p.host ? ' <span class="tag">hôte</span>' : ""}${kickBtn}</li>`;
+    }).join("");
+    show("btnStart", isHost); show("lobbyWait", !isHost);
+    $("btnStart").disabled = cs.length < 1;
+    $("btnStart").textContent = cs.length < 1 ? "En attente de joueurs…" : `Lancer la partie (${cs.length} joueur${cs.length > 1 ? "s" : ""})`;
+    setHelp(isHost ? "Fais scanner l'URL ou donne le code, puis lance la partie" : "Tu es dans la salle ! L'hôte va bientôt lancer la partie");
+    if (isHost) updateQRCode();
+    $("leave").textContent = isHost ? "Fermer la salle" : "Quitter la salle";
+  }
+  if (s.phase === "question" || s.phase === "reveal") {
+    const q = QUESTIONS[state.qOrder[state.qIndex]], opts = s.qOpts || optsOf(q), revealed = s.phase === "reveal";
+    if (lastQRendered !== s.qIndex) { lastQRendered = s.qIndex; myPick = null; }
+    if (s.answers && playerId in s.answers) myPick = s.answers[playerId];
+    $("qnum").textContent = `Question ${s.qIndex + 1} / ${QUESTIONS.length}`;
+    $("qtext").textContent = q.q;
+    const nAns = Object.keys(s.answers || {}).length;
+    const now = Date.now();
+    const elapsed = s.questionStartTime ? Math.max(0, now - s.questionStartTime) : 0;
+    const remaining = Math.max(0, 20 - Math.floor(elapsed / 1000));
+    const allAnswered = cs.length > 0 && cs.every((p) => p.id in (s.answers || {}));
+    const timeUp = remaining === 0;
+    if (isHost && (timeUp || allAnswered) && s.phase === "question") { hostReveal(); }
+    if (isHost) {
+      $("answers").innerHTML = revealed ? opts.map((o, i) => `<button class="${i === s.qAns ? "good" : "bad"}" disabled>${esc(o)}</button>`).join("") : "";
+      show("hostctl");
+      $("who").innerHTML = cs.map((p) => `<span class="${p.id in s.answers ? "ok" : ""}">${esc(p.name)}${p.id in s.answers ? " ✓" : ""}</span>`).join("");
+      $("btnHost").textContent = revealed ? (s.qIndex + 1 >= QUESTIONS.length ? "Voir le classement" : "Question suivante") : "Révéler les résultats";
+      $("status").textContent = revealed ? `Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}` : `${nAns} / ${cs.length} ont répondu — ${remaining}s`;
+      setHelp(revealed ? "Touche « Question suivante »" : "Tu animes : « Révéler » quand tout le monde a répondu");
+    } else {
+      show("hostctl", false);
+      setHTML("answers", opts.map((o, i) => {
+        let cls = myAnswer === i ? "picked" : "";
+        if (revealed) cls += i === s.qAns ? " good" : " bad";
+        return `<button data-i="${i}" class="${i === 0 ? "" : "sec"} ${cls}" ${myAnswer !== null || revealed ? "disabled" : ""}>${esc(o)}</button>`;
+      }).join(""));
+      const meP = s.players.find((p) => p.id === playerId);
+      if (revealed) {
+        const ok = myAnswer === s.qAns;
+        $("status").textContent = myAnswer === null ? `Pas de réponse… Bonne réponse : ${opts[s.qAns]}` : ok ? `✅ Bravo ! +${POINTS} pts (total ${meP ? meP.score : 0})` : `❌ Raté ! Bonne réponse : ${opts[s.qAns]}${q.info ? " — " + q.info : ""}`;
+        setHelp("Résultats révélés — attends la question suivante");
+      } else {
+        $("status").textContent = myAnswer !== null ? `Réponse envoyée · ${nAns} / ${cs.length} ont répondu` : `${nAns} / ${cs.length} ont répondu — ${remaining}s`;
+        setHelp(myAnswer !== null ? "Réponse enregistrée, attends la révélation" : "Choisis ta réponse en bas de l'écran");
+      }
+    }
+  }
+  if (s.phase === "end") {
+    const ranked = [...cs].sort((a, b) => b.score - a.score);
+    const medals = ["🥇", "🥈", "🥉"];
+    $("rank").innerHTML = `<thead><tr><th>#</th><th>Joueur</th><th>Score</th></tr></thead><tbody>` + ranked.map((p, i) =>
+      `<tr class="${i === 0 ? 'win' : ''} ${p.id === playerId ? 'me' : ''}"><td>${medals[i] || i + 1}</td><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${esc(p.color)};margin-right:6px"></span>${esc(p.name)}</td><td class="s">${p.score} pts</td></tr>`).join("") + `</tbody>`;
+    setHelp(ranked[0] ? `🏆 ${ranked[0].name} remporte la partie avec ${ranked[0].score} pts !` : "Partie terminée");
+  }
+  syncCharacters(); drawBoard();
+}
+function seatPositions(n) {
+  const out = []; let ring = 0, placed = 0;
+  while (placed < n) {
+    const cap = ring === 0 ? 6 : 6 + ring * 5, R = 3.9 + ring * 1.7, k = Math.min(cap, n - placed);
+    for (let i = 0; i < k; i++) { const a = Math.PI / 2 + (i / k) * Math.PI * 2 + ring * 0.3; out.push({ x: Math.cos(a) * R, z: Math.sin(a) * R, ring }); }
+    placed += k; ring++;
+  }
+  return out;
+}
+function syncCharacters() {
   const ids = new Set(state.players.map(p => p.id));
   chars.forEach((c, id) => { if (!ids.has(id)) { scene.remove(c); chars.delete(id); } });
   const seats = seatPositions(state.players.length);
