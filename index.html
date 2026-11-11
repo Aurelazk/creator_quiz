@@ -158,6 +158,27 @@ const TOPIC = (code, t) => `creatorquiz3d/${code}/${t}`;
 const PALETTE = ["#0B35FE", "#FF4E20", "#00E472", "#FF7A00", "#2E85FF", "#0C1A4B", "#F4F6FC"];
 const OPTIONS = ["Oui", "Non"];
 const POINTS = 10;
+const MAX_PLAYERS = 20;
+
+/* Sauvegarde/restauration de l'état hôte (reprise après refresh) */
+function saveHostState() {
+  if (isHost && state) {
+    try { localStorage.setItem("cq_host_state", JSON.stringify(state)); } catch {}
+  }
+}
+function loadHostState() {
+  try {
+    const raw = localStorage.getItem("cq_host_state");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.code) return parsed;
+    }
+  } catch {}
+  return null;
+}
+function clearHostState() {
+  try { localStorage.removeItem("cq_host_state"); } catch {}
+}
 
 function shuffle(a) {
   const r = [...a];
@@ -453,11 +474,23 @@ function publishState() {
   if (!isHost || !client || !state) return;
   state.ts = Date.now();
   client.publish(TOPIC(room, "state"), JSON.stringify(state), { qos: 1, retain: true });
+  saveHostState();
   render();
 }
 
 /* ---------- HÔTE ---------- */
 function createRoom() {
+  const saved = loadHostState();
+  if (saved) {
+    state = saved;
+    room = saved.code;
+    isHost = true;
+    history.replaceState(null, "", "?room=" + room);
+    connect(() => { publishState(); enterRoom(); });
+    hbTimer = setInterval(publishState, 3000);
+    toast("Salle restaurée : " + room, 2000);
+    return;
+  }
   room = makeCode(); isHost = true;
   state = { v: 1, code: room, hostId: me.id, phase: "lobby", qIndex: 0, answers: {}, players: [{ id: me.id, name: me.name, color: PALETTE[0], score: 0, host: true }] };
   history.replaceState(null, "", "?room=" + room);
@@ -468,11 +501,15 @@ function hostOnEvent(ev) {
   const p = state.players.find((x) => x.id === ev.from);
   if (ev.type === "join") {
     const name = sanitizeName(ev.name) || "Joueur";
-    if (!p) { state.players.push({ id: ev.from, name, color: PALETTE[state.players.length % PALETTE.length], score: 0 }); toast(name + " a rejoint la salle", 1500); }
+      if (!p) {
+      if (state.players.length >= MAX_PLAYERS) { toast("Salle pleine (" + MAX_PLAYERS + " max)", 1500); return; }
+      state.players.push({ id: ev.from, name, color: PALETTE[state.players.length % PALETTE.length], score: 0 }); toast(name + " a rejoint la salle", 1500); }
     else p.name = name;
     publishState();
   } else if (ev.type === "leave" && p && !p.host) {
     state.players = state.players.filter((x) => x.id !== ev.from); delete state.answers[ev.from]; publishState();
+  } else if (ev.type === "kick" && p && !p.host && ev.from === state.hostId && ev.target) {
+    state.players = state.players.filter((x) => x.id !== ev.target); delete state.answers[ev.target]; publishState();
   } else if (ev.type === "answer" && p && !p.host && state.phase === "question" && ev.q === state.qIndex) {
     const n = optsOf(QUESTIONS[state.qIndex]).length;
     if (Number.isInteger(ev.choice) && ev.choice >= 0 && ev.choice < n && !(ev.from in state.answers)) { state.answers[ev.from] = ev.choice; publishState(); }
@@ -605,8 +642,10 @@ function render() {
   if (s.phase === "lobby") {
     $("lobbyTitle").textContent = isHost ? "Partage le code de la salle" : "En attente du lancement";
     $("lobbyCode").textContent = room;
-    $("lobbyList").innerHTML = s.players.map((p) =>
-      `<li class="${p.id === me.id ? "me" : ""}"><i style="background:${esc(p.color)}"></i>${esc(p.name)}${p.host ? ' <span class="tag">hôte</span>' : ""}</li>`).join("");
+    $("lobbyList").innerHTML = s.players.map((p) => {
+      const kickBtn = (isHost && !p.host && p.id !== me.id) ? `<button class="kick" onclick="kickPlayer('${esc(p.id)}')">×</button>` : "";
+      return `<li class="${p.id === me.id ? "me" : ""}"><i style="background:${esc(p.color)}"></i>${esc(p.name)}${p.host ? ' <span class="tag">hôte</span>' : ""}${kickBtn}</li>`;
+    }).join("");
     show("btnStart", isHost); show("lobbyWait", !isHost);
     $("btnStart").disabled = cs.length < 1;
     $("btnStart").textContent = cs.length < 1 ? "En attente de joueurs…" : `Lancer la partie (${cs.length} joueur${cs.length > 1 ? "s" : ""})`;
@@ -778,6 +817,10 @@ const pseudoIn = $("pseudo"), codeIn = $("codeIn");
 pseudoIn.value = localStorage.getItem("cq_name") || "";
 const params = new URLSearchParams(location.search);
 if (params.get("room")) codeIn.value = params.get("room").toUpperCase().slice(0, 5);
+// Reprise automatique : si un code de salle est dans l'URL et qu'un pseudo est sauvegardé, rejoint automatiquement
+if (params.get("room") && localStorage.getItem("cq_name")) {
+  setTimeout(() => { $("btnJoin").click(); }, 800);
+}
 codeIn.addEventListener("input", () => (codeIn.value = codeIn.value.toUpperCase().replace(/[^A-Z0-9]/g, "")));
 function readName() {
   const n = sanitizeName(pseudoIn.value);
@@ -798,6 +841,12 @@ $("btnCopy").onclick = async () => {
 };
 $("btnStart").onclick = () => hostStart();
 $("btnHost").onclick = () => hostAdvance();
+function kickPlayer(id) {
+  if (!isHost) return;
+  if (confirm("Exclure ce joueur ?")) {
+    sendEvent({ type: "kick", target: id });
+  }
+}
 $("answers").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-i]"); if (!b || isHost || !state || state.phase !== "question" || myPick !== null) return;
   myPick = +b.dataset.i; sendEvent({ type: "answer", q: state.qIndex, choice: myPick }); render();
