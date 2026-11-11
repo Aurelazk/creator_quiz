@@ -113,7 +113,7 @@
 <div id="help" class="hidden"></div>
 <div id="topbar" class="hidden">
   <div class="chip"><span class="dot"></span><span id="count">0</span> joueur(s) · <span id="roomchip"></span></div>
-  <button id="leave" class="ghost">Quitter la salle</button>
+  <button id="leave" class="ghost" id="leaveBtn">Quitter la salle</button>
 </div>
 <div id="home" class="panel">
   <h1>QUIZ <b>3D</b> CREATOR</h1>
@@ -654,6 +654,7 @@ function render() {
   if (!state) return;
   const s = state, cs = contestants();
   $("count").textContent = s.players.length;
+  $("leave").textContent = isHost ? "Fermer la salle" : "Quitter la salle";
   const inGame = s.phase !== "lobby";
   if (mode !== (inGame ? "table" : "lobby")) setMode(inGame ? "table" : "lobby");
   show("lobby", s.phase === "lobby"); show("game", s.phase === "question" || s.phase === "reveal"); show("end", s.phase === "end");
@@ -670,6 +671,7 @@ function render() {
     $("btnStart").textContent = cs.length < 1 ? "En attente de joueurs…" : `Lancer la partie (${cs.length} joueur${cs.length > 1 ? "s" : ""})`;
     setHelp(isHost ? "Fais scanner l'URL ou donne le code, puis lance la partie" : "Tu es dans la salle ! L'hôte va bientôt lancer la partie");
     if (isHost) updateQRCode();
+    $("leave").textContent = isHost ? "Fermer la salle" : "Quitter la salle";
   }
 
   if (s.phase === "question" || s.phase === "reveal") {
@@ -875,7 +877,15 @@ $("answers").addEventListener("click", (e) => {
   myPick = +b.dataset.i; sendEvent({ type: "answer", q: state.qIndex, choice: myPick }); render();
   soundTick(); vibrate(50);
 });
-$("leave").onclick = () => { if (!isHost || confirm("Fermer la salle pour tout le monde ?")) leaveRoom(true); };
+$("leave").onclick = () => {
+  if (isHost) {
+    if (confirm("Fermer la salle pour tout le monde ? Tous les joueurs seront déconnectés.")) {
+      leaveRoom(true);
+    }
+  } else {
+    leaveRoom(true);
+  }
+};
 $("btnHome").onclick = () => leaveRoom(true);
 
 setMode("lobby"); resize(); drawBoard(); loop();
