@@ -16,6 +16,7 @@
   html,body{margin:0;height:100%;overflow:hidden;background:var(--navy);color:var(--white);
     font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
   #scene{position:fixed;inset:0;touch-action:manipulation}
+  #scene:not(.host-3d){display:none!important}
   .panel{position:fixed;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     border:1px solid rgba(255,255,255,.12);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.45);padding:18px;z-index:5}
   .hidden{display:none!important}
@@ -227,7 +228,7 @@ const show = (id, on = true) => $(id).classList.toggle("hidden", !on);
 /* ================= SCÈNE 3D ================= */
 const canvas = $("scene");
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Mode éco : limité à 1.5 pour préserver la batterie
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.22;
@@ -488,6 +489,7 @@ function createRoom() {
     history.replaceState(null, "", "?room=" + room);
     connect(() => { publishState(); enterRoom(); });
     hbTimer = setInterval(publishState, 3000);
+    canvas.classList.add("host-3d");
     toast("Salle restaurée : " + room, 2000);
     return;
   }
@@ -496,6 +498,7 @@ function createRoom() {
   history.replaceState(null, "", "?room=" + room);
   connect(() => { publishState(); enterRoom(); });
   hbTimer = setInterval(publishState, 3000);
+  canvas.classList.add("host-3d");
 }
 function hostOnEvent(ev) {
   const p = state.players.find((x) => x.id === ev.from);
@@ -621,6 +624,7 @@ function leaveRoom(notify = true) {
   chars.forEach((c) => scene.remove(c)); chars.clear();
   ["lobby", "game", "end", "help", "topbar"].forEach((id) => show(id, false)); show("home");
   setMode("lobby");
+  canvas.classList.remove("host-3d");
 }
 window.addEventListener("pagehide", () => cleanupNetwork());
 
@@ -808,7 +812,8 @@ function loop() {
     }
   });
   updateCrowd(t);
-  renderer.render(scene, camera);
+  // Rendu 3D uniquement pour l'hôte (projecteur). Les joueurs n'ont que l'UI.
+  if (isHost) renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 
