@@ -1,3 +1,17 @@
-node_modules
+# Dépendances / généré
+node_modules/
 leaderboard.json
-/home/aurel/creator_quiz/Guess-Their-Answer
+.vercel/
+.freebuff/
+
+# Projet Unity source (posé ici pour l'extraction d'assets, pas pour être déployé)
+Guess-Their-Answer/
+
+# Binaires et secrets qui ne doivent jamais être publiés
+*.rar
+*.keystore
+*.log
+*.blend
+*.blend1
+hs_err_pid*.log
+Publishing Details.txt

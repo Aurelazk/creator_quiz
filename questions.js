@@ -19,7 +19,7 @@ const QUESTIONS = [
   { q: "Quel langage rend une page web interactive ?", options: ["JavaScript", "HTML", "CSS", "Python"], ans: 0, info: "JavaScript gère les interactions clic, formulaire, animation." },
   { q: "Quelle balise crée un titre principal ?", options: ["<h1>", "<title>", "<p>", "<div>"], ans: 0, info: "La balise <h1> est le titre le plus important de la page." },
   { q: "Quelle balise crée un lien cliquable ?", options: ["<a>", "<link>", "<url>", "<href>"], ans: 0, info: "La balise <a> (anchor) crée un hyperlien avec l'attribut href." },
-  { q: "Quelle balise affiche une image ?", options: ["<img>", "<image>", "<pic>", "<photo>"], ans: 0, info: "La balise  tags affiche une image avec l'attribut src." },
+  { q: "Quelle balise affiche une image ?", options: ["<img>", "<image>", "<pic>", "<photo>"], ans: 0, info: "La balise <img> affiche une image avec l'attribut src." },
   { q: "Quelle extension a un fichier HTML ?", options: [".html", ".htm", ".htmlx", ".page"], ans: 0, info: "L'extension standard est .html (ou .htm autrefois)." },
   { q: "Que signifie le \"H\" de HTML ?", options: ["HyperText", "Home", "Hyperlink", "High"], ans: 0, info: "HTML = HyperText Markup Language." },
   { q: "Quel langage s'exécute dans le navigateur ?", options: ["JavaScript", "Python", "Java", "C++"], ans: 0, info: "JavaScript tourne directement dans le navigateur web." },
