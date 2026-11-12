@@ -81,7 +81,7 @@
     clips: null, crowdClips: null, crowdAnimByName: null,
     charCache: new Map(), charLoading: new Map(),
     players: new Map(), crowd: [], crowdSeats: [], crowdSlots: {},
-    camBase: new THREE.Vector3(0, 8.2, 19), camLook: new THREE.Vector3(0, 3.1, -2),
+    camBase: new THREE.Vector3(0, 8.2, 19), camLook: new THREE.Vector3(0, 3.1, 4),
     camPos: new THREE.Vector3(), camTarget: new THREE.Vector3(),
     pulseT: 0, fpsAcc: 0, fpsFrames: 0, fpsChecked: false,
     boardGlow: null,
@@ -549,13 +549,13 @@
     updateCameraMode(mode) {
       if (mode === 'end') {
         S.camBase.set(0, 5.4, 13);
-        S.camLook.set(0, 2.2, 6);
+        S.camLook.set(0, 2.2, 9);
       } else if (mode === 'solo') {
         S.camBase.set(0, 6.6, 16);
-        S.camLook.set(0, 2.2, 4);
+        S.camLook.set(0, 2.2, 10);
       } else {
         S.camBase.set(0, 8.2, 19);
-        S.camLook.set(0, 3.1, -2);
+        S.camLook.set(0, 3.1, 4);
       }
     },
 
