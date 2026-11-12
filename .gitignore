@@ -15,3 +15,6 @@ Guess-Their-Answer/
 *.blend1
 hs_err_pid*.log
 Publishing Details.txt
+
+# Artefacts de tests
+test-results/
