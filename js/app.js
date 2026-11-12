@@ -193,7 +193,7 @@
       if (Host.started) {
         if (!App.webglDisabled) {
           Scene3D.init($('scene'));
-          Game.loadBank('survey-questions.js').then(() => {
+          Game.loadBank('js/survey-questions.js').then(() => {
             Scene3D.load(() => {}).then(() => {
               Scene3D.syncPlayers(App.state.players, Host.mode);
               Scene3D.syncCrowd(App.state.blue, App.state.green);
@@ -225,7 +225,12 @@
 
     UI.loaderTxt('Chargement des questions…');
     try {
-      await Game.loadBank('survey-questions.js');
+    try {
+      await Game.loadBank('js/survey-questions.js');
+    } catch (e) {
+      UI.toast('Banque de questions indisponible', 4000);
+      return;
+    }
     } catch (e) {
       UI.toast('Banque de questions indisponible', 4000);
       return;
@@ -406,7 +411,12 @@
   /* ---------------- lancement ---------------- */
   async function startGame() {
     if (!Net.isHost || !App.state.players.length) { UI.toast('Aucun joueur'); return; }
-    await Game.loadBank('survey-questions.js');
+    try {
+      await Game.loadBank('js/survey-questions.js');
+    } catch (e) {
+      UI.toast('Banque de questions indisponible', 4000);
+      return;
+    }
     Host.order = Game.pickQuestions(Game.GAME_Q).map((q) => Game.bank().indexOf(q));
     Host.qi = -1;
     Host.started = true;
