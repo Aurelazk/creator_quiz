@@ -1,0 +1,13 @@
+# .vercelignore — seuls le site et l'API sont deploies sur Vercel
+Guess-Their-Answer/
+tools/
+.freebuff/
+*.rar
+*.keystore
+*.log
+*.blend*
+Publishing Details.txt
+node_modules/
+.vercel/
+.git/
+.gitignore
