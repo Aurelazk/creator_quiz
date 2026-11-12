@@ -1,0 +1,10 @@
+{
+  "name": "creator-quiz",
+  "version": "1.0.0",
+  "description": "CREATOR Guess Their Answer — Quiz 3D temps réel (Epitech Bénin). Déploiement statique Vercel, aucun build.",
+  "scripts": {
+    "test": "node tests/game.test.js",
+    "validate-bank": "node tools/validate-bank.js"
+  },
+  "engines": { "node": ">=18" }
+}
