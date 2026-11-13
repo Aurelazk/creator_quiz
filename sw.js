@@ -4,7 +4,7 @@
    ===================================================================== */
 'use strict';
 
-const CACHE = 'creator-quiz-v4';
+const CACHE = 'creator-quiz-v5';
 const ASSETS = [
   './', './index.html', './css/style.css',
   './js/game.js', './js/net.js', './js/scene.js', './js/ui.js', './js/app.js', './js/intro.js',
