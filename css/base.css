@@ -82,13 +82,6 @@ ul, ol { list-style: none; }
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'DS-Digi';
-  src: url('../assets/fonts/ds-digi.ttf') format('truetype');
-  font-weight: 400;
-  font-display: swap;
-}
-
 /* ── Safe-area (notch, punch-hole) ── */
 .safe-area {
   padding-left: max(16px, env(safe-area-inset-left));

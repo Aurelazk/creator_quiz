@@ -4,7 +4,7 @@
    ===================================================================== */
 'use strict';
 
-const CACHE = 'creator-quiz-v16';
+const CACHE = 'creator-quiz-v17';
 const ASSETS = [
   './css/style.css',
   // Assets statiques (images, modèles 3D, vendor) - pas les fichiers JS de l'app
