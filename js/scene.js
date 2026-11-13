@@ -8,8 +8,8 @@
   const PALETTE = ['#0B35FE', '#FF4E20', '#00E472', '#FF7A00', '#2E85FF', '#0C1A4B', '#F4F6FC'];
   const SKIN = '#F4F6FC';
   const ACCENT = '#0C1A4B';
-  const LIGHT_MODE_CROWD = 20;
-  const CROWD_MAX = 50;
+  const LIGHT_MODE_CROWD = 15;
+  const CROWD_MAX = 20;
 
   /* ---------- matériau "argile" : sweat / peau / chaussures par bandes Y ---------- */
   const UNIFORM_DECL = 'uniform vec3 uSweat;\nuniform vec3 uSkin;\nuniform vec3 uAccent;\nuniform float uSkinY;\nuniform float uShoeY;\nvarying float vY;\n';
@@ -25,7 +25,7 @@
     const key = sweat;
     if (matCache.has(key)) return matCache.get(key);
     const h = bbox.max.y - bbox.min.y;
-    const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.72, metalness: 0.02, skinning: false });
+    const m = new THREE.MeshStandardMaterial({ color: new THREE.Color(sweat), roughness: 0.72, metalness: 0.02, skinning: false });
     m.userData.clay = true;
     m.onBeforeCompile = (shader) => {
       shader.uniforms.uSweat = { value: new THREE.Color(sweat) };
@@ -35,8 +35,16 @@
       shader.uniforms.uShoeY = { value: bbox.min.y + h * 0.10 };
       shader.vertexShader = UNIFORM_DECL + shader.vertexShader.replace(
         '#include <begin_vertex>', '#include <begin_vertex>\nvY = position.y;');
-      shader.fragmentShader = UNIFORM_DECL + shader.fragmentShader.replace(
-        'vec4 diffuseColor = vec4( diffuse, opacity );', FRAG);
+      let frag = shader.fragmentShader;
+      const idx = frag.indexOf('diffuseColor = vec4(');
+      if (idx >= 0) {
+        const end = frag.indexOf(';', idx);
+        if (end > idx) {
+          frag = frag.slice(0, idx) + 'vec4 diffuseColor = vec4( bandCol, opacity );' + frag.slice(end + 1);
+          frag = UNIFORM_DECL + frag;
+        }
+      }
+      shader.fragmentShader = frag;
     };
     m.customProgramCacheKey = () => 'clay';
     matCache.set(key, m);
@@ -90,9 +98,9 @@
     /* ---------------- init ---------------- */
     init(canvas) {
       const r = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-      r.setPixelRatio(Math.min(global.devicePixelRatio || 1, 2));
+      r.setPixelRatio(Math.min(global.devicePixelRatio || 1, 1.5));
       r.setSize(global.innerWidth, global.innerHeight, false);
-      r.shadowMap.enabled = true;
+      r.shadowMap.enabled = false;
       r.shadowMap.type = THREE.PCFShadowMap;
       if (THREE.sRGBEncoding) r.outputEncoding = THREE.sRGBEncoding;
       S.renderer = r;
@@ -112,8 +120,8 @@
       sc.add(new THREE.HemisphereLight(0xdfe9ff, 0x1a2350, 0.95));
       const key = new THREE.DirectionalLight(0xffffff, 1.15);
       key.position.set(-8, 18, 12);
-      key.castShadow = true;
-      key.shadow.mapSize.set(1024, 1024);
+      key.castShadow = false;
+      key.shadow.mapSize.set(512, 512);
       key.shadow.camera.left = -16; key.shadow.camera.right = 16;
       key.shadow.camera.top = 16; key.shadow.camera.bottom = -16;
       key.shadow.camera.far = 60;
@@ -130,8 +138,8 @@
       const spot = new THREE.SpotLight(0xffffff, 2.5, 45, 0.55, 0.6, 1);
       spot.position.set(0, 14, 6);
       spot.target.position.set(0, 1.5, 3);
-      spot.castShadow = true;
-      spot.shadow.mapSize.set(1024, 1024);
+      spot.castShadow = false;
+      spot.shadow.mapSize.set(512, 512);
       spot.shadow.camera.near = 0.5; spot.shadow.camera.far = 45;
       sc.add(spot);
       sc.add(spot.target);
