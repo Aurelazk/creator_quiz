@@ -154,6 +154,7 @@
     $('btnHostPlus15').addEventListener('click', hostPlus15);
     $('btnHostReveal').addEventListener('click', () => { if (Net.isHost && App.state.phase === 'question') endRound(); });
     $('btnHostClose').addEventListener('click', closeRoom);
+    $('btnHostReset').addEventListener('click', resetAll);
     $('btnShare').addEventListener('click', shareRanking);
     $('btnQr').addEventListener('click', toggleQr);
     $('btnMute').addEventListener('click', () => {
@@ -737,6 +738,27 @@
     UI.screen('pHome');
     UI.phoneVisible(true);
     UI.toast('Salle fermée', 2000);
+  }
+
+  /** Vide tout le stockage local et recharge pour repartir de zéro. */
+  function resetAll() {
+    if (!confirm('Supprimer toute la salle et tous les données locales ? Cette action est irréversible.')) return;
+    try {
+      Net.clearHostState();
+      localStorage.removeItem('cq_order');
+      localStorage.removeItem('cq_host_state');
+      Net.state = null;
+      Net.room = null;
+      Net.roomSecret = null;
+      Net.hostSecret = null;
+      Net.isHost = false;
+      App.state = null;
+      App.role = null;
+      Host.started = false;
+      if (Host.tickTimer) { clearInterval(Host.tickTimer); Host.tickTimer = null; }
+    } catch (e) {}
+    try { Net.leaveRoom(false); } catch (e) {}
+    location.reload();
   }
 
   function renderHost() {
