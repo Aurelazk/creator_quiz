@@ -19,3 +19,6 @@ Publishing Details.txt
 # Artefacts de tests
 test-results/
 .vercel
+AssetStudio/
+~/gtai/work/extract_assets*.py
+*.py
