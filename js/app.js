@@ -4,8 +4,8 @@
 (function (global) {
   'use strict';
 
-  const $ = global.UI.$;
-  const esc = global.UI.esc;
+  const $ = global.UI && global.UI.$ ? global.UI.$ : ((id) => document.getElementById(id));
+  const esc = global.UI && global.UI.esc ? global.UI.esc : ((s) => String(s == null ? '' : s));
   const Net = global.Net;
   const Game = global.Game;
   const Scene3D = global.Scene3D;

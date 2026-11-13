@@ -552,6 +552,7 @@ function ranks(ranked, isHost) {
     updateTimer,
     updateQuestion,
     esc,
+    $,
   };
 })();
 

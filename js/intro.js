@@ -135,6 +135,7 @@ window.playCreatorIntro = playIntro;
 })();
 (function(){
   var root=document.getElementById("intro");
+  if(!root){return;}
   if(!window.THREE||/[?&]nointro/.test(location.search)){root.remove();return;}
   var kill=function(){root.classList.add("fade");setTimeout(function(){root.remove();},600);};
   var go=function(){try{window.playCreatorIntro(root,function(){});}catch(e){console.warn("intro",e);kill();}};
