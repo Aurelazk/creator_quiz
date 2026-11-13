@@ -116,8 +116,13 @@
     }
     // accueil au boot : desktop = accueil hôte, mobile/?room= = accueil joueur
     UI.screen('pHome');
-    UI.phoneVisible(true);
-    UI.hostVisible(false);
+    if (isDesktop()) {
+      UI.hostVisible(true);
+      UI.phoneVisible(false);
+    } else {
+      UI.hostVisible(false);
+      UI.phoneVisible(true);
+    }
 
     $('pseudo').addEventListener('input', () => {
       localStorage.setItem('cq_name', sanitizeName($('pseudo').value));
