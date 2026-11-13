@@ -122,6 +122,7 @@
     }
 
     UI.init();
+    UI.hideLoader();
     UI.pickChar(App.char); UI.pickSweat(App.sweat);
     UI.bindKeyboard();
     const name = localStorage.getItem('cq_name') || '';
