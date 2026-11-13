@@ -197,6 +197,27 @@
   </section>
 </div>
 
+<script>
+  /* Nettoyage d'urgence : désenregistre les anciens service workers et
+     vide le stockage local pour éviter la restauration d'une salle obsolète.
+     S'exécute avant tout autre script du site. */
+  (function () {
+    var params = new URLSearchParams(location.search);
+    if (params.get('reset')) {
+      try { localStorage.removeItem('cq_host_state'); } catch (e) {}
+      try { localStorage.removeItem('cq_order'); } catch (e) {}
+      try { localStorage.removeItem('cq_name'); } catch (e) {}
+      try { localStorage.removeItem('cq_char'); } catch (e) {}
+      try { localStorage.removeItem('cq_sweat'); } catch (e) {}
+      history.replaceState({}, '', location.pathname);
+    }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (reg) { reg.unregister(); });
+      });
+    }
+  })();
+</script>
 <script src="assets/vendor/three.min.js"></script>
 <script src="assets/vendor/mqtt.min.js"></script>
 <script src="assets/vendor/GLTFLoader.js"></script>
