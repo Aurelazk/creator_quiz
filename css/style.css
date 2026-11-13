@@ -37,8 +37,7 @@ img{user-select:none;-webkit-user-drag:none}
 #loaderTxt{margin-top:12px;font-size:13px;opacity:.7}
 
 /* ============================ HUD HÔTE ============================ */
-#hostHud{position:fixed;inset:0;z-index:5;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between}
-#hostHud > *{pointer-events:auto}
+#hostHud{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;justify-content:space-between}
 #hostTop{display:flex;gap:10px;align-items:center;padding:calc(12px + var(--safe-t)) 16px 0}
 .chip{display:inline-flex;align-items:center;gap:8px;background:var(--glass);border:1px solid rgba(255,255,255,.14);
   border-radius:99px;padding:8px 14px;font-size:13px;backdrop-filter:blur(8px)}
@@ -194,8 +193,9 @@ button.primary.small{width:auto;padding:14px 18px;flex:.9;margin-bottom:10px}
 
 /* clavier AZERTY */
 .kb{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:8px}
-.kb button{background:rgba(255,255,255,.92);color:#4b3f66;border-radius:10px;padding:0;height:42px;
-  font-family:'Granika';font-size:17px;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.kb button{background:rgba(255,255,255,.92);color:#4b3f66;border-radius:10px;padding:0;height:44px;
+  font-family:'Granika';font-size:17px;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center}
 .kb button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
 .kb button.wide{background:rgba(46,133,255,.95);color:#fff;font-size:13px}
 .kb button.med{background:rgba(255,255,255,.55);color:#2b2350;font-size:13px}
@@ -204,7 +204,16 @@ button.primary.small{width:auto;padding:14px 18px;flex:.9;margin-bottom:10px}
 .kb .img{background:transparent;box-shadow:none}
 .kb-rows{display:contents}
 .accents{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:5px}
-.accents button{background:rgba(255,255,255,.16);color:#fff;border-radius:9px;height:34px;font-size:14px}
+.accents button{background:rgba(255,255,255,.16);color:#fff;border-radius:9px;height:36px;font-size:14px;
+  display:flex;align-items:center;justify-content:center}
+
+/* clavier adaptatif mobile */
+@media (max-width:480px){
+  .kb{grid-template-columns:repeat(8,1fr);gap:4px}
+  .kb button{height:40px;font-size:15px}
+  .accents{grid-template-columns:repeat(6,1fr);gap:4px}
+  .accents button{height:32px;font-size:13px}
+}
 
 .emoji-row{display:flex;justify-content:center;gap:6px;margin:8px 0 0;touch-action:manipulation}
 .emoji{background:rgba(255,255,255,.16);color:#fff;border-radius:10px;width:48px;height:48px;font-size:24px;
