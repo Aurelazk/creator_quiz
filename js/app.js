@@ -104,6 +104,23 @@
      BOOT
      ===================================================================== */
   function boot() {
+    // ?reset dans l'URL : tout effacer et repartir de zéro (pas de restauration de salle)
+    if (new URLSearchParams(location.search).get('reset')) {
+      try {
+        localStorage.removeItem('cq_host_state');
+        localStorage.removeItem('cq_order');
+        Net.state = null;
+        Net.room = null;
+        Net.roomSecret = null;
+        Net.hostSecret = null;
+        Net.isHost = false;
+        App.state = null;
+        App.role = null;
+        Host.started = false;
+      } catch (e) {}
+      history.replaceState({}, '', location.pathname);
+    }
+
     UI.init();
     UI.pickChar(App.char); UI.pickSweat(App.sweat);
     UI.bindKeyboard();
@@ -759,7 +776,7 @@
       if (Host.tickTimer) { clearInterval(Host.tickTimer); Host.tickTimer = null; }
     } catch (e) {}
     try { Net.leaveRoom(false); } catch (e) {}
-    location.reload();
+    location.href = location.pathname + '?reset';
   }
 
   function renderHost() {
