@@ -5,7 +5,7 @@
 @font-face { font-family: 'Famous College'; src: url('../assets/fonts/famous-college.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Granika'; src: url('../assets/fonts/granika.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Janda'; src: url('../assets/fonts/janda-manatee-solid.ttf') format('truetype'); font-display: swap; }
-@font-face { font-family: 'DS-Digi'; src: url('../assets/fonts/ds-digi.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'DS-Digi'; src: url('../assets/fonts/janda-manatee-solid.ttf') format('truetype'); font-display: swap; }
 
 :root{
   --blue:#0B35FE; --navy:#0C1A4B; --green:#00E472; --coral:#FF4E20; --coral-h:#E63C10;
