@@ -761,6 +761,14 @@
   /** Vide tout le stockage local et recharge pour repartir de zéro. */
   function resetAll() {
     if (!confirm('Supprimer toute la salle et tous les données locales ? Cette action est irréversible.')) return;
+
+    // désenregistre tous les service workers (l'ancien SW sert encore le vieux code)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((reg) => reg.unregister());
+      });
+    }
+
     try {
       Net.clearHostState();
       localStorage.removeItem('cq_order');
