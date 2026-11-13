@@ -246,12 +246,7 @@
 
     UI.loaderTxt('Chargement des questions…');
     try {
-    try {
       await Game.loadBank('js/survey-questions.js');
-    } catch (e) {
-      UI.toast('Banque de questions indisponible', 4000);
-      return;
-    }
     } catch (e) {
       UI.toast('Banque de questions indisponible', 4000);
       return;
@@ -393,7 +388,7 @@
       // diffusion a tous les clients (le sujet /events est partage)
       try {
         if (Net.client && Net.client.connected) {
-          Net.client.publish(Net.topic('events'), JSON.stringify({ type: 'reaction', from: ev.from, emoji: ev.emoji, token: me.token }), { qos: 1 });
+          Net.client.publish(Net.topic('events'), JSON.stringify({ type: 'reaction', from: ev.from, emoji: ev.emoji, token: Net.me.token }), { qos: 1 });
         }
       } catch (e) {}
     }

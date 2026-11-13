@@ -105,10 +105,10 @@ localStorage.setItem(TOKEN_KEY, me.token);
     publishState() {
       if (!Net.isHost || !Net.client || !Net.state) return;
       Net.state.ts = Date.now();
-      const pub = Object.assign({}, Net.state);
-      pub.qAns = undefined;
-      pub.bank = undefined;
-      pub.order = undefined;
+      const pub = JSON.parse(JSON.stringify(Net.state));
+      delete pub.qAns;
+      delete pub.bank;
+      delete pub.order;
       if (!Net.client.connected) { Net.saveHostState(); return; }
       Net.client.publish(Net.topic('state'), JSON.stringify(pub), { qos: 1, retain: true });
       Net.saveHostState();

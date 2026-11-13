@@ -258,10 +258,8 @@ button.primary.small{width:auto;padding:14px 18px;flex:.9;margin-bottom:10px}
   #hostLobby,#hostEnd{width:94vw;padding:16px}
   #hostQuestionWrap{top:calc(48px + var(--safe-t))}
 }
-@media (min-width:701px) and (hover:hover){
-  /* Le téléphone (et son accueil) est piloté en JS via UI.phoneVisible / phone-mode,
-     pas masqué par défaut sur desktop : l'accueil hôte doit être visible au boot. */
-}
+/* Le téléphone (et son accueil) est piloté en JS via UI.phoneVisible / phone-mode,
+   pas masqué par défaut sur desktop : l'accueil hôte doit être visible au boot. */
 body.phone-mode #hostHud{display:none!important}
 body.phone-mode #scene{display:none!important}
 body.phone-mode{background:#050B26}

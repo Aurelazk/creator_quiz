@@ -118,7 +118,7 @@ function playIntro(root, onDone) {
     scene.background.copy(dark).lerp(light, L);
     bar.scale.x = Math.max(.001, ease(clamp((s - .8) / .9)));
     renderer.render(scene, camera);
-    if (s > 2.7) { t = 0; last = performance.now(); done = false; }
+    if (s > 2.7) { finish(); return; }
     raf = requestAnimationFrame(frame);
   };
   function finish() {

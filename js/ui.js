@@ -82,7 +82,7 @@
       const rows = slots <= 4 ? 1 : 2;
       b.style.gridTemplateColumns = 'repeat(' + Math.ceil(slots / rows) + ',minmax(0,1fr))';
       for (let i = 0; i < slots; i++) {
-        const found = (revealed || []).find((r) => r.i === i);
+        const found = (revealed || []).find((r) => r.i === i && !r.missed);
         const d = document.createElement('div');
         d.className = 'case' + (found ? ' done' : '');
         d.dataset.i = i;
@@ -98,12 +98,14 @@
       const b = $('board');
       if (!b) return;
       for (let i = 0; i < slots; i++) {
-        const found = (revealed || []).find((r) => r.i === i);
+        const found = (revealed || []).find((r) => r.i === i && !r.missed);
         if (found) continue;
         const el = b.querySelector('[data-i="' + i + '"]');
         if (!el) continue;
         el.classList.add('miss');
         el.querySelector('.txt').textContent = '—';
+        const pts = el.querySelector('.pts');
+        if (pts) pts.textContent = '';
       }
     },
 
@@ -250,7 +252,7 @@
       html += '<button type="button" class="img" data-act="shift"><img src="assets/ui/key-shift.webp" alt="maj"></button>';
       html += '<button type="button" class="img" data-act="digits"><img src="assets/ui/key-123.webp" alt="123"></button>';
       html += '<button type="button" class="img wide" data-act="space"><img src="assets/ui/key-space.webp" alt="espace"></button>';
-      html += '<button type="button" class="img' + '" data-act="back"><img src="assets/ui/key-back.webp" alt="effacer"></button>';
+      html += '<button type="button" class="img" data-act="back"><img src="assets/ui/key-back.webp" alt="effacer"></button>';
       rows.innerHTML = html;
     },
 
@@ -333,8 +335,8 @@
 
     /* bandeau defilant des fausses propositions */
     wrongBanner(list) {
-      const el = $('hostWrong'), m = $('wrong-marquee' ? null : null) || $('hostWrong') && document.getElementById('wrongMarquee');
-      const marquee = document.getElementById('wrongMarquee');
+      const el = $('hostWrong');
+      const marquee = document.querySelector('.wrong-marquee');
       if (!el || !marquee) return;
       if ((list || []).length === 0) { el.classList.add('hidden'); marquee.innerHTML = ''; return; }
       el.classList.remove('hidden');

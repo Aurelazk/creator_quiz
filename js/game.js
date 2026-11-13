@@ -81,22 +81,43 @@
 
   /* ---------- banque de questions (hôte seulement) ---------- */
   let BANK = null;
-  function loadBank(src) {
-    if (BANK) return Promise.resolve(BANK);
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src || 'survey-questions.js';
-      s.onload = () => {
-        if (!global.SURVEY_QUESTIONS || !global.SURVEY_QUESTIONS.length) {
-          reject(new Error('Banque de questions vide')); return;
-        }
-        BANK = global.SURVEY_QUESTIONS;
-        resolve(BANK);
-      };
-      s.onerror = () => reject(new Error('Banque de questions introuvable'));
-      document.head.appendChild(s);
-    });
-  }
+function loadBank(src) {
+  if (BANK) return Promise.resolve(BANK);
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src || 'survey-questions.js';
+    let settled = false;
+    const onLoad = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      s.remove();
+      if (!global.SURVEY_QUESTIONS || !global.SURVEY_QUESTIONS.length) {
+        reject(new Error('Banque de questions vide')); return;
+      }
+      BANK = global.SURVEY_QUESTIONS;
+      resolve(BANK);
+    };
+    const onError = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      s.remove();
+      reject(new Error('Banque de questions introuvable'));
+    };
+    s.onload = onLoad;
+    s.onerror = onError;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      s.onload = null;
+      s.onerror = null;
+      s.remove();
+      reject(new Error('Banque de questions : timeout'));
+    }, 10000);
+    document.head.appendChild(s);
+  });
+}
   const bank = () => BANK || [];
 
   function pickQuestions(n) {
