@@ -163,6 +163,7 @@
       UI.toast(on ? 'Son activé' : 'Son coupé', 1200);
     });
     $('btnLeaderboard').addEventListener('click', () => { UI.screen('pLeaderboard'); showLeaderboard('pHome'); });
+    $('btnResetAll').addEventListener('click', resetAll);
     $('btnResume').addEventListener('click', () => UI.screen(App.lastScreen || 'pGame'));
     $('btnPauseMenu').addEventListener('click', leave);
     $('selDuration').addEventListener('change', () => { Host.duration = +$('selDuration').value; });
