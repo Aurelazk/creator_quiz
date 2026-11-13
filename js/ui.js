@@ -554,3 +554,5 @@ function ranks(ranked, isHost) {
     esc,
   };
 })();
+
+window.UI = UI;
