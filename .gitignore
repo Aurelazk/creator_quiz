@@ -4,8 +4,8 @@ leaderboard.json
 .vercel/
 .freebuff/
 
-# Projet Unity source (posé ici pour l'extraction d'assets, pas pour être déployé)
-Guess-Their-Answer/
+# Archive : fichiers et projets qui ne font pas partie du site web
+archive/
 
 # Binaires et secrets qui ne doivent jamais être publiés
 *.rar
