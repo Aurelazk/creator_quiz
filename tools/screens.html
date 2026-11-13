@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Screens — Comparaison des écrans CREATOR</title>
+<link rel="stylesheet" href="../css/tokens.css" />
+<link rel="stylesheet" href="../css/base.css" />
+<link rel="stylesheet" href="../css/components.css" />
+<link rel="stylesheet" href="../css/screens.css" />
+<style>
+  body { padding: var(--space-4); max-width: var(--max-w); margin: 0 auto; font-family: var(--font-sans); }
+  h1 { font-size: var(--text-3xl); margin-bottom: var(--space-6); }
+  .screen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--space-4); }
+  .screen-preview {
+    background: var(--clair);
+    border: 1px solid var(--gris-clair);
+    border-radius: var(--r-lg);
+    padding: var(--space-4);
+    min-height: 600px;
+    position: relative;
+    overflow: hidden;
+  }
+  .screen-preview h4 { font-size: var(--text-lg); margin-bottom: var(--space-2); color: var(--nuit); }
+  .screen-badge {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    background: var(--bleu);
+    color: var(--blanc);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--r-sm);
+    font-size: var(--text-xs);
+    font-weight: 700;
+  }
+  .device-label {
+    font-size: var(--text-xs);
+    color: var(--gris-moyen);
+    margin-bottom: var(--space-2);
+    display: block;
+  }
+  .mobile-frame {
+    border: 4px solid var(--nuit);
+    border-radius: var(--r-xl);
+    padding: var(--space-4);
+    background: var(--blanc);
+  }
+</style>
+</head>
+<body>
+
+<h1>Screens — Comparaison des écrans</h1>
+<p>Grille de comparaison : tous les écrans du jeu, desktop et mobile côte à côte.</p>
+
+<div class="screen-grid">
+
+  <!-- Accueil hôte (desktop) -->
+  <div class="screen-preview">
+    <span class="screen-badge">HOST · Desktop</span>
+    <span class="device-label">1920 × 1080</span>
+    <h4>Accueil hôte</h4>
+    <div class="host-header">
+      <div class="room-chip"><span class="room-dot"></span><span class="room-code">6KGU8</span></div>
+      <div class="mode-chip">Duel Bleu / Vert</div>
+      <div class="host-controls">
+        <button class="pill">QR</button>
+        <button class="pill ghost">🔊</button>
+      </div>
+    </div>
+    <div class="host-question" style="margin-top:var(--space-6);">
+      <div class="host-qnum">Manche 1 / 10</div>
+      <div class="host-question-text">Combien de pattes a un araignée ?</div>
+    </div>
+    <div id="board" style="margin-top:var(--space-4);"></div>
+    <script>
+      const board = document.querySelector('.screen-preview:first-child #board');
+      for (let i = 0; i < 8; i++) {
+        const d = document.createElement('div');
+        d.className = 'board-case ' + (i < 3 ? 'board-case--done' : '');
+        d.dataset.i = i;
+        d.innerHTML = `<span class="board-case__idx">${i+1}</span><span class="board-case__txt">${i<3?'R'+(i+1):'?????'}</span><span class="board-case__pts">${i<3?'+'+(50-i*10):''}</span>`;
+        board.appendChild(d);
+      }
+    </script>
+  </div>
+
+  <!-- Accueil joueur (mobile) -->
+  <div class="screen-preview">
+    <span class="screen-badge">JOUEUR · Mobile</span>
+    <span class="device-label">390 × 844</span>
+    <h4>Accueil joueur</h4>
+    <div class="mobile-frame">
+      <div class="home-card" style="padding:var(--space-4);">
+        <h1 style="font-size:var(--text-4xl);">CREATOR</h1>
+        <p class="home-sub">Guess Their Answer · Epitech Bénin</p>
+        <input class="field__input" placeholder="Ton pseudo" style="margin:var(--space-3) 0; width:100%;" />
+        <input class="field__input field__input--code" placeholder="CODE" style="margin:var(--space-3) 0; width:70%; display:inline-block;" />
+        <button class="btn btn--primary btn--small" style="margin:var(--space-3) 0; width:25%; display:inline-block;">Rejoindre</button>
+        <button class="btn btn--secondary w-full" style="margin:var(--space-2) 0;">Créer une salle (hôte)</button>
+        <button class="btn btn--ghost w-full" style="margin:var(--space-2) 0;">Classement général</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lobby hôte -->
+  <div class="screen-preview">
+    <span class="screen-badge">HOST · Desktop</span>
+    <span class="device-label">1920 × 1080</span>
+    <h4>Lobby hôte</h4>
+    <div class="host-lobby" style="padding:var(--space-6); max-width:500px; margin:0 auto; text-align:center;">
+      <h2>Salle <span class="text-bleu" id="lobbyCode">6KGU8</span></h2>
+      <img src="../assets/ui/qr-placeholder.png" alt="QR" class="qrcode-img" style="width:150px;height:150px;margin:var(--space-4) 0;" />
+      <div class="join-hint">Scannez pour rejoindre · creatorquiz-chi.vercel.app/?room=6KGU8</div>
+      <div class="lobby-players" style="margin:var(--space-4) 0;">
+        <div class="lobby-player">
+          <div class="lobby-player__name">Alice</div>
+          <div class="badge badge--bleu">Bleu</div>
+        </div>
+        <div class="lobby-player">
+          <div class="lobby-player__name">Bob</div>
+          <div class="badge badge--vert">Vert</div>
+        </div>
+      </div>
+      <button class="btn btn--primary w-full">Lancer la partie</button>
+    </div>
+  </div>
+
+  <!-- Lobby joueur -->
+  <div class="screen-preview">
+    <span class="screen-badge">JOUEUR · Mobile</span>
+    <span class="device-label">390 × 844</span>
+    <h4>Lobby joueur</h4>
+    <div class="mobile-frame">
+      <div class="lobby-panel" style="padding:var(--space-4);">
+        <h2>Salle</h2>
+        <div class="codebox">6KGU8</div>
+        <div class="lobby-list">
+          <div class="lobby-player">
+            <div class="lobby-player__name">Toi</div>
+            <div class="badge badge--vert">Vert</div>
+          </div>
+          <div class="lobby-player">
+            <div class="lobby-player__name">Hôte</div>
+            <div class="badge badge--bleu">Bleu</div>
+          </div>
+        </div>
+        <p class="hint">En attente de l'hôte…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jeu téléphone -->
+  <div class="screen-preview">
+    <span class="screen-badge">JOUEUR · Mobile</span>
+    <span class="device-label">390 × 844</span>
+    <h4>Écran de question</h4>
+    <div class="mobile-frame">
+      <div class="game-top" style="margin-bottom:var(--space-4);">
+        <div class="game-qnum">Manche 1 / 10</div>
+        <div class="game-timer"><span class="timer-display" style="font-family:var(--font-mono);font-weight:700;color:var(--orange);">45</span></div>
+      </div>
+      <div class="game-question">Combien de pattes a un araignée ?</div>
+      <div class="p-found">
+        <span class="p-found__item">8 pattes · 100</span>
+      </div>
+      <div class="input-wrap" style="position:relative;">
+        <input type="text" readonly style="width:100%;padding:var(--space-3);font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--nuit);text-align:center;background:rgba(255,255,255,0.9);border:none;border-radius:var(--r-md);outline:none;" />
+        <button class="btn-send" style="position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:var(--r-full);background:var(--bleu);color:var(--blanc);font-weight:700;cursor:pointer;border:none;">GO</button>
+      </div>
+      <div class="kb" style="margin-top:var(--space-4);">
+        <div class="kb-row">
+          <button class="key">a</button><button class="key">z</button><button class="key">e</button><button class="key">r</button>
+        </div>
+        <div class="kb-row">
+          <button class="key key--wide">espace</button><button class="key key--go">GO</button><button class="key">⌫</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fin de partie -->
+  <div class="screen-preview">
+    <span class="screen-badge">JOUEUR · Mobile</span>
+    <span class="device-label">390 × 844</span>
+    <h4>Fin de partie</h4>
+    <div class="phone-end" style="padding:var(--space-6); text-align:center;">
+      <h2>Classement</h2>
+      <ol style="list-style:none; margin-bottom:var(--space-4);">
+        <li style="display:flex;justify-content:space-between;padding:var(--space-2);border-bottom:1px solid var(--gris-clair);">
+          <span class="lb-rank">🥇 #1</span><span class="text-gras">Alice</span><span class="text-bleu">350 pts</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:var(--space-2);border-bottom:1px solid var(--gris-clair);">
+          <span class="lb-rank">#2</span><span class="text-gras">Toi</span><span class="text-bleu">280 pts</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:var(--space-2);border-bottom:1px solid var(--gris-clair);">
+          <span class="lb-rank">#3</span><span class="text-gras">Bob</span><span class="text-bleu">220 pts</span>
+        </li>
+      </ol>
+      <button class="btn btn--secondary w-full" style="margin:var(--space-2) 0;">Classement général</button>
+      <button class="btn btn--ghost w-full" style="margin:var(--space-2) 0;">Accueil</button>
+    </div>
+  </div>
+
+  <!-- Classement général -->
+  <div class="screen-preview">
+    <span class="screen-badge">JOUEUR · Mobile</span>
+    <span class="device-label">390 × 844</span>
+    <h4>Classement général</h4>
+    <div class="phone-leaderboard" style="padding:var(--space-4);">
+      <h2>Classement général</h2>
+      <ol class="lb-list">
+        <li style="display:flex;justify-content:space-between;padding:var(--space-2);border-bottom:1px solid var(--gris-clair);">
+          <span class="lb-rank">#1</span><span>Alice</span><span class="text-bleu">1500 pts</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:var(--space-2);border-bottom:1px solid var(--gris-clair);">
+          <span class="lb-rank">#2</span><span>Bob</span><span class="text-bleu">1200 pts</span>
+        </li>
+      </ol>
+      <button class="btn btn--ghost w-full" style="margin:var(--space-4) 0;">Retour</button>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div class="screen-preview">
+    <span class="screen-badge">JOUEUR · Mobile</span>
+    <span class="device-label">390 × 844</span>
+    <h4>Pause</h4>
+    <div class="phone-pause" style="padding:var(--space-6); display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%; gap:var(--space-3);">
+      <img src="../assets/ui/btn-resume.webp" alt="Reprendre" style="width:200px;height:60px;border-radius:var(--r-lg);cursor:pointer;" />
+      <img src="../assets/ui/btn-menu.webp" alt="Menu" style="width:200px;height:60px;border-radius:var(--r-lg);cursor:pointer;" />
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
