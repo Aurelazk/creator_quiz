@@ -15,13 +15,30 @@
   const REVEAL_MS = 4200;
   const MAX_ROOM_PLAYERS = 20;
   const LB_KEY = 'cq_lb';
-  const makeHostSecret = () => Math.random().toString(36).slice(2, 14) + Math.random().toString(36).slice(2, 14);
+  const makeHostSecret = () => {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijklmnopqrstuvwxyz0123456789';
+    const buf = new Uint8Array(24);
+    crypto.getRandomValues(buf);
+    let s = '';
+    for (let i = 0; i < 24; i++) s += alphabet[buf[i] % alphabet.length];
+    return s;
+  };
   const roomUrl = (code, secret) => siteUrl(code) + (secret ? '&hs=' + encodeURIComponent(secret) : '');
 
   const makeCode = () => {
+    const buf = new Uint8Array(5);
+    crypto.getRandomValues(buf);
     let c = '';
-    for (let i = 0; i < 5; i++) c += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+    for (let i = 0; i < 5; i++) c += CODE_ALPHABET[buf[i] % CODE_ALPHABET.length];
     return c;
+  };
+  const randStrPlayer = () => {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijklmnopqrstuvwxyz0123456789';
+    const buf = new Uint8Array(8);
+    crypto.getRandomValues(buf);
+    let s = '';
+    for (let i = 0; i < 8; i++) s += alphabet[buf[i] % alphabet.length];
+    return s;
   };
   const sanitizeName = (s) => String(s || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 16);
   const teamOfScore = (p) => p.team;
@@ -97,6 +114,10 @@
     if (App.webglDisabled) {
       UI.toast('WebGL indisponible : mode tableau seul (sans 3D)', 7000);
     }
+    // accueil au boot : desktop = accueil hôte, mobile/?room= = accueil joueur
+    UI.screen('pHome');
+    UI.phoneVisible(true);
+    UI.hostVisible(false);
 
     $('pseudo').addEventListener('input', () => {
       localStorage.setItem('cq_name', sanitizeName($('pseudo').value));
@@ -352,7 +373,7 @@
           char: Math.max(1, Math.min(6, ev.char | 0)) || 1,
           sweat: ev.sweat || '#FF4E20',
           score: 0, team: null,
-          token: ev.token || Math.random().toString(36).slice(2, 10),
+          token: ev.token || randStrPlayer(),
         });
       }
       assignTeams();

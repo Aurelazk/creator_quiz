@@ -8,20 +8,34 @@
 (function (global) {
   'use strict';
 
-  const BROKER = 'wss://broker.emqx.io:8084/mqtt';
-  const MAX_PLAYERS = 20;
-  const HOST_STATE_KEY = 'cq_host_state';
-  const ID_KEY = 'cq_id', NAME_KEY = 'cq_name';
-  const TOPIC_PREFIX = 'creatorquiz3d';
+const BROKER = 'wss://broker.emqx.io:8084/mqtt';
+const MAX_PLAYERS = 20;
+const HOST_STATE_KEY = 'cq_host_state';
+const ID_KEY = 'cq_id', NAME_KEY = 'cq_name', TOKEN_KEY = 'cq_token';
+const TOPIC_PREFIX = 'creatorquiz3d';
 
-  const uid = () => Math.random().toString(36).slice(2, 14) + Date.now().toString(36).slice(-4);
-  const makeSecret = () => Math.random().toString(36).slice(2, 14) + Math.random().toString(36).slice(2, 14);
-  const me = {
-    id: localStorage.getItem(ID_KEY) || uid(),
-    name: '',
-    token: Math.random().toString(36).slice(2, 14),
-  };
-  localStorage.setItem(ID_KEY, me.id);
+const randInt = (max) => {
+  const buf = new Uint32Array(1);
+  crypto.getRandomValues(buf);
+  return buf[0] % max;
+};
+const randStr = (len) => {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijklmnopqrstuvwxyz0123456789';
+  const buf = new Uint8Array(len);
+  crypto.getRandomValues(buf);
+  let s = '';
+  for (let i = 0; i < len; i++) s += alphabet[buf[i] % alphabet.length];
+  return s;
+};
+const uid = () => randStr(12) + Date.now().toString(36).slice(-4);
+const makeSecret = () => randStr(12) + randStr(12);
+const me = {
+  id: localStorage.getItem(ID_KEY) || uid(),
+  name: '',
+  token: localStorage.getItem(TOKEN_KEY) || randStr(12),
+};
+localStorage.setItem(ID_KEY, me.id);
+localStorage.setItem(TOKEN_KEY, me.token);
 
   const Net = {
     BROKER, TOPIC_PREFIX, MAX_PLAYERS, me,

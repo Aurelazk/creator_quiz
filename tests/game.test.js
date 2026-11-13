@@ -65,7 +65,9 @@ t('matching : faute de frappe (Levenshtein)', () => {
 
 t('refus : "chat" ne matche pas "achat"', () => {
   const Q3 = { answers: [{ text: "achat", pts: 10, aliases: [] }] };
-  assert.strictEqual(Game.matches("chat", Q3), false);
+  assert.strictEqual(Game.matches("chat", Q3.answers[0]), false);
+  assert.strictEqual(Game.matches("achat", Q3.answers[0]), true);
+  assert.strictEqual(Game.matches("chat ", Q3.answers[0]), false);
 });
 
 t('refus : vide / incohérent', () => {

@@ -13,7 +13,9 @@ Application "Guess Their Answer" (Family Feud-like) en temps réel :
 | `index.html` | Squelette : écrans (home/avatar/lobby/jeu/fin/classement/pause), HUD hôte, clavier, intro |
 | `css/style.css` | Palette CREATOR, polices, responsive, safe-area iOS, contraste, tactiles |
 | `js/game.js` | Règles (hôte seulement) : normalisation, matching (alias/pluriel/Levenshtein borné), scoring + bonus rapidité + ×2 |
-| `js/survey-questions.js` | Banque de sondages (30 questions) — chargée UNIQUEMENT côté hôte (`window.SURVEY_QUESTIONS`) |
+| `js/survey-questions.js` | Banque de sondages (200 questions, françaises) — chargée UNIQUEMENT côté hôte (`window.SURVEY_QUESTIONS`). Validée par `tools/validate-bank.js`. |
+| `ASSET_MAP.md` | Inventaire des actifs (provenance, destination à l'écran, budget). |
+| `CREDITS.md` | Provenance et licence de chaque actif (extraction APK `com.qoni.guesstheiranswer`). |
 | `js/net.js` | Transport MQTT + état de salle, sujets sécurisés, jetons, validation |
 | `js/scene.js` | Plateau 3D Three.js r128 (GLTF/Draco), personnages, public animé, caméra, projecteur |
 | `js/ui.js` | DOM : tableau des réponses, clavier, réactions, classements |

@@ -259,7 +259,8 @@ button.primary.small{width:auto;padding:14px 18px;flex:.9;margin-bottom:10px}
   #hostQuestionWrap{top:calc(48px + var(--safe-t))}
 }
 @media (min-width:701px) and (hover:hover){
-  body:not(.phone-mode) #phone{display:none!important}
+  /* Le téléphone (et son accueil) est piloté en JS via UI.phoneVisible / phone-mode,
+     pas masqué par défaut sur desktop : l'accueil hôte doit être visible au boot. */
 }
 body.phone-mode #hostHud{display:none!important}
 body.phone-mode #scene{display:none!important}

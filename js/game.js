@@ -9,7 +9,7 @@
   const DEFAULT_DURATION = 60;
   const SPEED_WINDOW = 10000; // bonus de rapidité sur les 10 premières secondes
   const SPEED_MAX = 0.25;     // +25 % max
-  const MAX_ALIAS_LEV = 1;
+  const MAX_LEV = 2;          // distance de Levenshtein max (C# AnswerMatcher maxDistance = 2)
 
   /* ---------- normalisation ---------- */
   const ACCENTS = /[\u0300-\u036f]/g;
@@ -42,15 +42,14 @@
     return prev[n];
   }
 
-  function toleranceFor(word) {
-    if (word.length >= 9) return 2;
-    if (word.length >= 5) return 1;
-    return 0;
-  }
-
   /**
    * Comparaison tolérante entre la saisie et une réponse de la banque.
-   * Égalité exacte, alias, ou faute de frappe (Levenshtein) — JAMAIS de "contains".
+   * Sémantique C# AnswerMatcher.Evaluate :
+   *   - égalité exacte après normalisation (couvre alias)
+   *   - pluriel simple ("langage"/"langages")
+   *   - faute de frappe Levenshtein : dist <= 2 ET dist <= 25 % de la longueur max
+   *   - JAMAIS de "contains" (défaut corrigé : "chat" ne valide pas "achat",
+   *     une extension par préfixe/suffixe d'un seul caractère est rejetée).
    */
   function matches(guess, entry) {
     const g = normalize(guess);
@@ -63,8 +62,19 @@
       // pluriel simple : "langage"/"langages"
       const gs = g.replace(/s$/, ''), cs = c.replace(/s$/, '');
       if (gs.length > 3 && gs === cs) return true;
-      const tol = Math.min(toleranceFor(c), MAX_ALIAS_LEV + (c.length >= 9 ? 1 : 0));
-      if (tol > 0 && Math.abs(g.length - c.length) <= tol && levenshtein(g, c) <= tol) return true;
+      // Levenshtein borné (C# : dist <= maxDistance && dist <= maxLen * 0.25)
+      const maxLen = Math.max(g.length, c.length);
+      const dist = levenshtein(g, c);
+      if (dist <= MAX_LEV && dist <= Math.floor(maxLen * 0.25)) {
+        // défaut corrigé : une insertion/suppression en bordure (préfixe ou suffixe)
+        // d'un seul caractère ne suffit pas (ex. "chat" dans "achat").
+        if (Math.abs(g.length - c.length) === 1 && dist === 1) {
+          const longer = g.length > c.length ? g : c;
+          const shorter = g.length > c.length ? c : g;
+          if (longer.startsWith(shorter) || longer.endsWith(shorter)) continue;
+        }
+        return true;
+      }
     }
     return false;
   }
