@@ -7,205 +7,18 @@
 <meta name="description" content="Guess Their Answer multijoueur 3D en temps réel — CREATOR, Epitech Bénin." />
 <meta name="theme-color" content="#0C1A4B" />
 <link rel="preload" href="assets/fonts/famous-college.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/style.css" />
+<link rel="preload" href="assets/fonts/janda-manatee-solid.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="assets/fonts/granika.otf" as="font" type="font/otf" crossorigin />
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/screens.css" />
 </head>
 <body>
-<div id="intro"></div>
-<canvas id="scene"></canvas>
-
-<!-- bandeau d'avertissement : version cache -->
-<div id="cacheWarn" style="display:none;position:fixed;top:0;left:0;right:0;background:#ff4444;color:#fff;padding:12px 16px;z-index:99999;font-weight:800;text-align:center;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.5)">
-  ⚠️ Ancienne version détectée. <strong>Appuyez sur Ctrl + Shift + R</strong> pour actualiser complètement, ou utilisez une fenêtre de navigation privée.
-</div>
-
-<!-- ===================== ÉCRAN DE CHARGEMENT ===================== -->
-<div id="loader">
-  <div class="loader-card">
-    <div class="loader-logo">CREATOR<span>.</span></div>
-    <div class="loader-sub">GUESS THEIR ANSWER</div>
-    <div class="loader-bar"><i id="loaderBar"></i></div>
-    <div id="loaderTxt">Préparation du plateau…</div>
-  </div>
-</div>
-
-<!-- ===================== HUD HÔTE (projection) ===================== -->
-<div id="hostHud" class="hidden">
-  <div id="hostTop">
-    <div class="chip"><span class="dot"></span><b id="roomCode">-----</b></div>
-    <div class="chip" id="modeChip">Duel Bleu / Vert</div>
-    <button class="pill" id="btnQr">QR</button>
-    <button class="pill ghost" id="btnMute" title="Muet / son">🔊</button>
-  </div>
-
-  <div id="hostQuestionWrap">
-    <div id="hostQnum">Manche 1 / 10</div>
-    <div id="hostQuestion">…</div>
-  </div>
-
-  <div id="board"></div>
-
-  <div id="hostBottom">
-    <div id="balance">
-      <img src="assets/ui/balance-bar.webp" alt="" id="balanceImg" />
-      <div id="balanceMark"></div>
-      <div id="balanceLabels"><span id="blueScore">0</span><span id="greenScore">0</span></div>
-    </div>
-    <div id="timerWrap">
-      <img src="assets/ui/hourglass.webp" alt="" id="hourglass" />
-      <div id="timer">60</div>
-    </div>
-    <div id="hostBtns">
-      <button id="btnHostMain" class="primary">Lancer la partie</button>
-      <button id="btnHostSkip" class="ghost">Passer</button>
-      <button id="btnHostPause" class="ghost">Pause</button>
-      <button id="btnHostPlus15" class="ghost">+15 s</button>
-      <button id="btnHostReveal" class="ghost">Reveler maintenant</button>
-      <button id="btnHostClose" class="ghost" style="color:#ff4444">Fermer salle</button>
-      <button id="btnHostReset" class="ghost" style="color:#ff4444">Réinitialiser</button>
-    </div>
-    <div id="hostAttempts">
-      <span id="attemptsBlue">0</span> <span id="attemptsLabelBlue">essais</span> ·
-      <span id="attemptsGreen">0</span> <span id="attemptsLabelGreen">essais</span>
-    </div>
-  </div>
-
-  <div id="hostWrong" class="hidden">
-    <div class="wrong-track">
-      <span class="wrong-label">Fausses propositions :</span>
-      <div class="wrong-marquee"></div>
-    </div>
-  </div>
-
-  <div id="hostLobby" class="hidden">
-    <h2>Salle <b id="lobbyCode">-----</b></h2>
-    <div class="qrbox"><img id="qrImg" alt="QR code de la salle" /></div>
-    <div class="join-hint">Scannez pour rejoindre · <b id="joinUrl"></b></div>
-    <div id="lobbyPlayers"></div>
-    <div class="row">
-      <label class="field"><span>Durée / question</span>
-        <select id="selDuration"><option value="30">30 s</option><option value="45">45 s</option><option value="60" selected>60 s</option><option value="90">90 s</option></select>
-      </label>
-      <label class="field"><span>Mode</span>
-        <select id="selMode"><option value="duel" selected>Duel Bleu / Vert</option><option value="solo">Solo (plateau)</option></select>
-      </label>
-    </div>
-    <p class="hint">Touchez un joueur pour l'exclure. 20 joueurs max.</p>
-    <button id="btnStart" class="primary">Lancer la partie</button>
-  </div>
-
-  <div id="hostEnd" class="hidden">
-    <h2>Classement final</h2>
-    <ol id="hostRank"></ol>
-    <div id="hostEndStats" class="hidden"></div>
-    <button id="btnLeaderboard" class="secondary">Classement general</button>
-    <button id="btnShare" class="ghost">Partager le classement</button>
-  </div>
-</div>
-</div>
-
-<!-- ===================== UI TÉLÉPHONE ===================== -->
-<div id="phone" class="hidden">
-  <header id="pTop" class="hidden">
-    <div class="chip"><span class="dot"></span><span id="pCount">0</span> joueurs · <b id="pRoom"></b></div>
-    <button class="pill ghost" id="btnLeave">Quitter</button>
-  </header>
-
-  <!-- accueil -->
-  <section id="pHome" class="screen">
-    <img src="assets/ui/menu-bg.webp" alt="" class="menu-bg" />
-    <div class="home-card">
-      <h1>CREATOR</h1>
-      <p class="sub">Guess Their Answer · Epitech Bénin</p>
-      <input id="pseudo" maxlength="16" placeholder="Ton pseudo" autocomplete="off" autocapitalize="words" />
-      <div class="row">
-        <input id="codeIn" class="code" maxlength="5" placeholder="CODE" autocomplete="off" />
-        <button id="btnJoin" class="primary small">Rejoindre</button>
-      </div>
-      <button id="btnCreate" class="secondary">Créer une salle (hôte)</button>
-      <button id="btnAvatar" class="ghost">Choisir mon personnage</button>
-      <button id="btnLeaderTop" class="ghost">Classement général</button>
-      <button id="btnResetAll" class="ghost" style="color:#ff4444">Effacer tout / Nouveau départ</button>
-    </div>
-  </section>
-
-  <!-- choix du personnage -->
-  <section id="pAvatar" class="screen hidden">
-    <h2>Ton personnage</h2>
-    <div id="charGrid"></div>
-    <h3>Couleur du sweat</h3>
-    <div id="sweatGrid"></div>
-    <button id="btnAvatarOk" class="primary">C'est parti</button>
-  </section>
-
-  <!-- lobby -->
-  <section id="pLobby" class="screen hidden">
-    <div class="panel small-panel">
-      <h2 id="pLobbyTitle">Salle</h2>
-      <div class="codebox"><b id="pLobbyCode">-----</b></div>
-      <div id="pLobbyList"></div>
-      <p class="hint" id="pLobbyHint">En attente de l'hôte…</p>
-      <button id="btnLeaderLobby" class="ghost">Classement général</button>
-    </div>
-  </section>
-
-  <!-- jeu -->
-  <section id="pGame" class="screen hidden">
-    <div class="game-top">
-      <div id="pQnum">Manche 1 / 10</div>
-      <div class="p-timer"><img src="assets/ui/hourglass.webp" alt="" /><span id="pTimer">60</span></div>
-    </div>
-    <div id="pQuestion">…</div>
-    <div id="pFound"></div>
-    <div id="pInputWrap">
-      <img src="assets/ui/input-field.webp" alt="" class="input-bg" />
-      <input id="pAnswer" readonly inputmode="none" placeholder="Ta réponse…" autocomplete="off" autocorrect="off" spellcheck="false" />
-      <button id="btnSubmit" class="send">GO</button>
-    </div>
-    <div id="pStatus" class="status"></div>
-    <div id="pKeyboard" class="kb"></div>
-    <div id="pReaction" class="reaction"><div class="rbig"></div><div class="rsub"></div></div>
-    <div id="pEmoji" class="emoji-row">
-      <button class="emoji" data-e="👍" title="Pouce">👍</button>
-      <button class="emoji" data-e="😂" title="Rire">😂</button>
-      <button class="emoji" data-e="🔥" title="Feu">🔥</button>
-      <button class="emoji" data-e="🎉" title="Fete">🎉</button>
-    </div>
-  </section>
-
-  <!-- fin -->
-  <section id="pEnd" class="screen hidden">
-    <div class="panel">
-      <h2 id="pEndTitle">Classement</h2>
-      <ol id="pRank"></ol>
-      <button id="btnLeaderEnd" class="secondary">Classement général</button>
-      <button id="btnHome" class="ghost">Accueil</button>
-    </div>
-  </section>
-
-  <!-- classement général -->
-  <section id="pLeaderboard" class="screen hidden">
-    <div class="panel">
-      <h2>Classement général</h2>
-      <ol id="lbList"></ol>
-      <p class="hint" id="lbHint"></p>
-      <button id="btnLbBack" class="ghost">Retour</button>
-    </div>
-  </section>
-
-  <!-- pause -->
-  <section id="pPause" class="screen hidden">
-    <img src="assets/ui/panel-pause.webp" alt="" class="pause-bg" />
-    <div class="pause-btns">
-      <button id="btnResume" class="imgbtn"><img src="assets/ui/btn-resume.webp" alt="Reprendre" /></button>
-      <button id="btnPauseMenu" class="imgbtn"><img src="assets/ui/btn-menu.webp" alt="Menu" /></button>
-    </div>
-  </section>
-</div>
 
 <script>
   /* Nettoyage d'urgence : désenregistre les anciens service workers et
-     vide le stockage local pour éviter la restauration d'une salle obsolète.
-     S'exécute avant tout autre script du site. */
+     vide le stockage local pour éviter la restauration d'une salle obsolète. */
   (function () {
     var params = new URLSearchParams(location.search);
     if (params.get('reset')) {
@@ -220,13 +33,246 @@
       navigator.serviceWorker.getRegistrations().then(function (regs) {
         regs.forEach(function (reg) { reg.unregister(); });
       });
-      // si un SW contrôle déjà la page, afficher l'avertissement
       if (navigator.serviceWorker.controller) {
-        document.getElementById('cacheWarn').style.display = 'block';
+        // SW actif : on laisse le bandeau d'avertissement s'afficher via CSS
       }
     }
   })();
 </script>
+
+<!-- ===================== ÉCRAN DE CHARGEMENT ===================== -->
+<div id="loader" class="screen-wrap">
+  <div class="loader-card">
+    <div class="loader-logo">CREATOR<span>.</span></div>
+    <div class="loader-sub">GUESS THEIR ANSWER</div>
+    <div class="loader-bar"><div id="loaderBar"></div></div>
+    <div id="loaderTxt">Préparation du plateau…</div>
+  </div>
+</div>
+
+<!-- ===================== HUD HÔTE (projection desktop) ===================== -->
+<div id="hostHud" class="screen-wrap hidden">
+  <header class="host-header">
+    <div class="room-chip">
+      <span class="room-dot"></span>
+      <span class="room-code" id="roomCode">-----</span>
+    </div>
+    <div class="mode-chip" id="modeChip">Duel Bleu / Vert</div>
+    <div class="host-controls">
+      <button class="pill" id="btnQr">QR</button>
+      <button class="pill ghost" id="btnMute" title="Muet / son">🔊</button>
+    </div>
+  </header>
+
+  <div class="host-question">
+    <div class="host-qnum" id="hostQnum">Manche 1 / 10</div>
+    <div class="host-question-text" id="hostQuestion">…</div>
+  </div>
+
+  <div id="board"></div>
+
+  <div class="host-bottom">
+    <div class="balance-wrap">
+      <img src="assets/ui/balance-bar.webp" alt="Barre d'équilibre" class="balance-img" />
+      <div class="balance-mark" id="balanceMark"></div>
+      <div class="balance-labels">
+        <span id="blueScore">0</span>
+        <span id="greenScore">0</span>
+      </div>
+    </div>
+    <div class="timer-wrap">
+      <img src="assets/ui/hourglass.webp" alt="Sablier" class="timer-img" />
+      <div class="timer-display" id="hostTimer">60</div>
+    </div>
+    <div class="host-btns">
+      <button class="btn btn--primary" id="btnHostMain">Lancer la partie</button>
+      <button class="btn btn--ghost" id="btnHostSkip">Passer</button>
+      <button class="btn btn--ghost" id="btnHostPause">Pause</button>
+      <button class="btn btn--ghost" id="btnHostPlus15">+15 s</button>
+      <button class="btn btn--ghost" id="btnHostReveal">Révéler maintenant</button>
+      <button class="btn btn--danger" id="btnHostClose">Fermer salle</button>
+      <button class="btn btn--danger" id="btnHostReset">Réinitialiser</button>
+    </div>
+    <div class="host-attempts">
+      <span id="attemptsBlue">0</span> <span class="text-gris">essais</span> ·
+      <span id="attemptsGreen">0</span> <span class="text-gris">essais</span>
+    </div>
+  </div>
+
+  <div class="host-wrong" id="hostWrong">
+    <div class="wrong-track">
+      <span class="wrong-label">Fausses propositions :</span>
+      <div class="wrong-marquee"></div>
+    </div>
+  </div>
+
+  <div id="speedBadge"></div>
+
+  <!-- Lobby hôte -->
+  <section class="host-lobby hidden" id="hostLobby">
+    <h2>Salle <span class="text-bleu" id="lobbyCode">-----</span></h2>
+    <div class="qrcode-wrap">
+      <img src="assets/ui/qr-placeholder.png" alt="QR code de la salle" class="qrcode-img" id="qrImg" />
+    </div>
+    <div class="join-hint">Scannez pour rejoindre · <span id="joinUrl"></span></div>
+    <div class="lobby-players" id="lobbyPlayers"></div>
+    <div class="lobby-settings">
+      <label class="field">
+        <span class="field__label">Durée / question</span>
+        <select class="field__input" id="selDuration">
+          <option value="30">30 s</option>
+          <option value="45">45 s</option>
+          <option value="60" selected>60 s</option>
+          <option value="90">90 s</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field__label">Mode</span>
+        <select class="field__input" id="selMode">
+          <option value="duel" selected>Duel Bleu / Vert</option>
+          <option value="solo">Solo (plateau)</option>
+        </select>
+      </label>
+    </div>
+    <p class="hint">Touchez un joueur pour l'exclure. 20 joueurs max.</p>
+    <button class="btn btn--primary w-full" id="btnStart">Lancer la partie</button>
+  </section>
+
+  <!-- Fin de partie hôte -->
+  <section class="host-end hidden" id="hostEnd">
+    <h2>Classement final</h2>
+    <ol class="host-rank" id="hostRank"></ol>
+    <div id="hostEndStats" class="hidden"></div>
+    <div style="display:flex; gap:var(--space-2); justify-content:center; margin-top:var(--space-4);">
+      <button class="btn btn--secondary" id="btnLeaderboard">Classement général</button>
+      <button class="btn btn--ghost" id="btnShare">Partager</button>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== UI TÉLÉPHONE ===================== -->
+<div id="phone" class="screen-wrap hidden">
+  <header class="phone-header">
+    <div class="phone-chip">
+      <span id="pCount">0</span> joueurs · <span id="pRoom"></span>
+    </div>
+    <button class="btn btn--ghost" id="btnLeave">Quitter</button>
+  </header>
+
+  <!-- Accueil téléphone -->
+  <section class="screen" id="pHome">
+    <img src="assets/ui/menu-bg.webp" alt="" class="menu-bg" />
+    <div class="home-card safe-area">
+      <h1>CREATOR</h1>
+      <p class="home-sub">Guess Their Answer · Epitech Bénin</p>
+      <div class="home-inputs">
+        <input type="text" id="pseudo" class="field__input" maxlength="16" placeholder="Ton pseudo" autocomplete="off" autocapitalize="words" />
+      </div>
+      <div class="home-inputs">
+        <input type="text" id="codeIn" class="field__input field__input--code" maxlength="5" placeholder="CODE SALLE" autocomplete="off" />
+        <button class="btn btn--primary btn--small" id="btnJoin">Rejoindre</button>
+      </div>
+      <div class="home-actions">
+        <button class="btn btn--secondary w-full" id="btnCreate">Créer une salle (hôte)</button>
+        <button class="btn btn--ghost w-full" id="btnAvatar">Choisir mon personnage</button>
+        <button class="btn btn--ghost w-full" id="btnLeaderTop">Classement général</button>
+        <button class="btn btn--danger w-full" id="btnResetAll">Effacer tout / Nouveau départ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Choix du personnage -->
+  <section class="screen hidden" id="pAvatar">
+    <div class="avatar-section safe-area">
+      <h2>Ton personnage</h2>
+      <div class="char-grid" id="charGrid"></div>
+      <h3 style="margin:var(--space-4) 0 var(--space-2); font-family:var(--font-display); color:var(--nuit);">Couleur du sweat</h3>
+      <div class="sweat-grid" id="sweatGrid">
+        <div class="sweat-option sweat-bleu sweat-option--selected" data-color="bleu"></div>
+        <div class="sweat-option sweat-vert" data-color="vert"></div>
+        <div class="sweat-option sweat-orange" data-color="orange"></div>
+        <div class="sweat-option sweat-bleu2" data-color="bleu2"></div>
+      </div>
+      <button class="btn btn--primary w-full" id="btnAvatarOk">C'est parti</button>
+    </div>
+  </section>
+
+  <!-- Lobby joueur -->
+  <section class="screen hidden" id="pLobby">
+    <div class="phone-lobby safe-area">
+      <div class="lobby-panel">
+        <h2 id="pLobbyTitle">Salle</h2>
+        <div class="codebox" id="pLobbyCode">-----</div>
+        <div class="lobby-list" id="pLobbyList"></div>
+        <p class="hint" id="pLobbyHint">En attente de l'hôte…</p>
+        <button class="btn btn--ghost w-full" id="btnLeaderLobby">Classement général</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Jeu téléphone -->
+  <section class="screen hidden" id="pGame">
+    <div class="phone-game safe-area">
+      <div class="game-top">
+        <div class="game-qnum" id="pQnum">Manche 1 / 10</div>
+        <div class="game-timer">
+          <img src="assets/ui/hourglass.webp" alt="Sablier" class="timer-icon" />
+          <span class="timer-display" id="pTimer">60</span>
+        </div>
+      </div>
+      <div class="game-question" id="pQuestion">…</div>
+      <div class="p-found" id="pFound"></div>
+      <div class="input-wrap">
+        <img src="assets/ui/input-field.webp" alt="" class="input-bg" />
+        <input type="text" id="pAnswer" readonly inputmode="none" placeholder="Ta réponse…" autocomplete="off" autocorrect="off" spellcheck="false" />
+        <button class="btn-send" id="btnSubmit">GO</button>
+      </div>
+      <div class="p-status" id="pStatus"></div>
+      <div class="kb" id="pKeyboard"></div>
+      <div class="emoji-row">
+        <button class="emoji" data-e="👍" title="Pouce">👍</button>
+        <button class="emoji" data-e="😂" title="Rire">😂</button>
+        <button class="emoji" data-e="🔥" title="Feu">🔥</button>
+        <button class="emoji" data-e="🎉" title="Fête">🎉</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fin de partie joueur -->
+  <section class="screen hidden" id="pEnd">
+    <div class="phone-end safe-area">
+      <h2 id="pEndTitle">Classement</h2>
+      <ol id="pRank"></ol>
+      <div style="display:flex; gap:var(--space-2); justify-content:center; margin-top:var(--space-4);">
+        <button class="btn btn--secondary w-full" id="btnLeaderEnd">Classement général</button>
+        <button class="btn btn--ghost w-full" id="btnHome">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Classement général -->
+  <section class="screen hidden" id="pLeaderboard">
+    <div class="phone-leaderboard safe-area">
+      <h2>Classement général</h2>
+      <ol class="lb-list" id="lbList"></ol>
+      <p class="hint" id="lbHint"></p>
+      <button class="btn btn--ghost w-full" id="btnLbBack">Retour</button>
+    </div>
+  </section>
+
+  <!-- Pause -->
+  <section class="screen hidden" id="pPause">
+    <img src="assets/ui/panel-pause.webp" alt="" class="pause-bg" />
+    <div class="pause-btns">
+      <img src="assets/ui/btn-resume.webp" alt="Reprendre" class="btn-img" id="btnResume" />
+      <img src="assets/ui/btn-menu.webp" alt="Menu" class="btn-img" id="btnPauseMenu" />
+    </div>
+  </section>
+</div>
+
+<!-- Toasts (injectés par JS) -->
+<div id="toastContainer" style="position:fixed; bottom:var(--space-6); left:50%; transform:translateX(-50%); z-index:var(--z-toast); pointer-events:none;"></div>
+
 <script src="assets/vendor/three.min.js"></script>
 <script src="assets/vendor/mqtt.min.js"></script>
 <script src="assets/vendor/GLTFLoader.js"></script>
@@ -239,9 +285,6 @@
 <script src="js/app.js"></script>
 <script src="js/intro.js"></script>
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW', e));
-  }
   /* Fallback WebGL indisponible : bascule en mode "tableau seul" (pas de 3D) */
   (function () {
     try {
@@ -249,7 +292,8 @@
       const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
       if (!gl) {
         document.body.classList.add('webgl-disabled');
-        document.getElementById('scene') && document.getElementById('scene').remove();
+        const scene = document.getElementById('scene');
+        if (scene) scene.remove();
       }
     } catch (e) { document.body.classList.add('webgl-disabled'); }
   })();
