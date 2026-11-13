@@ -11,42 +11,17 @@
   const LIGHT_MODE_CROWD = 15;
   const CROWD_MAX = 20;
 
-  /* ---------- matériau "argile" : sweat / peau / chaussures par bandes Y ---------- */
-  const UNIFORM_DECL = 'uniform vec3 uSweat;\nuniform vec3 uSkin;\nuniform vec3 uAccent;\nuniform float uSkinY;\nuniform float uShoeY;\nvarying float vY;\n';
-  const FRAG = [
-    'vec3 bandCol = uSweat;',
-    'if (vY > uSkinY) bandCol = uSkin;',
-    'else if (vY < uShoeY) bandCol = uAccent;',
-    'vec4 diffuseColor = vec4( bandCol, opacity );',
-  ].join('\n');
-
+  /* ---------- matériau "argile" : couleur unie par personnage ---------- */
   const matCache = new Map();
   function clayMaterial(sweat, bbox) {
     const key = sweat;
     if (matCache.has(key)) return matCache.get(key);
-    const h = bbox.max.y - bbox.min.y;
-    const m = new THREE.MeshStandardMaterial({ color: new THREE.Color(sweat), roughness: 0.72, metalness: 0.02, skinning: false });
+    const m = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(sweat),
+      roughness: 0.75,
+      metalness: 0.0,
+    });
     m.userData.clay = true;
-    m.onBeforeCompile = (shader) => {
-      shader.uniforms.uSweat = { value: new THREE.Color(sweat) };
-      shader.uniforms.uSkin = { value: new THREE.Color(SKIN) };
-      shader.uniforms.uAccent = { value: new THREE.Color(ACCENT) };
-      shader.uniforms.uSkinY = { value: bbox.min.y + h * 0.80 };
-      shader.uniforms.uShoeY = { value: bbox.min.y + h * 0.10 };
-      shader.vertexShader = UNIFORM_DECL + shader.vertexShader.replace(
-        '#include <begin_vertex>', '#include <begin_vertex>\nvY = position.y;');
-      let frag = shader.fragmentShader;
-      const idx = frag.indexOf('diffuseColor = vec4(');
-      if (idx >= 0) {
-        const end = frag.indexOf(';', idx);
-        if (end > idx) {
-          frag = frag.slice(0, idx) + 'vec4 diffuseColor = vec4( bandCol, opacity );' + frag.slice(end + 1);
-          frag = UNIFORM_DECL + frag;
-        }
-      }
-      shader.fragmentShader = frag;
-    };
-    m.customProgramCacheKey = () => 'clay';
     matCache.set(key, m);
     return m;
   }
@@ -287,7 +262,12 @@
     /** Crée une instance animée d'un personnage. */
     async spawnChar(charId, sweat, opts) {
       const src = await S.loadChar(charId);
-      const root = THREE.SkeletonUtils.clone(src);
+      let root;
+      try {
+        root = THREE.SkeletonUtils.clone(src);
+      } catch (e) {
+        root = src.clone(true);
+      }
       const bbox = new THREE.Box3().setFromObject(src);
       const height = bbox.max.y - bbox.min.y;
       const mat = clayMaterial(sweat, bbox);
@@ -307,7 +287,8 @@
       wrapper.add(root);
       const mixer = new THREE.AnimationMixer(root);
       const actions = {};
-      (opts && opts.clips ? opts.clips : S.clips || []).forEach((clip) => {
+      const clips = (opts && opts.clips ? opts.clips : S.clips || []);
+      clips.forEach((clip) => {
         const a = mixer.clipAction(clip);
         actions[clip.name] = a;
       });
@@ -316,8 +297,21 @@
 
     play(inst, name, fade) {
       if (!inst || !inst.actions) return null;
+      // essaie le nom demandé, puis des aliases courants
       let next = inst.actions[name];
-      if (!next && name === 'Cheer') next = inst.actions['Win']; // pas de clip Cheer : on reuse Win (bras leves)
+      const aliases = {
+        'Idle': ['Idle', 'idle', 'Idle1', 'Pose'],
+        'Running': ['Running', 'running', 'Run', 'run', 'Walk', 'walk'],
+        'Win': ['Win', 'win', 'Victory', 'victory', 'Celebrate'],
+        'Lose': ['Lose', 'lose', 'Defeat', 'defeat'],
+        'Cheer': ['Cheer', 'cheer', 'Win', 'win'],
+      };
+      if (!next && aliases[name]) {
+        for (const alias of aliases[name]) {
+          next = inst.actions[alias];
+          if (next) break;
+        }
+      }
       if (!next) return null;
       const cur = inst.current;
       if (cur === next) return next;

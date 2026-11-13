@@ -534,7 +534,7 @@
     });
     App.state.full = q.answers.map((a) => a.text);
     UI.board(q.answers.length, App.state.revealed, -1);
-    UI.markMiss(q.answers.length, App.state.revealed.filter((r) => !r.missed));
+    UI.markMiss(q.answers.length, App.state.revealed);
     UI.hostButtons('reveal');
     publish();
     startReveal();

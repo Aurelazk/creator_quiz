@@ -112,7 +112,9 @@
     foundList(revealed) {
       const f = $('pFound');
       if (!f) return;
-      f.innerHTML = (revealed || []).map((r) => '<span>' + esc(r.text) + ' · ' + r.pts + '</span>').join('');
+      f.innerHTML = (revealed || [])
+        .filter((r) => r && r.text)
+        .map((r) => '<span>' + esc(r.text) + ' · ' + r.pts + '</span>').join('');
     },
 
     /* ---------------- timer ---------------- */
