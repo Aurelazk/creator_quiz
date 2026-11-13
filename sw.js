@@ -4,26 +4,25 @@
    ===================================================================== */
 'use strict';
 
-const CACHE = 'creator-quiz-v9';
+const CACHE = 'creator-quiz-v10';
 const ASSETS = [
   './', './index.html', './css/style.css',
-  './js/game.js', './js/net.js', './js/scene.js', './js/ui.js', './js/app.js', './js/intro.js',
-  './js/survey-questions.js',
+  // Assets statiques (images, modèles 3D, vendor) - pas les fichiers JS de l'app
   './assets/vendor/three.min.js', './assets/vendor/mqtt.min.js',
   './assets/vendor/GLTFLoader.js', './assets/vendor/DRACOLoader.js', './assets/vendor/SkeletonUtils.js',
   './assets/vendor/draco/draco_decoder.js', './assets/vendor/draco/draco_decoder.wasm',
   './assets/vendor/draco/draco_wasm_wrapper.js',
-  // Modèles 3D (GLB)
   './assets/models/scene.glb',
   './assets/models/char1.glb', './assets/models/char2.glb', './assets/models/char3.glb',
   './assets/models/char4.glb', './assets/models/char5.glb', './assets/models/char6.glb',
   './assets/models/crowd.glb',
-  // Images UI (WebP)
   './assets/ui/balance-bar.webp', './assets/ui/hourglass.webp', './assets/ui/input-field.webp',
   './assets/ui/menu-bg.webp', './assets/ui/panel-pause.webp', './assets/ui/sky.webp',
   './assets/ui/turf-blue.webp', './assets/ui/turf-green.webp', './assets/ui/podium.webp',
   './assets/ui/key-123.webp', './assets/ui/key-back.webp', './assets/ui/key-shift.webp',
   './assets/ui/key-space.webp', './assets/ui/btn-menu.webp', './assets/ui/btn-resume.webp',
+  './assets/fonts/famous-college.ttf', './assets/fonts/ds-digi.ttf',
+  './assets/fonts/granika.otf', './assets/fonts/janda-manatee-solid.ttf',
 ];
 
 self.addEventListener('install', (event) => {
