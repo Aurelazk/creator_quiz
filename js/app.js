@@ -153,6 +153,7 @@
     $('btnHostPause').addEventListener('click', hostPauseToggle);
     $('btnHostPlus15').addEventListener('click', hostPlus15);
     $('btnHostReveal').addEventListener('click', () => { if (Net.isHost && App.state.phase === 'question') endRound(); });
+    $('btnHostClose').addEventListener('click', closeRoom);
     $('btnShare').addEventListener('click', shareRanking);
     $('btnQr').addEventListener('click', toggleQr);
     $('btnMute').addEventListener('click', () => {
@@ -707,6 +708,35 @@
     if (App.state.phase === 'question') { endRound(); return; }
     if (App.state.phase === 'reveal') { nextQuestion(); return; }
     startGame();
+  }
+
+  /** Ferme la salle : notifie tous les joueurs, vide l'état, déconnecte. */
+  function closeRoom() {
+    if (!Net.isHost) return;
+    if (!confirm('Fermer la salle ? Tous les joueurs seront déconnectés.')) return;
+
+    // notifie les joueurs connectés
+    try {
+      if (Net.client && Net.client.connected) {
+        Net.client.publish(Net.topic('events'), JSON.stringify({ type: 'closed', from: Net.me.id, token: Net.me.token }), { qos: 1 });
+        Net.client.publish(Net.topic('state'), '', { qos: 0, retain: true });
+      }
+    } catch (e) {}
+
+    // nettoie le stockage local pour qu'aucune reprise ne soit possible
+    Net.clearHostState();
+    App.state = null;
+    Host.started = false;
+    if (Host.tickTimer) { clearInterval(Host.tickTimer); Host.tickTimer = null; }
+
+    // déconnecte et retourne à l'accueil
+    Net.leaveRoom(false);
+    App.role = null;
+    document.body.classList.remove('phone-mode', 'hosting');
+    UI.hostVisible(false);
+    UI.screen('pHome');
+    UI.phoneVisible(true);
+    UI.toast('Salle fermée', 2000);
   }
 
   function renderHost() {
