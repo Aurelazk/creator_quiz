@@ -73,6 +73,16 @@
     App.phoneScreen = id;
     const main = $('.phone-main');
     if (main) main.scrollTop = 0;
+    updatePhoneShell();
+  }
+
+  function updatePhoneShell() {
+    const inRoom = !!App.code && App.role === 'player';
+    const btnLeave = $('#btnLeave');
+    const phoneRoom = $('.phone-room');
+    if (btnLeave) btnLeave.style.display = inRoom ? 'block' : 'none';
+    // le code est déjà affiché en grand dans le lobby : pas besoin du badge header là-bas
+    if (phoneRoom) phoneRoom.style.display = (App.phoneScreen === 'pLobby') ? 'none' : (inRoom ? 'block' : 'none');
   }
 
   async function showHostView() {
@@ -156,6 +166,18 @@
     return App.scenePromise;
   }
 
+  /* ---------- mode démo : charger demo.js et basculer sur DemoNet ---------- */
+  function loadDemo() {
+    return new Promise((ok, ko) => {
+      if (global.DemoNet) { ok(); return; }
+      const s = document.createElement('script');
+      s.src = 'js/demo.js';
+      s.onload = ok;
+      s.onerror = ko;
+      document.head.appendChild(s);
+    });
+  }
+
   /* ================================================================== */
   /* INITIALISATION                                                     */
   /* ================================================================== */
@@ -180,6 +202,18 @@
 
     const params = new URLSearchParams(location.search);
     const room = String(params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+
+    if (params.get('demo') === '1') {
+      loadDemo().then(() => {
+        window.Net = global.DemoNet;
+        App.role = 'host';
+        App.code = 'DEMO1';
+        saveJSON(LS.role, 'host');
+        enterHost();
+        DemoSim.startDemo();
+      });
+      return;
+    }
 
     if (room) {
       App.code = room;
@@ -1265,7 +1299,7 @@
   /* ================================================================== */
   function updateClocks() {
     const s = App.state;
-    const running = s && s.phaseEnd > 0 && !s.paused && ['buzz', 'play', 'steal', 'reveal'].includes(s.phase);
+    const running = s && s.phaseEnd > 0 && !s.paused && ['buzz', 'play', 'steal'].includes(s.phase);
     let remaining = 0;
     let label = '--';
     if (running) {
@@ -1281,8 +1315,8 @@
     });
     const hw = $('#hostTimerWrap');
     const pw = $('#pTimerWrap');
-    if (hw) hw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end');
-    if (pw) pw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end');
+    if (hw) hw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end' || s.phase === 'reveal');
+    if (pw) pw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end' || s.phase === 'reveal');
   }
 
   /* ---------------- démarrage ---------------- */

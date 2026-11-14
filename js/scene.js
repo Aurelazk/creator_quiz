@@ -273,14 +273,7 @@
     ctx.fillRect(W / 2 - 150, 248, 300, 3);
 
     if (S.round > 0 && S.round <= S.total) {
-      ctx.fillStyle = '#00E472';
-      ctx.font = '700 44px "Famous College", system-ui, sans-serif';
-      ctx.fillText('MANCHE ' + S.round + ' / ' + S.total, W / 2, 330);
-      if (S.multiplier > 1) {
-        ctx.fillStyle = '#FFCF5A';
-        ctx.font = '700 30px "Famous College", system-ui, sans-serif';
-        ctx.fillText('MULTIPLICATEUR ×' + S.multiplier, W / 2, 382);
-      }
+      // le texte de manche est affiché par l'UI hôte (plus lisible en projection)
     } else {
       ctx.fillStyle = '#00E472';
       ctx.font = '700 36px "Famous College", system-ui, sans-serif';
