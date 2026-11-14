@@ -370,6 +370,8 @@
     });
     on($('#btnSubmit'), 'click', submitGuess);
     on($('#pAnswer'), 'keydown', (e) => { if (e.key === 'Enter') submitGuess(); });
+    on($('#btnSpectSubmit'), 'click', submitSpectGuess);
+    on($('#pSpectAnswer'), 'keydown', (e) => { if (e.key === 'Enter') submitSpectGuess(); });
     on($('#btnLeave'), 'click', () => {
       const inGame = App.state && ['buzz', 'play', 'steal', 'reveal'].includes(App.state.phase);
       if (inGame && !global.confirm('Quitter la partie en cours ?')) return;
@@ -1054,8 +1056,10 @@
       else if (s.phase === 'buzz') {
         text = s.canBuzz ? 'À toi de buzzer !' : 'Attends le signal…';
         if (s.canBuzz) status.classList.add('you');
-      } else if (s.phase === 'play') {
+      }       else if (s.phase === 'play') {
         if (me.isController) { text = 'C’est à toi ! Propose une réponse.'; status.classList.add('you'); }
+        else if (me.isTeammate) { text = 'Ton équipe joue. Propose aussi !'; status.classList.add('you'); }
+        else if (s.canGuessSpectator) { text = 'Devine aussi pour un bonus.'; status.classList.add('steal'); }
         else text = (s.controller ? s.controller.name : 'Un joueur') + ' joue…';
       } else if (s.phase === 'steal') {
         if (me.isStealer) { text = 'VOL ! À toi de rafler la cagnotte !'; status.classList.add('steal'); }
@@ -1082,6 +1086,27 @@
       answer.placeholder = canAnswer ? 'Ta réponse…' : (s.phase === 'steal' ? 'Vol en cours…' : 'Attends ton tour…');
     }
     if (send) send.disabled = !canAnswer;
+
+    /* Spectateur actif : "Devine aussi" (bonus secret) */
+    const spectBox = $('#pSpectatorBox');
+    const spectInput = $('#pSpectAnswer');
+    const spectSend = $('#btnSpectSubmit');
+    const canSpect = !!s.canGuessSpectator;
+    if (spectBox) toggle(spectBox, canSpect);
+    if (spectInput) {
+      spectInput.disabled = !canSpect;
+      spectInput.placeholder = canSpect ? 'Propose en secret…' : '';
+    }
+    if (spectSend) spectSend.disabled = !canSpect;
+    if (canSpect) {
+      const key = s.qi + '|play|spect|' + (me.id || '');
+      if (App.spectFocusKey !== key) {
+        App.spectFocusKey = key;
+        setTimeout(() => { if (spectInput && !spectInput.disabled) spectInput.focus(); }, 80);
+      }
+    } else {
+      App.spectFocusKey = '';
+    }
 
     if (canAnswer) {
       const key = s.qi + '|' + s.phase + '|' + (me.isController ? 'c' : 's') + '|' + (s.stealer ? s.stealer.id : '');
@@ -1128,6 +1153,19 @@
     const s = App.state;
     if (!s || !s.canAnswer) return;
     const input = $('#pAnswer');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) { input.focus(); return; }
+    Net.send('player:guess', { text });
+    input.value = '';
+    input.focus();
+    Sound.play('click');
+  }
+
+  function submitSpectGuess() {
+    const s = App.state;
+    if (!s || !s.canGuessSpectator) return;
+    const input = $('#pSpectAnswer');
     if (!input) return;
     const text = input.value.trim();
     if (!text) { input.focus(); return; }
@@ -1185,6 +1223,17 @@
           global.Scene3D.react(d.playerId, 'joy');
           Sound.play('found');
         }
+        break;
+
+      case 'spectator-found':
+        if (!isHost && d.secret) {
+          toast('#phoneToasts', 'Bonus spectateur : « ' + d.text + ' » (+' + fmt(d.pts) + ')', 'gold', 2600);
+          Sound.play('found');
+        }
+        break;
+
+      case 'spectator-bonus':
+        if (!isHost) toast('#phoneToasts', d.name + ' a trouvé « ' + d.text + ' » en secret (+' + fmt(d.pts) + ')', 'gold', 2600);
         break;
 
       case 'strike':

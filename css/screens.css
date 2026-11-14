@@ -562,6 +562,10 @@
   50% { box-shadow: 0 14px 60px rgba(255,78,32,0.75), 0 0 0 12px rgba(255,78,32,0.09), inset 0 -10px 0 rgba(0,0,0,0.2); }
 }
 .answer-box { display: flex; gap: 0.45rem; margin-top: auto; }
+.answer-send--ghost { background: rgba(255,255,255,0.12); color: #fff; }
+.spectator-box { gap: 0.45rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem; margin-top: 0.4rem; }
+.spectator-label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(244,246,252,0.55); flex: none; }
+.spectator-line { font-size: 0.78rem; text-align: center; color: var(--gold); letter-spacing: 0.04em; min-height: 1.2rem; margin-top: 0.3rem; }
 .answer-input {
   flex: 1; min-height: 56px;
   padding: 0.7rem 1rem;

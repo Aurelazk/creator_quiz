@@ -356,6 +356,14 @@
           <button class="answer-send" id="btnSubmit" disabled>GO</button>
         </div>
 
+        <!-- Spectateur actif : deviner en secret pour bonus -->
+        <div class="answer-box spectator-box hidden" id="pSpectatorBox">
+          <span class="spectator-label">Devine aussi (bonus)</span>
+          <input id="pSpectAnswer" class="answer-input" type="text" maxlength="40" placeholder="Ta proposition…" autocomplete="off" autocorrect="off" spellcheck="false" disabled />
+          <button class="answer-send answer-send--ghost" id="btnSpectSubmit" disabled>GO</button>
+        </div>
+        <div class="spectator-line" id="pSpectLine"></div>
+
         <div class="found-list" id="pFound"></div>
         <div class="pot-line hidden" id="pPot">Cagnotte : <b>0</b></div>
 
