@@ -13,11 +13,60 @@
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/components.css" />
 <link rel="stylesheet" href="css/screens.css" />
+<link rel="stylesheet" href="css/intro.css" />
 </head>
 <body>
 
-<!-- ===================== CHARGEMENT ===================== -->
-<div id="loader" class="loader">
+<!-- ===================== INTRO ANIMÉE (remplace le loader) ===================== -->
+<div id="intro" class="intro hidden" role="status" aria-label="Intro CREATOR">
+  <div class="intro-bg"></div>
+  <div class="intro-word" id="introWord">
+    <span class="letter" id="l-C">C</span>
+    <span class="letter" id="l-R">R</span>
+    <span class="letter" id="l-E">E</span>
+    <span class="letter" id="l-A">A</span>
+    <span class="letter" id="l-T">T</span>
+    <span class="letter" id="l-O">O</span>
+    <span class="letter" id="l-R2">R</span>
+    <span class="dot" id="introDot">.</span>
+  </div>
+  <div class="intro-beam" id="introBeam"></div>
+  <svg class="intro-lamp" id="introLamp" viewBox="0 0 400 300" aria-hidden="true">
+    <defs>
+      <radialGradient id="bulbGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#FFCF5A" stop-opacity="0.85"/>
+      </radialGradient>
+    </defs>
+    <!-- socle -->
+    <g class="lamp-base">
+      <ellipse cx="200" cy="210" rx="52" ry="20" fill="#0B35FE"/>
+      <rect x="180" y="190" width="40" height="24" fill="#0B35FE"/>
+      <circle cx="200" cy="190" r="13" fill="#FF4E20"/>
+    </g>
+    <!-- bras inférieur -->
+    <g class="lamp-arm" id="lampArm1">
+      <rect x="190" y="125" width="20" height="70" rx="5" fill="#0B35FE" transform="rotate(-28 200 190)"/>
+      <circle cx="174" cy="128" r="12" fill="#FF4E20"/>
+    </g>
+    <!-- bras supérieur -->
+    <g class="lamp-arm" id="lampArm2">
+      <rect x="164" y="70" width="20" height="68" rx="5" fill="#0B35FE" transform="rotate(-14 174 128)"/>
+      <circle cx="160" cy="72" r="12" fill="#FF4E20"/>
+    </g>
+    <!-- tête / casque -->
+    <g class="lamp-head">
+      <path d="M 160 72 L 115 42 L 150 24 L 190 50 Z" fill="#0B35FE"/>
+      <circle cx="150" cy="38" r="17" fill="url(#bulbGrad)"/>
+    </g>
+    <!-- ombre portée sous lampe -->
+    <ellipse cx="200" cy="214" rx="40" ry="8" fill="#000" opacity="0.35"/>
+  </svg>
+  <button class="intro-skip" id="btnIntroSkip">Passer</button>
+  <div class="intro-loading" id="introLoading">Chargement…</div>
+</div>
+
+<div id="loader" class="loader hidden">
   <div class="loader-card">
     <div class="loader-logo">CREATOR<span>.</span></div>
     <div class="loader-sub">GUESS THEIR ANSWER</div>
@@ -348,6 +397,7 @@
 <script src="js/avatar.js"></script>
 <script src="js/net.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/intro-anim.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

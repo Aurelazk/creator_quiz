@@ -241,7 +241,8 @@
     setInterval(updateClocks, 100);
     setTimeout(updateClocks, 50);
     updateMuteButton();
-    setTimeout(() => global.UI.hideLoader(), 650);
+    /* Le masquage du loader est confié à l'intro animée (js/intro-anim.js).
+       L'appel direct est retiré pour éviter tout clignotement avec l'intro. */
   }
 
   function enterHost() {
