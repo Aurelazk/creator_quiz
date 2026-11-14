@@ -1,0 +1,13 @@
+# Render Blueprint — serveur de jeu CREATOR (WebSocket + état des salles).
+# Le site statique reste sur Vercel ; ce service ne sert que le jeu.
+services:
+  - type: web
+    name: creator-quiz-game
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production

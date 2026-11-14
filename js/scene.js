@@ -1,641 +1,837 @@
 /* =====================================================================
-   js/scene.js — plateau 3D (three r128)
-   Uniquement des meshes GLB venant des assets Unity + géométrie minimale.
+   js/scene.js — plateau 3D procédural (Three.js r128)
+   - Un seul modèle de personnage de base, assemblé à partir de pièces
+   - Variantes : silhouette, coiffure, tenue, accessoire, couleurs
+   - Foule, gradins, écran de scène, trophées, animations
+   Aucune dépendance à un GLB : tout est généré, léger et fluide.
    ===================================================================== */
 (function (global) {
   'use strict';
 
-  const PALETTE = ['#0B35FE', '#FF4E20', '#00E472', '#FF7A00', '#2E85FF', '#0C1A4B', '#F4F6FC'];
-  const SKIN = '#F4F6FC';
-  const ACCENT = '#0C1A4B';
-  const LIGHT_MODE_CROWD = 15;
-  const CROWD_MAX = 20;
+  const S = {
+    ready: false,
+    renderer: null,
+    scene: null,
+    camera: null,
+    clock: null,
+    canvas: null,
+    players: new Map(),
+    crowd: [],
+    crowdCheer: 0,
+    t: 0,
+    stageScreen: null,
+    screenCtx: null,
+    screenTex: null,
+    count: 0,
+    lastTime: 0,
+    question: '',
+    round: 0,
+    total: 10,
+    multiplier: 1,
+    reduceMotion: false,
+  };
 
-  /* ---------- matériau "argile" : couleur unie par personnage ---------- */
-  const matCache = new Map();
-  function clayMaterial(sweat, bbox) {
-    const key = sweat;
-    if (matCache.has(key)) return matCache.get(key);
+  const GEO = {};
+  const MATS = new Map();
+
+  function initGeo() {
+    if (GEO.sphere) return;
+    GEO.sphere = new THREE.SphereGeometry(1, 24, 18);
+    GEO.sphereLow = new THREE.SphereGeometry(1, 12, 9);
+    GEO.hemi = new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+    GEO.hemiLow = new THREE.SphereGeometry(1, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+    GEO.cyl = new THREE.CylinderGeometry(1, 1, 1, 16);
+    GEO.cylLow = new THREE.CylinderGeometry(1, 1, 1, 8);
+    GEO.cone = new THREE.ConeGeometry(1, 1, 16);
+    GEO.box = new THREE.BoxGeometry(1, 1, 1);
+    GEO.torus = new THREE.TorusGeometry(1, 0.05, 8, 36);
+    GEO.ring = new THREE.RingGeometry(0.78, 1, 40);
+    GEO.circle = new THREE.CircleGeometry(1, 48);
+  }
+
+  function mat(color, opts) {
+    const o = opts || {};
+    const key = color + '|' + (o.rough || 0) + '|' + (o.metal || 0) + '|' + (o.emissive || '') + '|' + (o.opacity || 1);
+    if (MATS.has(key)) return MATS.get(key);
     const m = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(sweat),
-      roughness: 0.75,
-      metalness: 0.0,
+      color: new THREE.Color(color),
+      roughness: o.rough != null ? o.rough : 0.38,
+      metalness: o.metal != null ? o.metal : 0.05,
+      transparent: o.opacity != null && o.opacity < 1,
+      opacity: o.opacity != null ? o.opacity : 1,
+      emissive: o.emissive ? new THREE.Color(o.emissive) : 0x000000,
+      emissiveIntensity: o.emissiveIntensity || 0,
     });
-    m.userData.clay = true;
-    matCache.set(key, m);
+    MATS.set(key, m);
     return m;
   }
 
-  function glowMaterial(color, opacity) {
-    return new THREE.MeshBasicMaterial({ color, transparent: true, opacity: opacity == null ? 0.16 : opacity, depthWrite: false });
+  function mesh(geo, material, x, y, z, sx, sy, sz) {
+    const m = new THREE.Mesh(geo, material);
+    m.position.set(x || 0, y || 0, z || 0);
+    if (sx != null) m.scale.set(sx, sy == null ? sx : sy, sz == null ? sx : sz);
+    return m;
   }
 
-  /* ---------- étiquettes ---------- */
-  function nameSprite(text, color) {
-    const c = document.createElement('canvas');
-    c.width = 256; c.height = 64;
-    const g = c.getContext('2d');
-    g.fillStyle = 'rgba(12,26,75,.82)';
-    g.beginPath();
-    const r = 18;
-    g.moveTo(r, 4); g.lineTo(256 - r, 4); g.quadraticCurveTo(252, 4, 252, r + 4);
-    g.lineTo(252, 60 - r); g.quadraticCurveTo(252, 60, 256 - r, 60);
-    g.lineTo(r, 60); g.quadraticCurveTo(4, 60, 4, 60 - r);
-    g.lineTo(4, r + 4); g.quadraticCurveTo(4, 4, r, 4);
-    g.closePath(); g.fill();
-    g.strokeStyle = color; g.lineWidth = 4; g.stroke();
-    g.fillStyle = '#fff';
-    g.font = 'bold 30px system-ui, sans-serif';
-    g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.fillText(String(text).slice(0, 12), 128, 33);
-    const tex = new THREE.CanvasTexture(c);
-    tex.minFilter = THREE.LinearFilter;
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
-    sp.scale.set(1.6, 0.4, 1);
-    sp.renderOrder = 5;
-    return sp;
+  /* ------------------------------------------------------------------ */
+  /* Initialisation                                                     */
+  /* ------------------------------------------------------------------ */
+  function init(canvas) {
+    if (S.ready) return true;
+    if (!global.THREE || !canvas) return false;
+    initGeo();
+    S.canvas = canvas;
+    S.reduceMotion = global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', alpha: false });
+    renderer.setPixelRatio(Math.min(global.devicePixelRatio || 1, 1.6));
+    renderer.setSize(global.innerWidth, global.innerHeight, false);
+    if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.shadowMap.enabled = false;
+    S.renderer = renderer;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#050b26');
+    scene.fog = new THREE.Fog('#050b26', 22, 46);
+    S.scene = scene;
+
+    const camera = new THREE.PerspectiveCamera(43, global.innerWidth / global.innerHeight, 0.1, 120);
+    camera.position.set(0, 4.9, 13.2);
+    camera.lookAt(0, 2.8, 0.6);
+    S.camera = camera;
+
+    const hemi = new THREE.HemisphereLight(0xdce8ff, 0x101c44, 0.9);
+    scene.add(hemi);
+
+    const key = new THREE.DirectionalLight(0xffffff, 1.15);
+    key.position.set(-7, 12, 9);
+    scene.add(key);
+
+    const rim = new THREE.DirectionalLight('#2E85FF', 0.85);
+    rim.position.set(7, 6, -8);
+    scene.add(rim);
+
+    const warm = new THREE.PointLight('#FF7A00', 0.6, 32);
+    warm.position.set(6, 4, 5);
+    scene.add(warm);
+
+    const spot = new THREE.SpotLight(0xffffff, 2.2, 34, 0.6, 0.55, 1);
+    spot.position.set(0, 13, 7);
+    spot.target.position.set(0, 1, 1);
+    scene.add(spot, spot.target);
+    S.spot = spot;
+
+    buildStage(scene);
+    buildCrowd(scene);
+    buildScreen(scene);
+    buildTrophies(scene);
+
+    S.clock = new THREE.Clock();
+    S.ready = true;
+    global.addEventListener('resize', resize);
+    animate();
+    return true;
   }
 
-  /* ===================================================================== */
-  const S = {
-    ready: false, lightMode: false, mode: 'duel',
-    renderer: null, scene: null, camera: null, clock: null,
-    groupScene: null, podium: null, platform: null, floor: null,
-    clips: null, crowdClips: null, crowdAnimByName: null,
-    charCache: new Map(), charLoading: new Map(),
-    players: new Map(), crowd: [], crowdSeats: [], crowdSlots: {},
-    camBase: new THREE.Vector3(0, 8.2, 19), camLook: new THREE.Vector3(0, 3.1, 4),
-    camPos: new THREE.Vector3(), camTarget: new THREE.Vector3(),
-    pulseT: 0, fpsAcc: 0, fpsFrames: 0, fpsChecked: false,
-    boardGlow: null,
-    onPerf: null,
+  function resize() {
+    if (!S.renderer) return;
+    S.renderer.setSize(global.innerWidth, global.innerHeight, false);
+    S.camera.aspect = global.innerWidth / global.innerHeight;
+    S.camera.updateProjectionMatrix();
+  }
 
-    /* ---------------- init ---------------- */
-    init(canvas) {
-      const r = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-      r.setPixelRatio(Math.min(global.devicePixelRatio || 1, 1.5));
-      r.setSize(global.innerWidth, global.innerHeight, false);
-      r.shadowMap.enabled = false;
-      r.shadowMap.type = THREE.PCFShadowMap;
-      if (THREE.sRGBEncoding) r.outputEncoding = THREE.sRGBEncoding;
-      S.renderer = r;
+  function buildStage(scene) {
+    // sol circulaire
+    const floor = mesh(GEO.circle, mat('#0a1840', { rough: 0.42, metal: 0.3 }), 0, 0, 0, 9.5, 1, 9.5);
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
 
-      const sc = new THREE.Scene();
-      sc.background = new THREE.Color('#0C1A4B');
-      sc.fog = new THREE.Fog('#0C1A4B', 34, 72);
-      S.scene = sc;
+    const inner = mesh(GEO.circle, mat('#0d2358', { rough: 0.5, metal: 0.2 }), 0, 0.01, 1.2, 6.8, 1, 6.8);
+    inner.rotation.x = -Math.PI / 2;
+    scene.add(inner);
 
-      const cam = new THREE.PerspectiveCamera(44, global.innerWidth / global.innerHeight, 0.1, 200);
-      S.camera = cam;
-      S.camPos.copy(S.camBase);
-      S.camTarget.copy(S.camLook);
-      cam.position.copy(S.camPos);
-      cam.lookAt(S.camTarget);
+    // anneaux lumineux
+    const ringMat = new THREE.MeshBasicMaterial({ color: '#2E85FF', transparent: true, opacity: 0.5, side: THREE.DoubleSide });
+    const r1 = mesh(GEO.ring, ringMat, 0, 0.03, 1.1, 9.2, 1, 9.2);
+    r1.rotation.x = -Math.PI / 2;
+    scene.add(r1);
+    const r2 = mesh(GEO.ring, new THREE.MeshBasicMaterial({ color: '#00E472', transparent: true, opacity: 0.32, side: THREE.DoubleSide }), 0, 0.035, 1.1, 7.6, 1, 7.6);
+    r2.rotation.x = -Math.PI / 2;
+    scene.add(r2);
+    S.rings = [r1, r2];
 
-      sc.add(new THREE.HemisphereLight(0xdfe9ff, 0x1a2350, 0.95));
-      const key = new THREE.DirectionalLight(0xffffff, 1.15);
-      key.position.set(-8, 18, 12);
-      key.castShadow = false;
-      key.shadow.mapSize.set(512, 512);
-      key.shadow.camera.left = -16; key.shadow.camera.right = 16;
-      key.shadow.camera.top = 16; key.shadow.camera.bottom = -16;
-      key.shadow.camera.far = 60;
-      key.shadow.bias = -0.0012;
-      sc.add(key);
-      const rim = new THREE.DirectionalLight('#2E85FF', 0.7);
-      rim.position.set(10, 8, -14);
-      sc.add(rim);
-      const fill = new THREE.PointLight('#FF4E20', 0.5, 40);
-      fill.position.set(0, 6, 10);
-      sc.add(fill);
+    // devant + marches
+    for (let i = 0; i < 3; i++) {
+      const step = mesh(GEO.box, mat('#101d49', { rough: 0.7 }), 0, 0.06 + i * 0.05, 4.7 + i * 0.5, 14 - i * 1.2, 0.12, 0.5);
+      scene.add(step);
+    }
 
-      // projecteur avec cône lumineux (pupitre / plateau actif)
-      const spot = new THREE.SpotLight(0xffffff, 2.5, 45, 0.55, 0.6, 1);
-      spot.position.set(0, 14, 6);
-      spot.target.position.set(0, 1.5, 3);
-      spot.castShadow = false;
-      spot.shadow.mapSize.set(512, 512);
-      spot.shadow.camera.near = 0.5; spot.shadow.camera.far = 45;
-      sc.add(spot);
-      sc.add(spot.target);
-      S.spotLight = spot;
-
-      // fond dégradé + texture de ciel fournie par l'UI Unity
-      const bg = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 22),
-        new THREE.MeshBasicMaterial({ map: S.texture('assets/ui/sky.webp'), color: 0x5f7bd6 })
+    // gradins arrière
+    const standMat = mat('#0b173c', { rough: 0.8 });
+    for (let tier = 0; tier < 3; tier++) {
+      const y = 0.35 + tier * 0.55;
+      const z = -1.2 - tier * 1.35;
+      const width = 18 - tier * 1.8;
+      const stand = mesh(GEO.box, standMat, 0, y, z, width, 0.5, 1.1);
+      scene.add(stand);
+      const lightStrip = new THREE.Mesh(
+        new THREE.BoxGeometry(width * 0.85, 0.035, 0.05),
+        new THREE.MeshBasicMaterial({ color: tier % 2 ? '#FF4E20' : '#2E85FF', transparent: true, opacity: 0.55 })
       );
-      bg.position.set(0, 9, -15.5);
-      sc.add(bg);
+      lightStrip.position.set(0, y + 0.24, z + 0.58);
+      scene.add(lightStrip);
+    }
 
-      S.clock = new THREE.Clock();
-      global.addEventListener('resize', S.resize);
-      S.loop();
-    },
+    // piliers latéraux
+    const pillarMat = mat('#0d1f50', { rough: 0.5, metal: 0.2 });
+    [-8.6, 8.6].forEach((x) => {
+      const pillar = mesh(GEO.cyl, pillarMat, x, 3.4, -2.8, 0.34, 6.8, 0.34);
+      scene.add(pillar);
+      const glow = mesh(GEO.cyl, new THREE.MeshBasicMaterial({ color: '#2E85FF', transparent: true, opacity: 0.35 }), x, 3.4, -2.8, 0.18, 6.2, 0.18);
+      scene.add(glow);
+    });
 
-    texture(url, repeat) {
-      const t = new THREE.TextureLoader().load(url);
-      if (THREE.sRGBEncoding) t.encoding = THREE.sRGBEncoding;
-      t.anisotropy = 4;
-      if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat[0], repeat[1]); }
-      return t;
-    },
+    // cônes de projecteurs
+    const coneMat = new THREE.MeshBasicMaterial({ color: '#2E85FF', transparent: true, opacity: 0.055, side: THREE.DoubleSide, depthWrite: false });
+    [[-4, 1], [4, 1], [0, -0.5]].forEach(([x, z], i) => {
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(2.4, 10, 20, 1, true), coneMat);
+      cone.position.set(x, 6.2, z + 1);
+      cone.rotation.x = Math.PI;
+      scene.add(cone);
+    });
+  }
 
-    resize() {
-      if (!S.renderer) return;
-      S.camera.aspect = global.innerWidth / global.innerHeight;
-      S.camera.updateProjectionMatrix();
-      S.renderer.setSize(global.innerWidth, global.innerHeight, false);
-    },
+  function buildScreen(scene) {
+    const c = document.createElement('canvas');
+    c.width = 1024; c.height = 512;
+    const tex = new THREE.CanvasTexture(c);
+    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    S.screenCtx = c.getContext('2d');
+    S.screenTex = tex;
+    drawScreen();
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(14.5, 7.2),
+      new THREE.MeshBasicMaterial({ map: tex })
+    );
+    plane.position.set(0, 5.2, -6.4);
+    scene.add(plane);
+    S.stageScreen = plane;
 
-    /* ---------------- chargement ---------------- */
-    load(onProgress) {
-      const loader = new THREE.GLTFLoader();
-      if (THREE.DRACOLoader) {
-        const d = new THREE.DRACOLoader();
-        d.setDecoderPath('assets/vendor/draco/');
-        loader.setDRACOLoader(d);
+    // cadre lumineux
+    const frame = new THREE.Mesh(
+      new THREE.BoxGeometry(15.2, 7.9, 0.25),
+      mat('#0a1230', { rough: 0.6, metal: 0.3 })
+    );
+    frame.position.set(0, 5.2, -6.55);
+    scene.add(frame);
+    const glow = new THREE.Mesh(
+      new THREE.BoxGeometry(15.5, 0.08, 0.3),
+      new THREE.MeshBasicMaterial({ color: '#00E472', transparent: true, opacity: 0.8 })
+    );
+    glow.position.set(0, 9.1, -6.4);
+    scene.add(glow);
+  }
+
+  function drawScreen() {
+    const ctx = S.screenCtx;
+    if (!ctx) return;
+    const W = 1024, H = 512;
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#0b1f5c');
+    g.addColorStop(0.55, '#0C1A4B');
+    g.addColorStop(1, '#061033');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // rayons
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.translate(W / 2, H / 2);
+    for (let i = 0; i < 18; i++) {
+      ctx.rotate((Math.PI * 2) / 18);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-40, -H);
+      ctx.lineTo(40, -H);
+      ctx.closePath();
+      ctx.fillStyle = i % 2 ? '#2E85FF' : '#00E472';
+      ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 88px "Famous College", system-ui, sans-serif';
+    ctx.fillText('CREATOR.', W / 2, 160);
+    if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '10px';
+    ctx.fillStyle = '#2E85FF';
+    ctx.font = '700 34px "Famous College", system-ui, sans-serif';
+    ctx.fillText('GUESS THEIR ANSWER', W / 2, 215);
+    if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '0px';
+
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fillRect(W / 2 - 150, 248, 300, 3);
+
+    if (S.round > 0 && S.round <= S.total) {
+      ctx.fillStyle = '#00E472';
+      ctx.font = '700 44px "Famous College", system-ui, sans-serif';
+      ctx.fillText('MANCHE ' + S.round + ' / ' + S.total, W / 2, 330);
+      if (S.multiplier > 1) {
+        ctx.fillStyle = '#FFCF5A';
+        ctx.font = '700 30px "Famous College", system-ui, sans-serif';
+        ctx.fillText('MULTIPLICATEUR ×' + S.multiplier, W / 2, 382);
       }
-      S.loader = loader;
-      let done = 0;
-      const step = (label) => (ev) => {
-        if (ev && ev.total) {
-          const pct = Math.min(1, ev.loaded / ev.total);
-          onProgress && onProgress(label, pct);
-        }
-      };
-      return Promise.all([
-        new Promise((res, rej) => loader.load('assets/models/scene.glb', res, step('Plateau'), rej)),
-        new Promise((res, rej) => loader.load('assets/models/char1.glb', res, step('Personnage'), rej)),
-        new Promise((res, rej) => loader.load('assets/models/crowd.glb', res, step('Public'), rej)),
-      ]).then(([gScene, gChar, gCrowd]) => {
-        S.buildStage(gScene.scene);
-        S.clips = gChar.animations || [];
-        S.charCache.set(1, gChar.scene);
-        S.crowdGeoSource = gCrowd.scene;
-        S.crowdBBox = new THREE.Box3().setFromObject(gCrowd.scene);
-        S.crowdAnimByName = new Map();
-        (gCrowd.animations || []).forEach((clip) => S.crowdAnimByName.set(clip.name, clip));
-        S.buildCrowd();
-        S.ready = true;
-        done++;
-        return true;
+    } else {
+      ctx.fillStyle = '#00E472';
+      ctx.font = '700 36px "Famous College", system-ui, sans-serif';
+      ctx.fillText('PLATEAU EN DIRECT', W / 2, 332);
+    }
+
+    if (S.question) {
+      const q = S.question.length > 66 ? S.question.slice(0, 63) + '…' : S.question;
+      ctx.fillStyle = 'rgba(255,255,255,0.76)';
+      ctx.font = '400 26px "Granika", system-ui, sans-serif';
+      ctx.fillText(q, W / 2, 446);
+    }
+    if (S.screenTex) S.screenTex.needsUpdate = true;
+  }
+
+  function buildTrophies(scene) {
+    const gold = mat('#FFCF5A', { rough: 0.22, metal: 0.92 });
+    const goldDark = mat('#B8860B', { rough: 0.3, metal: 0.8 });
+    const pedestal = mat('#111c42', { rough: 0.5, metal: 0.25 });
+    [-6.4, 6.4].forEach((x, idx) => {
+      const base = mesh(GEO.cyl, pedestal, x, 0.42, -0.2, 0.62, 0.84, 0.62);
+      scene.add(base);
+      const plate = mesh(GEO.cyl, goldDark, x, 0.9, -0.2, 0.46, 0.08, 0.46);
+      scene.add(plate);
+      const stem = mesh(GEO.cyl, gold, x, 1.18, -0.2, 0.12, 0.5, 0.12);
+      scene.add(stem);
+      const cup = mesh(GEO.sphere, gold, x, 1.58, -0.2, 0.36, 0.4, 0.36);
+      scene.add(cup);
+      const rim = mesh(GEO.torus, gold, x, 1.82, -0.2, 0.36, 0.36, 0.36);
+      rim.rotation.x = Math.PI / 2;
+      scene.add(rim);
+      [-1, 1].forEach((side) => {
+        const handle = mesh(GEO.torus, gold, x + side * 0.38, 1.62, -0.2, 0.18, 0.22, 0.18);
+        handle.rotation.y = Math.PI / 2;
+        scene.add(handle);
       });
-    },
+      const star = mesh(GEO.sphere, mat('#FFF2B8', { rough: 0.2, metal: 0.6, emissive: '#FFCF5A', emissiveIntensity: 0.45 }), x, 2.02, -0.2, 0.1);
+      scene.add(star);
+    });
+  }
 
-    buildStage(root) {
-      root.updateMatrixWorld(true);
-      const box = new THREE.Box3().setFromObject(root);
-      const find = (n) => root.getObjectByName(n);
-      const floor = find('Floor'), backdrop = find('Backdrop'), podium = find('Podium'), platform = find('Platform');
+  /* ------------------------------------------------------------------ */
+  /* Personnages                                                        */
+  /* ------------------------------------------------------------------ */
+  function addPart(parent, geo, material, x, y, z, sx, sy, sz) {
+    const m = mesh(geo, material, x, y, z, sx, sy, sz);
+    parent.add(m);
+    return m;
+  }
 
-      // fond Unity retiré : il ne couvre qu'un muret latéral
-      if (backdrop) backdrop.visible = false;
+  function createCharacter(config, opts) {
+    const o = opts || {};
+    const low = !!o.low;
+    const c = config && config.colors ? config.colors : {
+      hair: '#FF6B2C', jacket: '#0B35FE', shirt: '#FF4E20', pants: '#0C1A4B', shoes: '#FF4E20',
+    };
+    const sil = (config && config.silhouette) || 'neutral';
+    const hair = (config && config.hair) || 'short';
+    const outfit = (config && config.outfit) || 'jacket';
+    const accessory = (config && config.accessory) || 'none';
 
-      // sol : recoloré aux couleurs CREATOR
-      if (floor) {
-        floor.traverse((o) => {
-          if (!o.isMesh) return;
-          o.material = new THREE.MeshStandardMaterial({ color: '#132a63', roughness: 0.92, metalness: 0.0 });
-          o.receiveShadow = true;
-        });
-        const fb = new THREE.Box3().setFromObject(floor);
-        floor.position.y += (0 - fb.min.y);
-      }
+    const sphere = low ? GEO.sphereLow : GEO.sphere;
+    const hemi = low ? GEO.hemiLow : GEO.hemi;
+    const cyl = low ? GEO.cylLow : GEO.cyl;
 
-      // pupitre : deux copies alignées sur les camps
-      if (podium) {
-        const pb = new THREE.Box3().setFromObject(podium);
-        podium.position.y += (0 - pb.min.y);
-        podium.traverse((o) => {
-          if (!o.isMesh) return;
-          o.material = new THREE.MeshStandardMaterial({ color: '#F4F6FC', roughness: 0.55, metalness: 0.05 });
-          o.castShadow = true; o.receiveShadow = true;
-        });
-        const clone = podium.clone(true);
-        podium.position.set(-5.4, podium.position.y, -1.8);
-        clone.position.set(5.4, podium.position.y, -1.8);
-        S.scene.add(podium, clone);
-      }
+    const root = new THREE.Group();
+    const body = new THREE.Group();
+    root.add(body);
 
-      // cordons rouges : décor au fond
-      if (platform) {
-        platform.position.set(0, platform.position.y, -6.4);
-        S.scene.add(platform);
-        S.platform = platform;
-      }
+    const white = mat('#F7F9FF', { rough: 0.28 });
+    const headMat = mat('#FFFFFF', { rough: 0.24, metal: 0.02 });
+    const jacketMat = mat(c.jacket, { rough: 0.4 });
+    const shirtMat = mat(c.shirt, { rough: 0.42 });
+    const pantsMat = mat(c.pants, { rough: 0.55 });
+    const shoeMat = mat(c.shoes, { rough: 0.4 });
+    const hairMat = mat(c.hair, { rough: 0.5 });
+    const soleMat = mat('#F7F9FF', { rough: 0.6 });
 
-      // tapis d'équipe (textures du pack UI)
-      const blue = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 5.2),
-        new THREE.MeshStandardMaterial({ map: S.texture('assets/ui/turf-blue.webp'), roughness: 0.95 }));
-      blue.rotation.x = -Math.PI / 2; blue.position.set(-5.4, 0.012, 2.4); blue.receiveShadow = true;
-      const green = blue.clone();
-      green.material = new THREE.MeshStandardMaterial({ map: S.texture('assets/ui/turf-green.webp'), roughness: 0.95 });
-      green.position.set(5.4, 0.012, 2.4);
-      S.scene.add(blue, green);
+    const shoulderW = sil === 'masc' ? 0.86 : sil === 'fem' ? 0.72 : 0.8;
+    const hipW = sil === 'fem' ? 0.7 : sil === 'masc' ? 0.62 : 0.66;
 
-      // halo au sol sous le tableau des réponses
-      S.boardGlow = new THREE.Mesh(new THREE.CircleGeometry(6, 40), glowMaterial('#2E85FF', 0.18));
-      S.boardGlow.rotation.x = -Math.PI / 2;
-      S.boardGlow.position.set(0, 0.02, 9.6);
-      S.scene.add(S.boardGlow);
+    // ---- jambes ----
+    const legY = 0.52;
+    const legH = 0.62;
+    const legX = hipW / 2 - 0.14;
+    const legGeo = cyl;
+    const legL = addPart(body, legGeo, pantsMat, -legX, legY, 0, 0.115, legH, 0.115);
+    const legR = addPart(body, legGeo, pantsMat, legX, legY, 0, 0.115, legH, 0.115);
+    legL.name = 'legL'; legR.name = 'legR';
 
-      S.groupScene = root;
-    },
+    // ---- chaussures ----
+    const shoeY = 0.17;
+    [-legX, legX].forEach((x, i) => {
+      const shoe = addPart(body, sphere, shoeMat, x, shoeY, 0.04, 0.17, 0.13, 0.23);
+      shoe.scale.z = 0.25;
+      const sole = addPart(body, GEO.box, soleMat, x, 0.075, 0.06, 0.34, 0.06, 0.44);
+      sole.name = 'sole';
+    });
 
-    /* ---------------- personnages ---------------- */
-    loadChar(n) {
-      const id = Math.max(1, Math.min(6, n | 0));
-      if (S.charCache.has(id)) return Promise.resolve(S.charCache.get(id));
-      if (S.charLoading.has(id)) return S.charLoading.get(id);
-      const p = new Promise((res, rej) => {
-        S.loader.load('assets/models/char' + id + '.glb', (g) => {
-          S.charCache.set(id, g.scene);
-          if (!S.clips || !S.clips.length) S.clips = g.animations;
-          res(g.scene);
-        }, undefined, rej);
+    // ---- torse ----
+    const torsoY = 1.08;
+    const torso = addPart(body, sphere, outfit === 'tee' ? shirtMat : shirtMat, 0, torsoY, 0, shoulderW * 0.5, 0.36, 0.27);
+    torso.name = 'torso';
+
+    if (outfit === 'jacket') {
+      // panneaux de veste ouverts (t-shirt visible au centre)
+      const panelL = addPart(body, sphere, jacketMat, -shoulderW * 0.37, torsoY + 0.02, 0.01, 0.16, 0.35, 0.27);
+      const panelR = addPart(body, sphere, jacketMat, shoulderW * 0.37, torsoY + 0.02, 0.01, 0.16, 0.35, 0.27);
+      panelL.rotation.z = 0.12; panelR.rotation.z = -0.12;
+      // revers
+      const lapelL = addPart(body, GEO.box, mat(AvatarShade(c.jacket, 18), { rough: 0.4 }), -0.13, torsoY + 0.23, 0.24, 0.1, 0.3, 0.05);
+      const lapelR = addPart(body, GEO.box, mat(AvatarShade(c.jacket, 18), { rough: 0.4 }), 0.13, torsoY + 0.23, 0.24, 0.1, 0.3, 0.05);
+      lapelL.rotation.z = -0.32; lapelR.rotation.z = 0.32;
+      // col V du t-shirt
+      addPart(body, GEO.cone, mat(AvatarShade(c.shirt, 16), { rough: 0.42 }), 0, torsoY + 0.24, 0.245, 0.13, 0.22, 0.04);
+    } else if (outfit === 'hoodie') {
+      torso.material = jacketMat;
+      const pocket = addPart(body, GEO.box, mat(AvatarShade(c.jacket, -16), { rough: 0.5 }), 0, torsoY - 0.18, 0.25, 0.36, 0.18, 0.06);
+      pocket.name = 'pocket';
+      const hood = addPart(body, sphere, mat(AvatarShade(c.jacket, -10), { rough: 0.55 }), 0, torsoY + 0.42, -0.12, 0.32, 0.12, 0.24);
+      hood.name = 'hood';
+      [-0.09, 0.09].forEach((x) => {
+        addPart(body, cyl, mat(AvatarShade(c.jacket, 34), { rough: 0.5 }), x, torsoY + 0.08, 0.275, 0.012, 0.2, 0.012);
       });
-      S.charLoading.set(id, p);
-      return p;
-    },
+    } else if (outfit === 'dress') {
+      torso.material = shirtMat;
+      const skirt = addPart(body, cyl, jacketMat, 0, 0.6, 0, 0.4, 0.42, 0.34);
+      skirt.name = 'skirt';
+      addPart(body, GEO.torus, mat(AvatarShade(c.jacket, -20), { rough: 0.5 }), 0, 0.81, 0, 0.4, 0.4, 0.34).rotation.x = Math.PI / 2;
+    } else {
+      // tee simple : bande de bas
+      addPart(body, GEO.box, mat(AvatarShade(c.shirt, -18), { rough: 0.5 }), 0, torsoY - 0.3, 0.235, 0.44, 0.06, 0.04);
+    }
 
-    /** Crée une instance animée d'un personnage. */
-    async spawnChar(charId, sweat, opts) {
-      const src = await S.loadChar(charId);
-      let root;
-      try {
-        root = THREE.SkeletonUtils.clone(src);
-      } catch (e) {
-        root = src.clone(true);
+    // ---- bras (pivots) ----
+    const armY = torsoY + 0.22;
+    const armLen = 0.56;
+    function makeArm(side) {
+      const pivot = new THREE.Group();
+      pivot.position.set(side * (shoulderW / 2 + 0.06), armY, 0);
+      const sleeve = outfit === 'tee'
+        ? addPart(pivot, sphere, shirtMat, 0, -0.02, 0, 0.14, 0.17, 0.14)
+        : addPart(pivot, cyl, outfit === 'dress' ? jacketMat : jacketMat, 0, -armLen / 2 + 0.04, 0, 0.095, armLen, 0.095);
+      if (outfit !== 'tee') {
+        addPart(pivot, sphere, jacketMat, 0, 0.02, 0, 0.15, 0.14, 0.15);
       }
-      const bbox = new THREE.Box3().setFromObject(src);
-      const height = bbox.max.y - bbox.min.y;
-      const mat = clayMaterial(sweat, bbox);
-      root.traverse((o) => {
-        if (!o.isMesh) return;
-        o.material = mat;
-        o.castShadow = !(opts && opts.noShadow);
-        o.receiveShadow = false;
-        o.frustumCulled = true;
-      });
-      // normalise la taille (1,75 m) et pose les pieds sur y = 0
-      const k = 1.75 / (height || 1);
-      const wrapper = new THREE.Group();
-      root.scale.multiplyScalar(k);
-      root.position.y = -bbox.min.y * k;
-      root.rotation.y = 0;
-      wrapper.add(root);
-      const mixer = new THREE.AnimationMixer(root);
-      const actions = {};
-      const clips = (opts && opts.clips ? opts.clips : S.clips || []);
-      clips.forEach((clip) => {
-        const a = mixer.clipAction(clip);
-        actions[clip.name] = a;
-      });
-      return { wrapper, root, mixer, actions, height: 1.75 };
-    },
+      // avant-bras / peau blanc + gant
+      addPart(pivot, cyl, white, 0, -armLen + 0.12, 0, 0.085, 0.24, 0.085);
+      const hand = addPart(pivot, sphere, white, 0, -armLen - 0.02, 0, 0.14);
+      hand.name = 'hand';
+      pivot.rotation.z = side * 0.06;
+      body.add(pivot);
+      return pivot;
+    }
+    const armL = makeArm(-1);
+    const armR = makeArm(1);
+    armL.name = 'armL'; armR.name = 'armR';
 
-    play(inst, name, fade) {
-      if (!inst || !inst.actions) return null;
-      // essaie le nom demandé, puis des aliases courants
-      let next = inst.actions[name];
-      const aliases = {
-        'Idle': ['Idle', 'idle', 'Idle1', 'Pose'],
-        'Running': ['Running', 'running', 'Run', 'run', 'Walk', 'walk'],
-        'Win': ['Win', 'win', 'Victory', 'victory', 'Celebrate'],
-        'Lose': ['Lose', 'lose', 'Defeat', 'defeat'],
-        'Cheer': ['Cheer', 'cheer', 'Win', 'win'],
-      };
-      if (!next && aliases[name]) {
-        for (const alias of aliases[name]) {
-          next = inst.actions[alias];
-          if (next) break;
-        }
+    // ---- cou + tête ----
+    addPart(body, cyl, white, 0, 1.47, 0, 0.16, 0.14, 0.16);
+    const head = new THREE.Group();
+    head.position.set(0, 1.86, 0);
+    body.add(head);
+    addPart(head, sphere, headMat, 0, 0, 0, 0.5, 0.52, 0.48);
+    head.name = 'head';
+
+    // ---- cheveux ----
+    if (hair === 'short') {
+      const h = addPart(head, hemi, hairMat, 0, 0.07, -0.01, 0.52, 0.36, 0.5);
+      h.rotation.x = -0.06;
+    } else if (hair === 'curly') {
+      addPart(head, hemi, hairMat, 0, 0.08, -0.02, 0.53, 0.33, 0.51);
+      const curls = [[-0.32, 0.3, 0.16], [-0.16, 0.42, 0.2], [0.02, 0.45, 0.18], [0.2, 0.4, 0.2], [0.35, 0.28, 0.12], [-0.4, 0.15, 0.06], [0.4, 0.15, 0.06]];
+      curls.forEach(([x, y, z], i) => addPart(head, sphere, mat(i % 2 ? AvatarShade(c.hair, -12) : c.hair, { rough: 0.55 }), x, y, z, 0.14));
+    } else if (hair === 'afro') {
+      addPart(head, sphere, hairMat, 0, 0.16, -0.08, 0.62, 0.58, 0.6);
+      addPart(head, hemi, hairMat, 0, 0.1, 0.02, 0.56, 0.4, 0.53);
+      [[-0.42, 0.2, 0], [0.42, 0.2, 0], [-0.3, 0.42, -0.1], [0.3, 0.42, -0.1], [0, 0.5, -0.12]].forEach(([x, y, z]) => {
+        addPart(head, sphere, hairMat, x, y, z, 0.18);
+      });
+    } else if (hair === 'braids') {
+      addPart(head, hemi, hairMat, 0, 0.08, -0.01, 0.52, 0.34, 0.5);
+      [-1, 1].forEach((side) => {
+        addPart(head, cyl, hairMat, side * 0.46, -0.18, -0.02, 0.07, 0.62, 0.07);
+        addPart(head, sphere, mat(AvatarShade(c.hair, 34), { rough: 0.5 }), side * 0.46, -0.48, -0.02, 0.09);
+      });
+    } else if (hair === 'ponytail') {
+      addPart(head, hemi, hairMat, 0, 0.08, -0.01, 0.52, 0.34, 0.5);
+      addPart(head, sphere, hairMat, 0, 0.08, -0.45, 0.2);
+      addPart(head, GEO.cone, hairMat, 0, -0.28, -0.48, 0.17, 0.6, 0.17).rotation.x = -0.2;
+      addPart(head, sphere, mat(AvatarShade(c.hair, 34), { rough: 0.5 }), 0, 0.06, -0.4, 0.08);
+    } else if (hair === 'cap') {
+      addPart(head, hemi, hairMat, 0, 0.06, -0.01, 0.53, 0.38, 0.51);
+      addPart(head, GEO.box, mat(AvatarShade(c.hair, -18), { rough: 0.5 }), 0, 0.02, 0.46, 0.7, 0.07, 0.34);
+      addPart(head, sphere, mat(AvatarShade(c.hair, 30), { rough: 0.4 }), 0, 0.46, 0, 0.06);
+    } else {
+      // chauve : reflet
+      addPart(head, sphere, mat('#FFFFFF', { rough: 0.12, metal: 0.1 }), -0.18, 0.24, 0.32, 0.1, 0.05, 0.02);
+    }
+
+    // ---- accessoire ----
+    const darkFrame = mat('#141a33', { rough: 0.35, metal: 0.3 });
+    if (accessory === 'glasses') {
+      [-1, 1].forEach((side) => {
+        const lens = addPart(head, GEO.torus, darkFrame, side * 0.19, -0.02, 0.44, 0.15, 0.15, 0.15);
+        lens.rotation.x = 0;
+        const glass = addPart(head, sphere, new THREE.MeshStandardMaterial({
+          color: '#9fd0ff', transparent: true, opacity: 0.22, roughness: 0.1, metalness: 0.2,
+        }), side * 0.19, -0.02, 0.44, 0.13, 0.12, 0.02);
+      });
+      addPart(head, GEO.box, darkFrame, 0, 0.02, 0.45, 0.1, 0.025, 0.03);
+    } else if (accessory === 'headphones') {
+      const bandGeo = new THREE.TorusGeometry(0.56, 0.05, 8, 36, Math.PI);
+      addPart(head, bandGeo, darkFrame, 0, 0.04, 0, 1, 1, 1);
+      [-1, 1].forEach((side) => {
+        addPart(head, cyl, darkFrame, side * 0.5, -0.02, 0, 0.09, 0.24, 0.09).rotation.z = Math.PI / 2;
+        addPart(head, cyl, mat(c.jacket, { rough: 0.4 }), side * 0.53, -0.02, 0, 0.11, 0.17, 0.11).rotation.z = Math.PI / 2;
+      });
+    } else if (accessory === 'beanie') {
+      addPart(head, hemi, mat(c.jacket, { rough: 0.55 }), 0, 0.1, -0.01, 0.54, 0.42, 0.52);
+      addPart(head, GEO.torus, mat(AvatarShade(c.jacket, -18), { rough: 0.55 }), 0, 0.13, 0, 0.52, 0.52, 0.5).rotation.x = Math.PI / 2;
+      addPart(head, sphere, mat(AvatarShade(c.jacket, 30), { rough: 0.45 }), 0, 0.55, 0, 0.09);
+    } else if (accessory === 'backpack') {
+      addPart(body, GEO.box, mat(AvatarShade(c.jacket, -32), { rough: 0.55 }), 0, torsoY + 0.02, -0.32, 0.5, 0.62, 0.24);
+      addPart(body, GEO.box, mat(AvatarShade(c.jacket, -16), { rough: 0.5 }), 0, torsoY - 0.16, -0.45, 0.38, 0.2, 0.1);
+      [-1, 1].forEach((side) => {
+        addPart(body, GEO.box, mat(AvatarShade(c.jacket, -22), { rough: 0.5 }), side * 0.26, torsoY + 0.1, 0.18, 0.06, 0.44, 0.04).rotation.z = side * 0.08;
+      });
+    }
+
+    // ---- étiquette de nom ----
+    let label = null;
+    if (!low) {
+      label = makeLabel(o.name || '');
+      label.position.set(0, 2.78, 0);
+      root.add(label);
+    }
+
+    // ---- halo du joueur actif ----
+    let halo = null;
+    if (!low) {
+      halo = new THREE.Mesh(
+        new THREE.RingGeometry(0.44, 0.62, 40),
+        new THREE.MeshBasicMaterial({ color: '#FFCF5A', transparent: true, opacity: 0, side: THREE.DoubleSide })
+      );
+      halo.rotation.x = -Math.PI / 2;
+      halo.position.y = 0.035;
+      root.add(halo);
+    }
+
+    const ch = {
+      id: o.id || null,
+      root, body, head, armL, armR, legL, legR, label, halo,
+      anim: 'idle', animUntil: 0, phase: Math.random() * Math.PI * 2,
+      baseY: 0, config, configKey: JSON.stringify(config || {}), low,
+    };
+    root.userData.character = ch;
+    return ch;
+  }
+
+  function AvatarShade(hex, amount) {
+    return global.Avatar ? global.Avatar.shade(hex, amount) : hex;
+  }
+
+  function makeLabel(text) {
+    const c = document.createElement('canvas');
+    c.width = 384; c.height = 96;
+    const g = c.getContext('2d');
+    const tex = new THREE.CanvasTexture(c);
+    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    tex.minFilter = THREE.LinearFilter;
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+    sprite.scale.set(1.9, 0.48, 1);
+    sprite.renderOrder = 10;
+    sprite.userData.canvas = c;
+    sprite.userData.ctx = g;
+    sprite.userData.tex = tex;
+    setLabelText(sprite, text);
+    return sprite;
+  }
+
+  function setLabelText(sprite, text) {
+    if (!sprite || !sprite.userData.ctx) return;
+    const g = sprite.userData.ctx;
+    const c = sprite.userData.canvas;
+    g.clearRect(0, 0, c.width, c.height);
+    if (!text) { sprite.visible = false; return; }
+    sprite.visible = true;
+    g.fillStyle = 'rgba(7, 14, 40, 0.82)';
+    const r = 26;
+    g.beginPath();
+    g.moveTo(r, 8);
+    g.lineTo(c.width - r, 8);
+    g.quadraticCurveTo(c.width - 8, 8, c.width - 8, r + 8);
+    g.lineTo(c.width - 8, c.height - r);
+    g.quadraticCurveTo(c.width - 8, c.height - 8, c.width - r, c.height - 8);
+    g.lineTo(r, c.height - 8);
+    g.quadraticCurveTo(8, c.height - 8, 8, c.height - r);
+    g.lineTo(8, r + 8);
+    g.quadraticCurveTo(8, 8, r, 8);
+    g.closePath();
+    g.fill();
+    g.strokeStyle = '#00E472';
+    g.lineWidth = 4;
+    g.stroke();
+    g.fillStyle = '#ffffff';
+    g.font = '700 40px "Janda Manatee Solid", system-ui, sans-serif';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillText(String(text).slice(0, 14), c.width / 2, c.height / 2 + 2);
+    sprite.userData.tex.needsUpdate = true;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Public : joueurs                                                   */
+  /* ------------------------------------------------------------------ */
+  function positionPlayers() {
+    const list = Array.from(S.players.values());
+    const n = list.length;
+    list.forEach((ch, idx) => {
+      let col, row, rows, perRow;
+      if (n <= 6) { rows = 1; perRow = n; }
+      else if (n <= 12) { rows = 2; perRow = Math.ceil(n / 2); }
+      else { rows = 3; perRow = Math.ceil(n / 3); }
+      col = perRow === 1 ? 0 : (idx % perRow) - (perRow - 1) / 2;
+      row = Math.floor(idx / perRow);
+      const spacing = n <= 6 ? 1.55 : 1.42;
+      const x = col * spacing;
+      const z = 2.55 - row * 1.32;
+      const y = 0;
+      ch.root.position.set(x, y, z);
+      ch.root.scale.setScalar(n > 12 ? 0.86 : n > 6 ? 0.95 : 1.06);
+      ch.baseY = y;
+      if (ch.label) {
+        ch.label.position.y = 2.72;
+        ch.label.scale.set(n > 12 ? 1.5 : 1.7, n > 12 ? 0.38 : 0.43, 1);
       }
-      if (!next) return null;
-      const cur = inst.current;
-      if (cur === next) return next;
-      next.reset().setEffectiveWeight(1).fadeIn(fade || 0.2).play();
-      if (cur) cur.fadeOut(fade || 0.2);
-      inst.current = next;
-      return next;
-    },
+      ch.root.rotation.y = row === 0 ? 0 : (row % 2 ? -0.08 : 0.08);
+    });
+  }
 
-    teamSide(team) { return team === 'green' ? 1 : -1; },
-
-    async syncPlayers(list, mode) {
-      if (!S.ready) return;
-      const wanted = new Set();
-      const teams = { blue: [], green: [] };
-      (list || []).forEach((p) => teams[p.team === 'green' ? 'green' : 'blue'].push(p));
-
-      if (mode === 'solo') {
-        // en solo, tout le monde est aligné devant le plateau
-        const all = (list || []).slice(0, 20);
-        for (let i = 0; i < all.length; i++) {
-          const p = all[i];
-          wanted.add(p.id);
-          let inst = S.players.get(p.id);
-          if (!inst || inst.char !== p.char) {
-            if (inst) S.removePlayer(p.id);
-            inst = await S.spawnChar(p.char || 1, p.sweat || PALETTE[i % PALETTE.length], {});
-            inst.char = p.char; inst.sweat = p.sweat;
-            S.scene.add(inst.wrapper);
-            S.players.set(p.id, inst);
-            S.play(inst, 'Idle');
-          }
-          const col = i % 10, row = Math.floor(i / 10);
-          inst.wrapper.position.set((col - 4.5) * 1.15, 0, 7.2 + row * 1.5);
-          inst.wrapper.rotation.y = Math.PI;
-          S.trackLabel(inst, p.name, '#2E85FF');
-        }
+  function setPlayers(list, controllerId, stealerId) {
+    if (!S.ready) return;
+    const seen = new Set();
+    (list || []).forEach((p) => {
+      seen.add(p.id);
+      let ch = S.players.get(p.id);
+      if (!ch) {
+        ch = createCharacter(p.avatar, { id: p.id, name: p.name });
+        S.players.set(p.id, ch);
+        S.scene.add(ch.root);
       } else {
-        for (const team of ['blue', 'green']) {
-          const side = S.teamSide(team);
-          const arr = teams[team].slice(0, 10);
-          for (let i = 0; i < arr.length; i++) {
-            const p = arr[i];
-            wanted.add(p.id);
-            let inst = S.players.get(p.id);
-            if (!inst || inst.char !== p.char) {
-              if (inst) S.removePlayer(p.id);
-              inst = await S.spawnChar(p.char || 1, p.sweat || (team === 'blue' ? '#0B35FE' : '#00E472'), {});
-              inst.char = p.char; inst.sweat = p.sweat;
-              S.scene.add(inst.wrapper);
-              S.players.set(p.id, inst);
-              S.play(inst, 'Idle');
-            }
-            const col = i % 5, row = Math.floor(i / 5);
-            inst.wrapper.position.set(side * 5.4 + (col - 2) * 1.25, 0, 1.2 + row * 1.6);
-            inst.wrapper.rotation.y = 0;
-            S.trackLabel(inst, p.name, team === 'blue' ? '#0B35FE' : '#00E472');
-          }
+        // mise à jour nom / config si besoin
+        if (ch.configKey !== JSON.stringify(p.avatar)) {
+          S.scene.remove(ch.root);
+          disposeCharacter(ch);
+          ch = createCharacter(p.avatar, { id: p.id, name: p.name });
+          ch.configKey = JSON.stringify(p.avatar);
+          S.players.set(p.id, ch);
+          S.scene.add(ch.root);
         }
       }
-      for (const id of Array.from(S.players.keys())) {
-        if (!wanted.has(id)) S.removePlayer(id);
+      if (ch.label) setLabelText(ch.label, p.name);
+      const active = p.id === controllerId || p.id === stealerId;
+      if (ch.halo) ch.halo.material.opacity = active ? 0.85 : 0;
+    });
+    for (const [id, ch] of Array.from(S.players.entries())) {
+      if (!seen.has(id)) {
+        S.scene.remove(ch.root);
+        disposeCharacter(ch);
+        S.players.delete(id);
       }
-    },
+    }
+    positionPlayers();
+  }
 
-    trackLabel(inst, name, color) {
-      if (inst.labelText === name) return;
-      if (inst.label) { inst.wrapper.remove(inst.label); inst.label.material.map.dispose(); inst.label.material.dispose(); }
-      const sp = nameSprite(name || '?', color);
-      sp.position.y = 2.15;
-      inst.wrapper.add(sp);
-      inst.label = sp; inst.labelText = name;
-    },
+  function disposeCharacter(ch) {
+    ch.root.traverse((o) => {
+      if (o.isSprite && o.userData.tex) o.userData.tex.dispose();
+    });
+  }
 
-    removePlayer(id) {
-      const inst = S.players.get(id);
-      if (!inst) return;
-      S.scene.remove(inst.wrapper);
-      if (inst.mixer) inst.mixer.stopAllAction();
-      S.players.delete(id);
-    },
+  function react(playerId, kind) {
+    const ch = S.players.get(playerId);
+    if (!ch) return;
+    const now = performance.now();
+    ch.anim = kind || 'idle';
+    ch.animUntil = now + (kind === 'error' ? 2000 : kind === 'buzz' ? 1600 : 1500);
+    if (kind === 'joy') S.crowdCheer = Math.max(S.crowdCheer, 1);
+    if (kind === 'buzz') S.crowdCheer = Math.max(S.crowdCheer, 0.45);
+  }
 
-    /* ---------------- public ---------------- */
-    buildCrowd() {
-      if (!S.crowdGeoSource) return;
-      const base = S.crowdBBox.clone();
-      const h = base.max.y - base.min.y;
-      const k = 1.55 / (h || 1);
-      const cols = 10, rows = 5;
-      for (let i = 0; i < CROWD_MAX; i++) {
-        const root = THREE.SkeletonUtils.clone(S.crowdGeoSource);
-        root.scale.multiplyScalar(k);
-        root.position.y = -base.min.y * k;
-        root.traverse((o) => { if (o.isMesh) { o.material = S.crowdMat(i); o.castShadow = false; } });
-        const wrap = new THREE.Group();
-        wrap.add(root);
-        const col = i % cols, row = Math.floor(i / cols);
-        const seat = new THREE.Vector3((col - (cols - 1) / 2) * 1.35, 0, -9.4 + row * 1.15);
-        wrap.position.copy(seat);
-        wrap.rotation.y = 0;
-        S.scene.add(wrap);
-        const mixer = new THREE.AnimationMixer(root);
-        const actions = {};
-        // le public recoit ses propres clips (retargetes dans crowd.glb : Idle, Running, Win)
-        const clips = Array.from(S.crowdAnimByName.values()) || [];
-        clips.forEach((clip) => { actions[clip.name] = mixer.clipAction(clip); });
-        const inst = { wrap, root, mixer, actions, seat, assigned: null, slot: null, current: null };
-        // tous les spectateurs sont animes (Idle par defaut)
-        S.play(inst, 'Idle', 0.1);
-        S.crowd.push(inst);
-      }
-      S.crowdSeats = S.crowd.map((c) => c.seat.clone());
-      S.crowdSlots = { blue: S.makeSlots(-1), green: S.makeSlots(1) };
-    },
+  function celebrate() {
+    S.crowdCheer = 2.4;
+    for (const ch of S.players.values()) {
+      ch.anim = 'joy';
+      ch.animUntil = performance.now() + 2600;
+    }
+  }
 
-    crowdMat(i) {
-      const col = PALETTE[i % PALETTE.length];
-      return clayMaterial(col, S.crowdBBox);
-    },
-
-    makeSlots(side) {
-      const out = [];
-      for (let i = 0; i < CROWD_MAX; i++) {
-        const col = i % 5, row = Math.floor(i / 5);
-        out.push(new THREE.Vector3(side * (7.2 + row * 0.95), 0, 3.6 - col * 1.05 - row * 0.2));
-      }
-      return out;
-    },
-
-    /** Applique le score d'équipe : floor(points/2) spectateurs dans le camp. */
-    syncCrowd(bluePts, greenPts) {
-      if (!S.ready || !S.crowd.length) return;
-      const limit = S.lightMode ? LIGHT_MODE_CROWD : CROWD_MAX;
-      const want = { blue: Math.min(limit, Math.floor((bluePts || 0) / 2)), green: Math.min(limit, Math.floor((greenPts || 0) / 2)) };
-      for (const team of ['blue', 'green']) {
-        const sideSlots = S.crowdSlots[team];
-        let have = S.crowd.filter((c) => c.assigned === team).length;
-        // trop de monde : on renvoie les derniers arrivés dans les gradins
-        while (have > want[team]) {
-          const c = S.crowd.filter((x) => x.assigned === team).pop();
-          c.assigned = null; c.slot = null;
-          S.moveCrowd(c, c.seat, null);
-          have--;
-        }
-        for (let i = have; i < want[team]; i++) {
-          const c = S.crowd.find((x) => !x.assigned);
-          if (!c) break;
-          c.assigned = team;
-          c.slot = sideSlots[i];
-          S.moveCrowd(c, sideSlots[i], team);
-        }
-      }
-      // un trou dans les gradins doit être comblé par le camp adverse ? non : jamais de retour
-    },
-
-    moveCrowd(c, target, team) {
-      c.target = target.clone();
-      c.moving = true;
-      S.play(c, 'Running', 0.15);
-    },
-
-    resetCrowd() {
-      S.crowd.forEach((c, i) => {
-        c.assigned = null; c.slot = null; c.target = null; c.moving = false;
-        c.wrap.position.copy(c.seat);
-        S.play(c, 'Idle', 0.1);
-      });
-    },
-
-    /* ---------------- fin de partie ---------------- */
-    celebrate(ranked, mode, teamScores) {
-      const scores = {};
-      (ranked || []).forEach((p) => { scores[p.id] = p.score; });
-      const teamOf = {};
-      (ranked || []).forEach((p) => { teamOf[p.id] = p.team; });
-
-      let winnerTeam = null;
-      if (mode === 'duel' && teamScores) {
-        const b = teamScores.blue || 0, g = teamScores.green || 0;
-        winnerTeam = b > g ? 'blue' : (g > b ? 'green' : null);
-      }
-
-      S.players.forEach((inst, id) => {
-        const p = (ranked || []).find((x) => x.id === id);
-        const team = teamOf[id];
-        if (mode === 'solo') {
-          const rank = (ranked || []).findIndex((x) => x.id === id);
-          if (rank >= 0 && rank < 3) {
-            S.play(inst, 'Win', 0.25); // Podium (pas de clip dedie : pose Win = victoire)
-            S.trackLabel(inst, (p && p.name || '?') + '  •  ' + (scores[id] || 0) + ' pts', team === 'blue' ? '#0B35FE' : '#00E472');
-          } else {
-            S.play(inst, 'Lose', 0.25);
-            S.trackLabel(inst, p && p.name || '?', team === 'blue' ? '#0B35FE' : '#00E472');
-          }
-        } else {
-          const win = winnerTeam !== null && team === winnerTeam;
-          S.play(inst, win ? 'Win' : 'Lose', 0.25);
-          S.trackLabel(inst, p && p.name || '?', team === 'blue' ? '#0B35FE' : '#00E472');
-        }
-      });
-
-      // public : camp gagnant saute (Cheer), l'autre baisse les bras (Lose)
-      S.crowd.forEach((c) => {
-        if (c.assigned === 'blue' || c.assigned === 'green') {
-          const win = winnerTeam !== null && c.assigned === winnerTeam;
-          S.play(c, win ? 'Cheer' : 'Lose', 0.25);
-        } else {
-          S.play(c, 'Idle', 0.2);
-        }
-      });
-
-      S.updateCameraMode('end');
-    },
-
-    /** Affiche un emoji au-dessus du personnage d'un joueur pendant 2 s. */
-    showEmojiAbove(id, emoji) {
-      const inst = S.players.get(id);
-      if (!inst || !emoji) return;
-      const c = document.createElement('canvas');
-      c.width = 96; c.height = 96;
-      const g = c.getContext('2d');
-      g.font = '72px sans-serif';
-      g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText(emoji, 48, 52);
-      const tex = new THREE.CanvasTexture(c);
-      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
-      sp.position.set(0, 2.7, 0);
-      sp.renderOrder = 6;
-      inst.wrapper.add(sp);
-      setTimeout(() => {
-        try { inst.wrapper.remove(sp); } catch (e) {}
-        tex.dispose(); sp.material.dispose();
-      }, 2000);
-    },
-
-    /* ---------------- caméra ---------------- */
-    updateCameraMode(mode) {
-      if (mode === 'end') {
-        S.camBase.set(0, 5.4, 13);
-        S.camLook.set(0, 2.2, 9);
-      } else if (mode === 'solo') {
-        S.camBase.set(0, 6.6, 16);
-        S.camLook.set(0, 2.2, 10);
+  /* ------------------------------------------------------------------ */
+  /* Foule                                                              */
+  /* ------------------------------------------------------------------ */
+  function buildCrowd(scene) {
+    const count = 26;
+    for (let i = 0; i < count; i++) {
+      const conf = global.Avatar ? global.Avatar.random() : null;
+      const ch = createCharacter(conf, { low: true });
+      ch.root.scale.setScalar(0.54);
+      const row = i % 5;
+      const col = Math.floor(i / 5);
+      const side = i % 2 === 0 ? -1 : 1;
+      let x, z, y;
+      if (col < 2) {
+        // gradins latéraux
+        x = side * (5.9 + col * 1.1);
+        z = -0.8 - row * 1.15;
+        y = 0.55 + row * 0.34;
+        ch.root.rotation.y = side > 0 ? -0.8 : 0.8;
       } else {
-        S.camBase.set(0, 8.2, 19);
-        S.camLook.set(0, 3.1, 4);
+        // gradins arrière
+        x = (row - 2) * 1.5 + (col % 2 ? 0.3 : -0.3);
+        z = -4.4 - (col - 2) * 0.9;
+        y = 0.55 + (col - 2) * 0.5;
+        ch.root.rotation.y = 0;
       }
-    },
+      ch.root.position.set(x, y, z);
+      ch.phase = Math.random() * Math.PI * 2;
+      ch.crowdBaseY = y;
+      scene.add(ch.root);
+      S.crowd.push(ch);
+    }
+  }
 
-    pulse() { S.pulseT = 1; },
+  /* ------------------------------------------------------------------ */
+  /* Animation                                                          */
+  /* ------------------------------------------------------------------ */
+  function animate() {
+    if (!S.ready) return;
+    requestAnimationFrame(animate);
+    const dt = Math.min(0.05, S.clock.getDelta());
+    S.t += dt;
+    const t = S.t;
+    const now = performance.now();
 
-    /* ---------------- boucle ---------------- */
-    loop() {
-      requestAnimationFrame(S.loop);
-      if (!S.renderer) return;
-      const dt = Math.min(0.05, S.clock.getDelta());
-
-      S.players.forEach((inst) => inst.mixer && inst.mixer.update(dt));
-      for (let i = 0; i < S.crowd.length; i++) {
-        const c = S.crowd[i];
-        if (i < (S.lightMode ? LIGHT_MODE_CROWD : CROWD_MAX) && c.mixer) c.mixer.update(dt);
-        if (c.moving && c.target) {
-          const p = c.wrap.position;
-          const d = p.distanceTo(c.target);
-          if (d < 0.12) {
-            p.copy(c.target);
-            c.moving = false;
-            S.play(c, 'Idle', 0.25);
-          } else {
-            p.lerp(c.target, Math.min(1, dt * 2.4));
-            c.wrap.rotation.y = Math.atan2(c.target.x - p.x, c.target.z - p.z);
-          }
+    // joueurs
+    for (const ch of S.players.values()) {
+      animateCharacter(ch, t, now, 1);
+    }
+    // foule
+    S.crowdCheer = Math.max(0, S.crowdCheer - dt * 0.55);
+    for (const ch of S.crowd) {
+      animateCharacter(ch, t, now, 0.55);
+      if (ch.crowdBaseY != null) {
+        const cheer = S.crowdCheer;
+        ch.root.position.y = ch.crowdBaseY + Math.abs(Math.sin(t * 7 + ch.phase)) * 0.18 * cheer;
+        if (cheer > 0.4) {
+          ch.anim = 'joy';
+          ch.animUntil = now + 200;
         }
       }
+    }
 
-      if (S.pulseT > 0) {
-        S.pulseT = Math.max(0, S.pulseT - dt * 0.9);
-        const e = S.pulseT * S.pulseT;
-        S.camPos.lerpVectors(S.camBase, new THREE.Vector3(S.camBase.x * 0.82, S.camBase.y - 0.7, S.camBase.z - 2.2), e);
-        S.camTarget.lerpVectors(S.camLook, new THREE.Vector3(0, 2.9, 4), e);
-      } else {
-        S.camPos.lerp(S.camBase, Math.min(1, dt * 1.6));
-        S.camTarget.lerp(S.camLook, Math.min(1, dt * 1.6));
+    // anneaux
+    if (S.rings) {
+      S.rings[0].rotation.z += dt * 0.08;
+      S.rings[1].rotation.z -= dt * 0.06;
+      S.rings[0].material.opacity = 0.35 + Math.sin(t * 1.4) * 0.12;
+    }
+    // halo joueur actif
+    for (const ch of S.players.values()) {
+      if (ch.halo && ch.halo.material.opacity > 0) {
+        ch.halo.rotation.z += dt * 0.9;
+        ch.halo.material.opacity = 0.55 + Math.sin(t * 5) * 0.3;
+        ch.halo.scale.setScalar(1 + Math.sin(t * 3) * 0.06);
       }
-      S.camera.position.lerp(S.camPos, Math.min(1, dt * 6));
-      S.camera.lookAt(S.camTarget);
+    }
+    // caméra légère
+    if (!S.reduceMotion) {
+      S.camera.position.x = Math.sin(t * 0.16) * 0.32;
+      S.camera.position.y = 4.9 + Math.sin(t * 0.22) * 0.08;
+      S.camera.lookAt(0, 2.8, 0.6);
+    }
+    S.renderer.render(S.scene, S.camera);
+  }
 
-      S.renderer.render(S.scene, S.camera);
+  function animateCharacter(ch, t, now, weight) {
+    if (ch.animUntil && now > ch.animUntil) { ch.anim = 'idle'; ch.animUntil = 0; }
+    const anim = ch.anim;
+    const phase = ch.phase;
+    const lerp = (a, b, k) => a + (b - a) * Math.min(1, k);
 
-      // détection de perf : bascule en mode léger
-      S.fpsAcc += dt; S.fpsFrames++;
-      if (!S.fpsChecked && S.fpsAcc > 3) {
-        const fps = S.fpsFrames / S.fpsAcc;
-        S.fpsChecked = true;
-        if (fps < 25) S.setLightMode(true);
-        S.onPerf && S.onPerf(Math.round(fps));
-      }
-    },
+    let armLTarget = 0.06, armRTarget = -0.06;
+    let headX = 0, headZ = 0;
+    let bodyZ = Math.sin(t * 1.7 + phase) * 0.018 * weight;
+    let jump = 0;
+    const speed = ch.low ? 0.1 : 0.14;
 
-    setLightMode(on) {
-      if (S.lightMode === on) return;
-      S.lightMode = on;
-      if (S.renderer) S.renderer.shadowMap.enabled = !on;
-      S.crowd.forEach((c, i) => {
-        c.wrap.visible = on ? i < LIGHT_MODE_CROWD : true;
-      });
-    },
+    if (anim === 'joy') {
+      armLTarget = 2.45; armRTarget = -2.45;
+      headZ = Math.sin(t * 6 + phase) * 0.08;
+      jump = Math.abs(Math.sin(t * 6.2 + phase)) * 0.2;
+    } else if (anim === 'error') {
+      armLTarget = 0.25; armRTarget = -0.25;
+      headX = 0.5;
+      bodyZ = 0.08;
+      jump = 0;
+    } else if (anim === 'buzz') {
+      armRTarget = -2.7;
+      armLTarget = 0.25;
+      headZ = -0.06;
+      jump = Math.abs(Math.sin(t * 9)) * 0.04;
+    } else {
+      armLTarget = 0.06 + Math.sin(t * 1.9 + phase) * 0.05;
+      armRTarget = -0.06 - Math.sin(t * 1.9 + phase + 0.7) * 0.05;
+      jump = Math.sin(t * 1.9 + phase) * 0.012;
+    }
+    ch.armL.rotation.z = lerp(ch.armL.rotation.z, armLTarget, speed);
+    ch.armR.rotation.z = lerp(ch.armR.rotation.z, armRTarget, speed);
+    ch.armL.rotation.x = lerp(ch.armL.rotation.x, anim === 'joy' ? -0.1 : 0, speed);
+    ch.armR.rotation.x = lerp(ch.armR.rotation.x, anim === 'joy' ? -0.1 : 0, speed);
+    ch.head.rotation.x = lerp(ch.head.rotation.x, headX, speed);
+    ch.head.rotation.z = lerp(ch.head.rotation.z, headZ, speed);
+    ch.body.rotation.z = lerp(ch.body.rotation.z, bodyZ, speed);
+    ch.root.position.y = (ch.baseY || 0) + jump * weight;
+  }
 
-    /* ---------------- liberation des ressources (nouvelle partie) ---------------- */
-    dispose() {
-      // arrete et retire tous les joueurs (ressources d'une partie)
-      S.players.forEach((inst) => {
-        if (inst.mixer) inst.mixer.stopAllAction();
-        if (inst.label) {
-          if (inst.label.material && inst.label.material.map) inst.label.material.map.dispose();
-          if (inst.label.material) inst.label.material.dispose();
-          inst.wrapper.remove(inst.label);
-        }
-        S.scene.remove(inst.wrapper);
-      });
-      S.players.clear();
-    },
+  /* ------------------------------------------------------------------ */
+  /* API                                                                */
+  /* ------------------------------------------------------------------ */
+  function setRound(round, total, multiplier, question) {
+    S.round = round || 0;
+    S.total = total || 10;
+    S.multiplier = multiplier || 1;
+    S.question = question || '';
+    if (S.ready) drawScreen();
+  }
+
+  function destroy() {
+    S.ready = false;
+    for (const ch of S.players.values()) {
+      if (S.scene) S.scene.remove(ch.root);
+    }
+    S.players.clear();
+    if (S.renderer) {
+      try { S.renderer.dispose(); } catch (e) {}
+    }
+  }
+
+  global.Scene3D = {
+    init, setPlayers, react, celebrate, setRound, resize, destroy,
+    get ready() { return S.ready; },
   };
-
-  global.PALETTE = PALETTE;
-  global.Scene3D = S;
 })(window);

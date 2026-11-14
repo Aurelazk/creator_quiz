@@ -102,10 +102,14 @@ module.exports = async (req, res) => {
   }
 
   if (req.method === 'GET') {
+    if (!REDIS_URL || !REDIS_TOKEN) {
+      res.statusCode = 200;
+      return res.end(JSON.stringify({ scores: [], count: 0, configured: false }));
+    }
     try {
       const scores = await getLeaderboard();
       res.statusCode = 200;
-      return res.end(JSON.stringify({ scores, count: scores.length }));
+      return res.end(JSON.stringify({ scores, count: scores.length, configured: true }));
     } catch (e) {
       res.statusCode = 502;
       return res.end(JSON.stringify({ error: 'indisponible', detail: e.message }));
@@ -143,6 +147,10 @@ module.exports = async (req, res) => {
     if (!Number.isFinite(score) || score < 0 || score > SCORE_MAX || String(parsed.score) === '' || Number(parsed.score) !== score) {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error: 'score invalide (0 a ' + SCORE_MAX + ')' }));
+    }
+    if (!REDIS_URL || !REDIS_TOKEN) {
+      res.statusCode = 503;
+      return res.end(JSON.stringify({ error: 'indisponible', detail: 'Upstash non configure' }));
     }
     try {
       await upsertScore(name, score);

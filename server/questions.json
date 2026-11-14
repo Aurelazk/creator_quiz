@@ -1,0 +1,123 @@
+[
+  {
+    "q": "Citez un plat béninois que tout le monde adore.",
+    "answers": [
+      { "text": "Pâte rouge (amiwo)", "pts": 25, "aliases": ["amiwo", "amio", "pate rouge", "pâte rouge", "sauce rouge", "amiwo rouge"] },
+      { "text": "Riz au gras", "pts": 20, "aliases": ["riz gras", "riz djolof", "jollof", "djolof rice", "riz jollof"] },
+      { "text": "Akassa", "pts": 15, "aliases": ["akasan", "akassa", "pate de mais", "pâte de maïs"] },
+      { "text": "Igname pilée", "pts": 12, "aliases": ["igname pilee", "igname pilé", "pilee d'igname", "pilé d'igname", "igname"] },
+      { "text": "Poisson braisé", "pts": 10, "aliases": ["poisson braise", "poisson grillé", "poisson grille", "poisson au feu"] },
+      { "text": "Atassi", "pts": 8, "aliases": ["atasi", "haricots riz", "riz haricots", "haricot riz", "watasi"] },
+      { "text": "Wô", "pts": 6, "aliases": ["wo", "wô", "pate noire", "pâte noire", "amiwo noire", "pate noir"] },
+      { "text": "Gari", "pts": 4, "aliases": ["gari", "tapioca", "semoule de manioc"] }
+    ]
+  },
+  {
+    "q": "Citez une technologie que les étudiants utilisent tous les jours.",
+    "answers": [
+      { "text": "WhatsApp", "pts": 30, "aliases": ["whats app", "whatsap", "wathsapp", "ouatsapp"] },
+      { "text": "Le téléphone", "pts": 22, "aliases": ["telephone", "téléphone", "smartphone", "portable", "tel"] },
+      { "text": "Internet", "pts": 15, "aliases": ["internet", "wifi", "wi-fi", "connexion", "data", "reseau", "réseau"] },
+      { "text": "L'ordinateur", "pts": 10, "aliases": ["ordinateur", "pc", "laptop", "ordi", "computer"] },
+      { "text": "Google", "pts": 8, "aliases": ["google", "google search", "moteur de recherche"] },
+      { "text": "L'intelligence artificielle", "pts": 8, "aliases": ["ia", "intelligence artificielle", "chatgpt", "chat gpt", "gpt", "copilot"] },
+      { "text": "TikTok", "pts": 7, "aliases": ["tiktok", "tik tok", "tiktok"] }
+    ]
+  },
+  {
+    "q": "Citez une boisson qu'on trouve facilement au Bénin.",
+    "answers": [
+      { "text": "L'eau", "pts": 25, "aliases": ["eau", "eau minerale", "eau minérale", "eau pure"] },
+      { "text": "Le sodabi", "pts": 18, "aliases": ["sodabi", "sodabe", "eau de vie", "alcool de palme"] },
+      { "text": "Le bissap", "pts": 15, "aliases": ["bissap", "jus d'hibiscus", "jus hibiscus", "hibiscus"] },
+      { "text": "Le jus d'orange", "pts": 12, "aliases": ["jus d'orange", "jus orange", "orange", "jus de fruit"] },
+      { "text": "Le Coca-Cola", "pts": 10, "aliases": ["coca", "coca-cola", "coca cola", "coke"] },
+      { "text": "La bière", "pts": 10, "aliases": ["biere", "bière", "beer", "beninoise", "béninoise", "castel", "la beninoise"] },
+      { "text": "Le café", "pts": 6, "aliases": ["cafe", "café", "nescafe", "nEscafé"] },
+      { "text": "Le lait", "pts": 4, "aliases": ["lait", "lait en poudre", "milk"] }
+    ]
+  },
+  {
+    "q": "Quel est le premier réflexe d'un étudiant le matin ?",
+    "answers": [
+      { "text": "Regarder son téléphone", "pts": 30, "aliases": ["regarder le telephone", "regarder son telephone", "telephone", "checker le phone", "consulter son tel"] },
+      { "text": "Dormir encore", "pts": 20, "aliases": ["dormir encore", "se rendormir", "snooze", "rester au lit", "dormir"] },
+      { "text": "Se laver", "pts": 15, "aliases": ["se laver", "prendre sa douche", "douche", "se brosser les dents", "faire sa toilette"] },
+      { "text": "Petit-déjeuner", "pts": 12, "aliases": ["petit dejeuner", "petit-déjeuner", "manger", "prendre le petit dej", "dejeuner"] },
+      { "text": "Aller en cours", "pts": 10, "aliases": ["aller en cours", "aller a l'ecole", "partir en cours", "aller au campus", "aller a la fac"] },
+      { "text": "Prier", "pts": 8, "aliases": ["prier", "faire la priere", "prière", "salat", "aller a la mosquee"] },
+      { "text": "Scroller les réseaux", "pts": 5, "aliases": ["scroller", "reseau sociaux", "réseaux sociaux", "facebook", "instagram", "tik tok"] }
+    ]
+  },
+  {
+    "q": "Citez une matière qui fait peur aux étudiants.",
+    "answers": [
+      { "text": "Les maths", "pts": 32, "aliases": ["maths", "mathematiques", "mathématiques", "math", "algebre", "algèbre", "analyse"] },
+      { "text": "La physique", "pts": 20, "aliases": ["physique", "physique chimie", "mecanique", "mécanique", "electricite"] },
+      { "text": "La programmation", "pts": 15, "aliases": ["programmation", "programmer", "informatique", "code", "algorithmique", "algo"] },
+      { "text": "La comptabilité", "pts": 10, "aliases": ["comptabilite", "comptabilité", "compta", "accounting"] },
+      { "text": "L'économie", "pts": 8, "aliases": ["economie", "économie", "eco", "macro", "micro"] },
+      { "text": "L'anglais", "pts": 8, "aliases": ["anglais", "english", "langue anglaise"] },
+      { "text": "Le droit", "pts": 7, "aliases": ["droit", "juridique", "droit civil", "law"] }
+    ]
+  },
+  {
+    "q": "Citez un endroit où les jeunes se retrouvent à Cotonou.",
+    "answers": [
+      { "text": "La plage", "pts": 25, "aliases": ["plage", "la plage", "fidjrosse", "fidjrossè", "cotonou plage", "bord de mer"] },
+      { "text": "Le marché Dantokpa", "pts": 18, "aliases": ["dantokpa", "dantokpa", "marche dantokpa", "marché dantokpa", "toko", "grand marche", "grand marché"] },
+      { "text": "Le campus", "pts": 15, "aliases": ["campus", "l'universite", "université", "fac", "uac", "l'ecole", "école"] },
+      { "text": "Les maquis", "pts": 14, "aliases": ["maquis", "bar", "resto", "restaurant", "buvette"] },
+      { "text": "Le cybercafé", "pts": 10, "aliases": ["cybercafe", "cybercafé", "cyber", "cafe internet", "café internet"] },
+      { "text": "Le cinéma", "pts": 10, "aliases": ["cinema", "cinéma", "le cinema", "movie theater"] },
+      { "text": "L'église", "pts": 8, "aliases": ["eglise", "église", "la messe", "temple", "mosquee", "mosquée"] }
+    ]
+  },
+  {
+    "q": "Citez un fruit jaune.",
+    "answers": [
+      { "text": "La banane", "pts": 35, "aliases": ["banane", "bananes", "bananier"] },
+      { "text": "La mangue", "pts": 25, "aliases": ["mangue", "mangues", "mango"] },
+      { "text": "L'ananas", "pts": 15, "aliases": ["ananas", "anana", "pineapple"] },
+      { "text": "Le citron", "pts": 10, "aliases": ["citron", "citrons", "lemon"] },
+      { "text": "La papaye", "pts": 8, "aliases": ["papaye", "papayes", "papaya"] },
+      { "text": "L'orange", "pts": 7, "aliases": ["orange", "oranges", "orange jaune"] }
+    ]
+  },
+  {
+    "q": "Citez un métier que les enfants veulent faire plus tard.",
+    "answers": [
+      { "text": "Médecin", "pts": 25, "aliases": ["medecin", "médecin", "docteur", "doctor", "medecine"] },
+      { "text": "Ingénieur", "pts": 20, "aliases": ["ingenieur", "ingénieur", "engineer", "ingenierie", "ingénierie"] },
+      { "text": "Footballeur", "pts": 18, "aliases": ["footballeur", "footballer", "joueur de foot", "foot", "sportif"] },
+      { "text": "Enseignant", "pts": 12, "aliases": ["enseignant", "professeur", "prof", "teacher", "maitre", "maîtresse"] },
+      { "text": "Avocat", "pts": 10, "aliases": ["avocat", "avocate", "lawyer", "juriste"] },
+      { "text": "Pilote", "pts": 8, "aliases": ["pilote", "pilote d'avion", "pilot", "aviateur"] },
+      { "text": "Influenceur", "pts": 7, "aliases": ["influenceur", "influenceuse", "youtubeur", "createur de contenu", "créateur de contenu", "influencer"] }
+    ]
+  },
+  {
+    "q": "Citez une application que tu ouvres au moins une fois par jour.",
+    "answers": [
+      { "text": "WhatsApp", "pts": 30, "aliases": ["whatsapp", "whats app", "whatsap", "wathsapp"] },
+      { "text": "Instagram", "pts": 20, "aliases": ["instagram", "insta", "ig"] },
+      { "text": "TikTok", "pts": 18, "aliases": ["tiktok", "tik tok", "tik-tok"] },
+      { "text": "Facebook", "pts": 12, "aliases": ["facebook", "fb", "meta"] },
+      { "text": "YouTube", "pts": 8, "aliases": ["youtube", "you tube", "yt"] },
+      { "text": "Snapchat", "pts": 6, "aliases": ["snapchat", "snap"] },
+      { "text": "Telegram", "pts": 6, "aliases": ["telegram", "telgram"] }
+    ]
+  },
+  {
+    "q": "Citez un instrument de musique béninois.",
+    "answers": [
+      { "text": "Le tam-tam", "pts": 30, "aliases": ["tam tam", "tam-tam", "tamtam", "tambour", "drum"] },
+      { "text": "Le djembé", "pts": 20, "aliases": ["djembe", "djembé", "jembe", "djembe"] },
+      { "text": "La kora", "pts": 15, "aliases": ["kora", "coras", "kora africaine"] },
+      { "text": "L'agogo", "pts": 12, "aliases": ["agogo", "agogos", "cloche", "gong"] },
+      { "text": "La guitare", "pts": 8, "aliases": ["guitare", "guitar", "guitare acoustique"] },
+      { "text": "La trompette", "pts": 8, "aliases": ["trompette", "trompete", "trumpet", "cuivre"] },
+      { "text": "La flûte", "pts": 7, "aliases": ["flute", "flûte", "flute traversiere", "flûte traversière"] }
+    ]
+  }
+]

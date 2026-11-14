@@ -73,9 +73,10 @@
   --max-w: 1200px;
 
   /* ── Typographie ── */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Famous College', 'Janda Manatee Solid', 'DS-Digi', 'Inter', system-ui, sans-serif;
-  --font-mono: 'DS-Digi', monospace;
+  --font-sans: 'Janda Manatee Solid', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Famous College', 'Janda Manatee Solid', system-ui, sans-serif;
+  --font-question: 'Granika', 'Janda Manatee Solid', system-ui, sans-serif;
+  --font-mono: 'Granika', monospace;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;

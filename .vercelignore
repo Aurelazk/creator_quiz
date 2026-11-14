@@ -13,3 +13,9 @@ node_modules/
 .vercel/
 .git/
 .gitignore
+
+assets_visuels/
+tests/
+tools/
+server/data/
+UI_REPORT.md
