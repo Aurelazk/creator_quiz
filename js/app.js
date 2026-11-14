@@ -124,6 +124,11 @@
     if (imgB && imgB.getAttribute('src') !== src) imgB.src = src;
   }
 
+  function showDemoBanner() {
+    const banner = $('#demoBanner');
+    if (banner) banner.classList.remove('hidden');
+  }
+
   function avatarSvg(avatar) {
     const key = JSON.stringify(avatar || {});
     if (App.avatarSvgCache.has(key)) return App.avatarSvgCache.get(key);
@@ -195,7 +200,6 @@
 
     buildAvatarControls();
     bindEvents();
-    bindNet();
     updateMuteButton();
     renderHomePreview();
     renderAvatarScreen();
@@ -203,17 +207,22 @@
     const params = new URLSearchParams(location.search);
     const room = String(params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
 
+    /* ---------- MODE DÉMO : isole Net AVANT bindNet ---------- */
     if (params.get('demo') === '1') {
       loadDemo().then(() => {
         window.Net = global.DemoNet;
+        bindNet();
         App.role = 'host';
         App.code = 'DEMO1';
         saveJSON(LS.role, 'host');
         enterHost();
         DemoSim.startDemo();
+        showDemoBanner();
       });
       return;
     }
+
+    bindNet();
 
     if (room) {
       App.code = room;
@@ -333,6 +342,18 @@
       enterHost();
     });
     on($('#btnLeaderTop'), 'click', () => openPlayerLeaderboard('home'));
+    on($('#btnDemoHome'), 'click', () => {
+      const url = new URL(location);
+      url.searchParams.set('demo', '1');
+      url.searchParams.delete('room');
+      url.searchParams.delete('host');
+      location.href = url.toString();
+    });
+    on($('#btnDemoQuit'), 'click', () => {
+      const url = new URL(location);
+      url.searchParams.delete('demo');
+      location.href = url.toString();
+    });
 
     /* ---- personnage ---- */
     on($('#btnAvatarBack'), 'click', closeAvatar);
@@ -1053,7 +1074,10 @@
       status.className = 'game-status';
       let text = 'En attente…';
       if (s.paused) text = 'Partie en pause';
-      else if (s.phase === 'buzz') {
+      else if (s.phase === 'countdown') {
+        text = s.canBuzz ? 'À toi de buzzer !' : 'Décompte…';
+        if (s.canBuzz) status.classList.add('you');
+      } else if (s.phase === 'buzz') {
         text = s.canBuzz ? 'À toi de buzzer !' : 'Attends le signal…';
         if (s.canBuzz) status.classList.add('you');
       }       else if (s.phase === 'play') {
@@ -1221,6 +1245,7 @@
         if (isHost) {
           toast('#hostToasts', d.name + ' trouve « ' + d.text + ' » (+' + fmt(d.pts) + ')', null, 2400);
           global.Scene3D.react(d.playerId, 'joy');
+          global.Scene3D.crowdReact('found');
           Sound.play('found');
         }
         break;
@@ -1241,11 +1266,17 @@
         Sound.play('wrong');
         if (isHost) {
           toast('#hostToasts', 'Raté : « ' + d.text + ' »', 'warn', 2200);
+          global.Scene3D.crowdReact('error');
           if (App.state) {
             const p = (App.state.players || []).find((x) => x.name === d.name);
             if (p) global.Scene3D.react(p.id, 'error');
           }
         }
+        break;
+
+      case 'no-buzz':
+        toast(toastBox(), 'Personne n’a buzzé — relance…', 'warn', 3000);
+        Sound.play('tick');
         break;
 
       case 'steal-open':
@@ -1256,6 +1287,7 @@
       case 'steal-failed':
         toast(toastBox(), d.name + ' a raté le vol.', 'warn', 2400);
         Sound.play('wrong');
+        if (isHost) global.Scene3D.crowdReact('error');
         break;
 
       case 'round-end': {
@@ -1264,6 +1296,7 @@
           toast(toastBox(), a.winnerName + ' remporte ' + fmt(a.amount) + ' points !', 'gold', 3200);
           if (isHost && App.state) global.Scene3D.react(a.winnerId, 'joy');
         }
+        if (isHost) global.Scene3D.crowdReact(d.reason === 'complete' ? 'celebrate' : 'error');
         break;
       }
 
@@ -1275,6 +1308,7 @@
         if (isHost) {
           toast('#hostToasts', d.name + ' a rejoint la salle.', null, 2200);
           Sound.play('join');
+          global.Scene3D.crowdReact('found');
         }
         break;
 
@@ -1283,6 +1317,7 @@
           confetti($('#confetti'), 3.6);
           Sound.play('win');
           global.Scene3D.celebrate();
+          global.Scene3D.crowdReact('celebrate');
         }
         break;
 

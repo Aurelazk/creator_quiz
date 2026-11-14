@@ -260,32 +260,17 @@
     ctx.restore();
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 88px "Famous College", system-ui, sans-serif';
-    ctx.fillText('CREATOR.', W / 2, 160);
-    if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '10px';
-    ctx.fillStyle = '#2E85FF';
-    ctx.font = '700 34px "Famous College", system-ui, sans-serif';
-    ctx.fillText('GUESS THEIR ANSWER', W / 2, 215);
-    if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '0px';
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.font = '700 64px "Famous College", system-ui, sans-serif';
+    ctx.fillText('CREATOR.', W / 2, 150);
+    ctx.fillStyle = 'rgba(46,133,255,0.08)';
+    ctx.font = '700 24px "Famous College", system-ui, sans-serif';
+    ctx.fillText('GUESS THEIR ANSWER', W / 2, 200);
 
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
-    ctx.fillRect(W / 2 - 150, 248, 300, 3);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fillRect(W / 2 - 150, 240, 300, 2);
 
-    if (S.round > 0 && S.round <= S.total) {
-      // le texte de manche est affiché par l'UI hôte (plus lisible en projection)
-    } else {
-      ctx.fillStyle = '#00E472';
-      ctx.font = '700 36px "Famous College", system-ui, sans-serif';
-      ctx.fillText('PLATEAU EN DIRECT', W / 2, 332);
-    }
-
-    if (S.question) {
-      const q = S.question.length > 66 ? S.question.slice(0, 63) + '…' : S.question;
-      ctx.fillStyle = 'rgba(255,255,255,0.76)';
-      ctx.font = '400 26px "Granika", system-ui, sans-serif';
-      ctx.fillText(q, W / 2, 446);
-    }
+    /* le texte de manche et la question sont affichés par l'UI hôte (pas de doublon 3D) */
     if (S.screenTex) S.screenTex.needsUpdate = true;
   }
 
@@ -674,35 +659,71 @@
     }
   }
 
+  function crowdReact(kind) {
+    const now = performance.now();
+    if (kind === 'found') {
+      S.crowdCheer = Math.max(S.crowdCheer, 1.2);
+      for (const ch of S.crowd) {
+        if (Math.random() < 0.5) {
+          ch.crowdAnim = 'cheer';
+          ch.crowdAnimUntil = now + 500 + Math.random() * 500;
+        }
+      }
+    } else if (kind === 'error') {
+      S.crowdCheer = Math.max(S.crowdCheer, 0.6);
+      for (const ch of S.crowd) {
+        if (Math.random() < 0.4) {
+          ch.crowdAnim = 'oh';
+          ch.crowdAnimUntil = now + 800;
+        }
+      }
+    } else if (kind === 'celebrate') {
+      S.crowdCheer = 2.4;
+      for (const ch of S.crowd) {
+        ch.crowdAnim = 'cheer';
+        ch.crowdAnimUntil = now + 2000;
+      }
+    }
+  }
+
   /* ------------------------------------------------------------------ */
   /* Foule                                                              */
   /* ------------------------------------------------------------------ */
   function buildCrowd(scene) {
-    const count = 26;
+    const count = 96;
+    const cols = 12;
     for (let i = 0; i < count; i++) {
       const conf = global.Avatar ? global.Avatar.random() : null;
       const ch = createCharacter(conf, { low: true });
-      ch.root.scale.setScalar(0.54);
-      const row = i % 5;
-      const col = Math.floor(i / 5);
+      ch.root.scale.setScalar(0.42);
+      const row = i % 6;
+      const col = Math.floor(i / cols);
       const side = i % 2 === 0 ? -1 : 1;
       let x, z, y;
-      if (col < 2) {
+      if (col < 4) {
         // gradins latéraux
-        x = side * (5.9 + col * 1.1);
-        z = -0.8 - row * 1.15;
-        y = 0.55 + row * 0.34;
-        ch.root.rotation.y = side > 0 ? -0.8 : 0.8;
+        x = side * (4.6 + col * 0.85);
+        z = -0.6 - row * 0.9;
+        y = 0.35 + row * 0.26;
+        ch.root.rotation.y = side > 0 ? -0.7 : 0.7;
+      } else if (col < 8) {
+        // gradins centre
+        x = (col - 6) * 1.1 + (row % 2 ? 0.4 : -0.4);
+        z = -3.6 - row * 0.9;
+        y = 0.35 + row * 0.26;
+        ch.root.rotation.y = 0;
       } else {
         // gradins arrière
-        x = (row - 2) * 1.5 + (col % 2 ? 0.3 : -0.3);
-        z = -4.4 - (col - 2) * 0.9;
-        y = 0.55 + (col - 2) * 0.5;
+        x = (col - 10) * 1.3;
+        z = -6.2 - row * 1.0;
+        y = 0.35 + row * 0.3;
         ch.root.rotation.y = 0;
       }
       ch.root.position.set(x, y, z);
       ch.phase = Math.random() * Math.PI * 2;
       ch.crowdBaseY = y;
+      ch.crowdAnim = 'idle';
+      ch.crowdAnimUntil = 0;
       scene.add(ch.root);
       S.crowd.push(ch);
     }
@@ -728,11 +749,25 @@
     for (const ch of S.crowd) {
       animateCharacter(ch, t, now, 0.55);
       if (ch.crowdBaseY != null) {
-        const cheer = S.crowdCheer;
-        ch.root.position.y = ch.crowdBaseY + Math.abs(Math.sin(t * 7 + ch.phase)) * 0.18 * cheer;
-        if (cheer > 0.4) {
-          ch.anim = 'joy';
-          ch.animUntil = now + 200;
+        // idle : léger balancement avec phase aléatoire
+        ch.root.position.y = ch.crowdBaseY + Math.abs(Math.sin(t * 2.5 + ch.phase)) * 0.06;
+        // animations d'audience
+        if (now < ch.crowdAnimUntil) {
+          if (ch.crowdAnim === 'cheer') {
+            ch.root.position.y = ch.crowdBaseY + Math.abs(Math.sin(t * 12 + ch.phase)) * 0.15;
+            ch.anim = 'joy';
+          } else if (ch.crowdAnim === 'oh') {
+            ch.root.position.y = ch.crowdBaseY;
+            ch.anim = 'idle';
+          }
+        } else if (S.crowdCheer > 0.5 && Math.random() < 0.02) {
+          ch.crowdAnim = 'cheer';
+          ch.crowdAnimUntil = now + 600 + Math.random() * 400;
+        } else if (S.crowdCheer > 1.5 && Math.random() < 0.03) {
+          ch.crowdAnim = 'oh';
+          ch.crowdAnimUntil = now + 800;
+        } else {
+          ch.crowdAnim = 'idle';
         }
       }
     }
@@ -824,7 +859,7 @@
   }
 
   global.Scene3D = {
-    init, setPlayers, react, celebrate, setRound, resize, destroy,
+    init, setPlayers, react, celebrate, crowdReact, setRound, resize, destroy,
     get ready() { return S.ready; },
   };
 })(window);

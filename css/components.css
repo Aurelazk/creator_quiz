@@ -150,6 +150,27 @@
   box-shadow: var(--shadow-xl);
 }
 .modal-card h2 { color: var(--blanc); margin-bottom: 0.4rem; }
+
+/* -------- lobby animateur : panneau latéral, pas de recouvrement -------- */
+#hostLobby {
+  position: absolute; top: 0; right: 0; bottom: 0; z-index: 60;
+  width: min(42vw, 460px);
+  display: flex; align-items: flex-start;
+  padding: 1rem;
+  background: rgba(4, 8, 28, 0.82);
+  backdrop-filter: blur(6px);
+  border-left: 1px solid rgba(255,255,255,0.1);
+  overflow-y: auto;
+  animation: none;
+}
+#hostLobby .lobby-card {
+  width: 100%; max-height: none; overflow: visible;
+  padding: 1.2rem 1rem;
+  box-shadow: none; border: none; background: transparent;
+}
+#hostLobby .lobby-qr img { width: 200px; height: 200px; }
+#hostLobby .btn--xl { width: 100%; }
+.panel, .panel { width: 100%; }
 .panel {
   width: 100%;
   background: linear-gradient(165deg, rgba(20, 38, 100, 0.88), rgba(8, 16, 51, 0.95));

@@ -6,6 +6,7 @@
 
 const PHASES = Object.freeze({
   LOBBY: 'lobby',
+  COUNTDOWN: 'countdown',
   BUZZ: 'buzz',
   PLAY: 'play',
   STEAL: 'steal',
@@ -14,7 +15,8 @@ const PHASES = Object.freeze({
 });
 
 const GAME_Q = 10;
-const BUZZ_MS = 10000;
+const COUNTDOWN_MS = 3000;
+const BUZZ_MS = 15000;
 const STEAL_MS = 12000;
 const REVEAL_MS = 6000;
 const MAX_STRIKES = 3;
@@ -140,7 +142,7 @@ function pickQuestions(bank, count) {
 }
 
 module.exports = {
-  PHASES, GAME_Q, BUZZ_MS, STEAL_MS, REVEAL_MS, MAX_STRIKES,
+  PHASES, GAME_Q, COUNTDOWN_MS, BUZZ_MS, STEAL_MS, REVEAL_MS, MAX_STRIKES,
   normalize, tokens, levenshtein, matches, clampText, judge,
   multiplierFor, pointsFor, shuffle, pickQuestions,
 };

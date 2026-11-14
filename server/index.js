@@ -389,6 +389,7 @@ function nextRound(room) {
   room.pauseLeft = 0;
   room.spectatorGuesses = new Map();
   room.secretFound = new Set();
+  room.buzzRetry = false;
   /* rotation : un joueur ne peut pas être main plus de 2 manches de suite
      si d'autres n'ont pas joué (équipes : capitaine tournant). */
   if (room.mode === 'teams' && room.players.size >= 2) {
@@ -411,8 +412,8 @@ function nextRound(room) {
   } else {
     room.roundMain = null;
   }
-  room.phase = G.PHASES.BUZZ;
-  room.phaseEnd = Date.now() + G.BUZZ_MS;
+  room.phase = G.PHASES.COUNTDOWN;
+  room.phaseEnd = Date.now() + G.COUNTDOWN_MS;
   touch(room);
   eventToAll(room, {
     type: 'round-start',
@@ -420,6 +421,7 @@ function nextRound(room) {
     qTotal: room.qTotal,
     text: room.question.q,
     multiplier: room.multiplier,
+    phase: 'countdown',
   });
   broadcast(room);
 }
@@ -505,7 +507,15 @@ function addFound(room, player, index, entry) {
 function handleBuzz(room, playerId) {
   const player = room.players.get(playerId);
   if (!player || room.paused) return;
-  if (room.phase === G.PHASES.BUZZ && !room.controllerId) {
+  if (room.phase === G.PHASES.COUNTDOWN && !room.controllerId) {
+    /* buzz pendant le décompte : démarre immédiatement la manche */
+    room.controllerId = playerId;
+    room.phase = G.PHASES.PLAY;
+    room.phaseEnd = Date.now() + room.settings.duration * 1000;
+    touch(room);
+    eventToAll(room, { type: 'control', playerId, name: player.name });
+    broadcast(room);
+  } else if (room.phase === G.PHASES.BUZZ && !room.controllerId) {
     room.controllerId = playerId;
     room.phase = G.PHASES.PLAY;
     room.phaseEnd = Date.now() + room.settings.duration * 1000;
@@ -538,6 +548,12 @@ function handleGuess(room, playerId, rawText) {
   const isController = room.controllerId === playerId;
   const isTeammate = isTeams && controller && player.team === controller.team;
   const isOpponent = isTeams && controller && player.team !== controller.team;
+
+  /* ---------- COUNTDOWN : décompte, pas de réponse encore ---------- */
+  if (room.phase === G.PHASES.COUNTDOWN) {
+    eventToPlayer(room, playerId, { type: 'result', kind: 'wait', text: 'Décompte…' });
+    return;
+  }
 
   /* ---------- BUZZ : course à la première réponse (désigne qui joue le tableau) ---------- */
   if (room.phase === G.PHASES.BUZZ) {
@@ -695,8 +711,22 @@ setInterval(() => {
     if (!room.phaseEnd) continue;
     if (now < room.phaseEnd) continue;
 
-    if (room.phase === G.PHASES.BUZZ) {
-      finishRound(room, 'timeout-buzz');
+    if (room.phase === G.PHASES.COUNTDOWN) {
+      room.phase = G.PHASES.BUZZ;
+      room.phaseEnd = Date.now() + G.BUZZ_MS;
+      eventToAll(room, { type: 'round-start', qi: room.qi, qTotal: room.qTotal, text: room.question.q, multiplier: room.multiplier, phase: 'buzz' });
+      broadcast(room);
+    } else if (room.phase === G.PHASES.BUZZ) {
+      if (!room.controllerId && !room.buzzRetry) {
+        /* première absence de buzz : message + relance 10 s */
+        room.buzzRetry = true;
+        room.phaseEnd = Date.now() + 10000;
+        eventToAll(room, { type: 'no-buzz', qi: room.qi, qTotal: room.qTotal });
+        broadcast(room);
+      } else {
+        finishRound(room, 'timeout-buzz');
+        room.buzzRetry = false;
+      }
     } else if (room.phase === G.PHASES.PLAY) {
       finishRound(room, 'timeout');
     } else if (room.phase === G.PHASES.STEAL) {
