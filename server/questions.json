@@ -2301,5 +2301,323 @@
         ]
       }
     ]
+  },
+  {
+    "q": "Citez une application de messagerie instantanée.",
+    "answers": [
+      {
+        "text": "WhatsApp",
+        "pts": 35,
+        "aliases": [
+          "whatsapp",
+          "wa",
+          "whats app"
+        ]
+      },
+      {
+        "text": "Telegram",
+        "pts": 20,
+        "aliases": [
+          "telegram",
+          "tg"
+        ]
+      },
+      {
+        "text": "Messenger",
+        "pts": 15,
+        "aliases": [
+          "messenger",
+          "facebook messenger"
+        ]
+      },
+      {
+        "text": "Signal",
+        "pts": 12,
+        "aliases": [
+          "signal"
+        ]
+      },
+      {
+        "text": "Discord",
+        "pts": 10,
+        "aliases": [
+          "discord"
+        ]
+      },
+      {
+        "text": "iMessage",
+        "pts": 8,
+        "aliases": [
+          "imessage"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un réseau social pour partager des photos.",
+    "answers": [
+      {
+        "text": "Instagram",
+        "pts": 40,
+        "aliases": [
+          "instagram",
+          "insta",
+          "ig"
+        ]
+      },
+      {
+        "text": "Facebook",
+        "pts": 20,
+        "aliases": [
+          "facebook",
+          "fb"
+        ]
+      },
+      {
+        "text": "Snapchat",
+        "pts": 15,
+        "aliases": [
+          "snapchat",
+          "snap"
+        ]
+      },
+      {
+        "text": "Pinterest",
+        "pts": 12,
+        "aliases": [
+          "pinterest"
+        ]
+      },
+      {
+        "text": "TikTok",
+        "pts": 8,
+        "aliases": [
+          "tiktok"
+        ]
+      },
+      {
+        "text": "Flickr",
+        "pts": 5,
+        "aliases": [
+          "flickr"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un plat à base de riz.",
+    "answers": [
+      {
+        "text": "Riz au gras",
+        "pts": 30,
+        "aliases": [
+          "riz gras",
+          "riz djolof",
+          "jollof"
+        ]
+      },
+      {
+        "text": "Riz cantonais",
+        "pts": 22,
+        "aliases": [
+          "riz cantonais",
+          "riz frit"
+        ]
+      },
+      {
+        "text": "Riz sauce arachide",
+        "pts": 18,
+        "aliases": [
+          "riz sauce arachide",
+          "riz pâte rouge"
+        ]
+      },
+      {
+        "text": "Riz au lait",
+        "pts": 15,
+        "aliases": [
+          "riz au lait",
+          "riz creme"
+        ]
+      },
+      {
+        "text": "Riz jambon",
+        "pts": 10,
+        "aliases": [
+          "riz jambon"
+        ]
+      },
+      {
+        "text": "Riz pois",
+        "pts": 5,
+        "aliases": [
+          "riz pois",
+          "riz haricots"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un animal de compagnie courant.",
+    "answers": [
+      {
+        "text": "Chien",
+        "pts": 35,
+        "aliases": [
+          "chien",
+          "chien de compagnie"
+        ]
+      },
+      {
+        "text": "Chat",
+        "pts": 30,
+        "aliases": [
+          "chat",
+          "chaton"
+        ]
+      },
+      {
+        "text": "Poisson rouge",
+        "pts": 15,
+        "aliases": [
+          "poisson rouge",
+          "poisson"
+        ]
+      },
+      {
+        "text": "Hamster",
+        "pts": 10,
+        "aliases": [
+          "hamster"
+        ]
+      },
+      {
+        "text": "Lapin",
+        "pts": 7,
+        "aliases": [
+          "lapin"
+        ]
+      },
+      {
+        "text": "Perroquet",
+        "pts": 3,
+        "aliases": [
+          "perroquet",
+          "oiseau"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un moyen de se divertir à la maison.",
+    "answers": [
+      {
+        "text": "Télévision",
+        "pts": 30,
+        "aliases": [
+          "télévision",
+          "tele",
+          "tv",
+          "television"
+        ]
+      },
+      {
+        "text": "Jeux vidéo",
+        "pts": 25,
+        "aliases": [
+          "jeux video",
+          "jeux vidéo",
+          "console",
+          "gaming"
+        ]
+      },
+      {
+        "text": "Lecture",
+        "pts": 20,
+        "aliases": [
+          "lecture",
+          "livre",
+          "lire"
+        ]
+      },
+      {
+        "text": "Musique",
+        "pts": 15,
+        "aliases": [
+          "musique",
+          "ecouter de la musique"
+        ]
+      },
+      {
+        "text": "Cinéma à la maison",
+        "pts": 7,
+        "aliases": [
+          "cinema",
+          "film",
+          "netflix"
+        ]
+      },
+      {
+        "text": "Bricolage",
+        "pts": 3,
+        "aliases": [
+          "bricolage",
+          "diy"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un grand fleuve ou cours d'eau.",
+    "answers": [
+      {
+        "text": "Le Niger",
+        "pts": 30,
+        "aliases": [
+          "niger",
+          "fleuve niger"
+        ]
+      },
+      {
+        "text": "La Seine",
+        "pts": 20,
+        "aliases": [
+          "seine",
+          "la seine"
+        ]
+      },
+      {
+        "text": "Le Nil",
+        "pts": 18,
+        "aliases": [
+          "nil",
+          "le nil"
+        ]
+      },
+      {
+        "text": "L'Amazone",
+        "pts": 15,
+        "aliases": [
+          "amazone",
+          "amazon"
+        ]
+      },
+      {
+        "text": "Le Mékong",
+        "pts": 10,
+        "aliases": [
+          "mekong",
+          "le mekong"
+        ]
+      },
+      {
+        "text": "Le Danube",
+        "pts": 7,
+        "aliases": [
+          "danube",
+          "le danube"
+        ]
+      }
+    ]
   }
 ]

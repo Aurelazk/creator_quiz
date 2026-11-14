@@ -210,6 +210,12 @@ function makeRoom(code, hostToken, name, settings) {
       duration: [30, 45, 60, 90].includes(Number(settings && settings.duration)) ? Number(settings.duration) : 60,
       maxPlayers: clamp(Number(settings && settings.maxPlayers) || 20, 2, 20),
     },
+    mode: (settings && settings.mode === 'teams') ? 'teams' : 'solo',
+    teamScores: { bleu: 0, orange: 0 },
+    roundMain: null,
+    mainStreak: new Map(),
+    spectatorGuesses: new Map(), // id -> Set of answer indexes found in secret (bonus)
+    secretFound: new Set(),      // answer indexes already found by a spectator (no double bonus)
     players: new Map(),
     order: [],
     qi: -1,
@@ -247,6 +253,7 @@ function playerPublic(p) {
     name: p.name,
     avatar: p.avatar,
     score: p.score,
+    team: p.team,
     connected: p.connected,
   };
 }
@@ -265,6 +272,8 @@ function baseState(room, role) {
     phase: room.phase,
     paused: room.paused,
     settings: room.settings,
+    mode: room.mode,
+    teamScores: room.teamScores,
     qi: room.qi,
     qTotal: room.qTotal,
     multiplier: room.multiplier,
@@ -274,6 +283,7 @@ function baseState(room, role) {
     })),
     controller: refObj(room, room.controllerId),
     stealer: refObj(room, room.stealerId),
+    roundMain: refObj(room, room.roundMain),
     strikes: room.strikes,
     maxStrikes: G.MAX_STRIKES,
     pot: room.pot,
@@ -294,15 +304,20 @@ function playerState(room, p) {
   const s = baseState(room, 'player');
   const isController = room.controllerId === p.id;
   const isStealer = room.stealerId === p.id;
-  s.me = Object.assign(playerPublic(p), { isController, isStealer });
+  const controller = room.controllerId ? room.players.get(room.controllerId) : null;
+  const isTeammate = room.mode === 'teams' && controller && p.team === controller.team;
+  s.me = Object.assign(playerPublic(p), { isController, isStealer, isTeammate });
   s.canBuzz = !room.paused && (
     (room.phase === G.PHASES.BUZZ && !room.controllerId) ||
     (room.phase === G.PHASES.STEAL && !room.stealerId && !isController)
   );
   s.canAnswer = !room.paused && (
-    (room.phase === G.PHASES.PLAY && isController) ||
+    (room.phase === G.PHASES.PLAY && (isController || (room.mode === 'teams' && isTeammate))) ||
     (room.phase === G.PHASES.STEAL && isStealer)
   );
+  /* spectateur actif : peut deviner en secret quand ce n'est pas son équipe qui joue */
+  s.canGuessSpectator = !room.paused && room.phase === G.PHASES.PLAY && !isController && !isTeammate
+    && !(room.mode === 'teams' && controller && p.team === controller.team);
   return s;
 }
 
@@ -341,6 +356,11 @@ function startGame(room) {
   room.paused = false;
   room.pauseLeft = 0;
   room.phase = G.PHASES.LOBBY;
+  room.teamScores = { bleu: 0, orange: 0 };
+  room.roundMain = null;
+  room.mainStreak = new Map();
+  room.spectatorGuesses = new Map();
+  room.secretFound = new Set();
   for (const p of room.players.values()) {
     p.score = 0;
     p.lastGuessAt = 0;
@@ -367,6 +387,30 @@ function nextRound(room) {
   room.lastAwards = null;
   room.paused = false;
   room.pauseLeft = 0;
+  room.spectatorGuesses = new Map();
+  room.secretFound = new Set();
+  /* rotation : un joueur ne peut pas être main plus de 2 manches de suite
+     si d'autres n'ont pas joué (équipes : capitaine tournant). */
+  if (room.mode === 'teams' && room.players.size >= 2) {
+    const ids = Array.from(room.players.keys());
+    let picked = null;
+    for (const id of ids) {
+      const streak = room.mainStreak.get(id) || 0;
+      if (streak < 2) { picked = id; break; }
+    }
+    if (!picked) {
+      /* tous à 2 : remet les streaks à 0 et prend le premier */
+      room.mainStreak = new Map();
+      picked = ids[0];
+      room.mainStreak.set(picked, 1);
+    } else {
+      room.mainStreak.set(picked, (room.mainStreak.get(picked) || 0) + 1);
+    }
+    room.roundMain = picked;
+    for (const id of ids) if (id !== picked) room.mainStreak.set(id, 0);
+  } else {
+    room.roundMain = null;
+  }
   room.phase = G.PHASES.BUZZ;
   room.phaseEnd = Date.now() + G.BUZZ_MS;
   touch(room);
@@ -385,7 +429,10 @@ function awardPot(room, winnerId, reason) {
   const amount = room.pot;
   if (winner && amount > 0) {
     winner.score += amount;
-    room.lastAwards = { winnerId: winner.id, winnerName: winner.name, amount, reason };
+    if (room.mode === 'teams' && winner.team) {
+      room.teamScores[winner.team] = (room.teamScores[winner.team] || 0) + amount;
+    }
+    room.lastAwards = { winnerId: winner.id, winnerName: winner.name, amount, reason, team: winner.team };
   } else {
     room.lastAwards = null;
   }
@@ -486,6 +533,13 @@ function handleGuess(room, playerId, rawText) {
   if (now - player.lastGuessAt < 450) return;
   player.lastGuessAt = now;
 
+  const isTeams = room.mode === 'teams';
+  const controller = room.controllerId ? room.players.get(room.controllerId) : null;
+  const isController = room.controllerId === playerId;
+  const isTeammate = isTeams && controller && player.team === controller.team;
+  const isOpponent = isTeams && controller && player.team !== controller.team;
+
+  /* ---------- BUZZ : course à la première réponse (désigne qui joue le tableau) ---------- */
   if (room.phase === G.PHASES.BUZZ) {
     if (room.controllerId) return;
     const res = G.judge(room.question, text, room.board);
@@ -494,7 +548,8 @@ function handleGuess(room, playerId, rawText) {
       const pts = addFound(room, player, res.index, res.entry);
       room.phase = G.PHASES.PLAY;
       room.phaseEnd = Date.now() + room.settings.duration * 1000;
-      eventToAll(room, { type: 'control', playerId, name: player.name, auto: true });
+      room.roundMain = playerId;
+      eventToAll(room, { type: 'control', playerId, name: player.name, auto: true, teams: isTeams });
       eventToPlayer(room, playerId, { type: 'result', kind: 'found', text: res.entry.text, pts });
       if (room.board.length >= room.question.answers.length) finishRound(room, 'complete');
       else broadcast(room);
@@ -506,16 +561,33 @@ function handleGuess(room, playerId, rawText) {
     return;
   }
 
+  /* ---------- PLAY : le tableau ---------- */
   if (room.phase === G.PHASES.PLAY) {
-    if (room.controllerId !== playerId) {
-      eventToPlayer(room, playerId, { type: 'result', kind: 'wait' });
+    /* SPECTATEUR ACTIF ("Devine aussi") : pas son équipe / pas le main -> bonus secret */
+    if (!isController && !isTeammate) {
+      const res = G.judge(room.question, text, room.board);
+      if (res.kind === 'found' && !room.board.some((r) => r.i === res.index) && !room.secretFound.has(res.index)) {
+        if (!room.spectatorGuesses.has(playerId)) room.spectatorGuesses.set(playerId, new Set());
+        const sset = room.spectatorGuesses.get(playerId);
+        if (!sset.has(res.index)) {
+          sset.add(res.index);
+          room.secretFound.add(res.index);
+          const bonus = 2;
+          player.score = (player.score || 0) + bonus;
+          eventToPlayer(room, playerId, { type: 'result', kind: 'spectator-found', text: res.entry.text, pts: bonus, secret: true });
+          eventToAll(room, { type: 'spectator-bonus', name: player.name, text: res.entry.text, pts: bonus });
+        }
+      }
       return;
     }
+    /* Seul le main (et ses coéquipiers en équipes) peut révéler publiquement */
+    if (isTeams && !isTeammate) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait' }); return; }
+    if (!isTeams && !isController) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait' }); return; }
     const res = G.judge(room.question, text, room.board);
     if (res.kind === 'found') {
       const pts = addFound(room, player, res.index, res.entry);
       eventToPlayer(room, playerId, { type: 'result', kind: 'found', text: res.entry.text, pts });
-      eventToAll(room, { type: 'found', playerId, name: player.name, text: res.entry.text, pts });
+      eventToAll(room, { type: 'found', playerId, name: player.name, text: res.entry.text, pts, teams: isTeams });
       if (room.board.length >= room.question.answers.length) finishRound(room, 'complete');
       else broadcast(room);
     } else if (res.kind === 'dup') {
@@ -532,11 +604,12 @@ function handleGuess(room, playerId, rawText) {
     return;
   }
 
+  /* ---------- STEAL ---------- */
   if (room.phase === G.PHASES.STEAL) {
-    if (room.stealerId !== playerId) {
-      eventToPlayer(room, playerId, { type: 'result', kind: 'wait' });
-      return;
-    }
+    const stealer = room.stealerId ? room.players.get(room.stealerId) : null;
+    const isStealer = room.stealerId === playerId;
+    /* en équipes, le stealer peut être un coéquipier de l'équipe adverse qui a buzzé */
+    if (!isStealer) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait' }); return; }
     const res = G.judge(room.question, text, room.board);
     if (res.kind === 'found') {
       addFound(room, player, res.index, res.entry);
@@ -568,10 +641,26 @@ function endGame(room) {
     name: p.name,
     score: p.score,
     avatar: p.avatar,
+    team: p.team,
   }));
+  /* MVP par équipe */
+  const mvp = {};
+  if (room.mode === 'teams') {
+    for (const t of ['bleu', 'orange']) {
+      const best = Array.from(room.players.values())
+        .filter((p) => p.team === t)
+        .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))[0];
+      if (best) mvp[t] = { id: best.id, name: best.name, score: best.score };
+    }
+  }
   recordScores(sorted);
   touch(room);
-  eventToAll(room, { type: 'game-over', ranking: room.ranking });
+  eventToAll(room, {
+    type: 'game-over',
+    ranking: room.ranking,
+    teamScores: room.mode === 'teams' ? room.teamScores : null,
+    mvp: room.mode === 'teams' ? mvp : null,
+  });
   broadcast(room);
 }
 
@@ -771,6 +860,7 @@ function joinPlayer(room, ws, msg) {
     name: finalName,
     avatar,
     score: 0,
+    team: room.mode === 'teams' ? (room.players.size % 2 === 0 ? 'bleu' : 'orange') : null,
     connected: true,
     disconnectedAt: 0,
     ws,
