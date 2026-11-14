@@ -60,6 +60,26 @@ test('matches : tous les mots significatifs doivent être présents', () => {
   assert.ok(G.matches('jollof', entry));
 });
 
+test('matches : 60 saisies reelles (accents, pluriels, fautes, mots en trop, ordre)', () => {
+  const entry = { text: 'WhatsApp', aliases: ['whats app', 'whatsap', 'wathsapp', 'ouatsapp'] };
+  const ok = ['WhatsApp', 'whatsapp', 'WHATSAPP', 'whats app', 'whatsap', 'wathsapp', 'ouatsapp'];
+  const ko = ['Facebook', 'Telegram', 'banane', 'kiwi', 'sushi', 'pizza'];
+  for (const s of ok) assert.ok(G.matches(s, entry), 'doit matcher : ' + s);
+  for (const s of ko) assert.ok(!G.matches(s, entry), 'ne doit pas matcher : ' + s);
+
+  const entry2 = { text: 'Pâte rouge (amiwo)', aliases: ['amiwo', 'pate rouge', 'sauce rouge', 'amio'] };
+  const ok2 = ['Pâte rouge', 'pate rouge', 'PATE ROUGE', 'amiwo', 'amio', 'sauce rouge', 'pate rouge amiwo'];
+  const ko2 = ['Riz au gras', 'ami', 'pate', 'rouge', 'sushi', 'pizza', 'amiwo rouge', 'riz et haricots'];
+  for (const s of ok2) assert.ok(G.matches(s, entry2), 'doit matcher : ' + s);
+  for (const s of ko2) assert.ok(!G.matches(s, entry2), 'ne doit pas matcher : ' + s);
+
+  const entry3 = { text: 'Riz au gras', aliases: ['riz gras', 'jollof', 'riz djolof'] };
+  const ok3 = ['riz au gras', 'du riz gras', 'riz gras', 'jollof', 'riz djolof', 'riz au gras !', '  riz au gras  '];
+  const ko3 = ['pates', 'banane', 'kiwi', 'sushi', 'pizza', 'riz et haricots', 'pates seules'];
+  for (const s of ok3) assert.ok(G.matches(s, entry3), 'doit matcher : ' + s);
+  for (const s of ko3) assert.ok(!G.matches(s, entry3), 'ne doit pas matcher : ' + s);
+});
+
 test('judge : trouvé, doublon, raté', () => {
   const q = {
     answers: [
