@@ -6,12 +6,19 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "test": "node tests/game.test.js",
-    "test:e2e": "node tests/e2e.test.js"
+    "test": "node tests/game.test.js && node tests/code.test.js",
+    "test:e2e": "node tests/e2e.test.js",
+    "test:visual": "node tests/visual.js",
+    "test:code": "node tests/code.test.js"
   },
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "qrcode": "^1.5.4",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.1"
   }
 }

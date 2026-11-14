@@ -10,6 +10,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const crypto = require('crypto');
 const { WebSocketServer, WebSocket } = require('ws');
 const QRCode = require('qrcode');
@@ -22,7 +23,41 @@ const QUESTIONS_FILE = path.join(__dirname, 'questions.json');
 const PORT = Number(process.env.PORT) || 3000;
 const HOST_IDLE_MS = 5 * 60 * 1000;
 const LOBBY_DISCONNECT_MS = 30 * 1000;
-const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+// Alphabet sans I, L, O, 0, 1 (caractères visuellement confus)
+const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const CODE_LENGTH = 5;
+const CODE_MAX_TRIES = 50;
+// Origines WebSocket autorisées (production : domaine du site). '*' = tout accepter (dév uniquement).
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+// Limite de tentatives de jonction par IP (≈12 par minute).
+const JOIN_MAX = 12;
+const JOIN_WINDOW_MS = 60 * 1000;
+const joinAttempts = new Map();
+
+function lanIp() {
+  for (const list of Object.values(os.networkInterfaces() || {})) {
+    for (const n of (list || [])) {
+      if (n.family === 'IPv4' && !n.internal) return n.address;
+    }
+  }
+  return null;
+}
+
+function tooManyJoins(ip) {
+  const now = Date.now();
+  const e = joinAttempts.get(ip);
+  if (!e || now > e.resetAt) {
+    joinAttempts.set(ip, { count: 1, resetAt: now + JOIN_WINDOW_MS });
+    return false;
+  }
+  return ++e.count > JOIN_MAX;
+}
+
+function clientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  const addr = (fwd ? fwd.split(',')[0] : req.socket.remoteAddress) || '';
+  return String(addr).trim() || 'unknown';
+}
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -119,8 +154,9 @@ function recordScores(players) {
 const randStr = (len) => crypto.randomBytes(len).toString('base64url').slice(0, len).replace(/[-_]/g, 'A');
 const randomCode = () => {
   let code = '';
-  const bytes = crypto.randomBytes(5);
-  for (let i = 0; i < 5; i++) code += CODE_ALPHABET[bytes[i] % CODE_ALPHABET.length];
+  for (let i = 0; i < CODE_LENGTH; i++) {
+    code += CODE_ALPHABET[crypto.randomInt(CODE_ALPHABET.length)];
+  }
   return code;
 };
 const sanitizeName = (raw) => String(raw == null ? '' : raw)
@@ -665,6 +701,10 @@ function createWebSocketServer(server, paths) {
     let pathname = '/';
     try { pathname = new URL(req.url, 'http://localhost').pathname; } catch (e) {}
     if (!allowed.includes(pathname)) { socket.destroy(); return; }
+    if (ALLOWED_ORIGIN !== '*') {
+      const origin = req.headers.origin || '';
+      if (origin !== ALLOWED_ORIGIN) { socket.destroy(); return; }
+    }
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req));
   });
 
@@ -751,10 +791,11 @@ function joinPlayer(room, ws, msg) {
   broadcast(room);
 }
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
   ws.isAlive = true;
   ws.on('pong', () => { ws.isAlive = true; });
   ws._ctx = null;
+  ws._ip = clientIp(req);
 
   ws.on('message', (buf) => {
     let msg;
@@ -764,8 +805,12 @@ wss.on('connection', (ws) => {
 
     switch (msg.type) {
       case 'host:create': {
-        let code;
-        do { code = randomCode(); } while (rooms.has(code));
+        let code, tries = 0;
+        do { code = randomCode(); } while (rooms.has(code) && ++tries < CODE_MAX_TRIES);
+        if (rooms.has(code)) {
+          sendError(ws, 'busy', 'Réessaie dans un instant.');
+          break;
+        }
         const room = makeRoom(code, randStr(24), msg.name, msg.settings);
         rooms.set(code, room);
         attachHost(room, ws);
@@ -792,6 +837,10 @@ wss.on('connection', (ws) => {
       }
       case 'player:join':
       case 'player:rejoin': {
+        if (tooManyJoins(ws._ip)) {
+          sendError(ws, 'rate', 'Trop d’essais, attends une minute.');
+          return;
+        }
         const code = String(msg.code || '').toUpperCase();
         const room = rooms.get(code);
         if (!room) {
@@ -952,12 +1001,14 @@ setInterval(() => {
 /* ------------------------------------------------------------------ */
 function sendJson(res, status, obj) {
   const body = JSON.stringify(obj);
-  res.writeHead(status, {
+  const allow = ALLOWED_ORIGIN === '*' ? '*' : ALLOWED_ORIGIN;
+  const headers = {
     'content-type': 'application/json; charset=utf-8',
     'cache-control': 'no-store',
-    'access-control-allow-origin': '*',
     'content-length': Buffer.byteLength(body),
-  });
+  };
+  if (allow) headers['access-control-allow-origin'] = allow;
+  res.writeHead(status, headers);
   res.end(body);
 }
 
@@ -982,9 +1033,11 @@ async function handleHttp(req, res) {
   }
 
   if (pathname === '/api/config') {
-    // En local (et sur un hôte Node persistant), le jeu est servi sur le
-    // même domaine : le client garde /api/ws par défaut.
-    sendJson(res, 200, { wsUrl: null });
+    const host = req.headers.host || '';
+    const isLocal = /^(localhost|127\.|\[::1\])/.test(host);
+    const publicUrl = process.env.PUBLIC_URL
+      || (isLocal && lanIp() ? `http://${lanIp()}:${PORT}` : null);
+    sendJson(res, 200, { wsUrl: null, publicUrl });
     return;
   }
 
@@ -1005,7 +1058,7 @@ async function handleHttp(req, res) {
         type: 'png', width: 420, margin: 1,
         color: { dark: '#0C1A4B', light: '#FFFFFF' },
       });
-      res.writeHead(200, { 'content-type': 'image/png', 'cache-control': 'no-store' });
+      res.writeHead(200, { 'content-type': 'image/png', 'cache-control': 'public, max-age=300' });
       res.end(buf);
     } catch (e) {
       sendJson(res, 500, { error: 'QR indisponible' });
@@ -1075,4 +1128,9 @@ module.exports = {
   handleHttp,
   rooms,
   questions: QUESTIONS,
+  randomCode,
+  CODE_ALPHABET,
+  CODE_LENGTH,
+  tooManyJoins,
+  lanIp,
 };

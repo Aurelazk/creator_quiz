@@ -4,6 +4,7 @@
 
 .app { position: fixed; inset: 0; }
 .host, .phone { position: absolute; inset: 0; overflow: hidden; }
+.phone { position: fixed; inset: 0; overflow: hidden; }
 
 /* =====================================================================
    ANIMATEUR / PROJECTION
@@ -380,12 +381,25 @@
 .brand--phone .brand-mark { width: 8px; height: 8px; }
 .brand-dot { color: var(--vert); }
 .phone-room { font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.16em; color: var(--vert); }
-.phone-main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.phone-main { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .screen {
   position: relative;
-  min-height: 100%;
+  min-height: 0;
   display: flex; flex-direction: column; gap: 0.85rem;
   padding: 1rem 0.9rem calc(1rem + env(safe-area-inset-bottom));
+}
+
+/* arrivée via QR : écran minimal (code pré-rempli, pseudo seulement) */
+.join-via-qr .home-hero,
+.join-via-qr .home-preview,
+.join-via-qr .home-foot,
+.join-via-qr .home-links,
+.join-via-qr .field--code { display: none; }
+.room-chip { display: none; margin: 0 0 0.5rem; text-align: center; }
+.join-via-qr .room-chip {
+  display: block; font-family: var(--font-display); letter-spacing: 0.25em;
+  font-size: 1.5rem; color: var(--vert);
+  text-shadow: 0 0 20px rgba(0,228,114,0.45);
 }
 
 /* -------- accueil -------- */
@@ -609,4 +623,16 @@
   .home-hero { display: none; }
   .phone-main { overflow-y: auto; }
   .screen { min-height: auto; }
+}
+
+/* petits téléphones portrait : réduire l'accueil pour tout voir sans scroller */
+@media (max-width: 480px), (max-height: 700px) {
+  .home-preview { display: none; }
+  .home-card { gap: 0.5rem; }
+  .field { gap: 0.3rem; }
+  .input { min-height: 48px; padding: 0.75rem 1rem; font-size: 1rem; }
+  .input--code { font-size: 1.25rem; }
+  .btn--xl { min-height: 52px; font-size: 1rem; padding: 0.85rem 1.4rem; }
+  .home-links { gap: 0.2rem; margin-top: 0.1rem; }
+  .home-foot { display: none; }
 }

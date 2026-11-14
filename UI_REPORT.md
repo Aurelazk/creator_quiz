@@ -26,9 +26,9 @@ L'UI complète du projet creator_quiz a été refaite de zéro, écran par écra
 
 **Anciens fichiers conservés (interdits de modification) :**
 - `js/intro.js` — Intro CREATOR (inchangée)
-- `js/net.js` — Logique réseau MQTT (inchangée)
+- `js/net.js` — Logique réseau WebSocket (reconnexion automatique, ping/pong)
 - `js/game.js` — Logique de jeu (inchangée)
-- `js/scene.js` — Plateau 3D Three.js (inchangée, décor reconstruit par buildStage())
+- `js/scene.js` — Plateau 3D Three.js (inchangée, chargée uniquement côté animateur)
 - `js/app.js` — Orchestration hôte/joueur (inchangée, compatible avec nouveau ui.js)
 
 ---

@@ -180,7 +180,7 @@
       <div class="hint">Reprends depuis les contrôles de l'animateur.</div>
     </div>
 
-    <div class="reconnect-banner hidden" id="hostReconnect">Connexion perdue — reconnexion…</div>
+    <div class="reconnect-banner hidden" id="hostReconnect"><span id="hostReconnectTxt">Connexion perdue — reconnexion…</span> <button class="btn btn--ghost btn--sm" id="btnHostRetry">Réessayer</button></div>
     <div class="toast-container" id="hostToasts"></div>
     <canvas id="confetti" class="confetti hidden"></canvas>
   </section>
@@ -205,11 +205,12 @@
           <p class="hero-tagline">Devine les réponses les plus populaires.<br />Le plateau, les buzz et les points, sur ton téléphone.</p>
         </div>
         <div class="home-card">
+          <div class="room-chip" id="pRoomChip"></div>
           <label class="field">
             <span>Ton pseudo</span>
             <input id="pseudo" class="input" type="text" maxlength="16" placeholder="Ex. Awa" autocomplete="off" autocapitalize="words" />
           </label>
-          <label class="field">
+          <label class="field field--code">
             <span>Code de la salle</span>
             <input id="codeIn" class="input input--code" type="text" maxlength="5" placeholder="ABCDE" autocomplete="off" autocapitalize="characters" />
           </label>
@@ -340,14 +341,12 @@
     </main>
 
     <div class="toast-container" id="phoneToasts"></div>
-    <div class="reconnect-banner hidden" id="phoneReconnect">Reconnexion…</div>
+    <div class="reconnect-banner hidden" id="phoneReconnect"><span id="phoneReconnectTxt">Connexion au serveur…</span> <button class="btn btn--ghost btn--sm" id="btnPhoneRetry">Réessayer</button></div>
   </section>
 </div>
 
-<script src="assets/vendor/three.min.js"></script>
 <script src="js/avatar.js"></script>
 <script src="js/net.js"></script>
-<script src="js/scene.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/app.js"></script>
 </body>

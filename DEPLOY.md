@@ -20,8 +20,11 @@ ce qui fonctionne en local et sur un hôte Node persistant.
    - Build : `npm install`
    - Start : `npm start`
    - Health check : `/api/health`
-3. Récupérer l'URL publique, par exemple `https://creator-quiz-game.onrender.com`.
-   L'URL WebSocket est `wss://creator-quiz-game.onrender.com/ws`.
+   - Variables d'environnement à définir sur Render :
+     - `PUBLIC_URL` : l'URL publique du service Render (ex. `https://creator-quiz-game.onrender.com`), sert à générer le QR lisible depuis un téléphone.
+     - `ALLOWED_ORIGIN` : l'origine autorisée pour le WebSocket et le CORS (ex. `https://<ton-projet>.vercel.app`). Valeur `*` pour accepter tout (déconseillé en prod).
+   3. Récupérer l'URL publique, par exemple `https://creator-quiz-game.onrender.com`.
+      L'URL WebSocket est `wss://creator-quiz-game.onrender.com/ws`.
 
 Vérification :
 
@@ -38,6 +41,8 @@ curl https://creator-quiz-game.onrender.com/api/health
 ```bash
 vercel env add GAME_WS_URL production
 # valeur : wss://creator-quiz-game.onrender.com/ws
+vercel env add PUBLIC_URL production   # optionnel : https://<ton-projet>.vercel.app (sert pour le QR)
+vercel env add ALLOWED_ORIGIN production # optionnel : https://<ton-projet>.vercel.app (CORS/WebSocket)
 vercel --prod
 ```
 

@@ -22,6 +22,7 @@
   const Net = {
     ws: null,
     connected: false,
+    connecting: false,
     active: false,
     retry: 0,
     retryTimer: null,
@@ -29,6 +30,7 @@
     onOpen: null,
     onStatus: null,
     wsBase: null,
+    publicUrl: null,
     configPromise: null,
     everConnected: false,
 
@@ -39,6 +41,8 @@
           .then((res) => (res.ok ? res.json() : null))
           .then((cfg) => {
             Net.wsBase = cfg ? normalizeWsUrl(cfg.wsUrl) : null;
+            Net.publicUrl = cfg && typeof cfg.publicUrl === 'string'
+              ? cfg.publicUrl.replace(/\/+$/, '') : null;
             return Net.wsBase;
           })
           .catch(() => null);
@@ -64,6 +68,7 @@
     connect() {
       if (Net.ws && (Net.ws.readyState === 0 || Net.ws.readyState === 1)) return;
       Net.active = true;
+      Net.connecting = true;
       clearTimeout(Net.retryTimer);
       Net.loadConfig().then(() => {
         if (Net.active) Net.open();
@@ -78,6 +83,7 @@
 
       ws.onopen = () => {
         Net.connected = true;
+        Net.connecting = false;
         Net.everConnected = true;
         Net.retry = 0;
         if (Net.onStatus) Net.onStatus('connected');
@@ -97,6 +103,7 @@
       };
       ws.onclose = () => {
         Net.connected = false;
+        Net.connecting = false;
         if (Net.onStatus) Net.onStatus('disconnected');
         if (Net.active) Net.scheduleRetry();
       };

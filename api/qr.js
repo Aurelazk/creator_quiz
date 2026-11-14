@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     });
     res.statusCode = 200;
     res.setHeader('content-type', 'image/png');
-    res.setHeader('cache-control', 'no-store');
+    res.setHeader('cache-control', 'public, max-age=300');
     return res.end(buf);
   } catch (e) {
     res.statusCode = 500;

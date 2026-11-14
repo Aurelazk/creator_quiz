@@ -21,7 +21,10 @@ module.exports = (req, res) => {
     }
   }
 
+  const publicUrl = process.env.PUBLIC_URL
+    || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL : null);
+
   res.setHeader('content-type', 'application/json; charset=utf-8');
   res.setHeader('cache-control', 'no-store');
-  res.end(JSON.stringify({ wsUrl }));
+  res.end(JSON.stringify({ wsUrl, publicUrl }));
 };

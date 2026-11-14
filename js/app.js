@@ -75,15 +75,13 @@
     if (main) main.scrollTop = 0;
   }
 
-  function showHostView() {
+  async function showHostView() {
     hide($('#playerView'));
     show($('#hostView'));
-    if (!global.Scene3D.ready) {
-      const ok = global.Scene3D.init($('#scene'));
-      if (!ok && !App.sceneWarned) {
-        App.sceneWarned = true;
-        toast('#hostToasts', 'Rendu 3D indisponible sur cet appareil.', 'warn', 4000);
-      }
+    await ensureScene();
+    if (!global.Scene3D?.ready && !App.sceneWarned) {
+      App.sceneWarned = true;
+      toast('#hostToasts', 'Rendu 3D indisponible sur cet appareil.', 'warn', 4000);
     }
   }
 
@@ -93,7 +91,8 @@
 
   /* ---------------- code / QR ---------------- */
   function joinUrl() {
-    return location.origin + '/?room=' + encodeURIComponent(App.code || '');
+    const base = Net.publicUrl || location.origin;
+    return base + '/?room=' + encodeURIComponent(App.code || '');
   }
 
   function updateRoomChrome() {
@@ -127,6 +126,36 @@
     return svg;
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Chargement différé de la 3D (animateur seulement, jamais téléphone) */
+  /* ------------------------------------------------------------------ */
+  function loadScript(src) {
+    return new Promise((ok, ko) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = ok;
+      s.onerror = ko;
+      document.head.appendChild(s);
+    });
+  }
+  async function ensureScene() {
+    if (global.Scene3D && global.Scene3D.ready) return true;
+    if (App.scenePromise) return App.scenePromise;
+    App.scenePromise = (async () => {
+      await loadScript('assets/vendor/three.min.js');
+      await loadScript('js/scene.js');
+      if (global.Scene3D) global.Scene3D.init($('#scene'));
+      if (global.Scene3D && global.Scene3D.ready && App.role === 'host' && App.state) {
+        const s = App.state;
+        const inLobby = s.phase === 'lobby';
+        global.Scene3D.setRound(inLobby || s.phase === 'end' ? 0 : s.qi + 1, s.qTotal, s.multiplier, s.question ? s.question.text : '');
+        global.Scene3D.setPlayers(s.players || [], s.controller && s.controller.id, s.stealer && s.stealer.id);
+      }
+      return !!global.Scene3D && global.Scene3D.ready;
+    })();
+    return App.scenePromise;
+  }
+
   /* ================================================================== */
   /* INITIALISATION                                                     */
   /* ================================================================== */
@@ -157,11 +186,16 @@
       App.role = App.playerSession && App.playerSession.code === room ? 'player' : null;
       showPlayerScreen('pHome', true);
       if ($('#codeIn')) $('#codeIn').value = room;
+      document.body.classList.add('join-via-qr');
+      if ($('#pRoomChip')) $('#pRoomChip').textContent = 'Salle ' + room;
+      const input = $('#pseudo');
+      if (App.playerName) input.value = App.playerName;
       if (App.playerSession && App.playerSession.code === room) {
         toast('#phoneToasts', 'Reconnexion à la salle ' + room + '…', null, 2000);
       }
+      setTimeout(() => { if (input) input.focus({ preventScroll: false }); }, 300);
       Net.connect();
-    } else if (params.get('host') || (loadJSON(LS.role) === 'host' && App.hostSession)) {
+    } else if (params.has('host') || (loadJSON(LS.role) === 'host' && App.hostSession)) {
       enterHost();
     } else {
       App.role = null;
@@ -316,6 +350,8 @@
     /* ---- hôte ---- */
     on($('#btnQr'), 'click', () => { updateRoomChrome(); openModal('#qrModal'); });
     on($('#btnQrClose'), 'click', () => closeModal('#qrModal'));
+    on($('#btnHostRetry'), 'click', () => Net.connect());
+    on($('#btnPhoneRetry'), 'click', () => Net.connect());
     on($('#btnHostMain'), 'click', hostMain);
     on($('#btnStart'), 'click', hostMain);
     on($('#btnHostSkip'), 'click', () => Net.send('host:next'));
@@ -530,13 +566,41 @@
   /* RÉSEAU                                                             */
   /* ================================================================== */
   function bindNet() {
+    let connStart = 0;
     Net.onStatus = (status) => {
-      const reconnecting = status === 'disconnected';
-      toggle($('#hostReconnect'), reconnecting);
-      toggle($('#phoneReconnect'), reconnecting);
-      if (reconnecting && !Net.everConnected && Net.retry >= 3 && !App.netWarned) {
-        App.netWarned = true;
-        toast(toastBox(), 'Serveur de jeu injoignable. Vérifie GAME_WS_URL.', 'bad', 6000);
+      const hostTxt = $('#hostReconnectTxt');
+      const phoneTxt = $('#phoneReconnectTxt');
+      const connecting = status === 'connecting';
+      const disconnected = status === 'disconnected';
+      const showBanner = connecting || disconnected;
+      toggle($('#hostReconnect'), showBanner);
+      toggle($('#phoneReconnect'), showBanner);
+      if (connecting) {
+        connStart = Date.now();
+        App.connectAttempts = (App.connectAttempts || 0) + 1;
+        const txt = 'Connexion au serveur… (' + App.connectAttempts + ')';
+        if (hostTxt) hostTxt.textContent = txt;
+        if (phoneTxt) phoneTxt.textContent = txt;
+        if (!App.connWakeScheduled) {
+          App.connWakeScheduled = true;
+          setTimeout(() => {
+            if (Net.connecting && !Net.connected) {
+              toast(toastBox(), 'Le serveur se réveille, patiente quelques secondes.', 'info', 6000);
+            }
+          }, 4000);
+        }
+      } else if (disconnected) {
+        const txt = Net.everConnected ? 'Reconnexion…' : 'Connexion perdue — reconnexion…';
+        if (hostTxt) hostTxt.textContent = txt;
+        if (phoneTxt) phoneTxt.textContent = txt;
+        if (!Net.everConnected && Net.retry >= 3 && !App.netWarned) {
+          App.netWarned = true;
+          toast(toastBox(), 'Serveur de jeu injoignable. Vérifie GAME_WS_URL.', 'bad', 6000);
+        }
+      } else {
+        App.connectAttempts = 0;
+        App.connWakeScheduled = false;
+        App.netWarned = false;
       }
     };
 
