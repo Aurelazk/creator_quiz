@@ -439,7 +439,8 @@
     const hint = $(hintSel);
     if (hint) hint.textContent = 'Chargement…';
     try {
-      const res = await fetch('/api/leaderboard', { cache: 'no-store' });
+      await Net.loadConfig();
+      const res = await fetch(Net.apiBase() + '/api/leaderboard', { cache: 'no-store' });
       const data = await res.json();
       const rows = (data.scores || []).map((e, i) => ({
         rank: i + 1,

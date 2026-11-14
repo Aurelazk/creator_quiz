@@ -52,6 +52,15 @@
       return proto + '//' + location.host + '/api/ws';
     },
 
+    /* Origine HTTP du serveur de jeu ('' si même hôte). */
+    apiBase() {
+      if (!Net.wsBase) return '';
+      try {
+        const url = new URL(Net.wsBase);
+        return url.origin;
+      } catch (e) { return ''; }
+    },
+
     connect() {
       if (Net.ws && (Net.ws.readyState === 0 || Net.ws.readyState === 1)) return;
       Net.active = true;
