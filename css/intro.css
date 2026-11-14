@@ -55,6 +55,9 @@
 .letter.appear { animation: letterIn 0.55s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
 
 /* écrasement T */
+.letter.crush {
+  animation: crushT 0.4s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+}
 @keyframes crushT {
   0% { transform: scaleY(1) scaleX(1); }
   60% { transform: scaleY(0.34) scaleX(1.3); }

@@ -168,7 +168,7 @@
   padding: 1.2rem 1rem;
   box-shadow: none; border: none; background: transparent;
 }
-#hostLobby .lobby-qr img { width: 200px; height: 200px; }
+#hostLobby .lobby-qr img { width: 320px; height: 320px; }
 #hostLobby .btn--xl { width: 100%; }
 .panel, .panel { width: 100%; }
 .panel {

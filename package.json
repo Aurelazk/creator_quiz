@@ -9,7 +9,8 @@
     "test": "node tests/game.test.js && node tests/code.test.js",
     "test:e2e": "node tests/e2e.test.js",
     "test:visual": "node tests/visual.js",
-    "test:code": "node tests/code.test.js"
+    "test:code": "node tests/code.test.js",
+    "test:proof": "node tests/proof.js"
   },
   "engines": {
     "node": ">=18"

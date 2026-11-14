@@ -124,6 +124,11 @@
     const tEl = metric[4];
     const lampStopX = tEl ? tEl.right + lampW * 0.35 : wordCenter + lampW;
 
+    /* Position initiale de la lampe : hors écran à droite */
+    if (lamp && !isShort) {
+      lamp.style.transform = `translate(${window.innerWidth + lampW}px, 0px) scale(1,1)`;
+    }
+
     window.addEventListener('resize', () => { metric = measureLetters(); }, { passive: true });
 
     function frame(now) {
@@ -159,31 +164,31 @@
         if (j < 0.05 && jumpIndex > 0) sLand();
       }
 
-      /* 0.667-0.75 : lampe s'arrête devant le T, casque penche */
-      if (p >= 0.667 && p < 0.75 && lamp && !isShort) {
-        lamp.style.transform = `translate(${Math.round(lampStopX)}px, 0px) scale(1,1) rotate(${Math.sin((p - 0.667) / 0.083 * Math.PI) * 4}deg)`;
+      /* 0.62-0.72 : lampe s'arrête devant le T, casque penche */
+      if (p >= 0.62 && p < 0.72 && lamp && !isShort) {
+        lamp.style.transform = `translate(${Math.round(lampStopX)}px, 0px) scale(1,1) rotate(${Math.sin((p - 0.62) / 0.10 * Math.PI) * 4}deg)`;
       }
 
-      /* 0.75-0.875 : anticipation puis saut sur le T */
-      if (p >= 0.75 && p < 0.875 && lamp && !isShort) {
-        const ant = (p - 0.75) / 0.125;
+      /* 0.72-0.80 : anticipation puis saut sur le T */
+      if (p >= 0.72 && p < 0.80 && lamp && !isShort) {
+        const ant = (p - 0.72) / 0.08;
         const scaleY = 1 - 0.25 * ant;
         const scaleX = 1 + 0.15 * ant;
         lamp.style.transform = `translate(${Math.round(lampStopX)}px, ${Math.round(10 * ant)}px) scale(${scaleX}, ${scaleY})`;
         if (ant > 0.8 && !landedAtT) { sBoing(); landedAtT = true; }
       }
 
-      /* 0.875-0.938 : impact, T écrasé */
-      if (p >= 0.875 && p < 0.938 && lamp && !isShort) {
+      /* 0.80-0.86 : impact, T écrasé */
+      if (p >= 0.80 && p < 0.86 && lamp && !isShort) {
         sSplat();
         const t4 = letters[4];
-        if (t4) { t4.style.animation = 'none'; t4.classList.add('crush'); }
+        if (t4) t4.classList.add('crush');
         lamp.style.transform = `translate(${Math.round(lampStopX)}px, 8px) scale(1.05, 0.85)`;
       }
 
-      /* 0.938-1.0 : lumière, point allumé, fade */
-      if (p >= 0.938 && dot) dot.classList.add('on');
-      if (p >= 0.938 && beam) beam.style.opacity = Math.min(1, (p - 0.938) / 0.062) * 0.9;
+      /* 0.86-1.0 : lumière, point allumé, fade */
+      if (p >= 0.86 && dot) dot.classList.add('on');
+      if (p >= 0.86 && beam) beam.style.opacity = Math.min(1, (p - 0.86) / 0.14) * 0.9;
 
       if (p >= 1) {
         finishIntro();
