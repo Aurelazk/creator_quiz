@@ -67,7 +67,7 @@
 
 /* lampe */
 .intro-lamp {
-  position: absolute; z-index: 20;
+  position: absolute; z-index: 20; left: 0; top: 0;
   width: clamp(120px, 26vw, 260px); height: auto;
   transform-origin: bottom center;
   filter: drop-shadow(0 12px 24px rgba(0,0,0,0.55));

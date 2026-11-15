@@ -61,12 +61,14 @@ function check(cond, msg) {
   const focused = await p2.evaluate(() => document.activeElement?.id === 'pseudo');
   check(focused, 'champ pseudo au focus');
   const heroHidden = await p2.locator('.home-hero').isVisible() === false;
-  const previewHidden = await p2.locator('.home-preview').isVisible() === false;
+  const previewVisible = await p2.locator('.home-preview').isVisible();
+  const welcomeShown = await p2.locator('#pQrWelcome').isVisible();
   const footHidden = await p2.locator('.home-foot').isVisible() === false;
   const linksHidden = await p2.locator('.home-links').isVisible() === false;
   const codeFieldHidden = await p2.locator('.field--code').isVisible() === false;
   check(heroHidden, 'hero masqué (parcours QR)');
-  check(previewHidden, 'aperçu masqué (parcours QR)');
+  check(previewVisible, 'aperçu du personnage visible (parcours QR)');
+  check(welcomeShown, 'phrase d’accueil visible (parcours QR)');
   check(linksHidden, 'liens masqués (parcours QR)');
   check(codeFieldHidden, 'champ code masqué (parcours QR)');
   await ctx2.close();

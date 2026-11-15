@@ -30,10 +30,15 @@ const CODE_LENGTH = 5;
 const CODE_MAX_TRIES = 50;
 // Origines WebSocket autorisées (production : domaine du site). '*' = tout accepter (dév uniquement).
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
-// Limite de tentatives de jonction par IP (≈12 par minute).
-const JOIN_MAX = 12;
+// Limite des ÉCHECS de jonction : 30 par minute et par IP, ET 30 par minute
+// et par code de salle. Les jonctions réussies et les reconnexions ne comptent pas.
+const JOIN_FAIL_MAX = 30;
 const JOIN_WINDOW_MS = 60 * 1000;
-const joinAttempts = new Map();
+const joinFailures = new Map();
+const DEMO_MAX_MS = 12 * 60 * 1000;
+const DEMO_BOT_COUNT = 8;
+/* 6 manches : la démo montre aussi le multiplicateur ×1,5. */
+const DEMO_ROUNDS = 6;
 
 function lanIp() {
   for (const list of Object.values(os.networkInterfaces() || {})) {
@@ -44,14 +49,30 @@ function lanIp() {
   return null;
 }
 
-function tooManyJoins(ip) {
+function joinBlocked(ip, code) {
   const now = Date.now();
-  const e = joinAttempts.get(ip);
-  if (!e || now > e.resetAt) {
-    joinAttempts.set(ip, { count: 1, resetAt: now + JOIN_WINDOW_MS });
-    return false;
+  const keys = ['ip|' + String(ip || 'unknown'), 'code|' + String(code || '')];
+  for (const k of keys) {
+    const e = joinFailures.get(k);
+    if (e && now <= e.resetAt && e.count >= JOIN_FAIL_MAX) return true;
   }
-  return ++e.count > JOIN_MAX;
+  return false;
+}
+/* Ne consigne QUE les échecs (jamais les arrivées valides ni les reconnexions). */
+function noteJoinFailure(ip, code) {
+  const now = Date.now();
+  const keys = ['ip|' + String(ip || 'unknown'), 'code|' + String(code || '')];
+  for (const k of keys) {
+    const e = joinFailures.get(k);
+    if (!e || now > e.resetAt) joinFailures.set(k, { count: 1, resetAt: now + JOIN_WINDOW_MS });
+    else e.count++;
+  }
+}
+/* Compatibilité : ancienne API, désormais réservée aux échecs. */
+function tooManyJoins(ip, code) {
+  if (joinBlocked(ip, code)) return true;
+  noteJoinFailure(ip, code);
+  return false;
 }
 
 function clientIp(req) {
@@ -246,6 +267,10 @@ function makeRoom(code, hostToken, name, settings) {
     ranking: null,
     createdAt: Date.now(),
     lastActivity: Date.now(),
+    demo: false,
+    demoStartedAt: 0,
+    demoEndedAt: 0,
+    demoTimer: null,
   };
 }
 
@@ -359,9 +384,10 @@ function eventToPlayer(room, playerId, event) {
 /* ------------------------------------------------------------------ */
 /* Déroulé d'une manche                                               */
 /* ------------------------------------------------------------------ */
-function startGame(room) {
+function startGame(room, rounds) {
   if (room.players.size < 1) return false;
-  room.order = G.pickQuestions(QUESTIONS, G.GAME_Q);
+  const total = Number(rounds) > 0 ? Math.floor(Number(rounds)) : G.GAME_Q;
+  room.order = G.pickQuestions(QUESTIONS, total);
   room.qi = -1;
   room.qTotal = room.order.length;
   room.ranking = null;
@@ -682,7 +708,7 @@ function endGame(room) {
       if (best) mvp[t] = { id: best.id, name: best.name, score: best.score };
     }
   }
-  recordScores(sorted);
+  if (!room.demo) recordScores(sorted);
   touch(room);
   eventToAll(room, {
     type: 'game-over',
@@ -699,10 +725,14 @@ function endGame(room) {
 setInterval(() => {
   const now = Date.now();
   /* purge non bornée des IP de rate-limit expirées */
-  for (const [ip, e] of joinAttempts.entries()) {
-    if (now > e.resetAt) joinAttempts.delete(ip);
+  for (const [key, e] of joinFailures.entries()) {
+    if (now > e.resetAt) joinFailures.delete(key);
   }
   for (const room of rooms.values()) {
+    if (room.demo && now - (room.demoStartedAt || room.createdAt) > DEMO_MAX_MS) {
+      closeRoom(room);
+      continue;
+    }
     if (!room.hostConnected && room.hostDisconnectedAt && now - room.hostDisconnectedAt > HOST_IDLE_MS) {
       eventToAll(room, { type: 'closed', message: "L'animateur a quitté la salle." });
       for (const p of room.players.values()) if (p.ws) { try { p.ws.close(); } catch (e) {} }
@@ -828,6 +858,7 @@ function removePlayer(room, playerId, reason) {
 }
 
 function closeRoom(room) {
+  stopDemo(room);
   eventToAll(room, { type: 'closed', message: "L'animateur a fermé la salle." });
   for (const p of room.players.values()) {
     if (p.ws) { try { p.ws.close(); } catch (e) {} }
@@ -839,6 +870,144 @@ function closeRoom(room) {
 /* ------------------------------------------------------------------ */
 /* WebSocket                                                          */
 /* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* Mode démo serveur : 8 bots jouent une vraie partie isolée           */
+/* ------------------------------------------------------------------ */
+const DEMO_BOTS = [
+  { name: 'Aïcha', silhouette: 'fem', hair: 'braids', outfit: 'dress', accessory: 'none', jacket: '#FF4E20', shirt: '#FF4E20', pants: '#0C1A4B', shoes: '#F4F6FC', hairColor: '#2B1B12' },
+  { name: 'Koffi', silhouette: 'masc', hair: 'short', outfit: 'jacket', accessory: 'glasses', jacket: '#0B35FE', shirt: '#F4F6FC', pants: '#111827', shoes: '#FF4E20', hairColor: '#2B1B12' },
+  { name: 'Mariam', silhouette: 'fem', hair: 'afro', outfit: 'tee', accessory: 'none', jacket: '#00E472', shirt: '#00E472', pants: '#3B4A6B', shoes: '#111827', hairColor: '#2B1B12' },
+  { name: 'Sèna', silhouette: 'neutral', hair: 'cap', outfit: 'hoodie', accessory: 'beanie', jacket: '#F5C542', shirt: '#111827', pants: '#0C1A4B', shoes: '#F4F6FC', hairColor: '#111827' },
+  { name: 'Dossou', silhouette: 'masc', hair: 'curly', outfit: 'jacket', accessory: 'headphones', jacket: '#8B5CF6', shirt: '#F4F6FC', pants: '#111827', shoes: '#00E472', hairColor: '#111827' },
+  { name: 'Adjoa', silhouette: 'fem', hair: 'ponytail', outfit: 'dress', accessory: 'none', jacket: '#E84A8A', shirt: '#E84A8A', pants: '#F4F6FC', shoes: '#FF4E20', hairColor: '#1B2A6B' },
+  { name: 'Ibrahim', silhouette: 'masc', hair: 'bald', outfit: 'tee', accessory: 'backpack', jacket: '#F4F6FC', shirt: '#F4F6FC', pants: '#1F2937', shoes: '#F5C542', hairColor: '#2B1B12' },
+  { name: 'Grâce', silhouette: 'neutral', hair: 'short', outfit: 'hoodie', accessory: 'glasses', jacket: '#2E85FF', shirt: '#0B35FE', pants: '#3B4A6B', shoes: '#F4F6FC', hairColor: '#5AD86B' },
+];
+const DEMO_GUESSES = ['Le football', 'La musique', 'Paris', 'Le riz', 'Un téléphone', 'Le marché', 'La pluie', 'Les vacances'];
+
+function demoAvatar(i) {
+  const b = DEMO_BOTS[i % DEMO_BOTS.length];
+  return sanitizeAvatar({
+    silhouette: b.silhouette,
+    hair: b.hair,
+    outfit: b.outfit,
+    accessory: b.accessory,
+    colors: {
+      hair: b.hairColor,
+      jacket: b.jacket,
+      shirt: b.shirt,
+      pants: b.pants,
+      shoes: b.shoes,
+    },
+  });
+}
+
+function addDemoBot(room, i) {
+  const b = DEMO_BOTS[i % DEMO_BOTS.length];
+  const player = {
+    id: 'bot_' + i + '_' + randStr(6),
+    token: 'demo-' + randStr(12),
+    name: b.name,
+    avatar: demoAvatar(i),
+    score: 0,
+    team: room.mode === 'teams' ? (i % 2 === 0 ? 'bleu' : 'orange') : null,
+    connected: true,
+    disconnectedAt: 0,
+    ws: null,
+    lastGuessAt: 0,
+    bot: true,
+  };
+  room.players.set(player.id, player);
+  return player;
+}
+
+function startDemo(room) {
+  room.demo = true;
+  room.demoStartedAt = Date.now();
+  const count = Math.min(DEMO_BOT_COUNT, room.settings.maxPlayers);
+  for (let i = 0; i < count; i++) addDemoBot(room, i);
+  touch(room);
+  broadcast(room);
+  setTimeout(() => {
+    if (!rooms.has(room.code) || !room.demo) return;
+    if (room.phase === G.PHASES.LOBBY) startGame(room, DEMO_ROUNDS);
+  }, 1400);
+  if (room.demoTimer) clearInterval(room.demoTimer);
+  room.demoTimer = setInterval(() => demoStep(room), 850);
+  if (room.demoTimer.unref) room.demoTimer.unref();
+}
+
+function demoBotIdle(room, excludeId) {
+  const list = Array.from(room.players.values()).filter(
+    (p) => p.bot && p.connected !== false && p.id !== excludeId
+  );
+  if (!list.length) return null;
+  return list[crypto.randomInt(list.length)].id;
+}
+
+function demoStep(room) {
+  if (!rooms.has(room.code) || !room.demo) {
+    if (room.demoTimer) clearInterval(room.demoTimer);
+    room.demoTimer = null;
+    return;
+  }
+  if (room.phase === G.PHASES.LOBBY) {
+    if (room.players.size) startGame(room, DEMO_ROUNDS);
+    return;
+  }
+  if (room.phase === G.PHASES.END) {
+    if (!room.demoEndedAt) room.demoEndedAt = Date.now();
+    if (Date.now() - room.demoEndedAt > 7000) {
+      room.demoEndedAt = 0;
+      startGame(room, DEMO_ROUNDS);
+    }
+    return;
+  }
+  if (room.phase === G.PHASES.BUZZ && !room.controllerId) {
+    const id = demoBotIdle(room, null);
+    if (id) handleBuzz(room, id);
+    return;
+  }
+  if (room.phase === G.PHASES.PLAY && room.controllerId) {
+    const ctrl = room.players.get(room.controllerId);
+    if (!ctrl || !ctrl.bot) return;
+    const q = room.question;
+    if (!q) return;
+    const taken = new Set(room.board.map((r) => r.i));
+    const options = q.answers.map((a, i) => ({ a, i })).filter((x) => !taken.has(x.i));
+    if (!options.length) { finishRound(room, 'complete'); return; }
+    if (Math.random() < 0.22 && room.strikes < G.MAX_STRIKES - 1) {
+      const wrong = DEMO_GUESSES[crypto.randomInt(DEMO_GUESSES.length)];
+      handleGuess(room, ctrl.id, wrong);
+    } else {
+      const pick = options[crypto.randomInt(options.length)];
+      handleGuess(room, ctrl.id, pick.a.text);
+    }
+    return;
+  }
+  if (room.phase === G.PHASES.STEAL) {
+    if (!room.stealerId) {
+      const id = demoBotIdle(room, room.controllerId);
+      if (id) handleBuzz(room, id);
+    } else {
+      const q = room.question;
+      const taken = new Set(room.board.map((r) => r.i));
+      const options = q ? q.answers.map((a, i) => ({ a, i })).filter((x) => !taken.has(x.i)) : [];
+      if (options.length && Math.random() < 0.7) {
+        const pick = options[crypto.randomInt(options.length)];
+        handleGuess(room, room.stealerId, pick.a.text);
+      } else {
+        handleGuess(room, room.stealerId, DEMO_GUESSES[crypto.randomInt(DEMO_GUESSES.length)]);
+      }
+    }
+  }
+}
+
+function stopDemo(room) {
+  if (room.demoTimer) clearInterval(room.demoTimer);
+  room.demoTimer = null;
+}
+
 function createWebSocketServer(server, paths) {
   const allowed = Array.isArray(paths) ? paths : [paths || '/ws'];
   const wss = new WebSocketServer({ noServer: true, maxPayload: 16 * 1024 });
@@ -902,18 +1071,22 @@ function joinPlayer(room, ws, msg) {
     }
   }
 
+  if (room.demo) {
+    sendError(ws, 'demo', 'Partie de démonstration : regarde, tu ne peux pas la rejoindre.');
+    return 'demo';
+  }
   if (room.phase !== G.PHASES.LOBBY) {
     sendError(ws, 'locked', 'La partie a déjà commencé. Demande le lien de reconnexion à l’animateur.');
-    return;
+    return 'locked';
   }
   if (room.players.size >= room.settings.maxPlayers) {
     sendError(ws, 'full', 'La salle est complète.');
-    return;
+    return 'full';
   }
   const key = avatarKey(avatar);
   if (Array.from(room.players.values()).some((p) => avatarKey(p.avatar) === key)) {
     sendError(ws, 'avatar_taken', 'Ce personnage est déjà pris. Choisis-en un autre !');
-    return;
+    return 'avatar_taken';
   }
 
   let finalName = name;
@@ -949,6 +1122,7 @@ function joinPlayer(room, ws, msg) {
   });
   eventToAll(room, { type: 'player-joined', name: player.name });
   broadcast(room);
+  return null;
 }
 
 wss.on('connection', (ws, req) => {
@@ -979,8 +1153,10 @@ wss.on('connection', (ws, req) => {
           code,
           hostToken: room.hostToken,
           joinPath: '/?room=' + code,
+          demo: !!msg.demo,
         });
-        broadcast(room);
+        if (msg.demo) startDemo(room);
+        else broadcast(room);
         break;
       }
       case 'host:rejoin': {
@@ -997,17 +1173,23 @@ wss.on('connection', (ws, req) => {
       }
       case 'player:join':
       case 'player:rejoin': {
-        if (tooManyJoins(ws._ip)) {
+        const code = String(msg.code || '').toUpperCase();
+        const room = rooms.get(code);
+        const token = typeof msg.token === 'string' ? msg.token : '';
+        const tokenRejoin = !!(room && token &&
+          Array.from(room.players.values()).some((p) => p.token === token));
+        /* Une reconnexion valide n'est jamais limitée. */
+        if (!tokenRejoin && joinBlocked(ws._ip, code)) {
           sendError(ws, 'rate', 'Trop d’essais, attends une minute.');
           return;
         }
-        const code = String(msg.code || '').toUpperCase();
-        const room = rooms.get(code);
         if (!room) {
           sendError(ws, 'not-found', 'Salle introuvable. Vérifie le code.');
+          noteJoinFailure(ws._ip, code);
           return;
         }
-        joinPlayer(room, ws, msg);
+        const failure = joinPlayer(room, ws, msg);
+        if (failure) noteJoinFailure(ws._ip, code);
         break;
       }
       case 'player:avatar': {
@@ -1121,7 +1303,9 @@ wss.on('connection', (ws, req) => {
         room.hostWs = null;
         room.hostConnected = false;
         room.hostDisconnectedAt = Date.now();
-        if (room.phase !== G.PHASES.LOBBY && room.phase !== G.PHASES.END && !room.paused) {
+        if (room.demo) {
+          closeRoom(room);
+        } else if (room.phase !== G.PHASES.LOBBY && room.phase !== G.PHASES.END && !room.paused) {
           hostPause(room, true);
         }
       }
@@ -1179,6 +1363,9 @@ function sendJson(res, status, obj) {
 function safeStaticPath(urlPath) {
   if (urlPath === '/' || urlPath === '/index.html') return path.join(ROOT, 'index.html');
   if (urlPath === '/sw.js') return path.join(ROOT, 'sw.js');
+  /* liste blanche stricte : seul le moteur de règles est public,
+     shared/upstash.js (secrets) reste inaccessible. */
+  if (urlPath === '/shared/rules.js') return path.join(ROOT, 'shared', 'rules.js');
   const allowed = ['/css/', '/js/', '/assets/', '/favicon.ico'];
   if (!allowed.some((p) => urlPath === p || urlPath.startsWith(p))) return null;
   const decoded = decodeURIComponent(urlPath);
@@ -1192,7 +1379,9 @@ async function handleHttp(req, res) {
   const pathname = url.pathname;
 
   if (pathname === '/api/health') {
-    sendJson(res, 200, { ok: true, rooms: rooms.size, questions: QUESTIONS.length });
+    let demos = 0;
+    for (const r of rooms.values()) if (r.demo) demos++;
+    sendJson(res, 200, { ok: true, rooms: rooms.size - demos, demos, questions: QUESTIONS.length });
     return;
   }
 
@@ -1239,7 +1428,9 @@ async function handleHttp(req, res) {
   }
 
   if (pathname === '/api/rooms') {
-    sendJson(res, 200, { count: rooms.size });
+    let demos = 0;
+    for (const r of rooms.values()) if (r.demo) demos++;
+    sendJson(res, 200, { count: rooms.size - demos, demos });
     return;
   }
 
@@ -1309,5 +1500,9 @@ module.exports = {
   CODE_ALPHABET,
   CODE_LENGTH,
   tooManyJoins,
+  joinBlocked,
+  noteJoinFailure,
+  startDemo,
+  DEMO_BOTS,
   lanIp,
 };

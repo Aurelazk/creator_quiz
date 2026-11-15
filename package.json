@@ -6,10 +6,14 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "test": "node tests/game.test.js && node tests/code.test.js",
+    "test": "node tests/game.test.js && node tests/code.test.js && node tests/join.test.js",
     "test:e2e": "node tests/e2e.test.js",
-    "test:visual": "node tests/visual.js",
-    "test:code": "node tests/code.test.js"
+    "test:visual": "node tests/overlap.js",
+    "test:code": "node tests/code.test.js",
+    "test:join": "node tests/join.test.js",
+    "test:overlap": "node tests/overlap.js",
+    "test:intro": "node tests/intro.js",
+    "test:demo": "node tests/demo.js"
   },
   "engines": {
     "node": ">=18"

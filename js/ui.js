@@ -22,11 +22,13 @@
   function toast(container, message, kind, ms) {
     const box = typeof container === 'string' ? $(container) : container;
     if (!box || !message) return;
+    /* une seule notification à la fois : on remplace la précédente */
+    while (box.firstChild) box.removeChild(box.firstChild);
     const el = document.createElement('div');
     el.className = 'toast' + (kind ? ' toast--' + kind : '');
     el.textContent = message;
+    el.setAttribute('role', 'status');
     box.appendChild(el);
-    while (box.children.length > 3) box.removeChild(box.firstChild);
     const t = setTimeout(() => {
       el.style.opacity = '0';
       el.style.transform = 'translateY(6px)';

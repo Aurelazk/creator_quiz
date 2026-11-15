@@ -12,7 +12,8 @@
   } = global.UI;
 
   const PHASE_LABEL = {
-    lobby: 'Lobby', buzz: 'Buzz', play: 'Jeu', steal: 'Vol', reveal: 'Révélation', end: 'Terminé',
+    lobby: 'Salle d’attente', countdown: 'Prêts ?', buzz: 'Buzz !', play: 'Au jeu',
+    steal: 'Vol !', reveal: 'Révélation', end: 'Fin de partie',
   };
   const LS = {
     host: 'gtq.host',
@@ -130,8 +131,29 @@
     syncLobbyReopen(!!(App.state && App.state.phase === 'lobby'));
   }
 
-  function closeHostRoom() {
-    if (!global.confirm('Fermer la salle et déconnecter tous les joueurs ?')) return;
+  function closeHostRoom(btn) {
+    /* confirmation en deux temps, sans boîte de dialogue native */
+    if (!App.closeArmed) {
+      App.closeArmed = true;
+      const target = btn || $('#btnHostClose');
+      if (target) {
+        target.dataset.label = target.textContent;
+        target.textContent = 'Confirmer ?';
+        target.classList.add('btn--armed');
+      }
+      toast('#hostToasts', 'Appuie à nouveau pour fermer la salle.', 'warn', 3500);
+      clearTimeout(App.closeTimer);
+      App.closeTimer = setTimeout(() => {
+        App.closeArmed = false;
+        if (target) {
+          target.textContent = target.dataset.label || 'Fermer';
+          target.classList.remove('btn--armed');
+        }
+      }, 4000);
+      return;
+    }
+    App.closeArmed = false;
+    clearTimeout(App.closeTimer);
     Net.send('host:close');
     clearKey(LS.host);
     App.hostSession = null;
@@ -236,24 +258,13 @@
       if (global.Scene3D && global.Scene3D.ready && App.role === 'host' && App.state) {
         const s = App.state;
         const inLobby = s.phase === 'lobby';
+        if (global.Scene3D.setLobby) global.Scene3D.setLobby(inLobby);
         global.Scene3D.setRound(inLobby || s.phase === 'end' ? 0 : s.qi + 1, s.qTotal, s.multiplier, s.question ? s.question.text : '');
         global.Scene3D.setPlayers(s.players || [], s.controller && s.controller.id, s.stealer && s.stealer.id);
       }
       return !!global.Scene3D && global.Scene3D.ready;
     })();
     return App.scenePromise;
-  }
-
-  /* ---------- mode démo : charger demo.js et basculer sur DemoNet ---------- */
-  function loadDemo() {
-    return new Promise((ok, ko) => {
-      if (global.DemoNet) { ok(); return; }
-      const s = document.createElement('script');
-      s.src = 'js/demo.js';
-      s.onload = ok;
-      s.onerror = ko;
-      document.head.appendChild(s);
-    });
   }
 
   /* ================================================================== */
@@ -274,33 +285,34 @@
     const params = new URLSearchParams(location.search);
     const room = String(params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
 
-    /* ---------- MODE DÉMO : isole Net AVANT bindNet ---------- */
-    if (params.get('demo') === '1' || room === 'DEMO1') {
-      loadDemo().then(() => {
-        window.Net = global.DemoNet;
-        bindNet();
-        App.code = 'DEMO1';
-        saveJSON(LS.role, 'host');
-        /* D-4 : vue joueur sur mobile, animateur sur desktop */
-        const isMobile = window.matchMedia ? window.matchMedia('(max-width: 768px)').matches : false;
-        App.role = isMobile ? 'player' : 'host';
-        if (App.role === 'host') {
-          showHostView();
-          updateRoomChrome();
-        } else {
-          showPlayerScreen('pLobby', true);
-          if ($('#codeIn')) $('#codeIn').value = 'DEMO1';
-          if ($('#pRoomChip')) $('#pRoomChip').textContent = 'Salle DEMO1';
-        }
-        /* D-3 : attendre la fin de l'intro avant de lancer l'acte 1 */
-        const runDemo = () => { DemoSim.startDemo(); };
-        if (global.IntroAnim && !global.IntroAnim.isFinished()) {
-          window.addEventListener('intro:done', runDemo, { once: true });
-        } else {
-          runDemo();
-        }
-        showDemoBanner();
-      });
+    /* ---------- MODE DÉMO : vraie partie serveur avec 8 bots ---------- */
+    if (params.get('demo') === '1') {
+      bindNet();
+      App.demo = true;
+      App.role = 'host';
+      saveJSON(LS.role, 'host');
+      showHostView();
+      showDemoBanner();
+      updateRoomChrome();
+      const startDemo = () => {
+        const payload = {
+          name: 'Démo',
+          demo: true,
+          settings: {
+            duration: 30,
+            maxPlayers: 20,
+            mode: params.get('mode') === 'teams' ? 'teams' : 'solo',
+          },
+        };
+        const send = () => Net.send('host:create', payload);
+        if (Net.connected) send();
+        else { App.pending = send; Net.connect(); }
+      };
+      if (global.IntroAnim && !global.IntroAnim.isFinished()) {
+        window.addEventListener('intro:done', startDemo, { once: true });
+      } else {
+        startDemo();
+      }
       return;
     }
 
@@ -313,6 +325,10 @@
       if ($('#codeIn')) $('#codeIn').value = room;
       document.body.classList.add('join-via-qr');
       if ($('#pRoomChip')) $('#pRoomChip').textContent = 'Salle ' + room;
+      if ($('#pQrWelcome')) {
+        $('#pQrWelcome').classList.remove('hidden');
+        $('#pQrWelcome').textContent = 'Bienvenue ! Tu rejoins la salle ' + room + '. Choisis ton pseudo pour entrer.';
+      }
       const input = $('#pseudo');
       if (App.playerName) input.value = App.playerName;
       if (App.playerSession && App.playerSession.code === room) {
@@ -373,6 +389,7 @@
   function resetToHome(message, kind) {
     App.state = null;
     App.role = null;
+    App.demo = false;
     App.code = '';
     App.lastPhase = null;
     App.phoneScreen = 'pHome';
@@ -396,6 +413,21 @@
   function bindEvents() {
     on(document, 'pointerdown', () => Sound.unlock(), { once: true });
     on(document, 'keydown', () => Sound.unlock(), { once: true });
+
+    /* raccourcis animateur : Espace = action, P = pause, R = révéler, H = masquer la barre */
+    on(document, 'keydown', (e) => {
+      if (App.role !== 'host' || App.demo) return;
+      const tag = (e.target && e.target.tagName) || '';
+      if (/INPUT|SELECT|TEXTAREA|BUTTON/.test(tag)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === ' ') { e.preventDefault(); hostMain(); }
+      else if (e.key === 'p' || e.key === 'P') Net.send('host:pause');
+      else if (e.key === 'r' || e.key === 'R') Net.send('host:reveal');
+      else if (e.key === 'h' || e.key === 'H') {
+        const hv = $('#hostView');
+        if (hv) hv.classList.toggle('hide-bar');
+      }
+    });
 
     on($('#btnMute'), 'click', () => {
       const muted = Sound.toggle();
@@ -431,7 +463,10 @@
       url.searchParams.delete('host');
       location.href = url.toString();
     });
+    on($('#btnDemoRestart'), 'click', restartDemo);
     on($('#btnDemoQuit'), 'click', () => {
+      App.demo = false;
+      clearKey(LS.host);
       const url = new URL(location);
       url.searchParams.delete('demo');
       location.href = url.toString();
@@ -501,8 +536,8 @@
       Net.send('host:pause', { paused: !App.state.paused });
     });
     on($('#btnHostPlus15'), 'click', () => Net.send('host:addtime', { seconds: 15 }));
-    on($('#btnHostClose'), 'click', closeHostRoom);
-    on($('#btnLobbyClose'), 'click', closeHostRoom);
+    on($('#btnHostClose'), 'click', (e) => closeHostRoom(e.currentTarget));
+    on($('#btnLobbyClose'), 'click', (e) => closeHostRoom(e.currentTarget));
     on($('#btnLobbyCollapse'), 'click', () => {
       setLobbyCollapsed(true);
       if ($('#btnLobbyOpen')) $('#btnLobbyOpen').focus();
@@ -799,10 +834,18 @@
     Net.handlers['host:created'] = (msg) => {
       App.role = 'host';
       App.code = msg.code;
+      App.lastPhase = null;
+      if (App.demo) {
+        App.hostSession = null;
+        clearKey(LS.host);
+        updateRoomChrome();
+        showHostView();
+        showDemoBanner();
+        return;
+      }
       App.hostSession = { code: msg.code, token: msg.hostToken };
       saveJSON(LS.host, App.hostSession);
       saveJSON(LS.role, 'host');
-      App.lastPhase = null;
       updateRoomChrome();
       showHostView();
       Sound.play('join');
@@ -939,7 +982,10 @@
 
     if (inLobby && phaseChanged) App.lobbyCollapsed = false;
     const hostView = $('#hostView');
-    if (hostView) hostView.classList.toggle('is-lobby', inLobby && !isEnd);
+    if (hostView) {
+      hostView.classList.toggle('is-lobby', inLobby && !isEnd);
+      hostView.classList.toggle('is-demo', !!App.demo);
+    }
 
     toggle($('#hostLobby'), inLobby && !isEnd);
     syncLobbyReopen(inLobby && !isEnd);
@@ -950,22 +996,19 @@
     if ($('#hostRound')) {
       if (inLobby) $('#hostRound').textContent = 'SALLE D’ATTENTE';
       else if (isEnd) $('#hostRound').textContent = 'FIN DE PARTIE';
-      else $('#hostRound').textContent = 'MANCHE ' + Math.min(s.qi + 1, s.qTotal) + ' / ' + s.qTotal;
+      else {
+        const mult = s.multiplier || 1;
+        $('#hostRound').textContent = 'MANCHE ' + Math.min(s.qi + 1, s.qTotal) + ' / ' + s.qTotal +
+          (mult > 1 ? ' · ×' + String(mult).replace('.', ',') : '');
+      }
     }
     if ($('#hostQuestion')) {
       let text = 'En attente des joueurs…';
       if (s.question) text = s.question.text;
-      if (s.phase === 'steal') text = 'VOL EN COURS — ' + text;
-      if (s.phase === 'reveal') text = 'Réponses révélées — ' + text;
       if (isEnd) text = 'Partie terminée. Bravo à tous !';
       $('#hostQuestion').textContent = text;
     }
     if ($('#hostPhase')) $('#hostPhase').textContent = s.paused ? 'Pause' : (PHASE_LABEL[s.phase] || s.phase);
-    const mult = $('#hostMultiplier');
-    if (mult) {
-      mult.textContent = '×' + (s.multiplier || 1);
-      toggle(mult, (s.multiplier || 1) > 1);
-    }
     const pot = $('#hostPot');
     if (pot) {
       pot.textContent = 'Cagnotte ' + fmt(s.pot);
@@ -990,6 +1033,7 @@
       }
     }
 
+    if (global.Scene3D.setLobby) global.Scene3D.setLobby(inLobby && !isEnd);
     if (phaseChanged && global.Scene3D.ready) {
       global.Scene3D.setRound(inLobby || isEnd ? 0 : s.qi + 1, s.qTotal, s.multiplier, s.question ? s.question.text : '');
     }
@@ -1005,6 +1049,9 @@
   function renderHostBoard(s) {
     const board = $('#board');
     if (!board) return;
+    const off = s.phase === 'lobby' || s.phase === 'end';
+    board.classList.toggle('hidden', off);
+    if (off) return;
     const slots = s.question ? s.question.slots : 0;
     if (board.dataset.slots !== String(slots)) {
       board.dataset.slots = String(slots);
@@ -1111,11 +1158,18 @@
 
   function renderHostControls(s) {
     const main = $('#btnHostMain');
+    if (App.demo) {
+      if (main) {
+        main.textContent = 'Recommencer la démo';
+        main.disabled = false;
+      }
+      return;
+    }
     if (main) {
       let label = 'Terminer la manche';
       let disabled = false;
       if (s.phase === 'lobby') { label = 'Lancer la partie'; disabled = !(s.players && s.players.length); }
-      else if (s.phase === 'reveal') label = 'Manche suivante';
+      else if (s.phase === 'reveal') { label = 'Manche suivante'; disabled = false; }
       else if (s.phase === 'end') label = 'Rejouer';
       main.textContent = label;
       main.disabled = disabled;
@@ -1130,8 +1184,16 @@
     if (plus) plus.disabled = !['buzz', 'play', 'steal'].includes(s.phase);
   }
 
+  function restartDemo() {
+    if (!App.demo) return;
+    Net.send('host:close');
+    Net.send('host:create', { name: 'Démo', demo: true, settings: { duration: 30, maxPlayers: 20, mode: 'solo' } });
+    toast('#hostToasts', 'Nouvelle démo lancée.', 'gold', 2000);
+  }
+
   function hostMain() {
     const s = App.state;
+    if (App.demo) { restartDemo(); return; }
     if (!s) return;
     if (s.phase === 'lobby') Net.send('host:start');
     else Net.send('host:next');
@@ -1283,6 +1345,8 @@
       App.answerFocusKey = '';
     }
 
+    renderMiniBoard(s);
+
     const found = $('#pFound');
     if (found) {
       found.innerHTML = (s.board || []).map((r) =>
@@ -1296,6 +1360,32 @@
       const b = $('b', pot);
       if (b) b.textContent = fmt(s.pot);
     }
+  }
+
+  function renderMiniBoard(s) {
+    const box = $('#pMiniBoard');
+    const list = $('#pMiniList');
+    if (!box || !list) return;
+    const me = s.me || {};
+    const rows = (s.players || [])
+      .map((p) => ({ id: p.id, name: p.name, score: Number(p.score) || 0 }))
+      .sort((a, b) => b.score - a.score);
+    const top = rows.slice(0, 3);
+    const inTop = top.some((r) => r.id === me.id);
+    if (!inTop && me.id) {
+      const mine = rows.find((r) => r.id === me.id);
+      if (mine) top.push(mine);
+    }
+    box.hidden = rows.length < 2;
+    list.innerHTML = top.map((r, i) => {
+      const rank = rows.indexOf(r) + 1;
+      const isMe = r.id === me.id;
+      return '<li class="mini-board-row' + (isMe ? ' me' : '') + '">' +
+        '<span class="mini-board-pos">' + (i < 3 ? rank : '…') + '</span>' +
+        '<span class="mini-board-name">' + esc(r.name || 'Joueur') + '</span>' +
+        '<span class="mini-board-score">' + fmt(r.score) + '</span>' +
+        '</li>';
+    }).join('');
   }
 
   function renderPlayerEnd(s) {
@@ -1474,6 +1564,12 @@
         break;
 
       case 'closed':
+        if (App.demo) {
+          /* en démo, une fermeture est suivie d'une relance immédiate */
+          App.state = null;
+          App.lastPhase = null;
+          break;
+        }
         clearKey(LS.host);
         clearKey(LS.player);
         clearKey(LS.role);
@@ -1525,10 +1621,13 @@
   /* ================================================================== */
   function updateClocks() {
     const s = App.state;
+    const timed = s && s.phaseEnd > 0 && !s.paused &&
+      ['countdown', 'buzz', 'play', 'steal'].includes(s.phase);
     const running = s && s.phaseEnd > 0 && !s.paused && ['buzz', 'play', 'steal'].includes(s.phase);
     let remaining = 0;
-    let label = '--';
-    if (running) {
+    /* jamais de « -- » : 0 tant qu'aucun chrono n'est actif */
+    let label = '0';
+    if (timed) {
       remaining = Math.max(0, s.phaseEnd - (Date.now() - App.skew));
       label = String(secs(remaining));
     }
@@ -1539,11 +1638,29 @@
       if (el.textContent !== label) el.textContent = label;
       el.classList.toggle('low', low);
     });
+    const cd = $('#hostCountdown');
+    if (cd) {
+      const on = !!s && s.phase === 'countdown' && !App.demo;
+      cd.classList.toggle('hidden', !on);
+      if (on && timed) {
+        const n = Math.max(1, Math.ceil(remaining / 1000));
+        if ($('#hostCountdownNum') && $('#hostCountdownNum').textContent !== String(n)) {
+          $('#hostCountdownNum').textContent = String(n);
+          const el = $('#hostCountdownNum');
+          el.style.animation = 'none';
+          void el.offsetWidth;
+          el.style.animation = '';
+        }
+      }
+    }
     const hw = $('#hostTimerWrap');
     const pw = $('#pTimerWrap');
-    if (hw) hw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end' || s.phase === 'reveal');
-    if (pw) pw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end' || s.phase === 'reveal');
+    if (hw) hw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end');
+    if (pw) pw.classList.toggle('hidden', !s || s.phase === 'lobby' || s.phase === 'end');
   }
+
+  /* exposé pour les tests d'interface (anti-chevauchement, chronos) */
+  global.__CREATOR_APP__ = App;
 
   /* ---------------- démarrage ---------------- */
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

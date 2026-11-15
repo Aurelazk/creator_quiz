@@ -42,16 +42,27 @@ test('alphabet : 5 caractères, sans I, L, O, 0, 1', () => {
   assert.ok(seen.size > 1900, 'trop de collisions sur 2000 tirages : ' + seen.size);
 });
 
-test('limite de tentatives par IP (12/minute)', () => {
+test('limite : 30 ÉCHECS par minute et par IP', () => {
   const ip = '1.2.3.4';
-  let limited = 0;
-  for (let i = 0; i < 12; i++) {
-    if (S.tooManyJoins(ip)) limited++;
+  const code = 'ABCDE';
+  for (let i = 0; i < 30; i++) S.noteJoinFailure(ip, code);
+  assert.ok(S.joinBlocked(ip, 'ZZZZZ'), 'IP bloquée après 30 échecs, tous codes');
+  assert.ok(!S.joinBlocked('5.6.7.8', 'MNPQR'), 'autre IP + autre code non bloqués');
+});
+
+test('limite : 30 ÉCHECS par minute et par code de salle', () => {
+  const code = 'QWERT';
+  for (let i = 0; i < 30; i++) S.noteJoinFailure('10.0.0.' + i, code);
+  assert.ok(S.joinBlocked('20.0.0.1', code), 'code bloqué après 30 échecs');
+  assert.ok(!S.joinBlocked('20.0.0.1', 'MNPQR'), 'autre code non bloqué');
+});
+
+test('les jonctions réussies et reconnexions ne consomment pas la limite', () => {
+  const ip = '7.7.7.7';
+  const code = 'STUVW';
+  for (let i = 0; i < 100; i++) {
+    assert.ok(!S.joinBlocked(ip, code), 'aucun échec enregistré : jamais bloqué');
   }
-  assert.strictEqual(limited, 0, 'les 12 premières tentatives doivent passer');
-  assert.ok(S.tooManyJoins(ip), 'la 13ème tentative doit être bloquée');
-  assert.ok(S.tooManyJoins(ip), 'les suivantes restent bloquées');
-  assert.ok(!S.tooManyJoins('5.6.7.8'), 'autre IP limitée à tort');
 });
 
 let server = null;
@@ -75,6 +86,14 @@ async function runHttp() {
         test('publicUrl : utilise PUBLIC_URL (jamais localhost)', () => {
           assert.strictEqual(cfg.publicUrl, 'https://quiz.creator.example');
           assert.ok(!cfg.publicUrl.includes('localhost'), 'publicUrl contient localhost');
+        });
+        const rules = await fetch(base + '/shared/rules.js');
+        const rulesTxt = await rules.text();
+        const priv = await fetch(base + '/shared/upstash.js');
+        test('shared/rules.js est public, shared/upstash.js ne l’est pas', () => {
+          assert.strictEqual(rules.status, 200, 'rules.js doit répondre 200');
+          assert.ok(rulesTxt.includes('module.exports'), 'rules.js servi');
+          assert.strictEqual(priv.status, 404, 'upstash.js ne doit pas être exposé');
         });
         return;
       }

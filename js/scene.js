@@ -18,6 +18,9 @@
     players: new Map(),
     crowd: [],
     crowdCheer: 0,
+    crowdInst: null,
+    crowdData: [],
+    crowdDummy: null,
     t: 0,
     stageScreen: null,
     screenCtx: null,
@@ -29,6 +32,7 @@
     total: 10,
     multiplier: 1,
     reduceMotion: false,
+    lobbyMode: false,
   };
 
   const GEO = {};
@@ -598,24 +602,48 @@
     const n = list.length;
     list.forEach((ch, idx) => {
       let col, row, rows, perRow;
-      if (n <= 6) { rows = 1; perRow = n; }
-      else if (n <= 12) { rows = 2; perRow = Math.ceil(n / 2); }
-      else { rows = 3; perRow = Math.ceil(n / 3); }
+      if (n <= 8) { rows = 1; perRow = n; }
+      else { rows = 2; perRow = Math.ceil(n / 2); }
       col = perRow === 1 ? 0 : (idx % perRow) - (perRow - 1) / 2;
       row = Math.floor(idx / perRow);
-      const spacing = n <= 6 ? 1.55 : 1.42;
+      /* arc unique face public : les joueurs se tiennent côte à côte,
+         légèrement en cercle, tournés en 3/4 vers la caméra. */
+      const spacing = n <= 4 ? 1.7 : n <= 8 ? 1.5 : 1.36;
       const x = col * spacing;
-      const z = 2.55 - row * 1.32;
-      const y = 0;
+      const z = 2.7 - row * 1.25 + Math.abs(col) * 0.1;
+      const y = row * 0.16;
       ch.root.position.set(x, y, z);
-      ch.root.scale.setScalar(n > 12 ? 0.86 : n > 6 ? 0.95 : 1.06);
+      ch.root.scale.setScalar(n > 8 ? 0.92 : n > 5 ? 0.98 : 1.06);
       ch.baseY = y;
+      /* 3/4 : chaque personnage pivote un peu vers le centre */
+      ch.root.rotation.y = -col * 0.11;
       if (ch.label) {
-        ch.label.position.y = 2.72;
-        ch.label.scale.set(n > 12 ? 1.5 : 1.7, n > 12 ? 0.38 : 0.43, 1);
+        const lw = Math.min(1.75, Math.max(1.0, spacing - 0.12));
+        ch.label.position.set(0, 2.74 + row * 0.18, 0.08);
+        ch.label.scale.set(lw, lw * 0.26, 1);
       }
-      ch.root.rotation.y = row === 0 ? 0 : (row % 2 ? -0.08 : 0.08);
     });
+    /* anti-collision des plaques : une plaque qui en touche une autre monte
+       automatiquement, pour ne jamais masquer une tête ni un nom. */
+    const placed = [];
+    for (const ch of list) {
+      if (!ch.label) continue;
+      const lw = ch.label.scale.x;
+      const lx = ch.root.position.x;
+      const lz = ch.root.position.z;
+      let ly = ch.label.position.y;
+      for (let guard = 0; guard < 4; guard++) {
+        const hit = placed.find((p) =>
+          Math.abs(lx - p.x) < (lw + p.w) / 2 + 0.06 &&
+          Math.abs(lz - p.z) < 0.25 &&
+          Math.abs(ly - p.y) < 0.24
+        );
+        if (!hit) break;
+        ly = hit.y + 0.3;
+      }
+      ch.label.position.y = ly;
+      placed.push({ x: lx, z: lz, y: ly, w: lw });
+    }
   }
 
   function setPlayers(list, controllerId, stealerId) {
@@ -695,26 +723,17 @@
     const now = performance.now();
     if (kind === 'found') {
       S.crowdCheer = Math.max(S.crowdCheer, 1.2);
-      for (const ch of S.crowd) {
-        if (Math.random() < 0.5) {
-          ch.crowdAnim = 'cheer';
-          ch.crowdAnimUntil = now + 500 + Math.random() * 500;
-        }
+      for (const ch of S.crowdData) {
+        if (Math.random() < 0.45) { ch.anim = 'cheer'; ch.until = now + 500 + Math.random() * 500; }
       }
     } else if (kind === 'error') {
       S.crowdCheer = Math.max(S.crowdCheer, 0.6);
-      for (const ch of S.crowd) {
-        if (Math.random() < 0.4) {
-          ch.crowdAnim = 'oh';
-          ch.crowdAnimUntil = now + 800;
-        }
+      for (const ch of S.crowdData) {
+        if (Math.random() < 0.35) { ch.anim = 'oh'; ch.until = now + 800; }
       }
     } else if (kind === 'celebrate') {
       S.crowdCheer = 2.4;
-      for (const ch of S.crowd) {
-        ch.crowdAnim = 'cheer';
-        ch.crowdAnimUntil = now + 2000;
-      }
+      for (const ch of S.crowdData) { ch.anim = 'cheer'; ch.until = now + 2200; }
     }
   }
 
@@ -722,43 +741,128 @@
   /* Foule                                                              */
   /* ------------------------------------------------------------------ */
   function buildCrowd(scene) {
-    const count = 96;
-    const cols = 12;
-    for (let i = 0; i < count; i++) {
-      const conf = global.Avatar ? global.Avatar.random() : null;
-      const ch = createCharacter(conf, { low: true });
-      ch.root.scale.setScalar(0.42);
-      const row = i % 6;
-      const col = Math.floor(i / cols);
-      const side = i % 2 === 0 ? -1 : 1;
-      let x, z, y;
-      if (col < 4) {
-        // gradins latéraux
-        x = side * (4.6 + col * 0.85);
-        z = -0.6 - row * 0.9;
-        y = 0.35 + row * 0.26;
-        ch.root.rotation.y = side > 0 ? -0.7 : 0.7;
-      } else if (col < 8) {
-        // gradins centre
-        x = (col - 6) * 1.1 + (row % 2 ? 0.4 : -0.4);
-        z = -3.6 - row * 0.9;
-        y = 0.35 + row * 0.26;
-        ch.root.rotation.y = 0;
-      } else {
-        // gradins arrière
-        x = (col - 10) * 1.3;
-        z = -6.2 - row * 1.0;
-        y = 0.35 + row * 0.3;
-        ch.root.rotation.y = 0;
+    /* Foule instanciée : 108 spectateurs répartis sur 3 tribunes,
+       toutes les rangées (y compris le centre) sont remplies. */
+    const COLS = 18;
+    const ROWS = 6;
+    const count = COLS * ROWS;
+    const bodyGeo = new THREE.CylinderGeometry(0.26, 0.32, 0.62, 6);
+    const headGeo = new THREE.SphereGeometry(0.2, 8, 6);
+    const bodyMat = new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: 0.02, vertexColors: false });
+    const headMat = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.0 });
+    const bodies = new THREE.InstancedMesh(bodyGeo, bodyMat, count);
+    const heads = new THREE.InstancedMesh(headGeo, headMat, count);
+    bodies.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    heads.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    bodies.castShadow = false;
+    heads.castShadow = false;
+
+    /* sièges : petits cubes sombres, une instance par spectateur */
+    const seatGeo = new THREE.BoxGeometry(0.62, 0.12, 0.42);
+    const seatMat = new THREE.MeshStandardMaterial({ color: '#101f4f', roughness: 0.7, metalness: 0.15 });
+    const seats = new THREE.InstancedMesh(seatGeo, seatMat, count);
+    seats.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+
+    const dummy = new THREE.Object3D();
+    const color = new THREE.Color();
+    const shirt = ['#2E85FF', '#0B35FE', '#FF4E20', '#F5C542', '#00E472', '#E84A8A', '#F4F6FC', '#8B5CF6'];
+    const skin = ['#8D5524', '#C68642', '#E0AC69', '#F1C27D', '#5C3317', '#A16B3A'];
+
+    S.crowdData = [];
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        const i = row * COLS + col;
+        const t = COLS === 1 ? 0 : col / (COLS - 1);
+        const x = (t - 0.5) * 17.2 + (row % 2 ? 0.22 : -0.22);
+        const z = -2.35 - row * 0.98;
+        const y = 0.5 + row * 0.3;
+        const data = {
+          i, x, y, z,
+          phase: Math.random() * Math.PI * 2,
+          anim: 'idle', until: 0,
+        };
+        S.crowdData.push(data);
+
+        /* siège */
+        dummy.position.set(x, y - 0.34, z + 0.05);
+        dummy.rotation.set(0, 0, 0);
+        dummy.scale.set(1, 1, 1);
+        dummy.updateMatrix();
+        seats.setMatrixAt(i, dummy.matrix);
+
+        /* corps + tête */
+        dummy.position.set(x, y, z);
+        dummy.rotation.set(0, 0, 0);
+        dummy.scale.set(1, 1, 1);
+        dummy.updateMatrix();
+        bodies.setMatrixAt(i, dummy.matrix);
+        dummy.position.set(x, y + 0.52, z);
+        dummy.updateMatrix();
+        heads.setMatrixAt(i, dummy.matrix);
+
+        color.set(shirt[(i * 7) % shirt.length]);
+        bodies.setColorAt(i, color);
+        color.set(skin[(i * 5) % skin.length]);
+        heads.setColorAt(i, color);
       }
-      ch.root.position.set(x, y, z);
-      ch.phase = Math.random() * Math.PI * 2;
-      ch.crowdBaseY = y;
-      ch.crowdAnim = 'idle';
-      ch.crowdAnimUntil = 0;
-      scene.add(ch.root);
-      S.crowd.push(ch);
     }
+    bodies.instanceColor.needsUpdate = true;
+    heads.instanceColor.needsUpdate = true;
+    seats.instanceMatrix.needsUpdate = true;
+
+    scene.add(seats, bodies, heads);
+    S.crowdInst = { bodies, heads, seats };
+    S.crowdDummy = dummy;
+
+    /* gradins : marches, nez de marche et liseré lumineux */
+    const stepMat = mat('#0d1a44', { rough: 0.75, metal: 0.1 });
+    const edgeMat = mat('#16295f', { rough: 0.5, metal: 0.25 });
+    for (let row = 0; row < ROWS + 1; row++) {
+      const z = -1.85 - row * 0.98;
+      const y = 0.18 + row * 0.3;
+      const step = mesh(GEO.box, stepMat, 0, y, z, 18.4, 0.28, 0.98);
+      scene.add(step);
+      const edge = mesh(GEO.box, edgeMat, 0, y + 0.18, z + 0.5, 18.4, 0.08, 0.12);
+      scene.add(edge);
+    }
+    const strip = new THREE.Mesh(
+      new THREE.BoxGeometry(18.4, 0.05, 0.06),
+      new THREE.MeshBasicMaterial({ color: '#2E85FF', transparent: true, opacity: 0.5 })
+    );
+    strip.position.set(0, 0.85, -0.9);
+    scene.add(strip);
+    const strip2 = strip.clone();
+    strip2.material = new THREE.MeshBasicMaterial({ color: '#FF4E20', transparent: true, opacity: 0.45 });
+    strip2.position.set(0, 2.05, -7.85);
+    scene.add(strip2);
+  }
+
+  function animateCrowd(t, now, dt) {
+    const inst = S.crowdInst;
+    if (!inst) return;
+    const dummy = S.crowdDummy;
+    S.crowdCheer = Math.max(0, S.crowdCheer - dt * 0.55);
+    for (const ch of S.crowdData) {
+      if (now > ch.until) {
+        if (S.crowdCheer > 1.5 && Math.random() < 0.03) { ch.anim = 'cheer'; ch.until = now + 700; }
+        else { ch.anim = 'idle'; }
+      }
+      let bob = Math.abs(Math.sin(t * 2.5 + ch.phase)) * 0.05;
+      let lift = 0;
+      let tilt = 0;
+      if (ch.anim === 'cheer') { lift = Math.abs(Math.sin(t * 12 + ch.phase)) * 0.18; tilt = Math.sin(t * 10 + ch.phase) * 0.18; }
+      else if (ch.anim === 'oh') { lift = 0; tilt = -0.12; }
+      dummy.position.set(ch.x, ch.y + bob + lift, ch.z);
+      dummy.rotation.set(0, 0, tilt);
+      dummy.scale.set(1, 1, 1);
+      dummy.updateMatrix();
+      inst.bodies.setMatrixAt(ch.i, dummy.matrix);
+      dummy.position.set(ch.x, ch.y + 0.52 + bob + lift, ch.z);
+      dummy.updateMatrix();
+      inst.heads.setMatrixAt(ch.i, dummy.matrix);
+    }
+    inst.bodies.instanceMatrix.needsUpdate = true;
+    inst.heads.instanceMatrix.needsUpdate = true;
   }
 
   /* ------------------------------------------------------------------ */
@@ -776,33 +880,8 @@
     for (const ch of S.players.values()) {
       animateCharacter(ch, t, now, 1);
     }
-    // foule
-    S.crowdCheer = Math.max(0, S.crowdCheer - dt * 0.55);
-    for (const ch of S.crowd) {
-      animateCharacter(ch, t, now, 0.55);
-      if (ch.crowdBaseY != null) {
-        // idle : léger balancement avec phase aléatoire
-        ch.root.position.y = ch.crowdBaseY + Math.abs(Math.sin(t * 2.5 + ch.phase)) * 0.06;
-        // animations d'audience
-        if (now < ch.crowdAnimUntil) {
-          if (ch.crowdAnim === 'cheer') {
-            ch.root.position.y = ch.crowdBaseY + Math.abs(Math.sin(t * 12 + ch.phase)) * 0.15;
-            ch.anim = 'joy';
-          } else if (ch.crowdAnim === 'oh') {
-            ch.root.position.y = ch.crowdBaseY;
-            ch.anim = 'idle';
-          }
-        } else if (S.crowdCheer > 0.5 && Math.random() < 0.02) {
-          ch.crowdAnim = 'cheer';
-          ch.crowdAnimUntil = now + 600 + Math.random() * 400;
-        } else if (S.crowdCheer > 1.5 && Math.random() < 0.03) {
-          ch.crowdAnim = 'oh';
-          ch.crowdAnimUntil = now + 800;
-        } else {
-          ch.crowdAnim = 'idle';
-        }
-      }
-    }
+    // foule instanciée
+    animateCrowd(t, now, dt);
 
     // anneaux
     if (S.rings) {
@@ -820,9 +899,10 @@
     }
     // caméra légère
     if (!S.reduceMotion) {
-      S.camera.position.x = Math.sin(t * 0.16) * 0.32;
+      const shift = S.lobbyMode ? -1.9 : 0;
+      S.camera.position.x = shift + Math.sin(t * 0.16) * 0.32;
       S.camera.position.y = 4.9 + Math.sin(t * 0.22) * 0.08;
-      S.camera.lookAt(0, 2.8, 0.6);
+      S.camera.lookAt(shift * 0.55, 2.8, 0.6);
     }
     S.renderer.render(S.scene, S.camera);
   }
@@ -886,6 +966,10 @@
   /* ------------------------------------------------------------------ */
   /* API                                                                */
   /* ------------------------------------------------------------------ */
+  function setLobby(on) {
+    S.lobbyMode = !!on;
+  }
+
   function setRound(round, total, multiplier, question) {
     S.round = round || 0;
     S.total = total || 10;
@@ -900,13 +984,19 @@
       if (S.scene) S.scene.remove(ch.root);
     }
     S.players.clear();
+    if (S.crowdInst) {
+      for (const k of ['bodies', 'heads', 'seats']) {
+        try { S.scene.remove(S.crowdInst[k]); S.crowdInst[k].geometry.dispose(); S.crowdInst[k].material.dispose(); } catch (e) {}
+      }
+      S.crowdInst = null;
+    }
     if (S.renderer) {
       try { S.renderer.dispose(); } catch (e) {}
     }
   }
 
   global.Scene3D = {
-    init, setPlayers, react, celebrate, crowdReact, setRound, resize, destroy,
+    init, setPlayers, react, celebrate, crowdReact, setRound, setLobby, resize, destroy,
     get ready() { return S.ready; },
   };
 })(window);
