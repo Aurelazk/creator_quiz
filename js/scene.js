@@ -107,7 +107,7 @@
     camera.lookAt(0, 2.8, 0.6);
     S.camera = camera;
 
-    const hemi = new THREE.HemisphereLight(0xdce8ff, 0x101c44, 0.75);
+    const hemi = new THREE.HemisphereLight(0xdce8ff, 0x101c44, 0.95);
     scene.add(hemi);
 
     const key = new THREE.DirectionalLight(0xffffff, 1.05);
@@ -120,18 +120,19 @@
     key.shadow.bias = -0.0005;
     scene.add(key);
 
-    /* fill lumiere froide opposee, adoucit les ombres */
-    const fill = new THREE.DirectionalLight(0x2e85ff, 0.35);
+    /* fill lumiere froide opposee, adoucit les ombres (eclaire aussi le public) */
+    const fill = new THREE.DirectionalLight(0x2e85ff, 0.55);
     fill.position.set(6, 4, -8);
     scene.add(fill);
 
-    const rim = new THREE.DirectionalLight('#2E85FF', 0.6);
+    const rim = new THREE.DirectionalLight('#2E85FF', 0.9);
     rim.position.set(7, 6, -8);
     scene.add(rim);
 
-    const warm = new THREE.PointLight('#FF7A00', 0.5, 32);
-    warm.position.set(6, 4, 5);
-    scene.add(warm);
+    /* douce lumiere chaude sur le public pour qu'il ne soit pas noir */
+    const crowdLight = new THREE.PointLight('#FFFFFF', 0.8, 60);
+    crowdLight.position.set(0, 5, -9);
+    scene.add(crowdLight);
 
     const spot = new THREE.SpotLight(0xffffff, 1.8, 34, 0.6, 0.55, 1);
     spot.position.set(0, 13, 7);
@@ -887,16 +888,17 @@
     for (let row = 0; row < ROWS; row++) {
       const y = startY + row * rise;
       const z = startZ - row * treadDepth;
+      /* même Z que le siège (buildTribune) : z + treadDepth - seatH/2*0 + ... pour s'asseoir */
+      const seatZ = z + treadDepth - 0.42;
       for (let s = 0; s < seatPerRow; s++) {
         const i = row * seatPerRow + s;
-        /* ≤ 8 % de sièges vides, naturellement répartis */
-        if (Math.random() < 0.08) { continue; }
+        /* chaque siège est occupé (pas de vide artificiel) */
         present++;
-        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap) + (Math.random() - 0.5) * 0.06;
+        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap) + (Math.random() - 0.5) * 0.04;
         const bodyY = y - seatH / 2 + 0.05 + 0.75;
         const headY = bodyY + 0.75 + 0.22;
         const data = {
-          i, x, bodyY, headY, z, row,
+          i, x, bodyY, headY, z: seatZ, row,
           phase: Math.random() * Math.PI * 2,
           anim: 'idle', until: 0,
           skin: skins[(present * 5) % skins.length],
@@ -910,20 +912,20 @@
         const rz = (Math.random() - 0.5) * 0.06;
 
         /* corps (boubou) */
-        dummy.position.set(x, bodyY, z);
+        dummy.position.set(x, bodyY, seatZ);
         dummy.rotation.set(0, ry, rz);
         dummy.updateMatrix();
         bodies.setMatrixAt(data.crowdIdx = i, dummy.matrix);
         color.set(data.outfit); bodies.setColorAt(i, color);
 
         /* tête */
-        dummy.position.set(x, headY, z);
+        dummy.position.set(x, headY, seatZ);
         dummy.updateMatrix();
         heads.setMatrixAt(i, dummy.matrix);
         color.set(data.skin); heads.setColorAt(i, color);
 
         /* chevelure */
-        dummy.position.set(x, headY + 0.16, z + 0.02);
+        dummy.position.set(x, headY + 0.16, seatZ + 0.02);
         dummy.updateMatrix();
         hairs.setMatrixAt(i, dummy.matrix);
         color.set(data.hair); hairs.setColorAt(i, color);
@@ -931,7 +933,7 @@
         /* bras : deux instances par spectateur (gauche, droite) */
         [ -1, 1 ].forEach((side) => {
           const ai = i * 2 + (side === -1 ? 0 : 1);
-          dummy.position.set(x + side * 0.3, bodyY - 0.25, z + 0.02);
+          dummy.position.set(x + side * 0.3, bodyY - 0.25, seatZ + 0.02);
           dummy.rotation.set(0, 0, side * 0.1);
           dummy.updateMatrix();
           arms.setMatrixAt(ai, dummy.matrix);
