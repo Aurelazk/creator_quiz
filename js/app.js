@@ -660,10 +660,10 @@
         const txt = Net.everConnected ? 'Reconnexion…' : 'Connexion perdue — reconnexion…';
         if (hostTxt) hostTxt.textContent = txt;
         if (phoneTxt) phoneTxt.textContent = txt;
-        if (!Net.everConnected && Net.retry >= 3 && !App.netWarned) {
-          App.netWarned = true;
-          toast(toastBox(), 'Serveur de jeu injoignable. Vérifie GAME_WS_URL.', 'bad', 6000);
-        }
+          if (!Net.everConnected && Net.retry >= 3 && !App.netWarned) {
+            App.netWarned = true;
+            toast(toastBox(), 'Serveur de jeu injoignable. Lancez npm start (ou verifiez GAME_WS_URL).', 'bad', 8000);
+          }
       } else {
         App.connectAttempts = 0;
         App.connWakeScheduled = false;

@@ -847,12 +847,15 @@ function createWebSocketServer(server, paths) {
     if (!allowed.includes(pathname)) { socket.destroy(); return; }
     const origin = req.headers.origin || '';
     const isSameOrigin = origin === (req.socket.encrypted ? 'https:' : 'http:') + '//' + req.headers.host;
+    const isLocalDev = process.env.NODE_ENV !== 'production' && /^(localhost|127\.|\[::1\])/.test(req.headers.host || '');
     if (ALLOWED_ORIGIN === '*') {
       /* accepte tout (dev uniquement, a definir explicitement) */
     } else if (ALLOWED_ORIGIN) {
       if (origin !== ALLOWED_ORIGIN) { socket.destroy(); return; }
+    } else if (isLocalDev) {
+      /* developpement local : accepter meme sans en-tete Origin */
     } else {
-      /* vide : same-origin uniquement */
+      /* production sans ALLOWED_ORIGIN : same-origin uniquement */
       if (!isSameOrigin) { socket.destroy(); return; }
     }
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req));
