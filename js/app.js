@@ -41,7 +41,6 @@
     xTimer: null,
     netWarned: false,
     lobbyCollapsed: false,
-    avatarSvgCache: new Map(),
   };
 
   if (!global.Scene3D) {
@@ -225,15 +224,10 @@
   }
 
   function avatarSvg(avatar) {
-    const key = JSON.stringify(avatar || {});
-    if (App.avatarSvgCache.has(key)) return App.avatarSvgCache.get(key);
-    const svg = global.Avatar.svg(avatar || global.Avatar.DEFAULTS);
-    App.avatarSvgCache.set(key, svg);
-    if (App.avatarSvgCache.size > 80) {
-      const first = App.avatarSvgCache.keys().next().value;
-      App.avatarSvgCache.delete(first);
-    }
-    return svg;
+    /* Chaque appel régénère un SVG aux identifiants de dégradé uniques :
+       le mettre en cache réinjecterait le même id plusieurs fois dans le
+       DOM et rendrait les têtes invisibles (chevauchement d'url(#…)). */
+    return global.Avatar.svg(avatar || global.Avatar.DEFAULTS);
   }
 
   /* ------------------------------------------------------------------ */
@@ -717,7 +711,7 @@
         '</button>'
       ).join('');
     }
-    const colorRows = { hairColors: 'hair', jacketColors: 'jacket', shirtColors: 'shirt', pantsColors: 'pants', shoeColors: 'shoes' };
+    const colorRows = { hairColors: 'hair', skinColors: 'skin', jacketColors: 'jacket', shirtColors: 'shirt', pantsColors: 'pants', shoeColors: 'shoes' };
     for (const [id, key] of Object.entries(colorRows)) {
       const box = $('#' + id);
       if (!box) continue;
@@ -739,7 +733,7 @@
     $$('#pAvatar .choice').forEach((btn) => {
       btn.classList.toggle('on', App.avatar[btn.dataset.group] === btn.dataset.value);
     });
-    const colorRows = { hairColors: 'hair', jacketColors: 'jacket', shirtColors: 'shirt', pantsColors: 'pants', shoeColors: 'shoes' };
+    const colorRows = { hairColors: 'hair', skinColors: 'skin', jacketColors: 'jacket', shirtColors: 'shirt', pantsColors: 'pants', shoeColors: 'shoes' };
     for (const [id, key] of Object.entries(colorRows)) {
       $$('#' + id + ' .color-dot').forEach((dot) => {
         dot.classList.toggle('on', App.avatar.colors[key] === dot.dataset.color);
@@ -1062,9 +1056,11 @@
         card.innerHTML =
           '<div class="card-inner">' +
           '<div class="card-face card-front"><span class="card-idx">' + (i + 1) + '</span><span class="card-q">•••</span></div>' +
-          '<div class="card-face card-back">' +
-          '<span class="card-answer"></span><span class="card-points"></span><span class="card-by"></span>' +
-          '</div></div>';
+        '<div class="card-face card-back">' +
+        '<span class="card-answer"></span>' +
+        '<span class="card-by"></span>' +
+        '<span class="card-points"></span>' +
+        '</div></div>';
         board.appendChild(card);
       }
     }

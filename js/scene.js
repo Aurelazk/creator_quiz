@@ -141,6 +141,7 @@
     S.spot = spot;
 
     buildStage(scene);
+    buildTribune(scene);
     buildCrowd(scene);
     buildScreen(scene);
     buildTrophies(scene);
@@ -185,22 +186,6 @@
       scene.add(step);
     }
 
-    // gradins arrière
-    const standMat = mat('#0b173c', { rough: 0.8 });
-    for (let tier = 0; tier < 3; tier++) {
-      const y = 0.35 + tier * 0.55;
-      const z = -1.2 - tier * 1.35;
-      const width = 18 - tier * 1.8;
-      const stand = mesh(GEO.box, standMat, 0, y, z, width, 0.5, 1.1);
-      scene.add(stand);
-      const lightStrip = new THREE.Mesh(
-        new THREE.BoxGeometry(width * 0.85, 0.035, 0.05),
-        new THREE.MeshBasicMaterial({ color: tier % 2 ? '#FF4E20' : '#2E85FF', transparent: true, opacity: 0.55 })
-      );
-      lightStrip.position.set(0, y + 0.24, z + 0.58);
-      scene.add(lightStrip);
-    }
-
     // piliers latéraux
     const pillarMat = mat('#0d1f50', { rough: 0.5, metal: 0.2 });
     [-8.6, 8.6].forEach((x) => {
@@ -220,74 +205,170 @@
     });
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Tribune unique : une seule structure avec pente réelle, sièges,
+     nez de marche, escaliers latéraux et mur LED au fond               */
+  /* ------------------------------------------------------------------ */
+  function buildTribune(scene) {
+    const ROWS = 6;
+    const treadDepth = 0.95;      /* profondeur d'une marche */
+    const rise = 0.5;             /* hauteur d'une rangée (≥ 0.45 pour voir par-dessus) */
+    const seatH = 0.42;
+    const width = 17;
+    const startZ = -7.0;
+    const startY = 0.3;
+
+    const standMat = mat('#0d1a44', { rough: 0.8 });
+    const edgeMat = mat('#16295f', { rough: 0.5, metal: 0.25 });
+    const seatMat = mat('#101f4f', { rough: 0.7, metal: 0.15 });
+
+    /* contre-marches et nez de marche de chaque rangée */
+    for (let r = 0; r < ROWS; r++) {
+      const y = startY + r * rise;
+      const z = startZ - r * treadDepth;
+      const riser = mesh(GEO.box, standMat, 0, y - seatH / 2 - 0.16, z + treadDepth / 2, width, seatH + 0.16, 0.14);
+      scene.add(riser);
+      const nosing = mesh(GEO.box, edgeMat, 0, y - seatH / 2 + 0.02, z + treadDepth - 0.06, width, 0.07, 0.16);
+      scene.add(nosing);
+      const strip = new THREE.Mesh(
+        new THREE.BoxGeometry(width * 0.9, 0.03, 0.06),
+        new THREE.MeshBasicMaterial({ color: r % 2 ? '#FF4E20' : '#2E85FF', transparent: true, opacity: 0.5 })
+      );
+      strip.position.set(0, y - seatH / 2 + 0.04, z + treadDepth - 0.04);
+      scene.add(strip);
+    }
+
+    /* sièges : assises + dossiers instanciés */
+    const seatPerRow = 14;
+    const seatW = 0.62;
+    const seatGap = 0.08;
+    const totalCount = ROWS * seatPerRow;
+    const seatGeo = new THREE.BoxGeometry(seatW, 0.1, 0.5);
+    const backGeo = new THREE.BoxGeometry(seatW * 0.9, 0.45, 0.12);
+    const seats = new THREE.InstancedMesh(seatGeo, seatMat, totalCount);
+    const backs = new THREE.InstancedMesh(backGeo, seatMat, totalCount);
+    seats.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+    backs.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+    const dummy = new THREE.Object3D();
+    let k = 0;
+    for (let r = 0; r < ROWS; r++) {
+      const y = startY + r * rise;
+      const z = startZ - r * treadDepth;
+      for (let s = 0; s < seatPerRow; s++) {
+        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap);
+        dummy.position.set(x, y - seatH / 2 + 0.05, z + treadDepth - 0.42);
+        dummy.updateMatrix();
+        seats.setMatrixAt(k, dummy.matrix);
+        dummy.position.set(x, y - seatH / 2 + 0.05 + 0.28, z + treadDepth - 0.42 - 0.22);
+        dummy.updateMatrix();
+        backs.setMatrixAt(k, dummy.matrix);
+        k++;
+      }
+    }
+    seats.instanceMatrix.needsUpdate = true;
+    backs.instanceMatrix.needsUpdate = true;
+    scene.add(seats, backs);
+
+    /* escaliers latéraux + rampes lumineuses */
+    const stairMat = mat('#0a1230', { rough: 0.75 });
+    [-1, 1].forEach((side) => {
+      for (let r = 0; r < ROWS; r++) {
+        const y = startY + r * rise - seatH;
+        const z = startZ - r * treadDepth - 0.05;
+        const step = mesh(GEO.box, stairMat, side * (width / 2 + 0.6), y + 0.2, z, 1.1, 0.3, 0.95);
+        scene.add(step);
+      }
+      const rail = new THREE.Mesh(
+        new THREE.BoxGeometry(0.06, ROWS * rise + 1, 0.06),
+        new THREE.MeshBasicMaterial({ color: '#2E85FF', transparent: true, opacity: 0.5 })
+      );
+      rail.position.set(side * (width / 2 + 1.0), startY + (ROWS * rise) / 2, startZ - ROWS * treadDepth - 0.5);
+      scene.add(rail);
+    });
+
+    /* mur LED du fond derrière le public : remplace le grand vide noir */
+    const ledCanvas = document.createElement('canvas');
+    ledCanvas.width = 512; ledCanvas.height = 256;
+    const ledCtx = ledCanvas.getContext('2d');
+    const ledTex = new THREE.CanvasTexture(ledCanvas);
+    if (THREE.sRGBEncoding) ledTex.encoding = THREE.sRGBEncoding;
+    ledCtx.fillStyle = '#061033'; ledCtx.fillRect(0, 0, 512, 256);
+    ledCtx.fillStyle = '#00E472'; ledCtx.font = 'bold 42px Famous College, sans-serif'; ledCtx.textAlign = 'center';
+    ledCtx.fillText('CREATOR.', 256, 128);
+    ledCtx.fillStyle = '#2E85FF'; ledCtx.font = '18px Famous College, sans-serif';
+    ledCtx.fillText('GUESS THEIR ANSWER', 256, 166);
+    for (let i = 0; i < 6; i++) {
+      ledCtx.fillStyle = i % 2 ? '#2E85FF' : '#00E472';
+      ledCtx.fillRect(i * 90, 212, 72, 6);
+    }
+    ledTex.needsUpdate = true;
+    const wall = new THREE.Mesh(new THREE.PlaneGeometry(18, 8), new THREE.MeshBasicMaterial({ map: ledTex }));
+    wall.position.set(0, 3.5, -15);
+    scene.add(wall);
+    S.ledWall = { tex: ledTex, ctx: ledCtx, canvas: ledCanvas };
+    S.tribune = { ROWS, treadDepth, rise, startZ, startY, seatPerRow, seatW, seatGap, width };
+  }
+
   function buildScreen(scene) {
     const c = document.createElement('canvas');
-    c.width = 1024; c.height = 512;
+    c.width = 1024; c.height = 320;
     const tex = new THREE.CanvasTexture(c);
     if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
     S.screenCtx = c.getContext('2d');
     S.screenTex = tex;
     drawScreen();
+    /* bandeau supérieur (marquee) : assez fin pour ne pas masquer le public derrière */
     const plane = new THREE.Mesh(
-      new THREE.PlaneGeometry(14.5, 7.2),
+      new THREE.PlaneGeometry(14.5, 2.6),
       new THREE.MeshBasicMaterial({ map: tex })
     );
-    plane.position.set(0, 5.2, -6.4);
+    plane.position.set(0, 8.6, -6.4);
     scene.add(plane);
     S.stageScreen = plane;
 
-    // cadre lumineux
+    // cadre lumineux autour du bandeau
     const frame = new THREE.Mesh(
-      new THREE.BoxGeometry(15.2, 7.9, 0.25),
+      new THREE.BoxGeometry(15.2, 3.3, 0.25),
       mat('#0a1230', { rough: 0.6, metal: 0.3 })
     );
-    frame.position.set(0, 5.2, -6.55);
+    frame.position.set(0, 8.6, -6.55);
     scene.add(frame);
     const glow = new THREE.Mesh(
       new THREE.BoxGeometry(15.5, 0.08, 0.3),
       new THREE.MeshBasicMaterial({ color: '#00E472', transparent: true, opacity: 0.8 })
     );
-    glow.position.set(0, 9.1, -6.4);
+    glow.position.set(0, 10.0, -6.4);
     scene.add(glow);
   }
 
   function drawScreen() {
     const ctx = S.screenCtx;
     if (!ctx) return;
-    const W = 1024, H = 512;
+    const W = 1024, H = 320;
     const g = ctx.createLinearGradient(0, 0, W, H);
     g.addColorStop(0, '#0b1f5c');
-    g.addColorStop(0.55, '#0C1A4B');
+    g.addColorStop(0.5, '#0C1A4B');
     g.addColorStop(1, '#061033');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 
-    // rayons
+    // liserés LED verticaux
     ctx.save();
-    ctx.globalAlpha = 0.1;
-    ctx.translate(W / 2, H / 2);
-    for (let i = 0; i < 18; i++) {
-      ctx.rotate((Math.PI * 2) / 18);
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(-40, -H);
-      ctx.lineTo(40, -H);
-      ctx.closePath();
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 12; i++) {
+      const x = (i / 11) * W;
       ctx.fillStyle = i % 2 ? '#2E85FF' : '#00E472';
-      ctx.fill();
+      ctx.fillRect(x - 2, 0, 4, H);
     }
     ctx.restore();
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    ctx.font = '700 64px "Famous College", system-ui, sans-serif';
-    ctx.fillText('CREATOR.', W / 2, 150);
-    ctx.fillStyle = 'rgba(46,133,255,0.08)';
-    ctx.font = '700 24px "Famous College", system-ui, sans-serif';
-    ctx.fillText('GUESS THEIR ANSWER', W / 2, 200);
-
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    ctx.fillRect(W / 2 - 150, 240, 300, 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = '700 52px "Famous College", system-ui, sans-serif';
+    ctx.fillText('CREATOR.', W / 2, H / 2 + 14);
+    ctx.fillStyle = 'rgba(46,133,255,0.7)';
+    ctx.font = '700 18px "Famous College", system-ui, sans-serif';
+    ctx.fillText('GUESS THEIR ANSWER', W / 2, H / 2 + 42);
 
     /* le texte de manche et la question sont affichés par l'UI hôte (pas de doublon 3D) */
     if (S.screenTex) S.screenTex.needsUpdate = true;
@@ -348,7 +429,10 @@
     root.add(body);
 
     const white = mat('#F7F9FF', { rough: 0.28 });
-    const headMat = mat('#FFFFFF', { rough: 0.24, metal: 0.02 });
+    const headMat = mat(c.skin || '#E0AC69', { rough: 0.28, metal: 0.02 });
+    const eyeMat = mat('#FFFFFF', { rough: 0.15, metal: 0.02 });
+    const irisMat = mat('#3B4A6B', { rough: 0.4, metal: 0.02 });
+    const mouthMat = mat('#5C2E22', { rough: 0.6, metal: 0.0 });
     const jacketMat = mat(c.jacket, { rough: 0.4 });
     const shirtMat = mat(c.shirt, { rough: 0.42 });
     const pantsMat = mat(c.pants, { rough: 0.55 });
@@ -441,8 +525,23 @@
     const head = new THREE.Group();
     head.position.set(0, 1.86, 0);
     body.add(head);
+    /* tête de carnation avec traits du visage */
     addPart(head, sphere, headMat, 0, 0, 0, 0.5, 0.52, 0.48);
     head.name = 'head';
+
+    /* ---- visage : yeux, iris, sourcils, bouche ---- */
+    const eyeZ = 0.46;
+    const eyeY = 0.07;
+    const eyeX = 0.11;
+    const browY = 0.14;
+    const mouthY = -0.13;
+    addPart(head, sphere, eyeMat, -eyeX, eyeY, eyeZ, 0.085, 0.075, 0.02);
+    addPart(head, sphere, eyeMat, eyeX, eyeY, eyeZ, 0.085, 0.075, 0.02);
+    addPart(head, sphere, irisMat, -eyeX, eyeY, eyeZ + 0.012, 0.04, 0.04, 0.01);
+    addPart(head, sphere, irisMat, eyeX, eyeY, eyeZ + 0.012, 0.04, 0.04, 0.01);
+    addPart(head, GEO.box, mat('#222222', { rough: 0.6 }), -eyeX - 0.015, browY, eyeZ + 0.006, 0.11, 0.02, 0.015);
+    addPart(head, GEO.box, mat('#222222', { rough: 0.6 }), eyeX - 0.015, browY, eyeZ + 0.006, 0.11, 0.02, 0.015);
+    addPart(head, GEO.box, mouthMat, 0, mouthY, eyeZ + 0.018, 0.09, 0.02, 0.012);
 
     // ---- cheveux ----
     if (hair === 'short') {
@@ -741,128 +840,163 @@
   /* Foule                                                              */
   /* ------------------------------------------------------------------ */
   function buildCrowd(scene) {
-    /* Foule instanciée : 108 spectateurs répartis sur 3 tribunes,
-       toutes les rangées (y compris le centre) sont remplies. */
-    const COLS = 18;
-    const ROWS = 6;
-    const count = COLS * ROWS;
-    const bodyGeo = new THREE.CylinderGeometry(0.26, 0.32, 0.62, 6);
-    const headGeo = new THREE.SphereGeometry(0.2, 8, 6);
-    const bodyMat = new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: 0.02, vertexColors: false });
-    const headMat = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.0 });
-    const bodies = new THREE.InstancedMesh(bodyGeo, bodyMat, count);
-    const heads = new THREE.InstancedMesh(headGeo, headMat, count);
-    bodies.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    heads.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    bodies.castShadow = false;
-    heads.castShadow = false;
+    /* Foule humanoïde instanciée sur le tribune unique : torso (boubou/tenue),
+       tête, chevelure et bras. Chaque spectateur occupe un siège ; ≤ 8 % des
+       sièges sont volontairement vides (pas de grille rigide, pas de dos). */
+    const trib = S.tribune;
+    const ROWS = trib.ROWS;
+    const seatPerRow = trib.seatPerRow;
+    const seatW = trib.seatW;
+    const seatGap = trib.seatGap;
+    const rise = trib.rise;
+    const startZ = trib.startZ;
+    const startY = trib.startY;
+    const treadDepth = trib.treadDepth;
+    const totalCount = ROWS * seatPerRow;
+    const seatH = 0.42;
 
-    /* sièges : petits cubes sombres, une instance par spectateur */
-    const seatGeo = new THREE.BoxGeometry(0.62, 0.12, 0.42);
-    const seatMat = new THREE.MeshStandardMaterial({ color: '#101f4f', roughness: 0.7, metalness: 0.15 });
-    const seats = new THREE.InstancedMesh(seatGeo, seatMat, count);
-    seats.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+    const bodyGeo = new THREE.BoxGeometry(0.5, 1.5, 0.3);   /* torso + jambes (boubou) */
+    const headGeo = new THREE.SphereGeometry(0.22, 10, 8);
+    const hairGeo = new THREE.BoxGeometry(0.28, 0.2, 0.28); /* afro / gélé / casquette */
+    const armGeo = new THREE.BoxGeometry(0.07, 0.5, 0.07);
+
+    const bodyMat = new THREE.MeshStandardMaterial({ roughness: 0.7, metalness: 0.02, vertexColors: true });
+    const headMat = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.0, vertexColors: true });
+    const hairMat = new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05, vertexColors: true });
+    const armMat = new THREE.MeshStandardMaterial({ roughness: 0.7, metalness: 0.02, vertexColors: true });
+
+    const bodies = new THREE.InstancedMesh(bodyGeo, bodyMat, totalCount);
+    const heads = new THREE.InstancedMesh(headGeo, headMat, totalCount);
+    const hairs = new THREE.InstancedMesh(hairGeo, hairMat, totalCount);
+    const arms = new THREE.InstancedMesh(armGeo, armMat, totalCount * 2);
+    for (const inst of [bodies, heads, hairs, arms]) {
+      inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      inst.castShadow = false;
+    }
 
     const dummy = new THREE.Object3D();
     const color = new THREE.Color();
-    const shirt = ['#2E85FF', '#0B35FE', '#FF4E20', '#F5C542', '#00E472', '#E84A8A', '#F4F6FC', '#8B5CF6'];
-    const skin = ['#8D5524', '#C68642', '#E0AC69', '#F1C27D', '#5C3317', '#A16B3A'];
+    /* carnations : majorité de peaux brunes à foncées, gamme complète */
+    const skins = ['#C68642', '#E0AC69', '#5C3317', '#A16B3A', '#8D5524', '#F1C27D', '#B9875C', '#7A4E28'];
+    /* tenues béninoises : boubou, pagne/wax, maillot des Écureuils, tee */
+    const outfits = ['#00E472', '#FF4E20', '#0B35FE', '#F5C542', '#E84A8A', '#2E85FF', '#F4F6FC', '#8B5CF6', '#B9B9C9'];
+    const hairsCol = ['#2B1B12', '#1B2A6B', '#F5C542', '#F4F6FC', '#5AD86B', '#8B5CF6', '#B9B9C9', '#2B1B12'];
 
     S.crowdData = [];
+    let present = 0;
     for (let row = 0; row < ROWS; row++) {
-      for (let col = 0; col < COLS; col++) {
-        const i = row * COLS + col;
-        const t = COLS === 1 ? 0 : col / (COLS - 1);
-        const x = (t - 0.5) * 17.2 + (row % 2 ? 0.22 : -0.22);
-        const z = -2.35 - row * 0.98;
-        const y = 0.5 + row * 0.3;
+      const y = startY + row * rise;
+      const z = startZ - row * treadDepth;
+      for (let s = 0; s < seatPerRow; s++) {
+        const i = row * seatPerRow + s;
+        /* ≤ 8 % de sièges vides, naturellement répartis */
+        if (Math.random() < 0.08) { continue; }
+        present++;
+        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap) + (Math.random() - 0.5) * 0.06;
+        const bodyY = y - seatH / 2 + 0.05 + 0.75;
+        const headY = bodyY + 0.75 + 0.22;
         const data = {
-          i, x, y, z,
+          i, x, bodyY, headY, z, row,
           phase: Math.random() * Math.PI * 2,
           anim: 'idle', until: 0,
+          skin: skins[(present * 5) % skins.length],
+          outfit: outfits[(present * 7) % outfits.length],
+          hair: hairsCol[(present * 3) % hairsCol.length],
         };
         S.crowdData.push(data);
 
-        /* siège */
-        dummy.position.set(x, y - 0.34, z + 0.05);
-        dummy.rotation.set(0, 0, 0);
-        dummy.scale.set(1, 1, 1);
-        dummy.updateMatrix();
-        seats.setMatrixAt(i, dummy.matrix);
+        /* rotation vers la caméra (public face à la scène) + léger décalage */
+        const ry = Math.PI + (Math.random() - 0.5) * 0.15;
+        const rz = (Math.random() - 0.5) * 0.06;
 
-        /* corps + tête */
-        dummy.position.set(x, y, z);
-        dummy.rotation.set(0, 0, 0);
-        dummy.scale.set(1, 1, 1);
+        /* corps (boubou) */
+        dummy.position.set(x, bodyY, z);
+        dummy.rotation.set(0, ry, rz);
         dummy.updateMatrix();
-        bodies.setMatrixAt(i, dummy.matrix);
-        dummy.position.set(x, y + 0.52, z);
+        bodies.setMatrixAt(data.crowdIdx = i, dummy.matrix);
+        color.set(data.outfit); bodies.setColorAt(i, color);
+
+        /* tête */
+        dummy.position.set(x, headY, z);
         dummy.updateMatrix();
         heads.setMatrixAt(i, dummy.matrix);
+        color.set(data.skin); heads.setColorAt(i, color);
 
-        color.set(shirt[(i * 7) % shirt.length]);
-        bodies.setColorAt(i, color);
-        color.set(skin[(i * 5) % skin.length]);
-        heads.setColorAt(i, color);
+        /* chevelure */
+        dummy.position.set(x, headY + 0.16, z + 0.02);
+        dummy.updateMatrix();
+        hairs.setMatrixAt(i, dummy.matrix);
+        color.set(data.hair); hairs.setColorAt(i, color);
+
+        /* bras : deux instances par spectateur (gauche, droite) */
+        [ -1, 1 ].forEach((side) => {
+          const ai = i * 2 + (side === -1 ? 0 : 1);
+          dummy.position.set(x + side * 0.3, bodyY - 0.25, z + 0.02);
+          dummy.rotation.set(0, 0, side * 0.1);
+          dummy.updateMatrix();
+          arms.setMatrixAt(ai, dummy.matrix);
+          color.set(data.outfit); arms.setColorAt(ai, color);
+        });
       }
     }
     bodies.instanceColor.needsUpdate = true;
     heads.instanceColor.needsUpdate = true;
-    seats.instanceMatrix.needsUpdate = true;
+    hairs.instanceColor.needsUpdate = true;
+    arms.instanceColor.needsUpdate = true;
+    bodies.instanceMatrix.needsUpdate = true;
+    heads.instanceMatrix.needsUpdate = true;
+    hairs.instanceMatrix.needsUpdate = true;
+    arms.instanceMatrix.needsUpdate = true;
 
-    scene.add(seats, bodies, heads);
-    S.crowdInst = { bodies, heads, seats };
-    S.crowdDummy = dummy;
-
-    /* gradins : marches, nez de marche et liseré lumineux */
-    const stepMat = mat('#0d1a44', { rough: 0.75, metal: 0.1 });
-    const edgeMat = mat('#16295f', { rough: 0.5, metal: 0.25 });
-    for (let row = 0; row < ROWS + 1; row++) {
-      const z = -1.85 - row * 0.98;
-      const y = 0.18 + row * 0.3;
-      const step = mesh(GEO.box, stepMat, 0, y, z, 18.4, 0.28, 0.98);
-      scene.add(step);
-      const edge = mesh(GEO.box, edgeMat, 0, y + 0.18, z + 0.5, 18.4, 0.08, 0.12);
-      scene.add(edge);
-    }
-    const strip = new THREE.Mesh(
-      new THREE.BoxGeometry(18.4, 0.05, 0.06),
-      new THREE.MeshBasicMaterial({ color: '#2E85FF', transparent: true, opacity: 0.5 })
-    );
-    strip.position.set(0, 0.85, -0.9);
-    scene.add(strip);
-    const strip2 = strip.clone();
-    strip2.material = new THREE.MeshBasicMaterial({ color: '#FF4E20', transparent: true, opacity: 0.45 });
-    strip2.position.set(0, 2.05, -7.85);
-    scene.add(strip2);
+    scene.add(bodies, heads, hairs, arms);
+    S.crowdInst = { bodies, heads, hairs, arms };
+    S.crowdCount = present;
   }
 
   function animateCrowd(t, now, dt) {
     const inst = S.crowdInst;
     if (!inst) return;
-    const dummy = S.crowdDummy;
     S.crowdCheer = Math.max(0, S.crowdCheer - dt * 0.55);
+    const dummy = new THREE.Object3D();
     for (const ch of S.crowdData) {
       if (now > ch.until) {
         if (S.crowdCheer > 1.5 && Math.random() < 0.03) { ch.anim = 'cheer'; ch.until = now + 700; }
         else { ch.anim = 'idle'; }
       }
-      let bob = Math.abs(Math.sin(t * 2.5 + ch.phase)) * 0.05;
-      let lift = 0;
-      let tilt = 0;
-      if (ch.anim === 'cheer') { lift = Math.abs(Math.sin(t * 12 + ch.phase)) * 0.18; tilt = Math.sin(t * 10 + ch.phase) * 0.18; }
-      else if (ch.anim === 'oh') { lift = 0; tilt = -0.12; }
-      dummy.position.set(ch.x, ch.y + bob + lift, ch.z);
-      dummy.rotation.set(0, 0, tilt);
-      dummy.scale.set(1, 1, 1);
+      let lift = 0, tilt = 0;
+      if (ch.anim === 'cheer') { lift = Math.abs(Math.sin(t * 12 + ch.phase)) * 0.14; tilt = Math.sin(t * 10 + ch.phase) * 0.12; }
+      else if (ch.anim === 'oh') { lift = 0; tilt = -0.1; }
+      const ry = Math.PI + (ch.tiltOffset || 0);
+      const rz = tilt;
+
+      /* corps */
+      dummy.position.set(ch.x, ch.bodyY + lift, ch.z);
+      dummy.rotation.set(0, ry, rz);
       dummy.updateMatrix();
       inst.bodies.setMatrixAt(ch.i, dummy.matrix);
-      dummy.position.set(ch.x, ch.y + 0.52 + bob + lift, ch.z);
+      /* tête */
+      dummy.position.set(ch.x, ch.headY + lift, ch.z);
       dummy.updateMatrix();
       inst.heads.setMatrixAt(ch.i, dummy.matrix);
+      /* chevelure */
+      dummy.position.set(ch.x, ch.headY + 0.16 + lift, ch.z + 0.02);
+      dummy.updateMatrix();
+      inst.hairs.setMatrixAt(ch.i, dummy.matrix);
+      /* bras : bras levés quand on applaudit */
+      let armLift = 0;
+      if (ch.anim === 'cheer') armLift = Math.abs(Math.sin(t * 12 + ch.phase)) * 0.5;
+      [ -1, 1 ].forEach((side) => {
+        const ai = ch.i * 2 + (side === -1 ? 0 : 1);
+        dummy.position.set(ch.x + side * 0.3, ch.bodyY - 0.25 + armLift, ch.z + 0.02);
+        dummy.rotation.set(0, 0, side * 0.1 + (ch.anim === 'cheer' ? side * 0.8 : 0));
+        dummy.updateMatrix();
+        inst.arms.setMatrixAt(ai, dummy.matrix);
+      });
     }
     inst.bodies.instanceMatrix.needsUpdate = true;
     inst.heads.instanceMatrix.needsUpdate = true;
+    inst.hairs.instanceMatrix.needsUpdate = true;
+    inst.arms.instanceMatrix.needsUpdate = true;
   }
 
   /* ------------------------------------------------------------------ */

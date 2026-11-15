@@ -125,6 +125,11 @@
       <div class="board" id="board" aria-live="polite"></div>
 
       <div class="host-strikes" id="hostStrikes" aria-label="Erreurs" aria-live="polite"></div>
+
+      <div class="wrong-banner hidden" id="hostWrong">
+        <span class="wrong-label">Fausses propositions</span>
+        <div class="wrong-list" id="hostWrongList"></div>
+      </div>
     </div>
 
     <div class="host-countdown hidden" id="hostCountdown" aria-live="assertive">
@@ -149,11 +154,6 @@
         <button class="btn btn--ghost" id="btnHostPlus15">+15 s</button>
         <button class="btn btn--danger" id="btnHostClose">Fermer</button>
       </div>
-    </div>
-
-    <div class="wrong-banner hidden" id="hostWrong">
-      <span class="wrong-label">Fausses propositions</span>
-      <div class="wrong-list" id="hostWrongList"></div>
     </div>
 
     <div class="big-x hidden" id="bigX" aria-hidden="true">✕</div>
@@ -345,6 +345,7 @@
           <div class="avatar-group">
             <div class="group-title">Couleurs</div>
             <div class="color-block"><span>Cheveux</span><div class="color-row" id="hairColors"></div></div>
+            <div class="color-block"><span>Peau</span><div class="color-row" id="skinColors"></div></div>
             <div class="color-block"><span>Veste / haut</span><div class="color-row" id="jacketColors"></div></div>
             <div class="color-block"><span>T-shirt</span><div class="color-row" id="shirtColors"></div></div>
             <div class="color-block"><span>Pantalon</span><div class="color-row" id="pantsColors"></div></div>

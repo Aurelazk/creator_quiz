@@ -11,6 +11,8 @@
     shirt: ['#FF4E20', '#0B35FE', '#00E472', '#FF7A00', '#2E85FF', '#F4F6FC', '#111827', '#F5C542', '#E84A8A'],
     pants: ['#0C1A4B', '#111827', '#3B4A6B', '#6B7280', '#F4F6FC', '#7A3E1D', '#1F2937'],
     shoes: ['#FF4E20', '#F4F6FC', '#0B35FE', '#111827', '#00E472', '#F5C542', '#E84A8A'],
+    /* carnations : du clair au foncé, majoritairement peaux brunes à foncées */
+    skin: ['#F1C27D', '#E0AC69', '#C68642', '#A16B3A', '#8D5524', '#7A4E28', '#5C3317', '#3E2723'],
   };
 
   const LABELS = {
@@ -27,6 +29,12 @@
     accessory: { none: '∅', glasses: '⌐', headphones: 'Ω', beanie: '⌒', backpack: '▤' },
   };
 
+  /* Identifiants de dégradé uniques à chaque rendu : le même SVG peut être
+     inséré plusieurs fois dans le DOM (scoreboard, lobby, aperçu), il ne faut
+     jamais réutiliser un id sous peine de rendre les têtes invisibles. */
+  let svgUid = 0;
+  function nextUid() { return 'a' + (++svgUid); }
+
   const DEFAULTS = {
     silhouette: 'neutral',
     hair: 'short',
@@ -38,6 +46,7 @@
       shirt: '#FF4E20',
       pants: '#0C1A4B',
       shoes: '#FF4E20',
+      skin: '#E0AC69',
     },
   };
 
@@ -61,6 +70,7 @@
           shirt: pick(PALETTES.shirt),
           pants: pick(PALETTES.pants),
           shoes: pick(PALETTES.shoes),
+          skin: pick(PALETTES.skin),
         },
       };
       guard++;
@@ -101,6 +111,7 @@
           shirt: pick(PALETTES.shirt),
           pants: pick(PALETTES.pants),
           shoes: pick(PALETTES.shoes),
+          skin: pick(PALETTES.skin),
         },
       };
       guard++;
@@ -130,7 +141,7 @@
     const waist = sil === 'masc' ? 54 : sil === 'fem' ? 46 : 50;
     const hip = sil === 'fem' ? 56 : sil === 'masc' ? 52 : 52;
     const legW = sil === 'masc' ? 17 : sil === 'fem' ? 14 : 15;
-    const uid = 'a' + Math.floor(Math.random() * 1e6);
+    const uid = nextUid();
 
     const parts = [];
     parts.push(`<defs>
@@ -174,8 +185,8 @@
     parts.push(`<rect x="${leftX}" y="${armTop}" width="${armW}" height="${armLen}" rx="${armW / 2}" fill="${sleeveColor}" transform="rotate(7 ${leftX + armW / 2} ${armTop})"/>`);
     parts.push(`<rect x="${rightX}" y="${armTop}" width="${armW}" height="${armLen}" rx="${armW / 2}" fill="${shade(sleeveColor, -8)}" transform="rotate(-7 ${rightX + armW / 2} ${armTop})"/>`);
     // Gants
-    parts.push(`<circle cx="${leftX + armW / 2 - 2}" cy="${armTop + armLen - 1}" r="${armW * 0.72}" fill="#FFFFFF"/>`);
-    parts.push(`<circle cx="${rightX + armW / 2 + 2}" cy="${armTop + armLen - 1}" r="${armW * 0.72}" fill="#F2F5FC"/>`);
+    parts.push(`<circle cx="${leftX + armW / 2 - 2}" cy="${armTop + armLen - 1}" r="${armW * 0.72}" fill="${c.skin}"/>`);
+    parts.push(`<circle cx="${rightX + armW / 2 + 2}" cy="${armTop + armLen - 1}" r="${armW * 0.72}" fill="${c.skin}"/>`);
 
     // Corps
     const bodyTop = 128, bodyBottom = 196;
@@ -205,10 +216,10 @@
     }
 
     // Cou
-    parts.push(`<rect x="90" y="112" width="20" height="20" rx="8" fill="#F0F4FD"/>`);
+    parts.push(`<rect x="90" y="112" width="20" height="20" rx="8" fill="${c.skin}"/>`);
 
     // Tête
-    parts.push(`<circle cx="100" cy="76" r="47" fill="url(#${uid}h)"/>`);
+    parts.push(`<circle cx="100" cy="76" r="47" fill="${c.skin}"/>`);
 
     // Cheveux
     const hc = c.hair;

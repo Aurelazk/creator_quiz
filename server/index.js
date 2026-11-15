@@ -109,6 +109,7 @@ const HAIR_COLORS = ['#FF6B2C', '#2B1B12', '#F5C542', '#1B2A6B', '#E84A8A', '#F4
 const TOP_COLORS = ['#FF4E20', '#0B35FE', '#00E472', '#FF7A00', '#2E85FF', '#F4F6FC', '#111827', '#F5C542', '#E84A8A'];
 const PANTS_COLORS = ['#0C1A4B', '#111827', '#3B4A6B', '#6B7280', '#F4F6FC', '#7A3E1D', '#1F2937'];
 const SHOE_COLORS = ['#FF4E20', '#F4F6FC', '#0B35FE', '#111827', '#00E472', '#F5C542', '#E84A8A'];
+const SKIN_COLORS = ['#F1C27D', '#E0AC69', '#C68642', '#A16B3A', '#8D5524', '#7A4E28', '#5C3317', '#3E2723'];
 
 let QUESTIONS = [];
 try {
@@ -216,6 +217,7 @@ function sanitizeAvatar(raw) {
       shirt: sanitizeHex(colors.shirt, TOP_COLORS[0]),
       pants: sanitizeHex(colors.pants, PANTS_COLORS[0]),
       shoes: sanitizeHex(colors.shoes, SHOE_COLORS[0]),
+      skin: sanitizeHex(colors.skin, SKIN_COLORS[0]),
     },
   };
 }

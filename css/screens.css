@@ -113,7 +113,9 @@
 .board {
   position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
   width: min(68vw, 1050px);
-  display: grid; grid-template-columns: 1fr 1fr;
+  display: grid;
+  /* 2 colonnes équilibrées, 8 cases max (2×4), pas de case orpheline */
+  grid-template-columns: 1fr 1fr;
   gap: clamp(6px, 1vw, 14px);
   z-index: 16;
   background: rgba(4, 8, 28, 0.5);
@@ -131,8 +133,9 @@
 .board-card.revealed .card-inner { transform: rotateX(180deg); }
 .card-face {
   position: absolute; inset: 0;
-  display: flex; align-items: center; gap: 0.8rem;
-  padding: 0 1rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem;
   border-radius: 12px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -176,31 +179,41 @@
   box-shadow: 0 0 30px rgba(255,207,90,0.5);
 }
 .card-answer {
-  flex: 1; font-family: var(--font-question);
+  text-align: center;
+  font-family: var(--font-question);
   font-size: clamp(1rem, 1.75vw, 1.55rem);
-  line-height: 1.05;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  line-height: 1.12;
+  /* jusqu'à 2 lignes, jamais de chevauchement avec la mention trouvée-par */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .card-points {
+  align-self: flex-end;
   font-family: var(--font-display);
-  font-size: clamp(1rem, 1.6vw, 1.45rem);
+  font-size: clamp(0.9rem, 1.6vw, 1.45rem);
   color: #05301c;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.55);
   border-radius: 99px;
-  padding: 0.1rem 0.55rem;
+  padding: 0.12rem 0.6rem;
+  margin-top: 0.2rem;
 }
 .board-card.missed .card-points { background: rgba(255,255,255,0.14); color: rgba(255,255,255,0.65); }
-.board-card .card-by {
-  position: absolute; left: 1rem; bottom: 2px;
-  font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em;
-  opacity: 0.65;
+.card-by {
+  width: 100%;
+  text-align: center;
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em;
+  opacity: 0.8;
+  margin-top: 0.25rem;
 }
 
 /* -------- erreurs / x -------- */
 .host-strikes {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  top: auto; bottom: 12rem; z-index: 22;
-  display: flex; gap: 0.5rem;
+  /* rangée fixe sous le tableau, dans le flux de la grille de scène,
+     jamais au-dessus des têtes / plaques de noms des joueurs */
+  margin: 0.5rem 0 0;
+  display: flex; gap: 0.5rem; justify-content: center;
 }
 .strike-x {
   width: 52px; height: 52px; border-radius: 14px;
@@ -297,13 +310,13 @@
 
 /* -------- mauvaises propositions -------- */
 .wrong-banner {
-  position: absolute; left: 50%; bottom: 118px; transform: translateX(-50%);
-  z-index: 22;
-  width: min(70vw, 900px);
+  /* bande lisible sous les pieds des joueurs, jamais sur les jambes ni les contrôles */
+  margin: 0.5rem 0 0;
   display: flex; align-items: center; gap: 0.6rem;
+  width: min(70vw, 900px);
   padding: 0.4rem 0.85rem;
-  background: rgba(255, 78, 32, 0.12);
-  border: 1px solid rgba(255, 78, 32, 0.3);
+  background: rgba(255, 78, 32, 0.2);
+  border: 1px solid rgba(255, 78, 32, 0.45);
   border-radius: var(--r-full);
   backdrop-filter: blur(6px);
   overflow: hidden;
@@ -314,8 +327,8 @@
   color: var(--orange); font-weight: 700;
 }
 .wrong-list {
-  display: flex; gap: 0.8rem; overflow: hidden;
-  font-size: 0.76rem; color: rgba(255, 170, 150, 0.9);
+  display: flex; gap: 0.6rem; overflow: hidden;
+  font-size: 0.8rem; color: rgba(255, 210, 190, 0.95);
   white-space: nowrap;
 }
 .wrong-item { animation: slideIn 0.3s ease; }
@@ -735,10 +748,9 @@
   position: absolute; top: var(--host-top); left: 0; right: 0;
   bottom: calc(var(--host-bottom) + 10px);
   z-index: 16;
-  display: grid;
-  grid-template-rows: auto auto auto minmax(0, 1fr);
-  justify-items: center;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 0.55rem;
   padding: 0.3rem 1.4rem 0;
   pointer-events: none;
