@@ -10,7 +10,7 @@
   const $ = (s) => document.querySelector(s);
   const DURATION_FULL = 4800;
   const DURATION_SHORT = 1200;
-  const MAX_WAIT = 8000;
+  const MAX_WAIT = 5000;
   const STORAGE_KEY = 'gtq.intro.seen';
 
   let introStarted = false;
@@ -243,9 +243,10 @@
     const isShort = alreadySeen();
     refreshRefs();
     intro.classList.remove('hidden');
-    /* Cache le contenu de l'app pendant l'intro */
+    /* L'intro est un overlay au-dessus de l'app : on ne cache pas #app
+       afin d'éviter qu'une init Three.js (ensureScene) tombe sur un canvas
+       masqué/dégénéré pendant l'intro. */
     const app = document.getElementById('app');
-    if (app) app.style.visibility = 'hidden';
     if (isShort) {
       letters.forEach((l) => { l.classList.add('on'); l.style.opacity = 1; l.style.transform = 'none'; });
       if (dot) { dot.classList.add('on'); dot.style.opacity = 1; }

@@ -192,12 +192,6 @@
     try { App.playerName = localStorage.getItem(LS.name) || ''; } catch (e) {}
     App.avatar = loadAvatar();
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations()
-        .then((regs) => regs.forEach((reg) => reg.unregister()))
-        .catch(() => {});
-    }
-
     buildAvatarControls();
     bindEvents();
     updateMuteButton();
@@ -1095,7 +1089,7 @@
       } else if (s.phase === 'buzz') {
         text = s.canBuzz ? 'À toi de buzzer !' : 'Attends le signal…';
         if (s.canBuzz) status.classList.add('you');
-      }       else if (s.phase === 'play') {
+        } else if (s.phase === 'play') {
         if (me.isController) { text = 'C’est à toi ! Propose une réponse.'; status.classList.add('you'); }
         else if (me.isTeammate) { text = 'Ton équipe joue. Propose aussi !'; status.classList.add('you'); }
         else if (s.canGuessSpectator) { text = 'Devine aussi pour un bonus.'; status.classList.add('steal'); }

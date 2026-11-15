@@ -11,3 +11,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PUBLIC_URL
+        value: https://creatorquiz-chi.vercel.app
+      - key: ALLOWED_ORIGIN
+        value: https://creatorquiz-chi.vercel.app
+      - key: KV_REST_API_URL
+        value: https://<ton-upstash>.upstash.io
+      - key: KV_REST_API_TOKEN
+        value: <ton-token>
+      - key: LEADERBOARD_WRITE_TOKEN
+        value: <secret-partage-render-vercel>
