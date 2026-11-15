@@ -205,6 +205,21 @@
               <option value="20" selected>20</option>
             </select>
           </label>
+          <fieldset class="cat-fieldset">
+            <legend>Catégories de questions</legend>
+            <div class="cat-buttons" id="catButtons">
+              <button type="button" class="cat-btn active" data-cat="tout">Tout mélanger</button>
+              <button type="button" class="cat-btn" data-cat="Histoire du Bénin">Histoire du Bénin</button>
+              <button type="button" class="cat-btn" data-cat="Monuments et patrimoine">Monuments & patrimoine</button>
+              <button type="button" class="cat-btn" data-cat="Culture et traditions">Culture & traditions</button>
+              <button type="button" class="cat-btn" data-cat="Gastronomie">Gastronomie</button>
+              <button type="button" class="cat-btn" data-cat="Géographie">Géographie</button>
+              <button type="button" class="cat-btn" data-cat="Sport">Sport</button>
+              <button type="button" class="cat-btn" data-cat="Musique et arts">Musique & arts</button>
+              <button type="button" class="cat-btn" data-cat="Vie étudiante et technologie">Vie étudiante & tech</button>
+            </div>
+            <p class="cat-hint">Sélectionne une ou plusieurs catégories. Par défaut, les questions sont mélangées et ne se répètent pas d’une partie à l’autre dans la même salle.</p>
+          </fieldset>
         </div>
         <div class="lobby-actions">
           <button class="btn btn--primary btn--xl w-full" id="btnStart">Lancer la partie</button>

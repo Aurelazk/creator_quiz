@@ -153,9 +153,25 @@
     return shuffle(bank).slice(0, Math.min(count || GAME_Q, bank.length));
   }
 
+  /* Sélectionne `count` questions de `bank`, filtrées par catégorie (tableau
+     de noms de catégorie, ou vide/["tout"] = toutes), en excluant les questions
+     déjà posées dans la salle (askedHistory = Set de textes de questions).
+     Mélange équilibré. Retourne le tableau sélectionné (peut être plus court
+     que `count` s'il n'y a pas assez de questions éligibles non posées). */
+  function pickQuestionsByCategory(bank, count, categories, askedHistory) {
+    const cats = Array.isArray(categories) ? categories : [];
+    const onlyAll = cats.length === 0 || cats.includes('tout') || cats.includes('Tout mélanger');
+    const eligible = bank.filter((q, idx) => {
+      if (!onlyAll && !cats.includes(q.category)) return false;
+      if (askedHistory && askedHistory.has(q.q)) return false;
+      return true;
+    });
+    return shuffle(eligible).slice(0, Math.min(count || GAME_Q, eligible.length));
+  }
+
   return {
     PHASES, GAME_Q, COUNTDOWN_MS, BUZZ_MS, STEAL_MS, REVEAL_MS, MAX_STRIKES,
     MAX_GUESS_LEN, normalize, tokens, levenshtein, matches, clampText, judge,
-    multiplierFor, pointsFor, shuffle, pickQuestions,
+    multiplierFor, pointsFor, shuffle, pickQuestions, pickQuestionsByCategory,
   };
 }));

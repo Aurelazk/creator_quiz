@@ -245,15 +245,19 @@ function makeRoom(code, hostToken, name, settings) {
     settings: {
       duration: [30, 45, 60, 90].includes(Number(settings && settings.duration)) ? Number(settings.duration) : 60,
       maxPlayers: clamp(Number(settings && settings.maxPlayers) || 20, 2, 20),
+      categories: Array.isArray(settings && settings.categories) && settings.categories.length > 0
+        ? settings.categories.slice()
+        : ['tout'],
     },
     mode: (settings && settings.mode === 'teams') ? 'teams' : 'solo',
     teamScores: { bleu: 0, orange: 0 },
     roundMain: null,
     mainStreak: new Map(),
-    spectatorGuesses: new Map(), // id -> Set of answer indexes found in secret (bonus)
-    secretFound: new Set(),      // answer indexes already found by a spectator (no double bonus)
+    spectatorGuesses: new Map(),
+    secretFound: new Set(),
     players: new Map(),
     order: [],
+    askedHistory: new Set(),
     qi: -1,
     qTotal: 0,
     question: null,
@@ -389,7 +393,8 @@ function eventToPlayer(room, playerId, event) {
 function startGame(room, rounds) {
   if (room.players.size < 1) return false;
   const total = Number(rounds) > 0 ? Math.floor(Number(rounds)) : G.GAME_Q;
-  room.order = G.pickQuestions(QUESTIONS, total);
+  room.order = G.pickQuestionsByCategory(QUESTIONS, total, room.settings.categories, room.askedHistory);
+  for (const q of room.order) room.askedHistory.add(q.q);
   room.qi = -1;
   room.qTotal = room.order.length;
   room.ranking = null;
@@ -1273,6 +1278,9 @@ wss.on('connection', (ws, req) => {
         }
         if (msg.maxPlayers != null) {
           room.settings.maxPlayers = clamp(Number(msg.maxPlayers) || 20, Math.max(2, room.players.size), 20);
+        }
+        if (Array.isArray(msg.categories) && msg.categories.length > 0) {
+          room.settings.categories = msg.categories.slice();
         }
         touch(room);
         broadcast(room);

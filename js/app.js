@@ -373,11 +373,29 @@
       settings: {
         duration: Number(($('#selDuration') || {}).value) || 60,
         maxPlayers: Number(($('#selMaxPlayers') || {}).value) || 20,
+        categories: selectedCategories(),
       },
     };
     const send = () => Net.send('host:create', payload);
     if (Net.connected) send();
     else { App.pending = send; Net.connect(); }
+  }
+
+  function selectedCategories() {
+    const active = $$('.cat-btn.active');
+    if (!active || active.length === 0) return ['tout'];
+    const cats = active.map((b) => b.getAttribute('data-cat'));
+    if (cats.includes('tout')) return ['tout'];
+    return cats;
+  }
+
+  function syncCatButtons(categories) {
+    const cats = Array.isArray(categories) ? categories : ['tout'];
+    $$('.cat-btn').forEach((b) => {
+      const val = b.getAttribute('data-cat');
+      const active = cats.includes('tout') ? val === 'tout' : cats.includes(val);
+      b.classList.toggle('active', active);
+    });
   }
 
   function resetToHome(message, kind) {
@@ -563,6 +581,19 @@
     });
     on($('#selDuration'), 'change', (e) => Net.send('host:settings', { duration: Number(e.target.value) }));
     on($('#selMaxPlayers'), 'change', (e) => Net.send('host:settings', { maxPlayers: Number(e.target.value) }));
+    $$('.cat-btn').forEach((btn) => {
+      on(btn, 'click', () => {
+        const val = btn.getAttribute('data-cat');
+        if (val === 'tout') {
+          $$('.cat-btn').forEach((b) => b.classList.toggle('active', b.getAttribute('data-cat') === 'tout'));
+        } else {
+          btn.classList.toggle('active');
+          const tout = $$('.cat-btn[data-cat="tout"]')[0];
+          if (tout) tout.classList.remove('active');
+        }
+        Net.send('host:settings', { categories: selectedCategories() });
+      });
+    });
   }
 
   function updateMuteButton() {
@@ -1149,6 +1180,7 @@
     const maxp = $('#selMaxPlayers');
     if (dur && document.activeElement !== dur) dur.value = String(s.settings.duration);
     if (maxp && document.activeElement !== maxp) maxp.value = String(s.settings.maxPlayers);
+    syncCatButtons(s.settings.categories);
     updateRoomChrome();
   }
 
