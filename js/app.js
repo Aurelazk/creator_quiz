@@ -208,7 +208,7 @@
     const room = String(params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
 
     /* ---------- MODE DÉMO : isole Net AVANT bindNet ---------- */
-    if (params.get('demo') === '1') {
+    if (params.get('demo') === '1' || room === 'DEMO1') {
       loadDemo().then(() => {
         window.Net = global.DemoNet;
         bindNet();
@@ -218,7 +218,8 @@
         const isMobile = window.matchMedia ? window.matchMedia('(max-width: 768px)').matches : false;
         App.role = isMobile ? 'player' : 'host';
         if (App.role === 'host') {
-          enterHost();
+          showHostView();
+          updateRoomChrome();
         } else {
           showPlayerScreen('pLobby', true);
           if ($('#codeIn')) $('#codeIn').value = 'DEMO1';
