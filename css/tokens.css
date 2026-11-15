@@ -28,6 +28,7 @@
   --warning: var(--orange2);
   --error: var(--orange);
   --info: var(--bleu2);
+  --gold: #FFCF5A;
 
   /* ── Rayons ── */
   --r-sm: 6px;

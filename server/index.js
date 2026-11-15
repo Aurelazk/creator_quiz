@@ -685,6 +685,10 @@ function endGame(room) {
 /* ------------------------------------------------------------------ */
 setInterval(() => {
   const now = Date.now();
+  /* purge non bornée des IP de rate-limit expirées */
+  for (const [ip, e] of joinAttempts.entries()) {
+    if (now > e.resetAt) joinAttempts.delete(ip);
+  }
   for (const room of rooms.values()) {
     if (!room.hostConnected && room.hostDisconnectedAt && now - room.hostDisconnectedAt > HOST_IDLE_MS) {
       eventToAll(room, { type: 'closed', message: "L'animateur a quitté la salle." });
@@ -701,6 +705,15 @@ setInterval(() => {
         }
       }
       continue;
+    }
+
+    /* joueurs fantômes en jeu : retirés après 5 min de déconnexion
+       (délai suffisant pour permettre la reconnexion) */
+    for (const p of Array.from(room.players.values())) {
+      if (!p.connected && p.disconnectedAt && now - p.disconnectedAt > 300000) {
+        room.players.delete(p.id);
+        broadcast(room);
+      }
     }
 
     if (room.paused) {
@@ -1126,6 +1139,10 @@ function sendJson(res, status, obj) {
     'content-type': 'application/json; charset=utf-8',
     'cache-control': 'no-store',
     'content-length': Buffer.byteLength(body),
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'DENY',
+    'referrer-policy': 'no-referrer',
+    'permissions-policy': 'camera=(), microphone=(), geolocation=()',
   };
   if (allow) headers['access-control-allow-origin'] = allow;
   res.writeHead(status, headers);

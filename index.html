@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>CREATOR — Guess Their Answer · Epitech Bénin</title>
 <meta name="description" content="Guess Their Answer multijoueur en temps réel — CREATOR, Epitech Bénin. Écran animateur 3D, joueurs sur téléphone." />
 <meta name="theme-color" content="#0C1A4B" />
@@ -105,8 +105,8 @@
           <span class="room-dot"></span>
           Salle <b id="hostCode">-----</b>
         </div>
-        <button class="icon-btn" id="btnQr" title="QR code de la salle">▦</button>
-        <button class="icon-btn" id="btnMute" title="Activer / couper le son">🔊</button>
+        <button class="icon-btn" id="btnQr" title="QR code de la salle" aria-label="Afficher le QR code de la salle">▦</button>
+        <button class="icon-btn" id="btnMute" title="Activer / couper le son" aria-label="Activer / couper le son">🔊</button>
       </div>
     </header>
 
@@ -287,7 +287,7 @@
       <!-- Personnage -->
       <section class="screen hidden" id="pAvatar">
         <div class="avatar-head">
-          <button class="icon-btn icon-btn--sm" id="btnAvatarBack">←</button>
+          <button class="icon-btn icon-btn--sm" id="btnAvatarBack" aria-label="Retour">←</button>
           <div>
             <h2>Ton personnage</h2>
             <p class="hint">Un seul modèle de base, plein de variantes.</p>
@@ -397,7 +397,7 @@
       <!-- Classement général -->
       <section class="screen hidden" id="pLeaderboard">
         <div class="panel">
-          <button class="icon-btn icon-btn--sm" id="btnLbBack">←</button>
+          <button class="icon-btn icon-btn--sm" id="btnLbBack" aria-label="Retour">←</button>
           <div class="eyebrow">Hall of fame</div>
           <h2>Top joueurs</h2>
           <p class="hint" id="lbHint">Chargement…</p>
