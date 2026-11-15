@@ -1,0 +1,2623 @@
+[
+  {
+    "q": "Citez un plat béninois que tout le monde adore.",
+    "answers": [
+      {
+        "text": "Pâte rouge (amiwo)",
+        "pts": 25,
+        "aliases": [
+          "amiwo",
+          "amio",
+          "pate rouge",
+          "pâte rouge",
+          "sauce rouge",
+          "amiwo rouge"
+        ]
+      },
+      {
+        "text": "Riz au gras",
+        "pts": 20,
+        "aliases": [
+          "riz gras",
+          "riz djolof",
+          "jollof",
+          "djolof rice",
+          "riz jollof"
+        ]
+      },
+      {
+        "text": "Akassa",
+        "pts": 15,
+        "aliases": [
+          "akasan",
+          "akassa",
+          "pate de mais",
+          "pâte de maïs"
+        ]
+      },
+      {
+        "text": "Igname pilée",
+        "pts": 12,
+        "aliases": [
+          "igname pilee",
+          "igname pilé",
+          "pilee d'igname",
+          "pilé d'igname",
+          "igname"
+        ]
+      },
+      {
+        "text": "Poisson braisé",
+        "pts": 10,
+        "aliases": [
+          "poisson braise",
+          "poisson grillé",
+          "poisson grille",
+          "poisson au feu"
+        ]
+      },
+      {
+        "text": "Atassi",
+        "pts": 8,
+        "aliases": [
+          "atasi",
+          "haricots riz",
+          "riz haricots",
+          "haricot riz",
+          "watasi"
+        ]
+      },
+      {
+        "text": "Wô",
+        "pts": 6,
+        "aliases": [
+          "wo",
+          "wô",
+          "pate noire",
+          "pâte noire",
+          "amiwo noire",
+          "pate noir"
+        ]
+      },
+      {
+        "text": "Gari",
+        "pts": 4,
+        "aliases": [
+          "gari",
+          "tapioca",
+          "semoule de manioc"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une technologie que les étudiants utilisent tous les jours.",
+    "answers": [
+      {
+        "text": "WhatsApp",
+        "pts": 30,
+        "aliases": [
+          "whats app",
+          "whatsap",
+          "wathsapp",
+          "ouatsapp"
+        ]
+      },
+      {
+        "text": "Le téléphone",
+        "pts": 22,
+        "aliases": [
+          "telephone",
+          "téléphone",
+          "smartphone",
+          "portable",
+          "tel"
+        ]
+      },
+      {
+        "text": "Internet",
+        "pts": 15,
+        "aliases": [
+          "internet",
+          "wifi",
+          "wi-fi",
+          "connexion",
+          "data",
+          "reseau",
+          "réseau"
+        ]
+      },
+      {
+        "text": "L'ordinateur",
+        "pts": 10,
+        "aliases": [
+          "ordinateur",
+          "pc",
+          "laptop",
+          "ordi",
+          "computer"
+        ]
+      },
+      {
+        "text": "Google",
+        "pts": 8,
+        "aliases": [
+          "google",
+          "google search",
+          "moteur de recherche"
+        ]
+      },
+      {
+        "text": "L'intelligence artificielle",
+        "pts": 8,
+        "aliases": [
+          "ia",
+          "intelligence artificielle",
+          "chatgpt",
+          "chat gpt",
+          "gpt",
+          "copilot"
+        ]
+      },
+      {
+        "text": "TikTok",
+        "pts": 7,
+        "aliases": [
+          "tiktok",
+          "tik tok",
+          "tiktok"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une boisson qu'on trouve facilement au Bénin.",
+    "answers": [
+      {
+        "text": "L'eau",
+        "pts": 25,
+        "aliases": [
+          "eau",
+          "eau minerale",
+          "eau minérale",
+          "eau pure"
+        ]
+      },
+      {
+        "text": "Le sodabi",
+        "pts": 18,
+        "aliases": [
+          "sodabi",
+          "sodabe",
+          "eau de vie",
+          "alcool de palme"
+        ]
+      },
+      {
+        "text": "Le bissap",
+        "pts": 15,
+        "aliases": [
+          "bissap",
+          "jus d'hibiscus",
+          "jus hibiscus",
+          "hibiscus"
+        ]
+      },
+      {
+        "text": "Le jus d'orange",
+        "pts": 12,
+        "aliases": [
+          "jus d'orange",
+          "jus orange",
+          "orange",
+          "jus de fruit"
+        ]
+      },
+      {
+        "text": "Le Coca-Cola",
+        "pts": 10,
+        "aliases": [
+          "coca",
+          "coca-cola",
+          "coca cola",
+          "coke"
+        ]
+      },
+      {
+        "text": "La bière",
+        "pts": 10,
+        "aliases": [
+          "biere",
+          "bière",
+          "beer",
+          "beninoise",
+          "béninoise",
+          "castel",
+          "la beninoise"
+        ]
+      },
+      {
+        "text": "Le café",
+        "pts": 6,
+        "aliases": [
+          "cafe",
+          "café",
+          "nescafe",
+          "nEscafé"
+        ]
+      },
+      {
+        "text": "Le lait",
+        "pts": 4,
+        "aliases": [
+          "lait",
+          "lait en poudre",
+          "milk"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Quel est le premier réflexe d'un étudiant le matin ?",
+    "answers": [
+      {
+        "text": "Regarder son téléphone",
+        "pts": 30,
+        "aliases": [
+          "regarder le telephone",
+          "regarder son telephone",
+          "telephone",
+          "checker le phone",
+          "consulter son tel"
+        ]
+      },
+      {
+        "text": "Dormir encore",
+        "pts": 20,
+        "aliases": [
+          "dormir encore",
+          "se rendormir",
+          "snooze",
+          "rester au lit",
+          "dormir"
+        ]
+      },
+      {
+        "text": "Se laver",
+        "pts": 15,
+        "aliases": [
+          "se laver",
+          "prendre sa douche",
+          "douche",
+          "se brosser les dents",
+          "faire sa toilette"
+        ]
+      },
+      {
+        "text": "Petit-déjeuner",
+        "pts": 12,
+        "aliases": [
+          "petit dejeuner",
+          "petit-déjeuner",
+          "manger",
+          "prendre le petit dej",
+          "dejeuner"
+        ]
+      },
+      {
+        "text": "Aller en cours",
+        "pts": 10,
+        "aliases": [
+          "aller en cours",
+          "aller a l'ecole",
+          "partir en cours",
+          "aller au campus",
+          "aller a la fac"
+        ]
+      },
+      {
+        "text": "Prier",
+        "pts": 8,
+        "aliases": [
+          "prier",
+          "faire la priere",
+          "prière",
+          "salat",
+          "aller a la mosquee"
+        ]
+      },
+      {
+        "text": "Scroller les réseaux",
+        "pts": 5,
+        "aliases": [
+          "scroller",
+          "reseau sociaux",
+          "réseaux sociaux",
+          "facebook",
+          "instagram",
+          "tik tok"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une matière qui fait peur aux étudiants.",
+    "answers": [
+      {
+        "text": "Les maths",
+        "pts": 32,
+        "aliases": [
+          "maths",
+          "mathematiques",
+          "mathématiques",
+          "math",
+          "algebre",
+          "algèbre",
+          "analyse"
+        ]
+      },
+      {
+        "text": "La physique",
+        "pts": 20,
+        "aliases": [
+          "physique",
+          "physique chimie",
+          "mecanique",
+          "mécanique",
+          "electricite"
+        ]
+      },
+      {
+        "text": "La programmation",
+        "pts": 15,
+        "aliases": [
+          "programmation",
+          "programmer",
+          "informatique",
+          "code",
+          "algorithmique",
+          "algo"
+        ]
+      },
+      {
+        "text": "La comptabilité",
+        "pts": 10,
+        "aliases": [
+          "comptabilite",
+          "comptabilité",
+          "compta",
+          "accounting"
+        ]
+      },
+      {
+        "text": "L'économie",
+        "pts": 8,
+        "aliases": [
+          "economie",
+          "économie",
+          "eco",
+          "macro",
+          "micro"
+        ]
+      },
+      {
+        "text": "L'anglais",
+        "pts": 8,
+        "aliases": [
+          "anglais",
+          "english",
+          "langue anglaise"
+        ]
+      },
+      {
+        "text": "Le droit",
+        "pts": 7,
+        "aliases": [
+          "droit",
+          "juridique",
+          "droit civil",
+          "law"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un endroit où les jeunes se retrouvent à Cotonou.",
+    "answers": [
+      {
+        "text": "La plage",
+        "pts": 25,
+        "aliases": [
+          "plage",
+          "la plage",
+          "fidjrosse",
+          "fidjrossè",
+          "cotonou plage",
+          "bord de mer"
+        ]
+      },
+      {
+        "text": "Le marché Dantokpa",
+        "pts": 18,
+        "aliases": [
+          "dantokpa",
+          "dantokpa",
+          "marche dantokpa",
+          "marché dantokpa",
+          "toko",
+          "grand marche",
+          "grand marché"
+        ]
+      },
+      {
+        "text": "Le campus",
+        "pts": 15,
+        "aliases": [
+          "campus",
+          "l'universite",
+          "université",
+          "fac",
+          "uac",
+          "l'ecole",
+          "école"
+        ]
+      },
+      {
+        "text": "Les maquis",
+        "pts": 14,
+        "aliases": [
+          "maquis",
+          "bar",
+          "resto",
+          "restaurant",
+          "buvette"
+        ]
+      },
+      {
+        "text": "Le cybercafé",
+        "pts": 10,
+        "aliases": [
+          "cybercafe",
+          "cybercafé",
+          "cyber",
+          "cafe internet",
+          "café internet"
+        ]
+      },
+      {
+        "text": "Le cinéma",
+        "pts": 10,
+        "aliases": [
+          "cinema",
+          "cinéma",
+          "le cinema",
+          "movie theater"
+        ]
+      },
+      {
+        "text": "L'église",
+        "pts": 8,
+        "aliases": [
+          "eglise",
+          "église",
+          "la messe",
+          "temple",
+          "mosquee",
+          "mosquée"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un fruit jaune.",
+    "answers": [
+      {
+        "text": "La banane",
+        "pts": 35,
+        "aliases": [
+          "banane",
+          "bananes",
+          "bananier"
+        ]
+      },
+      {
+        "text": "La mangue",
+        "pts": 25,
+        "aliases": [
+          "mangue",
+          "mangues",
+          "mango"
+        ]
+      },
+      {
+        "text": "L'ananas",
+        "pts": 15,
+        "aliases": [
+          "ananas",
+          "anana",
+          "pineapple"
+        ]
+      },
+      {
+        "text": "Le citron",
+        "pts": 10,
+        "aliases": [
+          "citron",
+          "citrons",
+          "lemon"
+        ]
+      },
+      {
+        "text": "La papaye",
+        "pts": 8,
+        "aliases": [
+          "papaye",
+          "papayes",
+          "papaya"
+        ]
+      },
+      {
+        "text": "L'orange",
+        "pts": 7,
+        "aliases": [
+          "orange",
+          "oranges",
+          "orange jaune"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un métier que les enfants veulent faire plus tard.",
+    "answers": [
+      {
+        "text": "Médecin",
+        "pts": 25,
+        "aliases": [
+          "medecin",
+          "médecin",
+          "docteur",
+          "doctor",
+          "medecine"
+        ]
+      },
+      {
+        "text": "Ingénieur",
+        "pts": 20,
+        "aliases": [
+          "ingenieur",
+          "ingénieur",
+          "engineer",
+          "ingenierie",
+          "ingénierie"
+        ]
+      },
+      {
+        "text": "Footballeur",
+        "pts": 18,
+        "aliases": [
+          "footballeur",
+          "footballer",
+          "joueur de foot",
+          "foot",
+          "sportif"
+        ]
+      },
+      {
+        "text": "Enseignant",
+        "pts": 12,
+        "aliases": [
+          "enseignant",
+          "professeur",
+          "prof",
+          "teacher",
+          "maitre",
+          "maîtresse"
+        ]
+      },
+      {
+        "text": "Avocat",
+        "pts": 10,
+        "aliases": [
+          "avocat",
+          "avocate",
+          "lawyer",
+          "juriste"
+        ]
+      },
+      {
+        "text": "Pilote",
+        "pts": 8,
+        "aliases": [
+          "pilote",
+          "pilote d'avion",
+          "pilot",
+          "aviateur"
+        ]
+      },
+      {
+        "text": "Influenceur",
+        "pts": 7,
+        "aliases": [
+          "influenceur",
+          "influenceuse",
+          "youtubeur",
+          "createur de contenu",
+          "créateur de contenu",
+          "influencer"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une application que tu ouvres au moins une fois par jour.",
+    "answers": [
+      {
+        "text": "WhatsApp",
+        "pts": 30,
+        "aliases": [
+          "whatsapp",
+          "whats app",
+          "whatsap",
+          "wathsapp"
+        ]
+      },
+      {
+        "text": "Instagram",
+        "pts": 20,
+        "aliases": [
+          "instagram",
+          "insta",
+          "ig"
+        ]
+      },
+      {
+        "text": "TikTok",
+        "pts": 18,
+        "aliases": [
+          "tiktok",
+          "tik tok",
+          "tik-tok"
+        ]
+      },
+      {
+        "text": "Facebook",
+        "pts": 12,
+        "aliases": [
+          "facebook",
+          "fb",
+          "meta"
+        ]
+      },
+      {
+        "text": "YouTube",
+        "pts": 8,
+        "aliases": [
+          "youtube",
+          "you tube",
+          "yt"
+        ]
+      },
+      {
+        "text": "Snapchat",
+        "pts": 6,
+        "aliases": [
+          "snapchat",
+          "snap"
+        ]
+      },
+      {
+        "text": "Telegram",
+        "pts": 6,
+        "aliases": [
+          "telegram",
+          "telgram"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un instrument de musique béninois.",
+    "answers": [
+      {
+        "text": "Le tam-tam",
+        "pts": 30,
+        "aliases": [
+          "tam tam",
+          "tam-tam",
+          "tamtam",
+          "tambour",
+          "drum"
+        ]
+      },
+      {
+        "text": "Le djembé",
+        "pts": 20,
+        "aliases": [
+          "djembe",
+          "djembé",
+          "jembe",
+          "djembe"
+        ]
+      },
+      {
+        "text": "La kora",
+        "pts": 15,
+        "aliases": [
+          "kora",
+          "coras",
+          "kora africaine"
+        ]
+      },
+      {
+        "text": "L'agogo",
+        "pts": 12,
+        "aliases": [
+          "agogo",
+          "agogos",
+          "cloche",
+          "gong"
+        ]
+      },
+      {
+        "text": "La guitare",
+        "pts": 8,
+        "aliases": [
+          "guitare",
+          "guitar",
+          "guitare acoustique"
+        ]
+      },
+      {
+        "text": "La trompette",
+        "pts": 8,
+        "aliases": [
+          "trompette",
+          "trompete",
+          "trumpet",
+          "cuivre"
+        ]
+      },
+      {
+        "text": "La flûte",
+        "pts": 7,
+        "aliases": [
+          "flute",
+          "flûte",
+          "flute traversiere",
+          "flûte traversière"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un plat du quotidien étudiant pas cher.",
+    "answers": [
+      {
+        "text": "Riz et haricots",
+        "pts": 28,
+        "aliases": [
+          "riz haricots",
+          "riz et haricots",
+          "atassi",
+          "riz poisson"
+        ]
+      },
+      {
+        "text": "Pâte rouge",
+        "pts": 22,
+        "aliases": [
+          "pate rouge",
+          "pâte rouge",
+          "amiwo",
+          "sauce tomate"
+        ]
+      },
+      {
+        "text": "Omelette",
+        "pts": 15,
+        "aliases": [
+          "omelette",
+          "oeufs",
+          "œufs",
+          "omelette au fromage"
+        ]
+      },
+      {
+        "text": "Macaronis",
+        "pts": 12,
+        "aliases": [
+          "macaronis",
+          "pates",
+          "pâtes",
+          "spaghetti",
+          "spaghettis"
+        ]
+      },
+      {
+        "text": "Pain beurre",
+        "pts": 10,
+        "aliases": [
+          "pain beurre",
+          "baguette",
+          "pain",
+          "tartine"
+        ]
+      },
+      {
+        "text": "Bouillie",
+        "pts": 8,
+        "aliases": [
+          "bouillie",
+          "akassa",
+          "degue",
+          "dégué"
+        ]
+      },
+      {
+        "text": "Sandwich",
+        "pts": 5,
+        "aliases": [
+          "sandwich",
+          "panini",
+          "snack"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une boisson chaude pour se réveiller.",
+    "answers": [
+      {
+        "text": "Café",
+        "pts": 35,
+        "aliases": [
+          "cafe",
+          "café",
+          "expresso",
+          "espresso",
+          "cafeine"
+        ]
+      },
+      {
+        "text": "Thé",
+        "pts": 20,
+        "aliases": [
+          "the",
+          "thé",
+          "infusion",
+          "tisane"
+        ]
+      },
+      {
+        "text": "Lait",
+        "pts": 15,
+        "aliases": [
+          "lait",
+          "chocolat chaud",
+          "cacao",
+          "milo"
+        ]
+      },
+      {
+        "text": "Nescafé",
+        "pts": 12,
+        "aliases": [
+          "nescafe",
+          "nescafé",
+          "cafe soluble",
+          "café soluble"
+        ]
+      },
+      {
+        "text": "Eau chaude",
+        "pts": 10,
+        "aliases": [
+          "eau chaude",
+          "eau",
+          "eau plume"
+        ]
+      },
+      {
+        "text": "Maté",
+        "pts": 8,
+        "aliases": [
+          "mate",
+          "maté"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un moyen de transport pour aller au campus.",
+    "answers": [
+      {
+        "text": "Moto taxi",
+        "pts": 35,
+        "aliases": [
+          "zemidjan",
+          "zemi",
+          "moto",
+          "taxi moto",
+          "moto-taxi"
+        ]
+      },
+      {
+        "text": "Marche à pied",
+        "pts": 22,
+        "aliases": [
+          "marche",
+          "a pied",
+          "pied",
+          "pieds",
+          "marche a pied"
+        ]
+      },
+      {
+        "text": "Bus",
+        "pts": 15,
+        "aliases": [
+          "bus",
+          "autobus",
+          "transport en commun"
+        ]
+      },
+      {
+        "text": "Voiture personnelle",
+        "pts": 12,
+        "aliases": [
+          "voiture",
+          "ma voiture",
+          "auto",
+          "carrosse"
+        ]
+      },
+      {
+        "text": "Vélo",
+        "pts": 10,
+        "aliases": [
+          "velo",
+          "vélo",
+          "bicyclette",
+          "bike"
+        ]
+      },
+      {
+        "text": "Taxi",
+        "pts": 6,
+        "aliases": [
+          "taxi",
+          "cab",
+          "chauffeur"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un site web que les étudiants consultent souvent.",
+    "answers": [
+      {
+        "text": "YouTube",
+        "pts": 30,
+        "aliases": [
+          "youtube",
+          "you tube",
+          "yt"
+        ]
+      },
+      {
+        "text": "Google",
+        "pts": 25,
+        "aliases": [
+          "google",
+          "google search",
+          "moteur de recherche"
+        ]
+      },
+      {
+        "text": "Wikipédia",
+        "pts": 18,
+        "aliases": [
+          "wikipedia",
+          "wiki",
+          "wikipédia"
+        ]
+      },
+      {
+        "text": "Discord",
+        "pts": 12,
+        "aliases": [
+          "discord",
+          "discordapp"
+        ]
+      },
+      {
+        "text": "Stack Overflow",
+        "pts": 10,
+        "aliases": [
+          "stackoverflow",
+          "stack overflow",
+          "stack"
+        ]
+      },
+      {
+        "text": "GitHub",
+        "pts": 5,
+        "aliases": [
+          "github",
+          "git hub"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une matière scientifique du cursus.",
+    "answers": [
+      {
+        "text": "Mathématiques",
+        "pts": 30,
+        "aliases": [
+          "maths",
+          "mathematiques",
+          "mathematique",
+          "math",
+          "analyse",
+          "algebre"
+        ]
+      },
+      {
+        "text": "Physique",
+        "pts": 22,
+        "aliases": [
+          "physique",
+          "physique chimie",
+          "chimie",
+          "mecanique"
+        ]
+      },
+      {
+        "text": "Algorithmique",
+        "pts": 15,
+        "aliases": [
+          "algo",
+          "algorithme",
+          "algorithmique",
+          "pseudocode"
+        ]
+      },
+      {
+        "text": "Programmation",
+        "pts": 12,
+        "aliases": [
+          "programmation",
+          "coder",
+          "code",
+          "dev",
+          "developpement"
+        ]
+      },
+      {
+        "text": "Logique",
+        "pts": 10,
+        "aliases": [
+          "logique",
+          "logique informatique",
+          "structures de donnees"
+        ]
+      },
+      {
+        "text": "Droit",
+        "pts": 8,
+        "aliases": [
+          "droit",
+          "juridique",
+          "loi"
+        ]
+      },
+      {
+        "text": "Anglais",
+        "pts": 3,
+        "aliases": [
+          "anglais",
+          "english"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un fruit tropical.",
+    "answers": [
+      {
+        "text": "Mangue",
+        "pts": 29,
+        "aliases": [
+          "mangue",
+          "mangues",
+          "mango"
+        ]
+      },
+      {
+        "text": "Ananas",
+        "pts": 22,
+        "aliases": [
+          "ananas",
+          "anana",
+          "pineapple"
+        ]
+      },
+      {
+        "text": "Banane",
+        "pts": 18,
+        "aliases": [
+          "banane",
+          "bananes"
+        ]
+      },
+      {
+        "text": "Papaye",
+        "pts": 12,
+        "aliases": [
+          "papaye",
+          "papayes",
+          "papaya"
+        ]
+      },
+      {
+        "text": "Avocat",
+        "pts": 10,
+        "aliases": [
+          "avocat",
+          "avocats"
+        ]
+      },
+      {
+        "text": "Goyave",
+        "pts": 8,
+        "aliases": [
+          "goyave",
+          "goyaves"
+        ]
+      },
+      {
+        "text": "Noix de coco",
+        "pts": 1,
+        "aliases": [
+          "coco",
+          "noix de coco"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un instrument de musique occidental.",
+    "answers": [
+      {
+        "text": "Guitare",
+        "pts": 28,
+        "aliases": [
+          "guitare",
+          "guitar",
+          "guitare acoustique",
+          "guitare electrique"
+        ]
+      },
+      {
+        "text": "Piano",
+        "pts": 22,
+        "aliases": [
+          "piano",
+          "clavier",
+          "clavier electronique"
+        ]
+      },
+      {
+        "text": "Batterie",
+        "pts": 15,
+        "aliases": [
+          "batterie",
+          "drums",
+          "percussion"
+        ]
+      },
+      {
+        "text": "Violon",
+        "pts": 12,
+        "aliases": [
+          "violon",
+          "violine",
+          "cordes"
+        ]
+      },
+      {
+        "text": "Trompette",
+        "pts": 10,
+        "aliases": [
+          "trompette",
+          "trumpet"
+        ]
+      },
+      {
+        "text": "Saxophone",
+        "pts": 8,
+        "aliases": [
+          "saxophone",
+          "sax"
+        ]
+      },
+      {
+        "text": "Flûte traversière",
+        "pts": 5,
+        "aliases": [
+          "flute",
+          "flûte",
+          "flute traversiere"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un sport collectif populaire.",
+    "answers": [
+      {
+        "text": "Football",
+        "pts": 40,
+        "aliases": [
+          "foot",
+          "football",
+          "soccer",
+          "le foot"
+        ]
+      },
+      {
+        "text": "Basketball",
+        "pts": 20,
+        "aliases": [
+          "basket",
+          "basketball",
+          "panier"
+        ]
+      },
+      {
+        "text": "Handball",
+        "pts": 15,
+        "aliases": [
+          "hand",
+          "handball"
+        ]
+      },
+      {
+        "text": "Volleyball",
+        "pts": 10,
+        "aliases": [
+          "volley",
+          "volleyball"
+        ]
+      },
+      {
+        "text": "Rugby",
+        "pts": 8,
+        "aliases": [
+          "rugby"
+        ]
+      },
+      {
+        "text": "Baseball",
+        "pts": 7,
+        "aliases": [
+          "baseball"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une ville du Bénin.",
+    "answers": [
+      {
+        "text": "Cotonou",
+        "pts": 32,
+        "aliases": [
+          "cotou",
+          "kotonou",
+          "cotono"
+        ]
+      },
+      {
+        "text": "Porto-Novo",
+        "pts": 22,
+        "aliases": [
+          "porto novo",
+          "porto-novo"
+        ]
+      },
+      {
+        "text": "Parakou",
+        "pts": 15,
+        "aliases": [
+          "parakou"
+        ]
+      },
+      {
+        "text": "Abomey-Calavi",
+        "pts": 12,
+        "aliases": [
+          "calavi",
+          "abomey calavi",
+          "abomey-calavi"
+        ]
+      },
+      {
+        "text": "Ouidah",
+        "pts": 10,
+        "aliases": [
+          "ouidah"
+        ]
+      },
+      {
+        "text": "Bohicon",
+        "pts": 8,
+        "aliases": [
+          "bohicon"
+        ]
+      },
+      {
+        "text": "Natitingou",
+        "pts": 1,
+        "aliases": [
+          "natitingou"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un plat à base de maïs.",
+    "answers": [
+      {
+        "text": "Akassa",
+        "pts": 30,
+        "aliases": [
+          "akassa",
+          "akasan",
+          "pate de mais",
+          "pâte de maïs"
+        ]
+      },
+      {
+        "text": "Pâte de maïs",
+        "pts": 22,
+        "aliases": [
+          "pate mais",
+          "pâte de maïs",
+          "pate de maïs"
+        ]
+      },
+      {
+        "text": "Degue",
+        "pts": 15,
+        "aliases": [
+          "degue",
+          "dégué",
+          "degue yaourt"
+        ]
+      },
+      {
+        "text": "Ablo",
+        "pts": 12,
+        "aliases": [
+          "ablo"
+        ]
+      },
+      {
+        "text": "Ugali",
+        "pts": 10,
+        "aliases": [
+          "ugali",
+          "posho"
+        ]
+      },
+      {
+        "text": "Banku",
+        "pts": 8,
+        "aliases": [
+          "banku"
+        ]
+      },
+      {
+        "text": "Foufou",
+        "pts": 3,
+        "aliases": [
+          "foufou",
+          "fufu"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un légume courant au marché.",
+    "answers": [
+      {
+        "text": "Tomate",
+        "pts": 28,
+        "aliases": [
+          "tomate",
+          "tomates",
+          "toma"
+        ]
+      },
+      {
+        "text": "Oignon",
+        "pts": 22,
+        "aliases": [
+          "oignon",
+          "oignons"
+        ]
+      },
+      {
+        "text": "Piment",
+        "pts": 15,
+        "aliases": [
+          "piment",
+          "piments",
+          "piment fort"
+        ]
+      },
+      {
+        "text": "Aubergine",
+        "pts": 12,
+        "aliases": [
+          "aubergine",
+          "gombo"
+        ]
+      },
+      {
+        "text": "Gombo",
+        "pts": 10,
+        "aliases": [
+          "gombo",
+          "okra"
+        ]
+      },
+      {
+        "text": "Carotte",
+        "pts": 8,
+        "aliases": [
+          "carotte",
+          "carottes"
+        ]
+      },
+      {
+        "text": "Chou",
+        "pts": 5,
+        "aliases": [
+          "chou",
+          "choux"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un outil informatique indispensable.",
+    "answers": [
+      {
+        "text": "Ordinateur",
+        "pts": 29,
+        "aliases": [
+          "ordinateur",
+          "pc",
+          "laptop",
+          "ordi",
+          "computer"
+        ]
+      },
+      {
+        "text": "Smartphone",
+        "pts": 25,
+        "aliases": [
+          "smartphone",
+          "telephone",
+          "téléphone",
+          "mobile"
+        ]
+      },
+      {
+        "text": "Clé USB",
+        "pts": 15,
+        "aliases": [
+          "cle usb",
+          "clé usb",
+          "usb",
+          "clef usb"
+        ]
+      },
+      {
+        "text": "Imprimante",
+        "pts": 12,
+        "aliases": [
+          "imprimante",
+          "print",
+          "impression"
+        ]
+      },
+      {
+        "text": "Casque",
+        "pts": 10,
+        "aliases": [
+          "casque",
+          "ecouteurs",
+          "écouteurs",
+          "headset"
+        ]
+      },
+      {
+        "text": "Disque dur",
+        "pts": 8,
+        "aliases": [
+          "disque dur",
+          "hdd",
+          "ssd",
+          "stockage"
+        ]
+      },
+      {
+        "text": "Souris",
+        "pts": 1,
+        "aliases": [
+          "souris",
+          "mouse"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une langue parlée au Bénin.",
+    "answers": [
+      {
+        "text": "Français",
+        "pts": 29,
+        "aliases": [
+          "francais",
+          "français",
+          "fr"
+        ]
+      },
+      {
+        "text": "Fon",
+        "pts": 25,
+        "aliases": [
+          "fon",
+          "fongbe"
+        ]
+      },
+      {
+        "text": "Yoruba",
+        "pts": 15,
+        "aliases": [
+          "yoruba",
+          "yorouba"
+        ]
+      },
+      {
+        "text": "Bariba",
+        "pts": 12,
+        "aliases": [
+          "bariba",
+          "baatonum"
+        ]
+      },
+      {
+        "text": "Dendi",
+        "pts": 10,
+        "aliases": [
+          "dendi"
+        ]
+      },
+      {
+        "text": "Adja",
+        "pts": 8,
+        "aliases": [
+          "adja"
+        ]
+      },
+      {
+        "text": "Goun",
+        "pts": 1,
+        "aliases": [
+          "goun"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une boisson gazeuse connue.",
+    "answers": [
+      {
+        "text": "Coca-Cola",
+        "pts": 32,
+        "aliases": [
+          "coca",
+          "coca-cola",
+          "coca cola",
+          "coke"
+        ]
+      },
+      {
+        "text": "Fanta",
+        "pts": 22,
+        "aliases": [
+          "fanta"
+        ]
+      },
+      {
+        "text": "Sprite",
+        "pts": 15,
+        "aliases": [
+          "sprite"
+        ]
+      },
+      {
+        "text": "Orangina",
+        "pts": 12,
+        "aliases": [
+          "orangina"
+        ]
+      },
+      {
+        "text": "Schweppes",
+        "pts": 10,
+        "aliases": [
+          "schweppes"
+        ]
+      },
+      {
+        "text": "Limonade",
+        "pts": 8,
+        "aliases": [
+          "limonade"
+        ]
+      },
+      {
+        "text": "Red Bull",
+        "pts": 1,
+        "aliases": [
+          "red bull",
+          "energisant"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un site de rencontre ou réseau pro.",
+    "answers": [
+      {
+        "text": "LinkedIn",
+        "pts": 28,
+        "aliases": [
+          "linkedin",
+          "linkdin"
+        ]
+      },
+      {
+        "text": "Instagram",
+        "pts": 22,
+        "aliases": [
+          "instagram",
+          "insta",
+          "ig"
+        ]
+      },
+      {
+        "text": "Twitter",
+        "pts": 15,
+        "aliases": [
+          "twitter",
+          "x",
+          "tweeter"
+        ]
+      },
+      {
+        "text": "Facebook",
+        "pts": 12,
+        "aliases": [
+          "facebook",
+          "fb"
+        ]
+      },
+      {
+        "text": "Tinder",
+        "pts": 10,
+        "aliases": [
+          "tinder"
+        ]
+      },
+      {
+        "text": "Bumble",
+        "pts": 8,
+        "aliases": [
+          "bumble"
+        ]
+      },
+      {
+        "text": "WhatsApp",
+        "pts": 5,
+        "aliases": [
+          "whatsapp",
+          "wa"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un animal de la savane africaine.",
+    "answers": [
+      {
+        "text": "Lion",
+        "pts": 30,
+        "aliases": [
+          "lion",
+          "lionne"
+        ]
+      },
+      {
+        "text": "Éléphant",
+        "pts": 22,
+        "aliases": [
+          "elephant",
+          "éléphant"
+        ]
+      },
+      {
+        "text": "Girafe",
+        "pts": 15,
+        "aliases": [
+          "girafe",
+          "giraffes"
+        ]
+      },
+      {
+        "text": "Zèbre",
+        "pts": 12,
+        "aliases": [
+          "zebre",
+          "zèbre"
+        ]
+      },
+      {
+        "text": "Hippopotame",
+        "pts": 10,
+        "aliases": [
+          "hippopotame",
+          "hippo"
+        ]
+      },
+      {
+        "text": "Crocodile",
+        "pts": 8,
+        "aliases": [
+          "crocodile",
+          "caiman"
+        ]
+      },
+      {
+        "text": "Guépard",
+        "pts": 3,
+        "aliases": [
+          "guépard",
+          "gepard"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un jour férié ou événement béninois.",
+    "answers": [
+      {
+        "text": "1er août",
+        "pts": 32,
+        "aliases": [
+          "1er aout",
+          "independance",
+          "indépendance",
+          "fete nationale",
+          "fête nationale"
+        ]
+      },
+      {
+        "text": "Noël",
+        "pts": 22,
+        "aliases": [
+          "noel",
+          "noël"
+        ]
+      },
+      {
+        "text": "Pâques",
+        "pts": 15,
+        "aliases": [
+          "paques",
+          "pâques"
+        ]
+      },
+      {
+        "text": "Tabaski",
+        "pts": 12,
+        "aliases": [
+          "tabaski",
+          "aid",
+          "aid el kebir"
+        ]
+      },
+      {
+        "text": "Kwanzaa",
+        "pts": 10,
+        "aliases": [
+          "kwanzaa"
+        ]
+      },
+      {
+        "text": "Vodoun",
+        "pts": 8,
+        "aliases": [
+          "vodoun",
+          "vodun",
+          "fete vodoun",
+          "fête vodoun"
+        ]
+      },
+      {
+        "text": "Nouvel an",
+        "pts": 1,
+        "aliases": [
+          "nouvel an",
+          "janvier"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un logiciel de retouche photo.",
+    "answers": [
+      {
+        "text": "Photoshop",
+        "pts": 30,
+        "aliases": [
+          "photoshop",
+          "ps",
+          "adobe photoshop"
+        ]
+      },
+      {
+        "text": "Canva",
+        "pts": 22,
+        "aliases": [
+          "canva"
+        ]
+      },
+      {
+        "text": "GIMP",
+        "pts": 15,
+        "aliases": [
+          "gimp"
+        ]
+      },
+      {
+        "text": "Lightroom",
+        "pts": 12,
+        "aliases": [
+          "lightroom",
+          "lr"
+        ]
+      },
+      {
+        "text": "Snapseed",
+        "pts": 10,
+        "aliases": [
+          "snapseed"
+        ]
+      },
+      {
+        "text": "Paint",
+        "pts": 8,
+        "aliases": [
+          "paint",
+          "dessin"
+        ]
+      },
+      {
+        "text": "Figma",
+        "pts": 3,
+        "aliases": [
+          "figma"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une marque de téléphone connue.",
+    "answers": [
+      {
+        "text": "Samsung",
+        "pts": 26,
+        "aliases": [
+          "samsung"
+        ]
+      },
+      {
+        "text": "iPhone",
+        "pts": 25,
+        "aliases": [
+          "iphone",
+          "apple",
+          "mac"
+        ]
+      },
+      {
+        "text": "Xiaomi",
+        "pts": 18,
+        "aliases": [
+          "xiaomi",
+          "redmi"
+        ]
+      },
+      {
+        "text": "Infinix",
+        "pts": 12,
+        "aliases": [
+          "infinix"
+        ]
+      },
+      {
+        "text": "Tecno",
+        "pts": 10,
+        "aliases": [
+          "tecno"
+        ]
+      },
+      {
+        "text": "Nokia",
+        "pts": 8,
+        "aliases": [
+          "nokia"
+        ]
+      },
+      {
+        "text": "Huawei",
+        "pts": 1,
+        "aliases": [
+          "huawei"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un accessoire de mode populaire.",
+    "answers": [
+      {
+        "text": "Montre",
+        "pts": 28,
+        "aliases": [
+          "montre",
+          "bracelet",
+          "gousset"
+        ]
+      },
+      {
+        "text": "Lunettes de soleil",
+        "pts": 22,
+        "aliases": [
+          "lunettes",
+          "lunettes de soleil",
+          "soleil"
+        ]
+      },
+      {
+        "text": "Casquette",
+        "pts": 15,
+        "aliases": [
+          "casquette",
+          "cap",
+          "bonnet"
+        ]
+      },
+      {
+        "text": "Sac à dos",
+        "pts": 12,
+        "aliases": [
+          "sac a dos",
+          "sac",
+          "dos",
+          "backpack"
+        ]
+      },
+      {
+        "text": "Chaussures",
+        "pts": 10,
+        "aliases": [
+          "chaussures",
+          "sneakers",
+          "baskets",
+          "chaussure"
+        ]
+      },
+      {
+        "text": "Ceinture",
+        "pts": 8,
+        "aliases": [
+          "ceinture"
+        ]
+      },
+      {
+        "text": "Bijoux",
+        "pts": 5,
+        "aliases": [
+          "bijoux",
+          "bague",
+          "collier"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une plateforme de streaming vidéo.",
+    "answers": [
+      {
+        "text": "Netflix",
+        "pts": 29,
+        "aliases": [
+          "netflix"
+        ]
+      },
+      {
+        "text": "YouTube",
+        "pts": 25,
+        "aliases": [
+          "youtube",
+          "you tube",
+          "yt"
+        ]
+      },
+      {
+        "text": "Amazon Prime",
+        "pts": 15,
+        "aliases": [
+          "prime video",
+          "amazon prime",
+          "prime"
+        ]
+      },
+      {
+        "text": "Disney+",
+        "pts": 12,
+        "aliases": [
+          "disney",
+          "disney plus",
+          "disney+"
+        ]
+      },
+      {
+        "text": "Canal+",
+        "pts": 10,
+        "aliases": [
+          "canal",
+          "canal plus",
+          "canal+"
+        ]
+      },
+      {
+        "text": "Showmax",
+        "pts": 8,
+        "aliases": [
+          "showmax"
+        ]
+      },
+      {
+        "text": "Twitch",
+        "pts": 1,
+        "aliases": [
+          "twitch"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un vêtement traditionnel béninois.",
+    "answers": [
+      {
+        "text": "Pagne",
+        "pts": 26,
+        "aliases": [
+          "pagne",
+          "tissu",
+          "wax"
+        ]
+      },
+      {
+        "text": "Boubou",
+        "pts": 25,
+        "aliases": [
+          "boubou",
+          "habit",
+          "tenue"
+        ]
+      },
+      {
+        "text": "Kaba",
+        "pts": 18,
+        "aliases": [
+          "kaba",
+          "femme"
+        ]
+      },
+      {
+        "text": "Tapis",
+        "pts": 12,
+        "aliases": [
+          "tapis"
+        ]
+      },
+      {
+        "text": "Chèche",
+        "pts": 10,
+        "aliases": [
+          "cheche",
+          "cheche",
+          "foulard"
+        ]
+      },
+      {
+        "text": "Sandales",
+        "pts": 8,
+        "aliases": [
+          "sandales",
+          "nu-pieds"
+        ]
+      },
+      {
+        "text": "Chapeau",
+        "pts": 1,
+        "aliases": [
+          "chapeau",
+          "casque"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une matière artistique.",
+    "answers": [
+      {
+        "text": "Dessin",
+        "pts": 28,
+        "aliases": [
+          "dessin",
+          "dessiner",
+          "croquis"
+        ]
+      },
+      {
+        "text": "Peinture",
+        "pts": 22,
+        "aliases": [
+          "peinture",
+          "peindre",
+          "toile"
+        ]
+      },
+      {
+        "text": "Sculpture",
+        "pts": 15,
+        "aliases": [
+          "sculpture",
+          "sculpter"
+        ]
+      },
+      {
+        "text": "Musique",
+        "pts": 12,
+        "aliases": [
+          "musique",
+          "jouer de la musique"
+        ]
+      },
+      {
+        "text": "Théâtre",
+        "pts": 10,
+        "aliases": [
+          "theatre",
+          "théâtre",
+          "comedie"
+        ]
+      },
+      {
+        "text": "Danse",
+        "pts": 8,
+        "aliases": [
+          "danse",
+          "danser"
+        ]
+      },
+      {
+        "text": "Cinéma",
+        "pts": 5,
+        "aliases": [
+          "cinema",
+          "cinéma"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un moyen de paiement courant.",
+    "answers": [
+      {
+        "text": "Espèces",
+        "pts": 35,
+        "aliases": [
+          "especes",
+          "espèces",
+          "cash",
+          "argent liquide"
+        ]
+      },
+      {
+        "text": "Mobile money",
+        "pts": 25,
+        "aliases": [
+          "mtn money",
+          "moov money",
+          "mobile money",
+          "momo"
+        ]
+      },
+      {
+        "text": "Carte bancaire",
+        "pts": 15,
+        "aliases": [
+          "carte bancaire",
+          "cb",
+          "visa",
+          "mastercard"
+        ]
+      },
+      {
+        "text": "Virement",
+        "pts": 12,
+        "aliases": [
+          "virement",
+          "transfert"
+        ]
+      },
+      {
+        "text": "Chèque",
+        "pts": 10,
+        "aliases": [
+          "cheque",
+          "chèque"
+        ]
+      },
+      {
+        "text": "PayPal",
+        "pts": 3,
+        "aliases": [
+          "paypal"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez une application de messagerie instantanée.",
+    "answers": [
+      {
+        "text": "WhatsApp",
+        "pts": 35,
+        "aliases": [
+          "whatsapp",
+          "wa",
+          "whats app"
+        ]
+      },
+      {
+        "text": "Telegram",
+        "pts": 20,
+        "aliases": [
+          "telegram",
+          "tg"
+        ]
+      },
+      {
+        "text": "Messenger",
+        "pts": 15,
+        "aliases": [
+          "messenger",
+          "facebook messenger"
+        ]
+      },
+      {
+        "text": "Signal",
+        "pts": 12,
+        "aliases": [
+          "signal"
+        ]
+      },
+      {
+        "text": "Discord",
+        "pts": 10,
+        "aliases": [
+          "discord"
+        ]
+      },
+      {
+        "text": "iMessage",
+        "pts": 8,
+        "aliases": [
+          "imessage"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un réseau social pour partager des photos.",
+    "answers": [
+      {
+        "text": "Instagram",
+        "pts": 40,
+        "aliases": [
+          "instagram",
+          "insta",
+          "ig"
+        ]
+      },
+      {
+        "text": "Facebook",
+        "pts": 20,
+        "aliases": [
+          "facebook",
+          "fb"
+        ]
+      },
+      {
+        "text": "Snapchat",
+        "pts": 15,
+        "aliases": [
+          "snapchat",
+          "snap"
+        ]
+      },
+      {
+        "text": "Pinterest",
+        "pts": 12,
+        "aliases": [
+          "pinterest"
+        ]
+      },
+      {
+        "text": "TikTok",
+        "pts": 8,
+        "aliases": [
+          "tiktok"
+        ]
+      },
+      {
+        "text": "Flickr",
+        "pts": 5,
+        "aliases": [
+          "flickr"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un plat à base de riz.",
+    "answers": [
+      {
+        "text": "Riz au gras",
+        "pts": 30,
+        "aliases": [
+          "riz gras",
+          "riz djolof",
+          "jollof"
+        ]
+      },
+      {
+        "text": "Riz cantonais",
+        "pts": 22,
+        "aliases": [
+          "riz cantonais",
+          "riz frit"
+        ]
+      },
+      {
+        "text": "Riz sauce arachide",
+        "pts": 18,
+        "aliases": [
+          "riz sauce arachide",
+          "riz pâte rouge"
+        ]
+      },
+      {
+        "text": "Riz au lait",
+        "pts": 15,
+        "aliases": [
+          "riz au lait",
+          "riz creme"
+        ]
+      },
+      {
+        "text": "Riz jambon",
+        "pts": 10,
+        "aliases": [
+          "riz jambon"
+        ]
+      },
+      {
+        "text": "Riz pois",
+        "pts": 5,
+        "aliases": [
+          "riz pois",
+          "riz haricots"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un animal de compagnie courant.",
+    "answers": [
+      {
+        "text": "Chien",
+        "pts": 35,
+        "aliases": [
+          "chien",
+          "chien de compagnie"
+        ]
+      },
+      {
+        "text": "Chat",
+        "pts": 30,
+        "aliases": [
+          "chat",
+          "chaton"
+        ]
+      },
+      {
+        "text": "Poisson rouge",
+        "pts": 15,
+        "aliases": [
+          "poisson rouge",
+          "poisson"
+        ]
+      },
+      {
+        "text": "Hamster",
+        "pts": 10,
+        "aliases": [
+          "hamster"
+        ]
+      },
+      {
+        "text": "Lapin",
+        "pts": 7,
+        "aliases": [
+          "lapin"
+        ]
+      },
+      {
+        "text": "Perroquet",
+        "pts": 3,
+        "aliases": [
+          "perroquet",
+          "oiseau"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un moyen de se divertir à la maison.",
+    "answers": [
+      {
+        "text": "Télévision",
+        "pts": 30,
+        "aliases": [
+          "télévision",
+          "tele",
+          "tv",
+          "television"
+        ]
+      },
+      {
+        "text": "Jeux vidéo",
+        "pts": 25,
+        "aliases": [
+          "jeux video",
+          "jeux vidéo",
+          "console",
+          "gaming"
+        ]
+      },
+      {
+        "text": "Lecture",
+        "pts": 20,
+        "aliases": [
+          "lecture",
+          "livre",
+          "lire"
+        ]
+      },
+      {
+        "text": "Musique",
+        "pts": 15,
+        "aliases": [
+          "musique",
+          "ecouter de la musique"
+        ]
+      },
+      {
+        "text": "Cinéma à la maison",
+        "pts": 7,
+        "aliases": [
+          "cinema",
+          "film",
+          "netflix"
+        ]
+      },
+      {
+        "text": "Bricolage",
+        "pts": 3,
+        "aliases": [
+          "bricolage",
+          "diy"
+        ]
+      }
+    ]
+  },
+  {
+    "q": "Citez un grand fleuve ou cours d'eau.",
+    "answers": [
+      {
+        "text": "Le Niger",
+        "pts": 30,
+        "aliases": [
+          "niger",
+          "fleuve niger"
+        ]
+      },
+      {
+        "text": "La Seine",
+        "pts": 20,
+        "aliases": [
+          "seine",
+          "la seine"
+        ]
+      },
+      {
+        "text": "Le Nil",
+        "pts": 18,
+        "aliases": [
+          "nil",
+          "le nil"
+        ]
+      },
+      {
+        "text": "L'Amazone",
+        "pts": 15,
+        "aliases": [
+          "amazone",
+          "amazon"
+        ]
+      },
+      {
+        "text": "Le Mékong",
+        "pts": 10,
+        "aliases": [
+          "mekong",
+          "le mekong"
+        ]
+      },
+      {
+        "text": "Le Danube",
+        "pts": 7,
+        "aliases": [
+          "danube",
+          "le danube"
+        ]
+      }
+    ]
+  }
+]

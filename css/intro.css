@@ -1,0 +1,119 @@
+/* =====================================================================
+   css/intro.css — intro animée CREATOR (remplace le loader statique)
+   < 30 Ko, pas de Three.js, transform/opacity uniquement.
+   ===================================================================== */
+#intro {
+  position: fixed; inset: 0; z-index: 600;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 28%, #142a6b 0%, #081033 55%, #050b26 100%);
+  transition: opacity 0.5s ease;
+  overflow: hidden;
+}
+#intro.done { opacity: 0; pointer-events: none; }
+#intro.hidden { display: none !important; }
+
+/* fond + lueur */
+.intro-bg {
+  position: absolute; inset: -20%;
+  background: radial-gradient(circle at 50% 40%, rgba(46,133,255,0.18) 0%, transparent 55%);
+  animation: introGlow 5s ease-in-out infinite;
+}
+@keyframes introGlow { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.06)} }
+
+/* mot CREATOR */
+.intro-word {
+  position: relative; z-index: 10;
+  display: flex; gap: 0.14em; justify-content: center; align-items: center;
+  letter-spacing: 0.02em;
+}
+.letter {
+  font-family: var(--font-display), 'Famous College', serif;
+  font-size: clamp(3rem, 14vw, 6.5rem);
+  color: #fff;
+  line-height: 1;
+  transform-origin: bottom center;
+  opacity: 0;
+  filter: drop-shadow(0 6px 20px rgba(0,0,0,0.7));
+}
+.letter.on { opacity: 1; }
+.dot {
+  font-family: var(--font-display), 'Famous College', serif;
+  font-size: clamp(1.6rem, 7vw, 3.2rem);
+  color: #00E472;
+  opacity: 0;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 4px 16px rgba(0,228,114,0.6));
+}
+.dot.on { opacity: 1; }
+
+/* apparitions lettres : fondu + petit rebond */
+@keyframes letterIn {
+  0% { opacity: 0; transform: translateY(18px) scale(0.92); }
+  70% { transform: translateY(0) scale(1.04); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.letter.appear { animation: letterIn 0.55s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
+
+/* écrasement T */
+.letter.crush {
+  animation: crushT 0.4s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+}
+@keyframes crushT {
+  0% { transform: scaleY(1) scaleX(1); }
+  60% { transform: scaleY(0.34) scaleX(1.3); }
+  80% { transform: scaleY(0.42) scaleX(1.22); }
+  100% { transform: scaleY(0.36) scaleX(1.26); }
+}
+
+/* lampe */
+.intro-lamp {
+  position: absolute; z-index: 20;
+  width: clamp(120px, 26vw, 260px); height: auto;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 12px 24px rgba(0,0,0,0.55));
+  pointer-events: none;
+}
+.lamp-base, .lamp-arm, .lamp-head, .lamp-bulb { transform-origin: bottom center; }
+
+/* faisceau */
+.intro-beam {
+  position: absolute; z-index: 5; pointer-events: none;
+  width: 170px; height: 120px; border-radius: 50% 50% 0 0;
+  background: radial-gradient(circle at 50% 100%, rgba(255,207,90,0.35) 0%, rgba(255,207,90,0) 60%);
+  opacity: 0; filter: blur(4px);
+}
+
+/* bouton passer */
+.intro-skip {
+  position: absolute; bottom: clamp(14px, 4vh, 28px); right: clamp(14px, 4vw, 28px);
+  z-index: 40; background: rgba(255,255,255,0.12); color: #fff;
+  border: 1px solid rgba(255,255,255,0.35); border-radius: 99px;
+  padding: 0.5rem 1rem; font-size: 0.82rem; cursor: pointer;
+  backdrop-filter: blur(6px); opacity: 0; transition: opacity .3s, background .2s;
+}
+.intro-skip.show { opacity: 1; }
+.intro-skip:focus-visible { outline: 2px solid #00E472; outline-offset: 2px; }
+.intro-skip:hover { background: rgba(255,255,255,0.25); }
+
+/* message chargement */
+.intro-loading {
+  position: absolute; bottom: clamp(70px, 14vh, 130px); left: 50%; transform: translateX(-50%);
+  z-index: 35; color: rgba(255,255,255,0.55); font-size: 0.85rem; letter-spacing: 0.14em;
+  text-transform: uppercase; opacity: 0; transition: opacity .4s;
+}
+.intro-loading.show { opacity: 1; }
+
+/* réduit le mouvement */
+@media (prefers-reduced-motion: reduce) {
+  .intro { transition: none; }
+  .letter { animation: none !important; opacity: 1; transform: none; }
+  .dot { opacity: 1; transform: none; }
+  .intro-lamp { animation: none !important; transform: none; }
+  .intro-beam { opacity: 0.35; animation: none; }
+  .intro-skip { opacity: 1; }
+  .intro-loading { opacity: 1; }
+  .intro.done, .intro.skip { opacity: 0; pointer-events: none; }
+}
+
+/* state après intro */
+#intro.fade-out { opacity: 0; pointer-events: none; transition: opacity 0.45s ease; }

@@ -1,24 +1,24 @@
 {
-  "name": "creator-quiz-wanaka",
-  "version": "1.0.0",
-  "description": "CREATOR Guess Their Answer — Quiz multijoueur temps réel avec Wanaka Studio Engine (Epitech Bénin)",
+  "name": "creator-quiz",
+  "version": "2.0.0",
+  "description": "CREATOR Guess Their Answer — quiz multijoueur 3D temps réel (Epitech Bénin). Serveur autoritaire Node + WebSocket.",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:e2e": "playwright test"
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "test": "node tests/game.test.js && node tests/code.test.js",
+    "test:e2e": "node tests/e2e.test.js",
+    "test:visual": "node tests/visual.js",
+    "test:code": "node tests/code.test.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
-    "three": "^0.160.1"
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@types/three": "^0.187.0",
-    "@vitejs/plugin-vue": "^5.0.0",
-    "typescript": "^5.9.3",
-    "vite": "^5.4.21",
-    "vitest": "^1.6.1"
+    "playwright": "^1.65.1"
   }
 }

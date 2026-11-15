@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kitchen Sink — Composants UI CREATOR</title>
+<link rel="stylesheet" href="../css/tokens.css" />
+<link rel="stylesheet" href="../css/base.css" />
+<link rel="stylesheet" href="../css/components.css" />
+<link rel="stylesheet" href="../css/screens.css" />
+<style>
+  body { padding: var(--space-4); max-width: var(--max-w); margin: 0 auto; }
+  .section { margin-bottom: var(--space-8); }
+  .section h3 { font-size: var(--text-xl); margin-bottom: var(--space-4); border-bottom: 2px solid var(--gris-clair); padding-bottom: var(--space-2); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-4); }
+  .card { background: var(--blanc); border: 1px solid var(--gris-clair); border-radius: var(--r-lg); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+  .badge-row { display: flex; gap: var(--space-2); margin-bottom: var(--space-2); }
+  .gauge-row { margin-bottom: var(--space-4); }
+  .toast-demo { margin-bottom: var(--space-2); }
+</style>
+</head>
+<body>
+
+<h1>Kitchen Sink — Composants UI</h1>
+<p>Tous les composants du système de design CREATOR, rendus pour validation visuelle.</p>
+
+<!-- Boutons -->
+<section class="section">
+  <h3>Boutons</h3>
+  <div class="grid">
+    <div class="card">
+      <button class="btn btn--primary">Primaire</button>
+      <button class="btn btn--primary" disabled>Primaire (désactivé)</button>
+    </div>
+    <div class="card">
+      <button class="btn btn--secondary">Secondaire</button>
+      <button class="btn btn--ghost">Fantôme</button>
+    </div>
+    <div class="card">
+      <button class="btn btn--danger">Danger</button>
+      <button class="btn btn--icon">⚙</button>
+    </div>
+    <div class="card">
+      <button class="btn btn--img"><img src="../assets/ui/btn-resume.webp" alt="Reprendre" style="width:48px;height:auto;" /></button>
+    </div>
+  </div>
+</section>
+
+<!-- Badges -->
+<section class="section">
+  <h3>Badges</h3>
+  <div class="badge-row">
+    <span class="badge badge--bleu">Bleu</span>
+    <span class="badge badge--vert">Vert</span>
+    <span class="badge badge--orange">Orange</span>
+    <span class="badge badge--nuit">Nuit</span>
+  </div>
+</section>
+
+<!-- Jauge -->
+<section class="section">
+  <h3>Jauge de score</h3>
+  <div class="gauge-row">
+    <div class="gauge"><div class="gauge__fill" style="width:65%"></div></div>
+    <div class="gauge__labels"><span>Bleu 65%</span><span>Vert 35%</span></div>
+  </div>
+</section>
+
+<!-- Champs -->
+<section class="section">
+  <h3>Champs de saisie</h3>
+  <div class="grid">
+    <div class="card">
+      <div class="field">
+        <label class="field__label">Pseudo</label>
+        <input class="field__input" placeholder="Entrez votre pseudo" />
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field__label">Code salle</label>
+        <input class="field__input field__input--code" placeholder="ABCDE" maxlength="5" />
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field__label">Durée</label>
+        <select class="field__input">
+          <option>30 s</option>
+          <option>45 s</option>
+          <option>60 s</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Touches clavier -->
+<section class="section">
+  <h3>Touches clavier AZERTY</h3>
+  <div class="kb" style="margin:var(--space-4) 0;">
+    <div class="kb-row">
+      <button class="key">a</button><button class="key">z</button><button class="key">e</button><button class="key">r</button>
+      <button class="key">t</button><button class="key">y</button><button class="key">u</button><button class="key">i</button>
+    </div>
+    <div class="kb-row">
+      <button class="key">q</button><button class="key">s</button><button class="key">d</button><button class="key">f</button>
+      <button class="key">g</button><button class="key">h</button><button class="key">j</button><button class="key">k</button>
+    </div>
+    <div class="kb-row">
+      <button class="key key--wide">espace</button><button class="key key--go">GO</button><button class="key">⌫</button>
+    </div>
+  </div>
+</section>
+
+<!-- Toasts -->
+<section class="section">
+  <h3>Toasts</h3>
+  <div id="toastContainer" style="position:fixed; top:var(--space-4); right:var(--space-4); z-index:var(--z-toast); pointer-events:none;"></div>
+  <div class="toast-demo">
+    <button class="btn btn--primary" onclick="showToast('success', 'Trouvé ! +10 pts')">Succès</button>
+    <button class="btn btn--danger" onclick="showToast('error', 'Déjà trouvée !')">Erreur</button>
+    <button class="btn btn--info" onclick="showToast('info', 'Nouveau joueur connecté')">Info</button>
+    <button class="btn btn--warning" onclick="showToast('warning', 'Attention : temps écoulé')">Warning</button>
+  </div>
+  <script>
+    function showToast(type, msg) {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'toast toast--' + type;
+      t.textContent = msg;
+      c.appendChild(t);
+      requestAnimationFrame(() => t.classList.add('toast--show'));
+      setTimeout(() => { t.classList.remove('toast--show'); setTimeout(() => t.remove(), 300); }, 3000);
+    }
+  </script>
+</section>
+
+<!-- Réactions -->
+<section class="section">
+  <h3>Réactions</h3>
+  <div style="display:flex; gap:var(--space-4); justify-content:center;">
+    <div class="reaction show reaction-ok" style="position:static; transform:none; display:block; margin:var(--space-4);">
+      <div class="rbig">Trouvé !</div>
+      <div class="rsub">+10 pts · Réponse correcte</div>
+    </div>
+    <div class="reaction show reaction-bad" style="position:static; transform:none; display:block; margin:var(--space-4);">
+      <div class="rbig">Raté</div>
+      <div class="rsub">Réessaie !</div>
+    </div>
+    <div class="reaction show reaction-dup" style="position:static; transform:none; display:block; margin:var(--space-4);">
+      <div class="rbig">Déjà trouvé</div>
+      <div class="rsub">Cette réponse existe déjà</div>
+    </div>
+  </div>
+</section>
+
+<!-- Sweat colors -->
+<section class="section">
+  <h3>Couleurs de sweat</h3>
+  <div class="sweat-grid" style="justify-content:center;">
+    <div class="sweat-option sweat-bleu sweat-option--selected"></div>
+    <div class="sweat-option sweat-vert"></div>
+    <div class="sweat-option sweat-orange"></div>
+    <div class="sweat-option sweat-bleu2"></div>
+  </div>
+</section>
+
+<!-- Board cases -->
+<section class="section">
+  <h3>Cases du plateau</h3>
+  <div id="board" style="display:grid; grid-template-columns: repeat(6, 1fr); gap:var(--space-3); margin:var(--space-4) 0;"></div>
+  <script>
+    const board = document.getElementById('board');
+    for (let i = 0; i < 12; i++) {
+      const d = document.createElement('div');
+      d.className = 'board-case ' + (i < 4 ? 'board-case--done' : i < 8 ? 'board-case--miss' : '');
+      d.dataset.i = i;
+      d.innerHTML = `
+        <span class="board-case__idx">${i + 1}</span>
+        <span class="board-case__txt">${i < 4 ? 'Réponse ' + (i+1) : '?????'}</span>
+        <span class="board-case__pts">${i < 4 ? '+' + (100 - i*10) : ''}</span>
+      `;
+      board.appendChild(d);
+    }
+  </script>
+</section>
+
+</body>
+</html>
