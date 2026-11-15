@@ -39,8 +39,22 @@
     answerFocusKey: '',
     xTimer: null,
     netWarned: false,
+    lobbyCollapsed: false,
     avatarSvgCache: new Map(),
   };
+
+  if (!global.Scene3D) {
+    global.Scene3D = {
+      ready: false,
+      init: () => false,
+      setRound: () => {},
+      setPlayers: () => {},
+      react: () => {},
+      crowdReact: () => {},
+      celebrate: () => {},
+      reset: () => {},
+    };
+  }
 
   /* ---------------- stockage ---------------- */
   function loadJSON(key) {
@@ -99,6 +113,64 @@
     return App.role === 'host' ? '#hostToasts' : '#phoneToasts';
   }
 
+  /* ---------------- panneau d'invitation rétractable ---------------- */
+  function setLobbyCollapsed(collapsed) {
+    App.lobbyCollapsed = !!collapsed;
+    const view = $('#hostView');
+    const panel = $('#hostLobby');
+    const openBtn = $('#btnLobbyOpen');
+    const closeBtn = $('#btnLobbyCollapse');
+    if (view) view.classList.toggle('lobby-collapsed', App.lobbyCollapsed);
+    if (panel) {
+      panel.setAttribute('aria-hidden', App.lobbyCollapsed ? 'true' : 'false');
+      try { panel.inert = App.lobbyCollapsed; } catch (e) {}
+    }
+    if (closeBtn) closeBtn.setAttribute('aria-expanded', App.lobbyCollapsed ? 'false' : 'true');
+    if (openBtn) openBtn.setAttribute('aria-expanded', App.lobbyCollapsed ? 'false' : 'true');
+    syncLobbyReopen(!!(App.state && App.state.phase === 'lobby'));
+  }
+
+  function closeHostRoom() {
+    if (!global.confirm('Fermer la salle et déconnecter tous les joueurs ?')) return;
+    Net.send('host:close');
+    clearKey(LS.host);
+    App.hostSession = null;
+    resetToHome('Salle fermée.', 'warn');
+  }
+
+  function syncLobbyReopen(inLobby) {
+    const openBtn = $('#btnLobbyOpen');
+    const collapsed = App.lobbyCollapsed && inLobby;
+    toggle(openBtn, collapsed);
+    if (openBtn && inLobby) openBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if ($('#lobbyReopenCode')) $('#lobbyReopenCode').textContent = App.code || '-----';
+  }
+
+  async function copyJoinLink() {
+    const link = joinUrl();
+    let ok = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(link);
+        ok = true;
+      }
+    } catch (e) { ok = false; }
+    if (!ok) {
+      try {
+        const area = document.createElement('textarea');
+        area.value = link;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        ok = document.execCommand('copy');
+        document.body.removeChild(area);
+      } catch (e) { ok = false; }
+    }
+    toast('#hostToasts', ok ? 'Lien copié !' : link, ok ? 'gold' : null, ok ? 2200 : 6000);
+  }
+
   /* ---------------- code / QR ---------------- */
   function joinUrl() {
     const base = Net.publicUrl || location.origin;
@@ -109,6 +181,7 @@
     const code = App.code || '-----';
     if ($('#hostCode')) $('#hostCode').textContent = code;
     if ($('#lobbyCode')) $('#lobbyCode').textContent = code;
+    if ($('#lobbyReopenCode')) $('#lobbyReopenCode').textContent = code;
     if ($('#qrCode')) $('#qrCode').textContent = code;
     if ($('#pLobbyCode')) $('#pLobbyCode').textContent = code;
     if ($('#phoneRoom')) $('#phoneRoom').textContent = App.code ? 'SALLE ' + App.code : '';
@@ -428,12 +501,22 @@
       Net.send('host:pause', { paused: !App.state.paused });
     });
     on($('#btnHostPlus15'), 'click', () => Net.send('host:addtime', { seconds: 15 }));
-    on($('#btnHostClose'), 'click', () => {
-      if (!global.confirm('Fermer la salle et déconnecter tous les joueurs ?')) return;
-      Net.send('host:close');
-      clearKey(LS.host);
-      App.hostSession = null;
-      resetToHome('Salle fermée.', 'warn');
+    on($('#btnHostClose'), 'click', closeHostRoom);
+    on($('#btnLobbyClose'), 'click', closeHostRoom);
+    on($('#btnLobbyCollapse'), 'click', () => {
+      setLobbyCollapsed(true);
+      if ($('#btnLobbyOpen')) $('#btnLobbyOpen').focus();
+    });
+    on($('#btnLobbyOpen'), 'click', () => {
+      setLobbyCollapsed(false);
+      if ($('#btnLobbyCollapse')) $('#btnLobbyCollapse').focus();
+    });
+    on($('#btnCopyLink'), 'click', copyJoinLink);
+    on(document, 'keydown', (e) => {
+      if (e.key === 'Escape' && App.state && App.state.phase === 'lobby' && !App.lobbyCollapsed) {
+        setLobbyCollapsed(true);
+        if ($('#btnLobbyOpen')) $('#btnLobbyOpen').focus();
+      }
     });
     on($('#btnLeaderboard'), 'click', () => { openModal('#hostLeaderboard'); loadLeaderboard('#hostLbList', '#hostLbHint'); });
     on($('#btnHostLbBack'), 'click', () => closeModal('#hostLeaderboard'));
@@ -854,7 +937,12 @@
     const inLobby = s.phase === 'lobby';
     const isEnd = s.phase === 'end';
 
+    if (inLobby && phaseChanged) App.lobbyCollapsed = false;
+    const hostView = $('#hostView');
+    if (hostView) hostView.classList.toggle('is-lobby', inLobby && !isEnd);
+
     toggle($('#hostLobby'), inLobby && !isEnd);
+    syncLobbyReopen(inLobby && !isEnd);
     toggle($('#hostEnd'), isEnd);
     toggle($('#hostPaused'), !!s.paused);
     if ($('#btnHostPause')) $('#btnHostPause').textContent = s.paused ? 'Reprendre' : 'Pause';
@@ -1012,6 +1100,8 @@
       ).join('');
     }
     if ($('#btnStart')) $('#btnStart').disabled = !(s.players && s.players.length);
+    if ($('#lobbyReopenCode')) $('#lobbyReopenCode').textContent = s.code || App.code || '-----';
+    setLobbyCollapsed(App.lobbyCollapsed);
     const dur = $('#selDuration');
     const maxp = $('#selMaxPlayers');
     if (dur && document.activeElement !== dur) dur.value = String(s.settings.duration);

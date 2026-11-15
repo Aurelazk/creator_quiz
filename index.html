@@ -6,6 +6,7 @@
 <title>CREATOR — Guess Their Answer · Epitech Bénin</title>
 <meta name="description" content="Guess Their Answer multijoueur en temps réel — CREATOR, Epitech Bénin. Écran animateur 3D, joueurs sur téléphone." />
 <meta name="theme-color" content="#0C1A4B" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B35FE'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='38' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <link rel="preload" href="assets/fonts/famous-college.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="preload" href="assets/fonts/janda-manatee-solid.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="preload" href="assets/fonts/granika.otf" as="font" type="font/otf" crossorigin />
@@ -151,20 +152,27 @@
     <div class="big-x hidden" id="bigX" aria-hidden="true">✕</div>
 
     <!-- Lobby animateur -->
-    <div class="modal hidden" id="hostLobby">
+    <div class="modal hidden" id="hostLobby" role="region" aria-label="Invitation et joueurs de la salle">
       <div class="modal-card lobby-card">
         <div class="lobby-head">
           <div>
             <div class="eyebrow">Salle ouverte</div>
             <h2>Rejoins la partie</h2>
+            <p class="lobby-sub">Partage le code ou fais scanner le QR code.</p>
           </div>
-          <div class="code-big" id="lobbyCode">-----</div>
+          <div class="lobby-head-right">
+            <div class="code-big" id="lobbyCode">-----</div>
+            <button type="button" class="btn btn--ghost btn--sm lobby-collapse" id="btnLobbyCollapse" aria-controls="hostLobby" aria-label="Masquer le panneau d'invitation" aria-expanded="true" title="Masquer le panneau (Échap)">Masquer</button>
+          </div>
         </div>
         <div class="lobby-qr">
           <img id="qrImg" alt="QR code pour rejoindre la salle" />
           <div class="lobby-join">
             <p>Scanne le QR code ou saisis le code sur ton téléphone.</p>
-            <div class="join-url" id="joinUrl">…</div>
+            <div class="join-url-row">
+              <div class="join-url" id="joinUrl">…</div>
+              <button type="button" class="btn btn--ghost btn--sm" id="btnCopyLink">Copier</button>
+            </div>
           </div>
         </div>
         <div class="lobby-players" id="lobbyPlayers"></div>
@@ -191,9 +199,19 @@
             </select>
           </label>
         </div>
-        <button class="btn btn--primary btn--xl w-full" id="btnStart">Lancer la partie</button>
+        <div class="lobby-actions">
+          <button class="btn btn--primary btn--xl w-full" id="btnStart">Lancer la partie</button>
+          <button class="btn btn--ghost btn--sm" id="btnLobbyClose">Fermer la salle</button>
+        </div>
       </div>
     </div>
+
+    <button type="button" class="lobby-reopen hidden" id="btnLobbyOpen" aria-controls="hostLobby" aria-expanded="false" aria-label="Afficher le panneau d'invitation" title="Afficher le panneau d'invitation">
+      <span class="lobby-reopen-dot" aria-hidden="true"></span>
+      <span>Invitation</span>
+      <b id="lobbyReopenCode">-----</b>
+      <span class="lobby-reopen-arrow" aria-hidden="true">▸</span>
+    </button>
 
     <!-- Fin de partie animateur -->
     <div class="modal hidden" id="hostEnd">
