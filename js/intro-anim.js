@@ -232,6 +232,9 @@
       const app = document.getElementById('app');
       if (app) app.style.visibility = '';
       if (global.UI && typeof global.UI.hideLoader === 'function') global.UI.hideLoader();
+      if (typeof window !== 'undefined' && window.dispatchEvent) {
+        window.dispatchEvent(new Event('intro:done'));
+      }
     }, 450);
   }
 

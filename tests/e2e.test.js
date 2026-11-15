@@ -47,7 +47,7 @@ function request(method, pathname) {
 }
 
 function client(tag) {
-  const ws = new WebSocket(WS_URL);
+  const ws = new WebSocket(WS_URL, { headers: { origin: 'http://127.0.0.1:' + PORT } });
   ws.tag = tag;
   ws.inbox = [];
   ws.errors = [];

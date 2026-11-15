@@ -86,8 +86,11 @@
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', alpha: false });
     renderer.setPixelRatio(Math.min(global.devicePixelRatio || 1, 1.6));
     renderer.setSize(global.innerWidth, global.innerHeight, false);
-    if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.shadowMap.enabled = false;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     S.renderer = renderer;
 
     const scene = new THREE.Scene();
@@ -100,24 +103,36 @@
     camera.lookAt(0, 2.8, 0.6);
     S.camera = camera;
 
-    const hemi = new THREE.HemisphereLight(0xdce8ff, 0x101c44, 0.9);
+    const hemi = new THREE.HemisphereLight(0xdce8ff, 0x101c44, 0.75);
     scene.add(hemi);
 
-    const key = new THREE.DirectionalLight(0xffffff, 1.15);
+    const key = new THREE.DirectionalLight(0xffffff, 1.05);
     key.position.set(-7, 12, 9);
+    key.castShadow = true;
+    key.shadow.mapSize.width = 1024;
+    key.shadow.mapSize.height = 1024;
+    key.shadow.camera.near = 0.5;
+    key.shadow.camera.far = 40;
+    key.shadow.bias = -0.0005;
     scene.add(key);
 
-    const rim = new THREE.DirectionalLight('#2E85FF', 0.85);
+    /* fill lumiere froide opposee, adoucit les ombres */
+    const fill = new THREE.DirectionalLight(0x2e85ff, 0.35);
+    fill.position.set(6, 4, -8);
+    scene.add(fill);
+
+    const rim = new THREE.DirectionalLight('#2E85FF', 0.6);
     rim.position.set(7, 6, -8);
     scene.add(rim);
 
-    const warm = new THREE.PointLight('#FF7A00', 0.6, 32);
+    const warm = new THREE.PointLight('#FF7A00', 0.5, 32);
     warm.position.set(6, 4, 5);
     scene.add(warm);
 
-    const spot = new THREE.SpotLight(0xffffff, 2.2, 34, 0.6, 0.55, 1);
+    const spot = new THREE.SpotLight(0xffffff, 1.8, 34, 0.6, 0.55, 1);
     spot.position.set(0, 13, 7);
     spot.target.position.set(0, 1, 1);
+    spot.castShadow = true;
     scene.add(spot, spot.target);
     S.spot = spot;
 
@@ -516,6 +531,9 @@
       baseY: 0, config, configKey: JSON.stringify(config || {}), low,
     };
     root.userData.character = ch;
+    if (o.shadows) {
+      root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    }
     return ch;
   }
 
@@ -602,12 +620,15 @@
 
   function setPlayers(list, controllerId, stealerId) {
     if (!S.ready) return;
+    const now = performance.now();
     const seen = new Set();
     (list || []).forEach((p) => {
       seen.add(p.id);
       let ch = S.players.get(p.id);
       if (!ch) {
-        ch = createCharacter(p.avatar, { id: p.id, name: p.name });
+        ch = createCharacter(p.avatar, { id: p.id, name: p.name, shadows: true });
+        ch.justCreated = true;
+        ch.animEnterTime = now;
         S.players.set(p.id, ch);
         S.scene.add(ch.root);
       } else {
@@ -615,7 +636,9 @@
         if (ch.configKey !== JSON.stringify(p.avatar)) {
           S.scene.remove(ch.root);
           disposeCharacter(ch);
-          ch = createCharacter(p.avatar, { id: p.id, name: p.name });
+          ch = createCharacter(p.avatar, { id: p.id, name: p.name, shadows: true });
+          ch.justCreated = true;
+          ch.animEnterTime = now;
           ch.configKey = JSON.stringify(p.avatar);
           S.players.set(p.id, ch);
           S.scene.add(ch.root);
@@ -633,6 +656,15 @@
       }
     }
     positionPlayers();
+    /* animation d'arrivée : les nouveaux personnages descendent du haut avec rebond */
+    for (const ch of S.players.values()) {
+      if (ch.justCreated) {
+        ch.justCreated = false;
+        ch.anim = 'entering';
+        ch.animUntil = now + 800;
+        ch.animStartTime = now;
+      }
+    }
   }
 
   function disposeCharacter(ch) {
@@ -821,6 +853,21 @@
       armLTarget = 0.25;
       headZ = -0.06;
       jump = Math.abs(Math.sin(t * 9)) * 0.04;
+    } else if (anim === 'entering') {
+      const elapsed = now - (ch.animStartTime || now);
+      const k = Math.min(1, elapsed / 800);
+      const bounce = 1 - Math.pow(1 - k, 3);
+      const extraY = (1 - bounce) * 2.2;
+      const sq = k < 0.5 ? 1 + 0.18 * Math.sin(Math.PI * k) : 1 - 0.12 * Math.sin(Math.PI * k);
+      const sx = k < 0.5 ? 1 - 0.14 * Math.sin(Math.PI * k) : 1 + 0.1 * Math.sin(Math.PI * k);
+      ch.root.position.y = (ch.baseY || 0) + extraY;
+      ch.root.scale.set(sx, sq, 1);
+      armLTarget = 0;
+      armRTarget = 0;
+      headX = 0;
+      headZ = 0;
+      bodyZ = 0;
+      jump = 0;
     } else {
       armLTarget = 0.06 + Math.sin(t * 1.9 + phase) * 0.05;
       armRTarget = -0.06 - Math.sin(t * 1.9 + phase + 0.7) * 0.05;

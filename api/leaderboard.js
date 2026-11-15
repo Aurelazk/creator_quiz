@@ -117,6 +117,14 @@ module.exports = async (req, res) => {
   }
 
   if (req.method === 'POST') {
+    /* Ecriture verrouillee : uniquement avec un jeton serveur signe.
+       Le serveur Node connait LEADERBOARD_WRITE_TOKEN et l'envoie;
+       les appels anonymes publiques sont refuses. */
+    const expectedToken = process.env.LEADERBOARD_WRITE_TOKEN;
+    if (expectedToken && req.headers['x-leaderboard-token'] !== expectedToken) {
+      res.statusCode = 401;
+      return res.end(JSON.stringify({ error: 'non autorise' }));
+    }
     const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim() || 'unknown';
     if (rateLimited(ip)) {
       res.statusCode = 429;

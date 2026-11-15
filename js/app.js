@@ -212,11 +212,25 @@
       loadDemo().then(() => {
         window.Net = global.DemoNet;
         bindNet();
-        App.role = 'host';
         App.code = 'DEMO1';
         saveJSON(LS.role, 'host');
-        enterHost();
-        DemoSim.startDemo();
+        /* D-4 : vue joueur sur mobile, animateur sur desktop */
+        const isMobile = window.matchMedia ? window.matchMedia('(max-width: 768px)').matches : false;
+        App.role = isMobile ? 'player' : 'host';
+        if (App.role === 'host') {
+          enterHost();
+        } else {
+          showPlayerScreen('pLobby', true);
+          if ($('#codeIn')) $('#codeIn').value = 'DEMO1';
+          if ($('#pRoomChip')) $('#pRoomChip').textContent = 'Salle DEMO1';
+        }
+        /* D-3 : attendre la fin de l'intro avant de lancer l'acte 1 */
+        const runDemo = () => { DemoSim.startDemo(); };
+        if (global.IntroAnim && !global.IntroAnim.isFinished()) {
+          window.addEventListener('intro:done', runDemo, { once: true });
+        } else {
+          runDemo();
+        }
         showDemoBanner();
       });
       return;
@@ -534,7 +548,7 @@
     if (hint) hint.textContent = 'Chargement…';
     try {
       await Net.loadConfig();
-      const res = await fetch(Net.apiBase() + '/api/leaderboard', { cache: 'no-store' });
+      const res = await fetch('/api/leaderboard', { cache: 'no-store' });
       const data = await res.json();
       const rows = (data.scores || []).map((e, i) => ({
         rank: i + 1,

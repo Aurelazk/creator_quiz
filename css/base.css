@@ -40,7 +40,7 @@ a { color: var(--bleu2); }
 
 .hidden { display: none !important; }
 .w-full { width: 100%; }
-.hint { color: rgba(244, 246, 252, 0.55); font-size: 0.85rem; line-height: 1.45; }
+.hint { color: rgba(244, 246, 252, 0.72); font-size: 0.85rem; line-height: 1.45; }
 .eyebrow {
   font-family: var(--font-display);
   letter-spacing: 0.18em;

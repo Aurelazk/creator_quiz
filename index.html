@@ -122,12 +122,12 @@
 
     <div class="board" id="board" aria-live="polite"></div>
 
-    <div class="host-strikes" id="hostStrikes" aria-label="Erreurs"></div>
+    <div class="host-strikes" id="hostStrikes" aria-label="Erreurs" aria-live="polite"></div>
 
     <div class="host-lower">
-      <div class="host-scoreboard" id="hostScoreboard"></div>
+      <div class="host-scoreboard" id="hostScoreboard" aria-live="polite"></div>
 
-      <div class="host-timer" id="hostTimerWrap">
+      <div class="host-timer" id="hostTimerWrap" aria-live="polite">
         <img src="assets/ui/hourglass.webp" alt="" class="host-hourglass" />
         <span class="host-timer-val" id="hostTimer">--</span>
         <span class="host-timer-label">secondes</span>
@@ -346,16 +346,16 @@
       <section class="screen hidden" id="pGame">
         <div class="game-top">
           <div class="game-round" id="pQnum">MANCHE 1 / 10</div>
-          <div class="game-timer" id="pTimerWrap">
+          <div class="game-timer" id="pTimerWrap" aria-live="polite">
             <img src="assets/ui/hourglass.webp" alt="" />
             <span id="pTimer">--</span>
           </div>
-          <div class="game-score"><span id="pScore">0</span> pts</div>
+          <div class="game-score" aria-live="polite"><span id="pScore">0</span> pts</div>
         </div>
 
         <div class="game-question" id="pQuestion">…</div>
 
-        <div class="game-strikes" id="pStrikes"></div>
+        <div class="game-strikes" id="pStrikes" aria-live="polite"></div>
 
         <div class="game-status" id="pStatus">En attente…</div>
 
@@ -416,6 +416,7 @@
 <script src="js/net.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/intro-anim.js"></script>
+<script src="shared/rules.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

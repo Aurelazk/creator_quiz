@@ -15,6 +15,7 @@ const crypto = require('crypto');
 const { WebSocketServer, WebSocket } = require('ws');
 const QRCode = require('qrcode');
 const G = require('./game');
+const upstash = require('../shared/upstash');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(__dirname, 'data');
@@ -28,7 +29,7 @@ const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const CODE_LENGTH = 5;
 const CODE_MAX_TRIES = 50;
 // Origines WebSocket autorisées (production : domaine du site). '*' = tout accepter (dév uniquement).
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
 // Limite de tentatives de jonction par IP (≈12 par minute).
 const JOIN_MAX = 12;
 const JOIN_WINDOW_MS = 60 * 1000;
@@ -130,6 +131,17 @@ function scheduleLeaderboardWrite() {
 
 function recordScores(players) {
   const now = Date.now();
+  const useUpstash = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+  if (useUpstash) {
+    /* Seul le serveur (légitime, vient de calculer les scores) écrit dans Upstash. */
+    for (const p of players) {
+      if (!p.score || p.score <= 0) continue;
+      const name = String(p.name || 'Joueur').slice(0, 16);
+      upstash.upsertScore(name, p.score).catch((e) => console.warn('Upstash upsertScore :', e.message));
+    }
+    return;
+  }
+  /* Fallback fichier JSON si Upstash non configure. */
   for (const p of players) {
     if (!p.score || p.score <= 0) continue;
     const name = String(p.name || 'Joueur').slice(0, 16);
@@ -833,9 +845,15 @@ function createWebSocketServer(server, paths) {
     let pathname = '/';
     try { pathname = new URL(req.url, 'http://localhost').pathname; } catch (e) {}
     if (!allowed.includes(pathname)) { socket.destroy(); return; }
-    if (ALLOWED_ORIGIN !== '*') {
-      const origin = req.headers.origin || '';
+    const origin = req.headers.origin || '';
+    const isSameOrigin = origin === (req.socket.encrypted ? 'https:' : 'http:') + '//' + req.headers.host;
+    if (ALLOWED_ORIGIN === '*') {
+      /* accepte tout (dev uniquement, a definir explicitement) */
+    } else if (ALLOWED_ORIGIN) {
       if (origin !== ALLOWED_ORIGIN) { socket.destroy(); return; }
+    } else {
+      /* vide : same-origin uniquement */
+      if (!isSameOrigin) { socket.destroy(); return; }
     }
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req));
   });
@@ -1180,6 +1198,14 @@ async function handleHttp(req, res) {
 
   if (pathname === '/api/leaderboard') {
     if (req.method === 'GET') {
+      if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+        upstash.getLeaderboard().then((scores) => {
+          sendJson(res, 200, { scores, count: scores.length, configured: true });
+        }).catch((e) => {
+          sendJson(res, 502, { error: 'indisponible', detail: e.message });
+        });
+        return;
+      }
       sendJson(res, 200, { scores: leaderboard.slice(0, 50) });
       return;
     }
@@ -1252,6 +1278,11 @@ function startLocalServer() {
     console.log('  CREATOR · Guess Their Answer');
     console.log('  http://localhost:' + PORT);
     console.log('  Questions : ' + QUESTIONS.length + ' · Salles : ' + rooms.size);
+    if (!ALLOWED_ORIGIN && process.env.NODE_ENV === 'production') {
+      console.log('  AVERTISSEMENT : ALLOWED_ORIGIN non defini — seules les connexions');
+      console.log('  same-origin sont acceptees. Definissez ALLOWED_ORIGIN pour autoriser');
+      console.log('  le frontend (ex. https://<ton-projet>.vercel.app).');
+    }
     console.log('');
   });
   return { server, wss };

@@ -43,14 +43,22 @@ vercel env add GAME_WS_URL production
 # valeur : wss://creator-quiz-game.onrender.com/ws
 vercel env add PUBLIC_URL production   # optionnel : https://<ton-projet>.vercel.app (sert pour le QR)
 vercel env add ALLOWED_ORIGIN production # optionnel : https://<ton-projet>.vercel.app (CORS/WebSocket)
+vercel env add LEADERBOARD_WRITE_TOKEN production # chaine secrete protegeant l'ecriture POST /api/leaderboard
 vercel --prod
 ```
 
 Pour le classement général, installer **Upstash for Redis** depuis le
 Marketplace Vercel sur le projet, puis vérifier que `KV_REST_API_URL` et
-`KV_REST_API_TOKEN` sont présentes (`vercel env ls`). Tant qu'elles manquent,
-`/api/leaderboard` répond `{"scores":[],"configured":false}` et l'interface
-affiche « Classement général indisponible » au lieu d'une erreur.
+`KV_REST_API_TOKEN` sont présentes (`vercel env ls`). Les mêmes variables doivent
+également être définies côté **Render** (serveur de jeu) : le serveur Node ecrit
+directement dans Upstash a la fin de chaque partie (plus de fichier JSON
+ephemere). Tant qu'elles manquent, `/api/leaderboard` repond
+`{"scores":[],"configured":false}` et l'interface affiche « Classement général
+indisponible » au lieu d'une erreur.
+
+L'ecriture POST sur `/api/leaderboard` est verrouillee par le jeton
+`LEADERBOARD_WRITE_TOKEN` (meme valeur cote Render et cote Vercel) : sans jeton
+correct, le serveur renvoie 401. Le GET et OPTIONS restent publics.
 
 ## 3. Vérifications
 

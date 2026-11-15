@@ -81,6 +81,33 @@
       a.colors.shoes === b.colors.shoes;
   }
 
+  /* Génère un avatar visuellement distinct des configs deja prises :
+     couleur dominante (veste) et coiffure differentes si possible. */
+  function distinctFrom(existing) {
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const takenJackets = new Set((existing || []).map((e) => e && e.colors && e.colors.jacket).filter(Boolean));
+    const takenHairs = new Set((existing || []).map((e) => e && e.hair).filter(Boolean));
+    let conf;
+    let guard = 0;
+    do {
+      conf = {
+        silhouette: pick(['masc', 'fem', 'neutral']),
+        hair: pick(['short', 'curly', 'afro', 'braids', 'ponytail', 'bald', 'cap']),
+        outfit: pick(['jacket', 'hoodie', 'dress', 'tee']),
+        accessory: pick(['none', 'none', 'glasses', 'headphones', 'beanie', 'backpack']),
+        colors: {
+          hair: pick(PALETTES.hair),
+          jacket: pick(PALETTES.jacket),
+          shirt: pick(PALETTES.shirt),
+          pants: pick(PALETTES.pants),
+          shoes: pick(PALETTES.shoes),
+        },
+      };
+      guard++;
+    } while ((takenJackets.has(conf.colors.jacket) || takenHairs.has(conf.hair)) && guard < 40);
+    return conf;
+  }
+
   function shade(hex, amount) {
     const m = /^#([0-9a-f]{6})$/i.exec(String(hex || ''));
     if (!m) return hex;
@@ -239,6 +266,6 @@
 
   global.Avatar = {
     PALETTES, LABELS, ICONS, DEFAULTS,
-    clone, random, sameKey, svg, shade,
+    clone, random, sameKey, distinctFrom, svg, shade,
   };
 })(window);
