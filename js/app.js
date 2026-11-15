@@ -512,6 +512,8 @@
     const reuseToken = App.playerSession && App.playerSession.code === code ? App.playerSession.token : '';
     const payload = { code, name, avatar: App.avatar };
     if (reuseToken) payload.token = reuseToken;
+    App.joinPayload = payload;
+    App.joinAttempts = 0;
 
     const send = () => Net.send('player:join', payload);
     if (Net.connected) send();
@@ -634,6 +636,39 @@
   /* ================================================================== */
   function bindNet() {
     let connStart = 0;
+
+    /* Sur Vercel, chaque connexion WebSocket peut atterrir sur une instance
+       différente de celle qui héberge la salle. On retente donc la jonction
+       sur une nouvelle connexion jusqu'à tomber sur la bonne instance. */
+    function retryPlayerJoin() {
+      if (!App.joinPayload) return false;
+      App.joinAttempts = (App.joinAttempts || 0) + 1;
+      if (App.joinAttempts > 8) return false;
+      const payload = App.joinPayload;
+      const delay = Math.min(200 + App.joinAttempts * 200, 1500);
+      setTimeout(() => {
+        if (App.role !== 'player') return;
+        Net.close();
+        App.pending = () => Net.send('player:join', payload);
+        Net.connect();
+      }, delay);
+      return true;
+    }
+
+    function retryHostRejoin() {
+      if (!App.hostSession) return false;
+      App.hostRejoinAttempts = (App.hostRejoinAttempts || 0) + 1;
+      if (App.hostRejoinAttempts > 8) return false;
+      const session = App.hostSession;
+      const delay = Math.min(200 + App.hostRejoinAttempts * 200, 1500);
+      setTimeout(() => {
+        if (App.role !== 'host') return;
+        Net.close();
+        App.pending = () => Net.send('host:rejoin', { code: session.code, hostToken: session.token });
+        Net.connect();
+      }, delay);
+      return true;
+    }
     Net.onStatus = (status) => {
       const hostTxt = $('#hostReconnectTxt');
       const phoneTxt = $('#phoneReconnectTxt');
@@ -694,6 +729,7 @@
     Net.handlers['host:joined'] = (msg) => {
       App.role = 'host';
       App.code = msg.code;
+      App.hostRejoinAttempts = 0;
       if (msg.hostToken) {
         App.hostSession = { code: msg.code, token: msg.hostToken };
         saveJSON(LS.host, App.hostSession);
@@ -705,6 +741,8 @@
     Net.handlers.joined = (msg) => {
       App.role = 'player';
       App.code = msg.code;
+      App.joinAttempts = 0;
+      App.joinPayload = null;
       App.playerSession = {
         code: msg.code,
         token: msg.token,
@@ -731,8 +769,10 @@
     Net.handlers.event = onEvent;
 
     Net.handlers.error = (msg) => {
-      toast(toastBox(), msg.message || 'Erreur.', 'bad', 4000);
       const code = msg.code;
+      if (code === 'not-found' && App.role === 'player' && retryPlayerJoin()) return;
+      if (code === 'host-gone' && App.role === 'host' && retryHostRejoin()) return;
+      toast(toastBox(), msg.message || 'Erreur.', 'bad', 4000);
       if (code === 'avatar_taken') {
         App.avatar = loadJSON(LS.avatar) || App.avatar;
         if (App.state && App.state.me && App.state.me.avatar) App.avatar = global.Avatar.clone(App.state.me.avatar);
@@ -766,12 +806,14 @@
     if (App.role === 'host' && App.hostSession && App.hostSession.code) {
       Net.send('host:rejoin', { code: App.hostSession.code, hostToken: App.hostSession.token });
     } else if (App.role === 'player' && App.playerSession && App.playerSession.token) {
-      Net.send('player:join', {
+      const payload = {
         code: App.playerSession.code,
         name: App.playerName || App.playerSession.name,
         avatar: App.avatar,
         token: App.playerSession.token,
-      });
+      };
+      App.joinPayload = payload;
+      Net.send('player:join', payload);
     }
   }
 

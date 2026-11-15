@@ -2,8 +2,9 @@
 
 /* =====================================================================
    api/config.js — configuration runtime du client
-   Vercel ne peut pas héberger le serveur de jeu (WebSocket + état des
-   salles). Le frontend lit ici l'URL du serveur Node persistant.
+   Sans GAME_WS_URL, le client utilise le WebSocket du même domaine
+   (/api/ws), servi par api/ws.js sur Vercel. GAME_WS_URL permet de
+   pointer vers un serveur Node persistant (Render, VPS…).
    ===================================================================== */
 
 module.exports = (req, res) => {

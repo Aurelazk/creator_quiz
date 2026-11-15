@@ -7,7 +7,7 @@
    ===================================================================== */
 'use strict';
 
-const CACHE_NAME = 'creator-quiz-v2';
+const CACHE_NAME = 'creator-quiz-v3';
 const ASSETS = [
   '/',
   '/index.html',

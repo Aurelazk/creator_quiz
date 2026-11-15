@@ -5,13 +5,20 @@
 | Composant | Hébergeur | Pourquoi |
 | --- | --- | --- |
 | Site (HTML/CSS/JS), `/api/health`, `/api/qr`, `/api/leaderboard`, `/api/config` | **Vercel** | statique + fonctions serverless |
-| Serveur de jeu (`server/index.js`, WebSocket + salles + tick 200 ms) | **hôte Node persistant** (Render, Railway, Fly, VPS) | Vercel Functions sont éphémères : pas de WebSocket, pas d'état de salle partagé |
+| Serveur de jeu (`api/ws.js` → `server/index.js`, WebSocket + salles + tick 200 ms) | **Vercel Functions** (WebSocket natif) | suffisant pour une salle de démo ; chaque connexion reste épinglée à une instance |
+| (optionnel) Serveur de jeu sur hôte Node persistant | **Render, Railway, Fly, VPS** | connexions > 300 s et instance unique garantie |
 
-Le frontend lit l'URL du serveur de jeu sur `/api/config`, qui renvoie la variable
-d'environnement `GAME_WS_URL`. Sans elle, il utilise le même domaine (`/api/ws`),
-ce qui fonctionne en local et sur un hôte Node persistant.
+Le frontend lit l'URL du serveur de jeu sur `/api/config`. Si `GAME_WS_URL` est
+absente, il utilise le même domaine (`/api/ws`) : c'est le cas par défaut sur
+Vercel, où la fonction WebSocket est servie directement.
 
-## 1. Serveur de jeu (Render, exemple)
+> Sur Vercel, une connexion WebSocket est limitée à 300 s (plan Hobby) et peut
+> atterrir sur une autre instance que celle qui héberge la salle. Le client
+> retente automatiquement la jonction (jusqu'à 8 fois) pour retrouver la bonne
+> instance. Pour une partie longue ou très fréquentée, préférez un hôte Node
+> persistant et renseignez `GAME_WS_URL`.
+
+## 1. Serveur de jeu persistant (optionnel — Render, exemple)
 
 1. Pousser le dépôt sur GitHub (déjà fait : `Aurelazk/creator_quiz`).
 2. Sur Render : **New → Blueprint**, sélectionner le dépôt. Le fichier
@@ -39,6 +46,7 @@ curl https://creator-quiz-game.onrender.com/api/health
 ## 2. Vercel
 
 ```bash
+# Optionnel : uniquement si le serveur de jeu tourne sur un hôte persistant.
 vercel env add GAME_WS_URL production
 # valeur : wss://creator-quiz-game.onrender.com/ws
 vercel env add PUBLIC_URL production   # optionnel : https://<ton-projet>.vercel.app (sert pour le QR)
