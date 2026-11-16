@@ -134,13 +134,18 @@
     ctx: null,
     muted: false,
     init() {
+      /* ne crée pas le contexte immédiatement : sécurité navigateur.
+         Le contexte est créé uniquement par unlock() au premier clic utilisateur. */
       if (Sound.ctx) return;
       const AC = global.AudioContext || global.webkitAudioContext;
       if (!AC) return;
-      try { Sound.ctx = new AC(); } catch (e) { Sound.ctx = null; }
+      Sound._AC = AC;
     },
     unlock() {
-      Sound.init();
+      if (Sound.ctx) { Sound.ctx.resume().catch(() => {}); return; }
+      const AC = Sound._AC || (global.AudioContext || global.webkitAudioContext);
+      if (!AC) return;
+      try { Sound.ctx = new AC(); } catch (e) { Sound.ctx = null; return; }
       if (Sound.ctx && Sound.ctx.state === 'suspended') Sound.ctx.resume().catch(() => {});
     },
     setMuted(v) {
@@ -166,7 +171,7 @@
     },
     play(name) {
       if (Sound.muted) return;
-      Sound.init();
+      Sound.unlock();
       if (!Sound.ctx) return;
       switch (name) {
         case 'click': Sound.tone(520, 0.06, 'triangle', 0.08); break;
@@ -215,6 +220,11 @@
     setTimeout(() => loader.classList.add('done'), 260);
     setTimeout(() => hide(loader), 900);
   }
+
+  /* débloque l'audio au premier geste utilisateur (sécurité navigateur) */
+  const _unlockAudio = () => { Sound.unlock(); document.removeEventListener('pointerdown', _unlockAudio); document.removeEventListener('keydown', _unlockAudio); };
+  document.addEventListener('pointerdown', _unlockAudio, { once: true });
+  document.addEventListener('keydown', _unlockAudio, { once: true });
 
   global.UI = {
     $, $$, on, show, hide, toggle, esc, fmt, secs,

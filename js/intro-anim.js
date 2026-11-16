@@ -276,7 +276,10 @@
     introStarted = true;
     refreshRefs();
     intro.classList.remove('hidden');
-    resumeAudio();
+    /* l'audio ne se crée qu'au premier clic utilisateur (sécurité navigateur) */
+    const startAudio = () => { resumeAudio(); document.removeEventListener('pointerdown', startAudio); document.removeEventListener('keydown', startAudio); };
+    document.addEventListener('pointerdown', startAudio, { once: true });
+    document.addEventListener('keydown', startAudio, { once: true });
     const isShort = alreadySeen();
     if (isShort) {
       letters.forEach((l) => { l.classList.add('on'); l.style.opacity = 1; });
