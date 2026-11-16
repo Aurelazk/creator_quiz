@@ -272,6 +272,7 @@ function makeRoom(code, hostToken, name, settings) {
     multiplier: 1,
     controllerId: null,
     stealerId: null,
+    _buzzLock: false,
     strikes: 0,
     pot: 0,
     phaseEnd: 0,
@@ -424,6 +425,7 @@ function startGame(room, rounds) {
 }
 
 function nextRound(room) {
+  room._buzzLock = false;
   room.qi = room.qi + 1;
   if (room.qi >= room.order.length) {
     endGame(room);
@@ -495,6 +497,7 @@ function awardPot(room, winnerId, reason) {
 }
 
 function finishRound(room, reason) {
+  room._buzzLock = false;
   if (room.phase === G.PHASES.REVEAL || room.phase === G.PHASES.END) return;
   const wasSteal = room.phase === G.PHASES.STEAL;
   if (reason === 'stolen' && room.stealerId) {
@@ -560,27 +563,35 @@ function addFound(room, player, index, entry) {
 function handleBuzz(room, playerId) {
   const player = room.players.get(playerId);
   if (!player || room.paused) return;
-  if (room.phase === G.PHASES.COUNTDOWN && !room.controllerId) {
-    /* buzz pendant le décompte : démarre immédiatement la manche */
-    room.controllerId = playerId;
-    room.phase = G.PHASES.PLAY;
-    room.phaseEnd = Date.now() + room.settings.duration * 1000;
-    touch(room);
-    eventToAll(room, { type: 'control', playerId, name: player.name });
-    broadcast(room);
-  } else if (room.phase === G.PHASES.BUZZ && !room.controllerId) {
-    room.controllerId = playerId;
-    room.phase = G.PHASES.PLAY;
-    room.phaseEnd = Date.now() + room.settings.duration * 1000;
-    touch(room);
-    eventToAll(room, { type: 'control', playerId, name: player.name });
-    broadcast(room);
-  } else if (room.phase === G.PHASES.STEAL && !room.stealerId && playerId !== room.controllerId) {
-    room.stealerId = playerId;
-    room.phaseEnd = Date.now() + G.STEAL_MS;
-    touch(room);
-    eventToAll(room, { type: 'stealer', playerId, name: player.name });
-    broadcast(room);
+  /* verrou : un seul buzz est traité à la fois (évite que plusieurs joueurs
+     deviennent contrôleur simultanément sur un même buzz) */
+  if (room._buzzLock) return;
+  room._buzzLock = true;
+  try {
+    if (room.phase === G.PHASES.COUNTDOWN && !room.controllerId) {
+      /* buzz pendant le décompte : démarre immédiatement la manche */
+      room.controllerId = playerId;
+      room.phase = G.PHASES.PLAY;
+      room.phaseEnd = Date.now() + room.settings.duration * 1000;
+      touch(room);
+      eventToAll(room, { type: 'control', playerId, name: player.name });
+      broadcast(room);
+    } else if (room.phase === G.PHASES.BUZZ && !room.controllerId) {
+      room.controllerId = playerId;
+      room.phase = G.PHASES.PLAY;
+      room.phaseEnd = Date.now() + room.settings.duration * 1000;
+      touch(room);
+      eventToAll(room, { type: 'control', playerId, name: player.name });
+      broadcast(room);
+    } else if (room.phase === G.PHASES.STEAL && !room.stealerId && playerId !== room.controllerId) {
+      room.stealerId = playerId;
+      room.phaseEnd = Date.now() + G.STEAL_MS;
+      touch(room);
+      eventToAll(room, { type: 'stealer', playerId, name: player.name });
+      broadcast(room);
+    }
+  } finally {
+    room._buzzLock = false;
   }
 }
 
@@ -610,6 +621,8 @@ function handleGuess(room, playerId, rawText) {
 
   /* ---------- BUZZ : course à la première réponse (désigne qui joue le tableau) ---------- */
   if (room.phase === G.PHASES.BUZZ) {
+    /* verrou : un seul joueur peut devenir contrôleur par phase de buzz */
+    if (room._buzzLock) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait', text: 'Buzz déjà pris.' }); return; }
     if (room.controllerId) return;
     const res = G.judge(room.question, text, room.board);
     if (res.kind === 'found') {
