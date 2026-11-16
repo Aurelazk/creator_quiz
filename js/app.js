@@ -1109,6 +1109,7 @@
         if (a) a.textContent = row.text;
         if (p) p.textContent = fmt(row.pts);
         if (b) b.textContent = row.by ? 'Trouvé par ' + row.by : '';
+        card.title = row.by ? 'Trouvé par ' + row.by : '';
       }
     });
   }

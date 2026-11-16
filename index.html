@@ -126,7 +126,9 @@
 
       <div class="host-strikes" id="hostStrikes" aria-label="Erreurs" aria-live="polite"></div>
 
-      <div class="wrong-banner hidden" id="hostWrong">
+      <!-- Bande 'fausses propositions' : en bas de la scène, au-dessus de la barre basse,
+           hors du flux de host-lower pour éviter tout débordement de layout -->
+      <div class="wrong-banner hidden" id="hostWrong" aria-live="polite">
         <span class="wrong-label">Fausses propositions</span>
         <div class="wrong-list" id="hostWrongList"></div>
       </div>

@@ -304,8 +304,8 @@
   width: min(90vw, 640px);
 }
 .phone .toast-container { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom)); }
-/* l'animateur : notifications en haut, sous la barre, jamais sur les contrôles du bas */
-.host .toast-container { position: absolute; top: 72px; bottom: auto; left: 50%; transform: translateX(-50%); }
+/* l'animateur : notifications en haut à droite, hors de la question et des contrôles du bas */
+.host .toast-container { position: absolute; top: 72px; right: 1.5rem; bottom: auto; left: auto; }
 .toast {
   background: rgba(12, 26, 75, 0.95);
   border: 1px solid rgba(255,255,255,0.2);

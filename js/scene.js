@@ -861,10 +861,10 @@
     const hairGeo = new THREE.BoxGeometry(0.28, 0.2, 0.28); /* afro / gélé / casquette */
     const armGeo = new THREE.BoxGeometry(0.07, 0.5, 0.07);
 
-    const bodyMat = new THREE.MeshStandardMaterial({ roughness: 0.7, metalness: 0.02, vertexColors: true });
-    const headMat = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.0, vertexColors: true });
-    const hairMat = new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05, vertexColors: true });
-    const armMat = new THREE.MeshStandardMaterial({ roughness: 0.7, metalness: 0.02, vertexColors: true });
+    const bodyMat = new THREE.MeshStandardMaterial({ color: '#00E472', roughness: 0.7, metalness: 0.02 });
+    const headMat = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.0 });
+    const hairMat = new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05 });
+    const armMat = new THREE.MeshStandardMaterial({ color: '#00E472', roughness: 0.7, metalness: 0.02 });
 
     const bodies = new THREE.InstancedMesh(bodyGeo, bodyMat, totalCount);
     const heads = new THREE.InstancedMesh(headGeo, headMat, totalCount);
@@ -876,7 +876,6 @@
     }
 
     const dummy = new THREE.Object3D();
-    const color = new THREE.Color();
     /* carnations : majorité de peaux brunes à foncées, gamme complète */
     const skins = ['#C68642', '#E0AC69', '#5C3317', '#A16B3A', '#8D5524', '#F1C27D', '#B9875C', '#7A4E28'];
     /* tenues béninoises : boubou, pagne/wax, maillot des Écureuils, tee */
@@ -916,19 +915,16 @@
         dummy.rotation.set(0, ry, rz);
         dummy.updateMatrix();
         bodies.setMatrixAt(data.crowdIdx = i, dummy.matrix);
-        color.set(data.outfit); bodies.setColorAt(i, color);
 
         /* tête */
         dummy.position.set(x, headY, seatZ);
         dummy.updateMatrix();
         heads.setMatrixAt(i, dummy.matrix);
-        color.set(data.skin); heads.setColorAt(i, color);
 
         /* chevelure */
         dummy.position.set(x, headY + 0.16, seatZ + 0.02);
         dummy.updateMatrix();
         hairs.setMatrixAt(i, dummy.matrix);
-        color.set(data.hair); hairs.setColorAt(i, color);
 
         /* bras : deux instances par spectateur (gauche, droite) */
         [ -1, 1 ].forEach((side) => {
@@ -937,14 +933,9 @@
           dummy.rotation.set(0, 0, side * 0.1);
           dummy.updateMatrix();
           arms.setMatrixAt(ai, dummy.matrix);
-          color.set(data.outfit); arms.setColorAt(ai, color);
         });
       }
     }
-    bodies.instanceColor.needsUpdate = true;
-    heads.instanceColor.needsUpdate = true;
-    hairs.instanceColor.needsUpdate = true;
-    arms.instanceColor.needsUpdate = true;
     bodies.instanceMatrix.needsUpdate = true;
     heads.instanceMatrix.needsUpdate = true;
     hairs.instanceMatrix.needsUpdate = true;
