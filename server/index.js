@@ -201,23 +201,30 @@ const sanitizeName = (raw) => String(raw == null ? '' : raw)
   .slice(0, 16);
 
 function sanitizeHex(value, fallback) {
-  return /^#[0-9a-fA-F]{6}$/.test(String(value || '')) ? String(value).toUpperCase() : fallback;
+  return /^#[0-9a-fA-F]{6}$/i.test(String(value || '')) ? String(value).toUpperCase() : fallback;
+}
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 function sanitizeAvatar(raw) {
   const a = raw && typeof raw === 'object' ? raw : {};
   const colors = a.colors && typeof a.colors === 'object' ? a.colors : {};
+  /* Quand le client n'envoie pas d'avatar personnalisé, on tire au hasard
+     une tenue, une coiffure, des couleurs et une carnation pour que chaque
+     personnage soit différent dès son arrivée. */
+  const randomColors = !colors.hair && !colors.jacket && !colors.shirt && !colors.pants && !colors.shoes && !colors.skin;
   return {
-    silhouette: SILHOUETTES.includes(a.silhouette) ? a.silhouette : 'neutral',
-    hair: HAIRS.includes(a.hair) ? a.hair : 'short',
-    outfit: OUTFITS.includes(a.outfit) ? a.outfit : 'jacket',
-    accessory: ACCESSORIES.includes(a.accessory) ? a.accessory : 'none',
+    silhouette: SILHOUETTES.includes(a.silhouette) ? a.silhouette : pickRandom(SILHOUETTES),
+    hair: HAIRS.includes(a.hair) ? a.hair : pickRandom(HAIRS),
+    outfit: OUTFITS.includes(a.outfit) ? a.outfit : pickRandom(OUTFITS),
+    accessory: ACCESSORIES.includes(a.accessory) ? a.accessory : pickRandom(ACCESSORIES),
     colors: {
-      hair: sanitizeHex(colors.hair, HAIR_COLORS[0]),
-      jacket: sanitizeHex(colors.jacket, TOP_COLORS[1]),
-      shirt: sanitizeHex(colors.shirt, TOP_COLORS[0]),
-      pants: sanitizeHex(colors.pants, PANTS_COLORS[0]),
-      shoes: sanitizeHex(colors.shoes, SHOE_COLORS[0]),
-      skin: sanitizeHex(colors.skin, SKIN_COLORS[0]),
+      hair: randomColors ? pickRandom(HAIR_COLORS) : sanitizeHex(colors.hair, pickRandom(HAIR_COLORS)),
+      jacket: randomColors ? pickRandom(TOP_COLORS) : sanitizeHex(colors.jacket, pickRandom(TOP_COLORS)),
+      shirt: randomColors ? pickRandom(TOP_COLORS) : sanitizeHex(colors.shirt, pickRandom(TOP_COLORS)),
+      pants: randomColors ? pickRandom(PANTS_COLORS) : sanitizeHex(colors.pants, pickRandom(PANTS_COLORS)),
+      shoes: randomColors ? pickRandom(SHOE_COLORS) : sanitizeHex(colors.shoes, pickRandom(SHOE_COLORS)),
+      skin: randomColors ? pickRandom(SKIN_COLORS) : sanitizeHex(colors.skin, pickRandom(SKIN_COLORS)),
     },
   };
 }

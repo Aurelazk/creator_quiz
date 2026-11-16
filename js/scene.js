@@ -55,16 +55,12 @@
 
   function mat(color, opts) {
     const o = opts || {};
-    const key = color + '|' + (o.rough || 0) + '|' + (o.metal || 0) + '|' + (o.emissive || '') + '|' + (o.opacity || 1);
+    const key = color + '|' + (o.opacity || 1) + '|' + (o.emissive || '');
     if (MATS.has(key)) return MATS.get(key);
-    const m = new THREE.MeshStandardMaterial({
+    const m = new THREE.MeshBasicMaterial({
       color: new THREE.Color(color),
-      roughness: o.rough != null ? o.rough : 0.38,
-      metalness: o.metal != null ? o.metal : 0.05,
       transparent: o.opacity != null && o.opacity < 1,
       opacity: o.opacity != null ? o.opacity : 1,
-      emissive: o.emissive ? new THREE.Color(o.emissive) : 0x000000,
-      emissiveIntensity: o.emissiveIntensity || 0,
     });
     MATS.set(key, m);
     return m;
