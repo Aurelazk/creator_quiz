@@ -414,8 +414,17 @@
         <button class="buzz-btn hidden" id="btnBuzz">BUZZER</button>
 
         <div class="answer-box">
+          <!-- Réponse ouverte (texte libre) -->
           <input id="pAnswer" class="answer-input" type="text" maxlength="40" placeholder="Ta réponse…" autocomplete="off" autocorrect="off" spellcheck="false" disabled />
           <button class="answer-send" id="btnSubmit" disabled>GO</button>
+        </div>
+
+        <!-- Options QCM (affiché quand format === 'qcm') -->
+        <div class="qcm-options hidden" id="pQcmOptions" role="radiogroup" aria-label="Choix de réponse">
+          <button class="qcm-option" id="optA" data-idx="0">A</button>
+          <button class="qcm-option" id="optB" data-idx="1">B</button>
+          <button class="qcm-option" id="optC" data-idx="2">C</button>
+          <button class="qcm-option" id="optD" data-idx="3">D</button>
         </div>
 
         <!-- Spectateur actif : deviner en secret pour bonus -->

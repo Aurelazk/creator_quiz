@@ -130,6 +130,19 @@
     return { kind: 'miss' };
   }
 
+  /* Juge une réponse QCM : `optionIdx` est l'index de l'option choisie (0-3).
+     Retourne {kind:'found'|'dup'|'miss', index, entry} sur le modèle de judge(). */
+  function judgeQCM(question, optionIdx, board) {
+    const opt = question.options && question.options[optionIdx];
+    if (!opt) return { kind: 'miss' };
+    if (!opt.correct) return { kind: 'miss' };
+    const correctIdx = question.correctAnswerIndex != null ? question.correctAnswerIndex : 0;
+    if (board.some((r) => r.i === correctIdx)) {
+      return { kind: 'dup', index: correctIdx, entry: question.answers[correctIdx] };
+    }
+    return { kind: 'found', index: correctIdx, entry: question.answers[correctIdx] };
+  }
+
   function multiplierFor(qi) {
     if (qi >= 7) return 2;
     if (qi >= 5) return 1.5;
@@ -172,6 +185,6 @@
   return {
     PHASES, GAME_Q, COUNTDOWN_MS, BUZZ_MS, STEAL_MS, REVEAL_MS, MAX_STRIKES,
     MAX_GUESS_LEN, normalize, tokens, levenshtein, matches, clampText, judge,
-    multiplierFor, pointsFor, shuffle, pickQuestions, pickQuestionsByCategory,
+    judgeQCM, multiplierFor, pointsFor, shuffle, pickQuestions, pickQuestionsByCategory,
   };
 }));

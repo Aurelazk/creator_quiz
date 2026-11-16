@@ -177,9 +177,8 @@ async function run() {
   assert.ok(buzz.phaseEnd > Date.now() + 5000);
   console.log('  ✓ manche 1 : ' + q.q);
 
-  const firstGuess = q.answers[0].aliases[0];
-  await sleep(400);
-  send(players[0].ws, 'player:guess', { text: firstGuess });
+  // Le premier à buzzer devient contrôleur
+  send(players[0].ws, 'player:buzz');
   const play = await waitFor(host, stateWhere((m) => m.phase === 'play'), 4000, 'phase play');
   assert.strictEqual(play.controller.id, players[0].id);
   const p1State = await waitFor(players[0].ws, stateWhere((m) => m.phase === 'play' && m.me));
@@ -188,22 +187,31 @@ async function run() {
   const p2State = await waitFor(players[1].ws, stateWhere((m) => m.phase === 'play' && m.me));
   assert.strictEqual(p2State.me.isController, false);
   assert.strictEqual(p2State.canAnswer, false);
-  console.log('  ✓ première réponse trouve et devient contrôleur');
+  console.log('  ✓ buzz prioritaire et droits de réponse');
 
+  // Le contrôleur trouve la bonne réponse (pot > 0), puis fait 3 strikes
+  const correctOpt = q.options.findIndex((o) => o.correct);
+  await sleep(300);
+  send(players[0].ws, 'player:guess', { text: '', optionIdx: correctOpt });
   const result = await waitFor(players[0].ws, eventNamed('result'), 3000, 'result found');
   assert.strictEqual(result.data.kind, 'found');
   assert.ok(result.data.pts > 0);
-  console.log('  ✓ réponse validée : ' + result.data.text + ' (+' + result.data.pts + ')');
+  let st = await waitFor(host, stateWhere((m) => m.board.length === 1), 3000, 'tableau 1 réponse');
+  assert.strictEqual(st.board[0].i, 0);
+  assert.ok(st.pot > 0);
+  console.log('  ✓ réponse QCM validée : ' + result.data.text + ' (+' + result.data.pts + ')');
 
-  // 3 mauvaises devinettes pour déclencher le vol
-  for (let i = 0; i < 2; i++) {
+  // Le contrôleur choisit 3 mauvaises options (strikes)
+  const wrongOpts = q.options.map((o, i) => o.correct ? null : i).filter((x) => x != null);
+  for (let i = 0; i < 3; i++) {
     await sleep(520);
-    send(players[0].ws, 'player:guess', { text: 'fausse réponse ' + i });
-    await waitFor(host, stateWhere((m) => m.strikes === i + 1), 3000, 'strike ' + (i + 1));
+    send(players[0].ws, 'player:guess', { text: '', optionIdx: wrongOpts[i % wrongOpts.length] });
   }
-  await sleep(520);
-  send(players[0].ws, 'player:guess', { text: 'fausse réponse 2' });
+  await sleep(350);
   st = await waitFor(host, stateWhere((m) => m.phase === 'steal'), 4000, 'phase steal');
+  assert.strictEqual(st.strikes, 3);
+  assert.ok(st.pot > 0);
+  console.log('  ✓ 3 erreurs → phase de vol');
 
   send(players[1].ws, 'player:buzz');
   st = await waitFor(host, stateWhere((m) => m.phase === 'steal' && m.stealer), 4000, 'stealer');
@@ -212,17 +220,17 @@ async function run() {
   assert.strictEqual(stealState.canAnswer, true);
   const potBefore = st.pot;
 
-  send(players[1].ws, 'player:guess', { text: q.answers[1].aliases[0] });
-  const stealResult = await waitFor(players[1].ws, eventNamed('result'), 3000, 'result steal');
-  assert.strictEqual(stealResult.data.kind, 'steal');
+  // Le stealer essaie la bonne option → déjà trouvée par le contrôleur → steal-failed
+  const stealCorrectOpt = q.options.findIndex((o) => o.correct);
+  send(players[1].ws, 'player:guess', { text: '', optionIdx: stealCorrectOpt });
+  const stealResult = await waitFor(players[1].ws, eventNamed('steal-failed'), 3000, 'result steal');
+  assert.strictEqual(stealResult.data.kind, undefined);
   st = await waitFor(host, stateWhere((m) => m.phase === 'reveal'), 4000, 'reveal');
   assert.strictEqual(st.board.length, q.answers.length, 'toutes les réponses sont révélées');
   assert.ok(st.awards);
-  assert.strictEqual(st.awards.winnerId, players[1].id);
-  assert.strictEqual(st.awards.reason, 'steal');
-  assert.ok(st.awards.amount >= potBefore, 'le voleur rafle au moins la cagnotte');
-  assert.strictEqual(st.awards.amount, stealResult.data.pts);
-  console.log('  ✓ vol réussi : ' + st.awards.amount + ' points');
+  assert.strictEqual(st.awards.winnerId, players[0].id);
+  assert.strictEqual(st.awards.reason, 'steal-failed');
+  console.log('  ✓ vol échoué (réponse déjà trouvée) — strikes gagnent');
 
   send(host, 'host:next');
   st = await waitFor(host, stateWhere((m) => m.phase === 'buzz' && m.qi === 1), 5000, 'manche 2');

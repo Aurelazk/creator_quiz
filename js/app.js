@@ -520,6 +520,13 @@
     });
     on($('#btnSubmit'), 'click', submitGuess);
     on($('#pAnswer'), 'keydown', (e) => { if (e.key === 'Enter') submitGuess(); });
+    /* Options QCM */
+    $$('#pQcmOptions .qcm-option').forEach((btn) => {
+      on(btn, 'click', () => {
+        const idx = Number(btn.getAttribute('data-idx'));
+        selectQcmOption(idx);
+      });
+    });
     on($('#btnSpectSubmit'), 'click', submitSpectGuess);
     on($('#pSpectAnswer'), 'keydown', (e) => { if (e.key === 'Enter') submitSpectGuess(); });
     on($('#btnLeave'), 'click', () => {
@@ -1355,11 +1362,30 @@
     const answer = $('#pAnswer');
     const send = $('#btnSubmit');
     const canAnswer = !!s.canAnswer;
+    const qcmFormat = !!s.question && s.question.format === 'qcm';
     if (answer) {
-      answer.disabled = !canAnswer;
-      answer.placeholder = canAnswer ? 'Ta réponse…' : (s.phase === 'steal' ? 'Vol en cours…' : 'Attends ton tour…');
+      answer.disabled = !canAnswer || qcmFormat;
+      answer.placeholder = qcmFormat ? '' : (canAnswer ? 'Ta réponse…' : (s.phase === 'steal' ? 'Vol en cours…' : 'Attends ton tour…'));
     }
-    if (send) send.disabled = !canAnswer;
+    if (send) send.disabled = !canAnswer || qcmFormat;
+
+    /* Options QCM : affiche 4 boutons quand format === 'qcm' */
+    const qcmBox = $('#pQcmOptions');
+    const q = s.question;
+    const isQCM = qcmFormat;
+    if (qcmBox) {
+      toggle(qcmBox, isQCM && canAnswer);
+      if (isQCM && q.options) {
+        q.options.forEach((opt, i) => {
+          const btn = qcmBox.querySelector('[data-idx="' + i + '"]');
+          if (btn) {
+            btn.textContent = opt.id + '. ' + opt.text;
+            btn.disabled = !canAnswer;
+            btn.classList.remove('selected', 'correct', 'wrong');
+          }
+        });
+      }
+    }
 
     /* Spectateur actif : "Devine aussi" (bonus secret) */
     const spectBox = $('#pSpectatorBox');
@@ -1461,6 +1487,21 @@
     Net.send('player:guess', { text });
     input.value = '';
     input.focus();
+    Sound.play('click');
+  }
+
+  function selectQcmOption(idx) {
+    const s = App.state;
+    if (!s || !s.canAnswer) return;
+    const q = s.question;
+    if (!q || q.format !== 'qcm') return;
+    /* Marque visuellement l'option sélectionnée */
+    $$('#pQcmOptions .qcm-option').forEach((b) => {
+      const bIdx = Number(b.getAttribute('data-idx'));
+      b.classList.toggle('selected', bIdx === idx);
+      b.disabled = true;
+    });
+    Net.send('player:guess', { text: '', optionIdx: idx });
     Sound.play('click');
   }
 

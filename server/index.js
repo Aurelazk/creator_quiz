@@ -588,12 +588,19 @@ function handleBuzz(room, playerId) {
   }
 }
 
-function handleGuess(room, playerId, rawText) {
+function handleGuess(room, playerId, rawText, optionIdx) {
   if (room.paused) return;
   const player = room.players.get(playerId);
   if (!player || !room.question) return;
-  const text = G.clampText(rawText);
-  if (!text) return;
+  const isQCM = room.question.format === 'qcm';
+  let text = '';
+  if (isQCM && optionIdx != null) {
+    /* QCM : on juge par index d'option, pas par texte libre */
+    text = '';
+  } else {
+    text = G.clampText(rawText);
+    if (!text) return;
+  }
 
   const now = Date.now();
   if (!player.lastGuessAt) player.lastGuessAt = 0;
@@ -617,7 +624,7 @@ function handleGuess(room, playerId, rawText) {
     /* verrou : un seul joueur peut devenir contrôleur par phase de buzz */
     if (room._buzzLock) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait', text: 'Buzz déjà pris.' }); return; }
     if (room.controllerId) return;
-    const res = G.judge(room.question, text, room.board);
+    const res = isQCM ? G.judgeQCM(room.question, optionIdx, room.board) : G.judge(room.question, text, room.board);
     if (res.kind === 'found') {
       room.controllerId = playerId;
       const pts = addFound(room, player, res.index, res.entry);
@@ -640,7 +647,7 @@ function handleGuess(room, playerId, rawText) {
   if (room.phase === G.PHASES.PLAY) {
     /* SPECTATEUR ACTIF ("Devine aussi") : pas son équipe / pas le main -> bonus secret */
     if (!isController && !isTeammate) {
-      const res = G.judge(room.question, text, room.board);
+      const res = isQCM ? G.judgeQCM(room.question, optionIdx, room.board) : G.judge(room.question, text, room.board);
       if (res.kind === 'found' && !room.board.some((r) => r.i === res.index) && !room.secretFound.has(res.index)) {
         if (!room.spectatorGuesses.has(playerId)) room.spectatorGuesses.set(playerId, new Set());
         const sset = room.spectatorGuesses.get(playerId);
@@ -658,7 +665,7 @@ function handleGuess(room, playerId, rawText) {
     /* Seul le main (et ses coéquipiers en équipes) peut révéler publiquement */
     if (isTeams && !isTeammate) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait' }); return; }
     if (!isTeams && !isController) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait' }); return; }
-    const res = G.judge(room.question, text, room.board);
+    const res = isQCM ? G.judgeQCM(room.question, optionIdx, room.board) : G.judge(room.question, text, room.board);
     if (res.kind === 'found') {
       const pts = addFound(room, player, res.index, res.entry);
       eventToPlayer(room, playerId, { type: 'result', kind: 'found', text: res.entry.text, pts });
@@ -993,15 +1000,22 @@ function demoStep(room) {
     if (!ctrl || !ctrl.bot) return;
     const q = room.question;
     if (!q) return;
+    const isQCM = q.format === 'qcm';
     const taken = new Set(room.board.map((r) => r.i));
     const options = q.answers.map((a, i) => ({ a, i })).filter((x) => !taken.has(x.i));
     if (!options.length) { finishRound(room, 'complete'); return; }
     if (Math.random() < 0.22 && room.strikes < G.MAX_STRIKES - 1) {
       const wrong = DEMO_GUESSES[crypto.randomInt(DEMO_GUESSES.length)];
-      handleGuess(room, ctrl.id, wrong);
+      handleGuess(room, ctrl.id, wrong, isQCM ? null : undefined);
     } else {
       const pick = options[crypto.randomInt(options.length)];
-      handleGuess(room, ctrl.id, pick.a.text);
+      if (isQCM) {
+        /* Trouve l'index de l'option qui correspond à la bonne réponse */
+        const optIdx = q.options.findIndex((o) => o.text === pick.a.text);
+        handleGuess(room, ctrl.id, pick.a.text, optIdx >= 0 ? optIdx : 0);
+      } else {
+        handleGuess(room, ctrl.id, pick.a.text);
+      }
     }
     return;
   }
@@ -1011,13 +1025,19 @@ function demoStep(room) {
       if (id) handleBuzz(room, id);
     } else {
       const q = room.question;
+      const isQCM = !!q && q.format === 'qcm';
       const taken = new Set(room.board.map((r) => r.i));
       const options = q ? q.answers.map((a, i) => ({ a, i })).filter((x) => !taken.has(x.i)) : [];
       if (options.length && Math.random() < 0.7) {
         const pick = options[crypto.randomInt(options.length)];
-        handleGuess(room, room.stealerId, pick.a.text);
+        if (isQCM) {
+          const optIdx = q.options.findIndex((o) => o.text === pick.a.text);
+          handleGuess(room, room.stealerId, pick.a.text, optIdx >= 0 ? optIdx : 0);
+        } else {
+          handleGuess(room, room.stealerId, pick.a.text);
+        }
       } else {
-        handleGuess(room, room.stealerId, DEMO_GUESSES[crypto.randomInt(DEMO_GUESSES.length)]);
+        handleGuess(room, room.stealerId, DEMO_GUESSES[crypto.randomInt(DEMO_GUESSES.length)], isQCM ? null : undefined);
       }
     }
   }
@@ -1235,7 +1255,10 @@ wss.on('connection', (ws, req) => {
       case 'player:guess': {
         if (ctx.role !== 'player') return;
         const room = rooms.get(ctx.code);
-        if (room) handleGuess(room, ctx.playerId, msg.text);
+        if (room) {
+          const optionIdx = typeof msg.optionIdx === 'number' && msg.optionIdx >= 0 && msg.optionIdx <= 3 ? msg.optionIdx : null;
+          handleGuess(room, ctx.playerId, msg.text, optionIdx);
+        }
         break;
       }
       case 'player:leave': {
