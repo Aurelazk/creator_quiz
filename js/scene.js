@@ -580,9 +580,7 @@
       [-1, 1].forEach((side) => {
         const lens = addPart(head, GEO.torus, darkFrame, side * 0.19, -0.02, 0.44, 0.15, 0.15, 0.15);
         lens.rotation.x = 0;
-        const glass = addPart(head, sphere, new THREE.MeshStandardMaterial({
-          color: '#9fd0ff', transparent: true, opacity: 0.22, roughness: 0.1, metalness: 0.2,
-        }), side * 0.19, -0.02, 0.44, 0.13, 0.12, 0.02);
+        const glass = addPart(head, sphere, mat('#9fd0ff', { opacity: 0.22 }), side * 0.19, -0.02, 0.44, 0.13, 0.12, 0.02);
       });
       addPart(head, GEO.box, darkFrame, 0, 0.02, 0.45, 0.1, 0.025, 0.03);
     } else if (accessory === 'headphones') {
