@@ -1,6 +1,3 @@
-/* =====================================================================
-   js/ui.js — petits utilitaires d'interface + sons + confettis
-   ===================================================================== */
 (function (global) {
   'use strict';
 
@@ -56,7 +53,8 @@
       const isMe = o.meId && r.id === o.meId;
       const win = rank === 1;
       const av = r.avatar ? miniAvatar(r.avatar) : '';
-      return '<li class="rank-item' + (win ? ' win' : '') + (isMe ? ' me' : '') + '">' +
+
+	return '<li class="rank-item' + (win ? ' win' : '') + (isMe ? ' me' : '') + '">' +
         '<span class="rank-pos">' + esc(rank) + '</span>' +
         av +
         '<span class="rank-name">' + esc(r.name || 'Joueur') + '</span>' +

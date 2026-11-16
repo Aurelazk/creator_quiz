@@ -424,7 +424,7 @@ function startGame(room, rounds) {
 }
 
 function nextRound(room) {
-  room.qi++;
+  room.qi = room.qi + 1;
   if (room.qi >= room.order.length) {
     endGame(room);
     return;

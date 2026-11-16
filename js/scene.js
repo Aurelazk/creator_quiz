@@ -38,10 +38,11 @@
   const GEO = {};
   const MATS = new Map();
 
-  function initGeo() {
-    if (GEO.sphere) return;
-    GEO.sphere = new THREE.SphereGeometry(1, 24, 18);
-    GEO.sphereLow = new THREE.SphereGeometry(1, 12, 9);
+
+    function initGeo() {
+	if (GEO.sphere) return;
+	GEO.sphere = new THREE.SphereGeometry(1, 24, 18);
+     GEO.sphereLow = new THREE.SphereGeometry(1, 12, 9);
     GEO.hemi = new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2);
     GEO.hemiLow = new THREE.SphereGeometry(1, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2);
     GEO.cyl = new THREE.CylinderGeometry(1, 1, 1, 16);
@@ -235,8 +236,7 @@
       scene.add(strip);
     }
 
-    /* sièges : assises + dossiers instanciés */
-    const seatPerRow = 14;
+    const seatPerRow = 16;
     const seatW = 0.62;
     const seatGap = 0.08;
     const totalCount = ROWS * seatPerRow;
@@ -266,7 +266,6 @@
     backs.instanceMatrix.needsUpdate = true;
     scene.add(seats, backs);
 
-    /* escaliers latéraux + rampes lumineuses */
     const stairMat = mat('#0a1230', { rough: 0.75 });
     [-1, 1].forEach((side) => {
       for (let r = 0; r < ROWS; r++) {
