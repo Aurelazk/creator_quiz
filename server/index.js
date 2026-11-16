@@ -563,35 +563,23 @@ function addFound(room, player, index, entry) {
 function handleBuzz(room, playerId) {
   const player = room.players.get(playerId);
   if (!player || room.paused) return;
-  /* verrou : un seul buzz est traité à la fois (évite que plusieurs joueurs
-     deviennent contrôleur simultanément sur un même buzz) */
-  if (room._buzzLock) return;
-  room._buzzLock = true;
-  try {
-    if (room.phase === G.PHASES.COUNTDOWN && !room.controllerId) {
-      /* buzz pendant le décompte : démarre immédiatement la manche */
-      room.controllerId = playerId;
-      room.phase = G.PHASES.PLAY;
-      room.phaseEnd = Date.now() + room.settings.duration * 1000;
-      touch(room);
-      eventToAll(room, { type: 'control', playerId, name: player.name });
-      broadcast(room);
-    } else if (room.phase === G.PHASES.BUZZ && !room.controllerId) {
-      room.controllerId = playerId;
-      room.phase = G.PHASES.PLAY;
-      room.phaseEnd = Date.now() + room.settings.duration * 1000;
-      touch(room);
-      eventToAll(room, { type: 'control', playerId, name: player.name });
-      broadcast(room);
-    } else if (room.phase === G.PHASES.STEAL && !room.stealerId && playerId !== room.controllerId) {
-      room.stealerId = playerId;
-      room.phaseEnd = Date.now() + G.STEAL_MS;
-      touch(room);
-      eventToAll(room, { type: 'stealer', playerId, name: player.name });
-      broadcast(room);
-    }
-  } finally {
-    room._buzzLock = false;
+  /* le buzzer ne désigne plus le contrôleur en phase BUZZ :
+     c'est la première bonne réponse dans handleGuess qui le fait.
+     Le buzzer sert seulement à démarrer la manche (COUNTDOWN)
+     ou à voler (STEAL). */
+  if (room.phase === G.PHASES.COUNTDOWN && !room.controllerId) {
+    room.controllerId = playerId;
+    room.phase = G.PHASES.PLAY;
+    room.phaseEnd = Date.now() + room.settings.duration * 1000;
+    touch(room);
+    eventToAll(room, { type: 'control', playerId, name: player.name });
+    broadcast(room);
+  } else if (room.phase === G.PHASES.STEAL && !room.stealerId && playerId !== room.controllerId) {
+    room.stealerId = playerId;
+    room.phaseEnd = Date.now() + G.STEAL_MS;
+    touch(room);
+    eventToAll(room, { type: 'stealer', playerId, name: player.name });
+    broadcast(room);
   }
 }
 
@@ -621,9 +609,7 @@ function handleGuess(room, playerId, rawText) {
 
   /* ---------- BUZZ : course à la première réponse (désigne qui joue le tableau) ---------- */
   if (room.phase === G.PHASES.BUZZ) {
-    /* verrou : un seul joueur peut devenir contrôleur par phase de buzz */
-    if (room._buzzLock) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait', text: 'Buzz déjà pris.' }); return; }
-    if (room.controllerId) return;
+    /* tous les joueurs peuvent répondre : le premier à trouver devient contrôleur */
     const res = G.judge(room.question, text, room.board);
     if (res.kind === 'found') {
       room.controllerId = playerId;

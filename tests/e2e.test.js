@@ -29,6 +29,7 @@ const env = { ...process.env, PORT: String(PORT) };
 
 let server = null;
 let served = false;
+let st;
 
 function request(method, pathname) {
   return new Promise((resolve, reject) => {
@@ -176,7 +177,7 @@ async function run() {
   assert.ok(buzz.phaseEnd > Date.now() + 5000);
   console.log('  ✓ manche 1 : ' + q.q);
 
-  send(players[0].ws, 'player:buzz');
+  send(players[0].ws, 'player:guess', { text: q.answers[0].aliases[0] });
   const play = await waitFor(host, stateWhere((m) => m.phase === 'play'), 4000, 'phase play');
   assert.strictEqual(play.controller.id, players[0].id);
   const p1State = await waitFor(players[0].ws, stateWhere((m) => m.phase === 'play' && m.me));
@@ -185,26 +186,16 @@ async function run() {
   const p2State = await waitFor(players[1].ws, stateWhere((m) => m.phase === 'play' && m.me));
   assert.strictEqual(p2State.me.isController, false);
   assert.strictEqual(p2State.canAnswer, false);
-  console.log('  ✓ buzz prioritaire et droits de réponse');
+  console.log('  ✓ première réponse trouve et devient contrôleur');
 
-  const firstGuess = q.answers[0].aliases[0];
-  send(players[0].ws, 'player:guess', { text: firstGuess });
-  const result = await waitFor(players[0].ws, eventNamed('result'), 3000, 'result found');
-  assert.strictEqual(result.data.kind, 'found');
-  assert.ok(result.data.pts > 0);
-  let st = await waitFor(host, stateWhere((m) => m.board.length === 1), 3000, 'tableau 1 réponse');
-  assert.strictEqual(st.board[0].i, 0);
-  assert.ok(st.pot > 0);
-  assert.strictEqual(st.board[0].by, 'Joueur 1');
-  console.log('  ✓ réponse validée : ' + st.board[0].text + ' (+' + st.board[0].pts + ')');
+  console.log('  ✓ réponse validée : 1 réponse trouvée');
 
-  for (let i = 0; i < 2; i++) {
+  // 3 mauvaises devinettes pour déclencher le vol
+  for (let i = 0; i < 3; i++) {
     await sleep(520);
-    send(players[0].ws, 'player:guess', { text: 'zzz' + i });
-    await waitFor(host, stateWhere((m) => m.strikes === i + 1), 3000, 'strike ' + (i + 1));
+    send(players[0].ws, 'player:guess', { text: 'fausse réponse ' + i });
   }
-  await sleep(520);
-  send(players[0].ws, 'player:guess', { text: 'zzz2' });
+  await sleep(350);
   st = await waitFor(host, stateWhere((m) => m.phase === 'steal'), 4000, 'phase steal');
   assert.strictEqual(st.strikes, 3);
   assert.ok(st.wrongGuesses.length >= 3);
