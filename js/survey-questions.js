@@ -6150,7 +6150,7 @@
         ]
       },
       {
-        "text": "Gani",
+        "text": "Ganni",
         "pts": 25,
         "aliases": [
           "gani",

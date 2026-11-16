@@ -95,14 +95,17 @@
     S.renderer = renderer;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#050b26');
-    scene.fog = new THREE.Fog('#050b26', 22, 46);
+    scene.background = new THREE.Color('#0B35FE');
+    scene.fog = new THREE.Fog('#0B35FE', 40, 80);
     S.scene = scene;
 
     const camera = new THREE.PerspectiveCamera(43, global.innerWidth / global.innerHeight, 0.1, 120);
     camera.position.set(0, 4.9, 13.2);
     camera.lookAt(0, 2.8, 0.6);
     S.camera = camera;
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambient);
 
     const hemi = new THREE.HemisphereLight(0xdce8ff, 0x101c44, 0.95);
     scene.add(hemi);
@@ -409,7 +412,8 @@
     const o = opts || {};
     const low = !!o.low;
     const c = config && config.colors ? config.colors : {
-      hair: '#FF6B2C', jacket: '#0B35FE', shirt: '#FF4E20', pants: '#0C1A4B', shoes: '#FF4E20',
+      hair: '#FF4E20', jacket: '#00E472', shirt: '#FF4E20', pants: '#0B35FE', shoes: '#00E472',
+      skin: '#F1C27D',
     };
     const sil = (config && config.silhouette) || 'neutral';
     const hair = (config && config.hair) || 'short';
