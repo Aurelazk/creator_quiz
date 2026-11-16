@@ -567,6 +567,24 @@
     });
     on($('#btnLeaderboard'), 'click', () => { openModal('#hostLeaderboard'); loadLeaderboard('#hostLbList', '#hostLbHint'); });
     on($('#btnHostLbBack'), 'click', () => closeModal('#hostLeaderboard'));
+    on($('#btnHostLbReset'), 'click', async () => {
+      if (!global.confirm('Vider tout le hall of fame ? Cette action est irréversible.')) return;
+      try {
+        const res = await fetch('/api/leaderboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reset: true }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          loadLeaderboard('#hostLbList', '#hostLbHint');
+        } else {
+          alert('Échec de la réinitialisation : ' + (data.error || 'inconnu'));
+        }
+      } catch (e) {
+        alert('Erreur réseau lors de la réinitialisation du hall of fame.');
+      }
+    });
     on($('#btnReplay'), 'click', () => {
       closeModal('#hostEnd');
       closeModal('#hostLeaderboard');

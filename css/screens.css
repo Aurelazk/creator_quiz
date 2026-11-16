@@ -75,7 +75,7 @@
 @keyframes blink { 50% { opacity: 0.35; } }
 
 .host-banner {
-  position: absolute; top: 6.4rem; left: 50%; transform: translateX(-50%);
+  position: absolute; top: 6rem; left: 50%; transform: translateX(-50%);
   width: min(92vw, 1280px);
   text-align: center; z-index: 18; pointer-events: none;
 }
@@ -111,8 +111,9 @@
 
 /* -------- tableau -------- */
 .board {
-  position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+  position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
   width: min(68vw, 1050px);
+  max-height: 42vh;
   display: grid;
   /* 2 colonnes équilibrées, 8 cases max (2×4), pas de case orpheline */
   grid-template-columns: 1fr 1fr;

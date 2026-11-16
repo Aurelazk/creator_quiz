@@ -1417,6 +1417,26 @@ async function handleHttp(req, res) {
       sendJson(res, 200, { scores: leaderboard.slice(0, 50) });
       return;
     }
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', (chunk) => { body += chunk; });
+      req.on('end', () => {
+        try {
+          const msg = JSON.parse(body || '{}');
+          if (msg.reset) {
+            leaderboard = [];
+            leaderboardDirty = true;
+            fs.writeFile(LEADERBOARD_FILE, '[]', () => {});
+            sendJson(res, 200, { ok: true, message: 'Classement réinitialisé' });
+          } else {
+            sendJson(res, 400, { error: 'paramètre reset requis' });
+          }
+        } catch (e) {
+          sendJson(res, 400, { error: 'json invalide' });
+        }
+      });
+      return;
+    }
     sendJson(res, 405, { error: 'method not allowed' });
     return;
   }
