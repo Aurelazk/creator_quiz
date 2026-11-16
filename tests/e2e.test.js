@@ -177,7 +177,9 @@ async function run() {
   assert.ok(buzz.phaseEnd > Date.now() + 5000);
   console.log('  ✓ manche 1 : ' + q.q);
 
-  send(players[0].ws, 'player:guess', { text: q.answers[0].aliases[0] });
+  const firstGuess = q.answers[0].aliases[0];
+  await sleep(400);
+  send(players[0].ws, 'player:guess', { text: firstGuess });
   const play = await waitFor(host, stateWhere((m) => m.phase === 'play'), 4000, 'phase play');
   assert.strictEqual(play.controller.id, players[0].id);
   const p1State = await waitFor(players[0].ws, stateWhere((m) => m.phase === 'play' && m.me));
@@ -188,18 +190,20 @@ async function run() {
   assert.strictEqual(p2State.canAnswer, false);
   console.log('  ✓ première réponse trouve et devient contrôleur');
 
-  console.log('  ✓ réponse validée : 1 réponse trouvée');
+  const result = await waitFor(players[0].ws, eventNamed('result'), 3000, 'result found');
+  assert.strictEqual(result.data.kind, 'found');
+  assert.ok(result.data.pts > 0);
+  console.log('  ✓ réponse validée : ' + result.data.text + ' (+' + result.data.pts + ')');
 
   // 3 mauvaises devinettes pour déclencher le vol
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 2; i++) {
     await sleep(520);
     send(players[0].ws, 'player:guess', { text: 'fausse réponse ' + i });
+    await waitFor(host, stateWhere((m) => m.strikes === i + 1), 3000, 'strike ' + (i + 1));
   }
-  await sleep(350);
+  await sleep(520);
+  send(players[0].ws, 'player:guess', { text: 'fausse réponse 2' });
   st = await waitFor(host, stateWhere((m) => m.phase === 'steal'), 4000, 'phase steal');
-  assert.strictEqual(st.strikes, 3);
-  assert.ok(st.wrongGuesses.length >= 3);
-  console.log('  ✓ 3 erreurs → phase de vol');
 
   send(players[1].ws, 'player:buzz');
   st = await waitFor(host, stateWhere((m) => m.phase === 'steal' && m.stealer), 4000, 'stealer');

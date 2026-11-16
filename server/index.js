@@ -563,11 +563,16 @@ function addFound(room, player, index, entry) {
 function handleBuzz(room, playerId) {
   const player = room.players.get(playerId);
   if (!player || room.paused) return;
-  /* le buzzer ne désigne plus le contrôleur en phase BUZZ :
-     c'est la première bonne réponse dans handleGuess qui le fait.
-     Le buzzer sert seulement à démarrer la manche (COUNTDOWN)
-     ou à voler (STEAL). */
+  /* le buzzer désigne le contrôleur : le premier qui buzz joue le tableau */
   if (room.phase === G.PHASES.COUNTDOWN && !room.controllerId) {
+    /* buzz pendant le décompte : démarre immédiatement la manche */
+    room.controllerId = playerId;
+    room.phase = G.PHASES.PLAY;
+    room.phaseEnd = Date.now() + room.settings.duration * 1000;
+    touch(room);
+    eventToAll(room, { type: 'control', playerId, name: player.name });
+    broadcast(room);
+  } else if (room.phase === G.PHASES.BUZZ && !room.controllerId) {
     room.controllerId = playerId;
     room.phase = G.PHASES.PLAY;
     room.phaseEnd = Date.now() + room.settings.duration * 1000;
@@ -609,7 +614,9 @@ function handleGuess(room, playerId, rawText) {
 
   /* ---------- BUZZ : course à la première réponse (désigne qui joue le tableau) ---------- */
   if (room.phase === G.PHASES.BUZZ) {
-    /* tous les joueurs peuvent répondre : le premier à trouver devient contrôleur */
+    /* verrou : un seul joueur peut devenir contrôleur par phase de buzz */
+    if (room._buzzLock) { eventToPlayer(room, playerId, { type: 'result', kind: 'wait', text: 'Buzz déjà pris.' }); return; }
+    if (room.controllerId) return;
     const res = G.judge(room.question, text, room.board);
     if (res.kind === 'found') {
       room.controllerId = playerId;
