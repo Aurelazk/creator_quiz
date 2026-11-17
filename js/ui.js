@@ -68,7 +68,7 @@
     const el = $('#pReaction');
     if (!el) return;
     clearTimeout(reactionTimer);
-    el.className = 'reaction ' + (kind === 'found' ? 'ok' : kind === 'steal' ? 'steal' : kind === 'dup' ? 'dup' : 'bad');
+    el.className = 'reaction ' + (kind === 'found' ? 'ok' : kind === 'info' || kind === 'dup' ? 'dup' : 'bad');
     el.innerHTML = '<div class="r-big">' + esc(big || '') + '</div>' +
       (sub ? '<div class="r-sub">' + esc(sub) + '</div>' : '');
     el.classList.remove('hidden');
@@ -176,10 +176,6 @@
       switch (name) {
         case 'click': Sound.tone(520, 0.06, 'triangle', 0.08); break;
         case 'join': Sound.tone(480, 0.1, 'sine', 0.1); Sound.tone(720, 0.12, 'sine', 0.1, 0.09); break;
-        case 'buzz':
-          Sound.tone(180, 0.28, 'sawtooth', 0.16, 0, 90);
-          Sound.tone(360, 0.28, 'square', 0.06);
-          break;
         case 'found':
           Sound.tone(660, 0.1, 'triangle', 0.14);
           Sound.tone(880, 0.12, 'triangle', 0.13, 0.09);
@@ -188,11 +184,6 @@
         case 'wrong':
           Sound.tone(220, 0.18, 'sawtooth', 0.14, 0, 140);
           Sound.tone(140, 0.26, 'sawtooth', 0.12, 0.16, 70);
-          break;
-        case 'steal':
-          Sound.tone(520, 0.1, 'square', 0.1);
-          Sound.tone(700, 0.1, 'square', 0.1, 0.1);
-          Sound.tone(980, 0.2, 'square', 0.1, 0.2);
           break;
         case 'tick': Sound.tone(880, 0.04, 'sine', 0.05); break;
         case 'win':

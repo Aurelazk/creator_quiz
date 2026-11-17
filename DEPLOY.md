@@ -1,87 +1,53 @@
-# Déploiement
+# Déploiement — CREATOR QCM
 
-## Ce tourne où
+## Hôte de jeu (obligatoire)
 
-| Composant | Hébergeur | Pourquoi |
-| --- | --- | --- |
-| Site (HTML/CSS/JS), `/api/health`, `/api/qr`, `/api/leaderboard`, `/api/config` | **Vercel** | statique + fonctions serverless |
-| Serveur de jeu (`api/ws.js` → `server/index.js`, WebSocket + salles + tick 200 ms) | **Vercel Functions** (WebSocket natif) | suffisant pour une salle de démo ; chaque connexion reste épinglée à une instance |
-| (optionnel) Serveur de jeu sur hôte Node persistant | **Render, Railway, Fly, VPS** | connexions > 300 s et instance unique garantie |
+Le jeu utilise des salles en mémoire et des WebSocket persistantes : il doit tourner sur un hôte Node en une seule instance. Vercel Functions ne convient pas (instances éphémères, limite de 300 s).
 
-Le frontend lit l'URL du serveur de jeu sur `/api/config`. Si `GAME_WS_URL` est
-absente, il utilise le même domaine (`/api/ws`) : c'est le cas par défaut sur
-Vercel, où la fonction WebSocket est servie directement.
-
-> Sur Vercel, une connexion WebSocket est limitée à 300 s (plan Hobby) et peut
-> atterrir sur une autre instance que celle qui héberge la salle. Le client
-> retente automatiquement la jonction (jusqu'à 8 fois) pour retrouver la bonne
-> instance. Pour une partie longue ou très fréquentée, préférez un hôte Node
-> persistant et renseignez `GAME_WS_URL`.
-
-## 1. Serveur de jeu persistant (optionnel — Render, exemple)
-
-1. Pousser le dépôt sur GitHub (déjà fait : `Aurelazk/creator_quiz`).
-2. Sur Render : **New → Blueprint**, sélectionner le dépôt. Le fichier
-   `render.yaml` crée le service `creator-quiz-game`.
-   Ou **New → Web Service** avec :
-   - Build : `npm install`
-   - Start : `npm start`
-   - Health check : `/api/health`
-   - Variables d'environnement à définir sur Render :
-     - `PUBLIC_URL` : l'URL publique du service Render (ex. `https://creator-quiz-game.onrender.com`), sert à générer le QR lisible depuis un téléphone.
-     - `ALLOWED_ORIGIN` : l'origine autorisée pour le WebSocket et le CORS (ex. `https://<ton-projet>.vercel.app`). Valeur `*` pour accepter tout (déconseillé en prod).
-   3. Récupérer l'URL publique, par exemple `https://creator-quiz-game.onrender.com`.
-      L'URL WebSocket est `wss://creator-quiz-game.onrender.com/ws`.
-
-Vérification :
+Déploiement recommandé avec Render :
 
 ```bash
-curl https://creator-quiz-game.onrender.com/api/health
-# {"ok":true,"rooms":0,"questions":10}
+git push origin main
 ```
 
-> Le plan gratuit Render met le service en veille après inactivité : la première
-> connexion peut prendre ~30 s, le client réessaie automatiquement.
-
-## 2. Vercel
+1. Créer un **Web Service** depuis `render.yaml` (ou manuellement : build `npm install`, start `npm start`, health check `/api/health`).
+2. Définir les variables :
+   - `PUBLIC_URL` : URL publique du service, sert à générer le QR et le lien de partage.
+   - `ALLOWED_ORIGIN` : origine autorisée pour la WebSocket (même URL que `PUBLIC_URL` en production ; `*` uniquement pour un test).
+   - `KV_REST_API_URL` et `KV_REST_API_TOKEN` : facultatifs, pour le classement général Upstash.
+3. Vérifier :
 
 ```bash
-# Optionnel : uniquement si le serveur de jeu tourne sur un hôte persistant.
-vercel env add GAME_WS_URL production
-# valeur : wss://creator-quiz-game.onrender.com/ws
-vercel env add PUBLIC_URL production   # optionnel : https://<ton-projet>.vercel.app (sert pour le QR)
-vercel env add ALLOWED_ORIGIN production # optionnel : https://<ton-projet>.vercel.app (CORS/WebSocket)
-vercel env add LEADERBOARD_WRITE_TOKEN production # chaine secrete protegeant l'ecriture POST /api/leaderboard
-vercel --prod
+curl https://<service>.onrender.com/api/health
+curl https://<service>.onrender.com/version.json
 ```
 
-Pour le classement général, installer **Upstash for Redis** depuis le
-Marketplace Vercel sur le projet, puis vérifier que `KV_REST_API_URL` et
-`KV_REST_API_TOKEN` sont présentes (`vercel env ls`). Les mêmes variables doivent
-également être définies côté **Render** (serveur de jeu) : le serveur Node ecrit
-directement dans Upstash a la fin de chaque partie (plus de fichier JSON
-ephemere). Tant qu'elles manquent, `/api/leaderboard` repond
-`{"scores":[],"configured":false}` et l'interface affiche « Classement général
-indisponible » au lieu d'une erreur.
+Réponse attendue : `{"ok":true,"rooms":0,"questions":120,"hash":"…"}`.
 
-L'ecriture POST sur `/api/leaderboard` est verrouillee par le jeton
-`LEADERBOARD_WRITE_TOKEN` (meme valeur cote Render et cote Vercel) : sans jeton
-correct, le serveur renvoie 401. Le GET et OPTIONS restent publics.
+> Le plan gratuit met le service en veille : la première connexion peut prendre environ 30 s. L’interface affiche « Connexion au serveur… (peut prendre 30 s) » et réessaie automatiquement.
 
-## 3. Vérifications
+## Site statique (optionnel)
 
-```bash
-curl https://<projet>.vercel.app/api/config     # {"wsUrl":"wss://…/ws"}
-curl https://<projet>.vercel.app/api/health     # {"ok":true,"mode":"serverless",…}
-curl https://<projet>.vercel.app/api/leaderboard
-curl https://<projet>.vercel.app/api/ws         # 501 explicite (normal sur Vercel)
-```
+Le serveur Node sert déjà tout le site (`/`, `/css`, `/js`, `/assets`, `/sw.js`). Si vous préférez servir le statique depuis un CDN :
+
+- gardez `GAME_WS_URL=wss://<service>.onrender.com/ws` côté CDN ;
+- gardez `PUBLIC_URL=https://<service>.onrender.com` pour les QR ;
+- `api/ws.js` renvoie volontairement `503 websocket-not-available` : il ne doit jamais servir le jeu.
+
+## Mise à jour du service worker
+
+Le hash de build est calculé côté serveur à partir des fichiers sources et injecté dans `sw.js`. Le cache change donc à chaque déploiement. Les anciens caches sont supprimés à l’activation et un bandeau « Nouvelle version disponible » propose le rechargement. Un appui long sur le logo force la mise à jour.
+
+## Classement général
+
+Sans Upstash, le classement est stocké localement dans `server/data/leaderboard.json` (vidé avant livraison). Avec Upstash, les meilleurs scores sont écrits à la fin de chaque partie et `/api/leaderboard` lit le Redis.
 
 ## Local
 
 ```bash
 npm install
 npm start          # http://localhost:3000
-npm test           # règles du jeu
-npm run test:e2e   # partie complète WebSocket
+npm test           # règles, code, jonction, banque
+npm run test:e2e   # partie WebSocket complète
+npm run test:visual
 ```

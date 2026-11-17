@@ -743,7 +743,7 @@
     }
   }
 
-  function setPlayers(list, controllerId, stealerId) {
+  function setPlayers(list) {
     if (!S.ready) return;
     const now = performance.now();
     const seen = new Set();
@@ -770,8 +770,7 @@
         }
       }
       if (ch.label) setLabelText(ch.label, p.name);
-      const active = p.id === controllerId || p.id === stealerId;
-      if (ch.halo) ch.halo.material.opacity = active ? 0.85 : 0;
+      if (ch.halo) ch.halo.material.opacity = p.correct ? 0.85 : 0;
     });
     for (const [id, ch] of Array.from(S.players.entries())) {
       if (!seen.has(id)) {
@@ -801,11 +800,11 @@
   function react(playerId, kind) {
     const ch = S.players.get(playerId);
     if (!ch) return;
+    const mapped = kind === 'found' || kind === 'correct' ? 'joy' : kind === 'miss' || kind === 'wrong' ? 'error' : (kind || 'idle');
     const now = performance.now();
-    ch.anim = kind || 'idle';
-    ch.animUntil = now + (kind === 'error' ? 2000 : kind === 'buzz' ? 1600 : 1500);
-    if (kind === 'joy') S.crowdCheer = Math.max(S.crowdCheer, 1);
-    if (kind === 'buzz') S.crowdCheer = Math.max(S.crowdCheer, 0.45);
+    ch.anim = mapped;
+    ch.animUntil = now + (mapped === 'error' ? 2000 : 1500);
+    if (mapped === 'joy') S.crowdCheer = Math.max(S.crowdCheer, 1);
   }
 
   function celebrate() {
@@ -1061,11 +1060,6 @@
       headX = 0.5;
       bodyZ = 0.08;
       jump = 0;
-    } else if (anim === 'buzz') {
-      armRTarget = -2.7;
-      armLTarget = 0.25;
-      headZ = -0.06;
-      jump = Math.abs(Math.sin(t * 9)) * 0.04;
     } else if (anim === 'entering') {
       const elapsed = now - (ch.animStartTime || now);
       const k = Math.min(1, elapsed / 800);
@@ -1104,10 +1098,17 @@
   }
 
   function setRound(round, total, multiplier, question) {
-    S.round = round || 0;
-    S.total = total || 10;
-    S.multiplier = multiplier || 1;
-    S.question = question || '';
+    if (round && typeof round === 'object') {
+      S.round = round.qi || 0;
+      S.total = round.total || round.qTotal || 10;
+      S.question = round.theme || '';
+      S.lobbyMode = round.phase === 'lobby';
+    } else {
+      S.round = round || 0;
+      S.total = total || 10;
+      S.multiplier = multiplier || 1;
+      S.question = question || '';
+    }
     if (S.ready) drawScreen();
   }
 
@@ -1130,6 +1131,7 @@
 
   global.Scene3D = {
     init, setPlayers, react, celebrate, crowdReact, setRound, setLobby, resize, destroy,
+    result(playerId, correct) { return react(playerId, correct ? 'found' : 'miss'); },
     get ready() { return S.ready; },
   };
 })(window);

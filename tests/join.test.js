@@ -110,6 +110,7 @@ async function main() {
   await new Promise((r) => setTimeout(r, 200));
   server.kill('SIGTERM');
   console.log('\n3 tests de jonction réussis.\n');
+  process.exit(0);
 }
 
 main().catch((err) => {

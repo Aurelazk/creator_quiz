@@ -4,7 +4,7 @@
    intentions et afficher l'état reçu.
 
    L'URL du serveur de jeu est lue depuis /api/config (variable GAME_WS_URL
-   sur Vercel). Si elle est absente, on retombe sur le même hôte (/api/ws),
+   sur Vercel). Si elle est absente, on retombe sur le même hôte (/ws),
    ce qui fonctionne en local et sur un hôte Node persistant.
    ===================================================================== */
 (function (global) {
@@ -53,7 +53,7 @@
     url() {
       if (Net.wsBase) return Net.wsBase;
       const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-      return proto + '//' + location.host + '/api/ws';
+      return proto + '//' + location.host + '/ws';
     },
 
     /* Origine HTTP du serveur de jeu ('' si même hôte). */
@@ -97,6 +97,8 @@
           if (Net.handlers.state) Net.handlers.state(msg);
         } else if (msg.type === 'event') {
           if (Net.handlers.event) Net.handlers.event(msg);
+        } else if (msg.type === 'ping') {
+          Net.send('pong', { t: msg.t });
         } else if (Net.handlers[msg.type]) {
           Net.handlers[msg.type](msg);
         }

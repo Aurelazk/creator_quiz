@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>CREATOR — Guess Their Answer · Epitech Bénin</title>
-<meta name="description" content="Guess Their Answer multijoueur en temps réel — CREATOR, Epitech Bénin. Écran animateur 3D, joueurs sur téléphone." />
+<title>CREATOR — Quiz · Epitech Bénin</title>
+<meta name="description" content="Quiz multijoueur en temps réel — CREATOR, Epitech Bénin. Écran animateur 3D, joueurs sur téléphone." />
 <meta name="theme-color" content="#0C1A4B" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B35FE'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='38' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <link rel="preload" href="assets/fonts/famous-college.ttf" as="font" type="font/ttf" crossorigin />
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<!-- ===================== INTRO ANIMÉE (remplace le loader) ===================== -->
+<!-- ===================== INTRO ANIMÉE (lampe CREATOR conservée) ===================== -->
 <div id="intro" class="intro hidden" role="status" aria-label="Intro CREATOR">
   <div class="intro-bg"></div>
   <div class="intro-word" id="introWord">
@@ -39,51 +39,41 @@
         <stop offset="100%" stop-color="#FFCF5A" stop-opacity="0.85"/>
       </radialGradient>
     </defs>
-    <!-- socle -->
     <g class="lamp-base">
       <ellipse cx="200" cy="210" rx="52" ry="20" fill="#0B35FE"/>
       <rect x="180" y="190" width="40" height="24" fill="#0B35FE"/>
       <circle cx="200" cy="190" r="13" fill="#FF4E20"/>
     </g>
-    <!-- bras inférieur -->
     <g class="lamp-arm" id="lampArm1">
       <rect x="190" y="125" width="20" height="70" rx="5" fill="#0B35FE" transform="rotate(-28 200 190)"/>
       <circle cx="174" cy="128" r="12" fill="#FF4E20"/>
     </g>
-    <!-- bras supérieur -->
     <g class="lamp-arm" id="lampArm2">
       <rect x="164" y="70" width="20" height="68" rx="5" fill="#0B35FE" transform="rotate(-14 174 128)"/>
       <circle cx="160" cy="72" r="12" fill="#FF4E20"/>
     </g>
-    <!-- tête / casque -->
     <g class="lamp-head">
       <path d="M 160 72 L 115 42 L 150 24 L 190 50 Z" fill="#0B35FE"/>
       <circle cx="150" cy="38" r="17" fill="url(#bulbGrad)"/>
     </g>
-    <!-- ombre portée sous lampe -->
     <ellipse cx="200" cy="214" rx="40" ry="8" fill="#000" opacity="0.35"/>
   </svg>
-  <button class="intro-skip" id="btnIntroSkip">Passer</button>
+  <button class="intro-skip" id="btnIntroSkip" type="button">Passer</button>
   <div class="intro-loading" id="introLoading">Chargement…</div>
 </div>
 
-<div id="loader" class="loader hidden">
+<div id="loader" class="loader hidden" aria-hidden="true">
   <div class="loader-card">
     <div class="loader-logo">CREATOR<span>.</span></div>
-    <div class="loader-sub">GUESS THEIR ANSWER</div>
+    <div class="loader-sub">QUIZ</div>
     <div class="loader-bar"><i id="loaderBar"></i></div>
     <div class="loader-txt" id="loaderTxt">Préparation du plateau…</div>
   </div>
 </div>
 
-<!-- Bannière mode démo -->
-<div class="demo-banner hidden" id="demoBanner">
-  <div class="demo-banner-content">
-    <span class="demo-badge">MODE DÉMO</span>
-    <span class="demo-label">Partie simulée avec 8 joueurs · aucune donnée enregistrée.</span>
-    <button class="btn btn--ghost btn--sm" id="btnDemoRestart">Recommencer</button>
-    <button class="btn btn--danger btn--sm" id="btnDemoQuit">Quitter la démo</button>
-  </div>
+<div id="updateBanner" class="update-banner hidden" role="status">
+  <span>Nouvelle version disponible.</span>
+  <button class="btn btn--primary btn--sm" id="btnUpdate" type="button">Mettre à jour</button>
 </div>
 
 <div id="app" class="app">
@@ -97,41 +87,33 @@
     <div class="host-grid" aria-hidden="true"></div>
 
     <header class="host-top">
-      <div class="brand">
+      <div class="brand" id="hostLogo">
         <span class="brand-mark"></span>
         <span class="brand-name">CREATOR.</span>
-        <span class="brand-sub">Guess Their Answer</span>
+        <span class="brand-sub">QUIZ</span>
       </div>
-      <div class="host-round" id="hostRound" aria-live="polite">SALLE D'ATTENTE</div>
+      <div class="host-round" id="hostRound">SALLE D’ATTENTE</div>
       <div class="host-top-right">
-        <div class="room-pill" id="hostRoomPill">
-          <span class="room-dot"></span>
-          Salle <b id="hostCode">-----</b>
-        </div>
-        <button class="icon-btn" id="btnQr" title="QR code de la salle" aria-label="Afficher le QR code de la salle">▦</button>
-        <button class="icon-btn" id="btnMute" title="Activer / couper le son" aria-label="Activer / couper le son">🔊</button>
+        <div class="room-pill" id="hostRoomPill"><span class="room-dot"></span>Salle <b id="hostCode">-----</b></div>
+        <button class="icon-btn" id="btnQr" type="button" title="QR code de la salle" aria-label="Afficher le QR code de la salle">▦</button>
+        <button class="icon-btn" id="btnMute" type="button" title="Activer / couper le son" aria-label="Activer / couper le son">🔊</button>
       </div>
     </header>
 
     <div class="host-stage">
       <div class="host-banner" id="hostBanner">
+        <div class="q-theme" id="hostTheme"></div>
         <h1 class="host-question" id="hostQuestion">En attente des joueurs…</h1>
         <div class="host-meta">
           <span class="meta-chip" id="hostPhase">Salle d’attente</span>
-          <span class="meta-chip hidden" id="hostPot">Cagnotte 0</span>
+          <span class="meta-chip hidden" id="hostWarning"></span>
         </div>
       </div>
 
-      <div class="board" id="board" aria-live="polite"></div>
-
+      <div class="host-options" id="hostOptions" aria-live="polite"></div>
       <div class="host-answers" id="hostAnswers" aria-live="polite"></div>
-
-      <!-- Bande 'fausses propositions' : en bas de la scène, au-dessus de la barre basse,
-           hors du flux de host-lower pour éviter tout débordement de layout -->
-      <div class="wrong-banner hidden" id="hostWrong" aria-live="polite">
-        <span class="wrong-label">Fausses propositions</span>
-        <div class="wrong-list" id="hostWrongList"></div>
-      </div>
+      <div class="host-reveal hidden" id="hostReveal" aria-live="assertive"></div>
+      <div class="board" id="board" aria-live="polite"></div>
     </div>
 
     <div class="host-countdown hidden" id="hostCountdown" aria-live="assertive">
@@ -141,26 +123,20 @@
 
     <div class="host-lower">
       <div class="host-scoreboard" id="hostScoreboard" aria-live="polite"></div>
-
-      <div class="host-timer" id="hostTimerWrap" aria-live="polite">
+      <div class="host-timer hidden" id="hostTimerWrap" aria-live="polite">
         <img src="assets/ui/hourglass.webp" alt="" class="host-hourglass" />
         <span class="host-timer-val" id="hostTimer">--</span>
         <span class="host-timer-label">secondes</span>
       </div>
-
       <div class="host-controls">
-        <button class="btn btn--primary" id="btnHostMain">Lancer la partie</button>
-        <button class="btn btn--ghost" id="btnHostSkip">Passer</button>
-        <button class="btn btn--ghost" id="btnHostReveal">Tout révéler</button>
-        <button class="btn btn--ghost" id="btnHostPause">Pause</button>
-        <button class="btn btn--ghost" id="btnHostPlus15">+15 s</button>
-        <button class="btn btn--danger" id="btnHostClose">Fermer</button>
+        <button class="btn btn--primary" id="btnHostMain" type="button">Lancer la partie</button>
+        <button class="btn btn--ghost hidden" id="btnHostReveal" type="button">Révéler</button>
+        <button class="btn btn--ghost hidden" id="btnHostNext" type="button">Question suivante</button>
+        <button class="btn btn--ghost hidden" id="btnHostPause" type="button">Pause</button>
+        <button class="btn btn--danger" id="btnHostClose" type="button">Fermer</button>
       </div>
     </div>
 
-    <div class="big-x hidden" id="bigX" aria-hidden="true">✕</div>
-
-    <!-- Lobby animateur -->
     <div class="modal hidden" id="hostLobby" role="region" aria-label="Invitation et joueurs de la salle">
       <div class="modal-card lobby-card">
         <div class="lobby-head">
@@ -171,7 +147,7 @@
           </div>
           <div class="lobby-head-right">
             <div class="code-big" id="lobbyCode">-----</div>
-            <button type="button" class="btn btn--ghost btn--sm lobby-collapse" id="btnLobbyCollapse" aria-controls="hostLobby" aria-label="Masquer le panneau d'invitation" aria-expanded="true" title="Masquer le panneau (Échap)">Masquer</button>
+            <button type="button" class="btn btn--ghost btn--sm lobby-collapse" id="btnLobbyCollapse" aria-controls="hostLobby" aria-label="Masquer le panneau d'invitation" aria-expanded="true">Masquer</button>
           </div>
         </div>
         <div class="lobby-qr">
@@ -185,105 +161,93 @@
           </div>
         </div>
         <div class="lobby-players" id="lobbyPlayers"></div>
-        <p class="hint">Touche un joueur pour l'exclure. La salle se verrouille au lancement.</p>
         <div class="lobby-settings">
-          <label class="field">
-            <span>Durée par manche</span>
+          <label class="field"><span>Durée par question</span>
             <select id="selDuration" class="input">
-              <option value="30">30 s</option>
-              <option value="45">45 s</option>
-              <option value="60" selected>60 s</option>
-              <option value="90">90 s</option>
+              <option value="10">10 s</option>
+              <option value="15" selected>15 s</option>
+              <option value="20">20 s</option>
             </select>
           </label>
-          <label class="field">
-            <span>Joueurs max</span>
+          <label class="field"><span>Joueurs max</span>
             <select id="selMaxPlayers" class="input">
-              <option value="4">4</option>
-              <option value="6">6</option>
-              <option value="8">8</option>
-              <option value="10">10</option>
-              <option value="16">16</option>
-              <option value="20" selected>20</option>
+              <option value="4">4</option><option value="8">8</option>
+              <option value="12">12</option><option value="20" selected>20</option>
+            </select>
+          </label>
+          <label class="field"><span>Équipes</span>
+            <select id="selMode" class="input">
+              <option value="solo" selected>Individuel</option>
+              <option value="teams">Par équipes</option>
             </select>
           </label>
           <fieldset class="cat-fieldset">
-            <legend>Catégories de questions</legend>
+            <legend>Thèmes</legend>
             <div class="cat-buttons" id="catButtons">
               <button type="button" class="cat-btn active" data-cat="tout">Tout mélanger</button>
+              <button type="button" class="cat-btn" data-cat="Monuments du Bénin">Monuments du Bénin</button>
               <button type="button" class="cat-btn" data-cat="Histoire du Bénin">Histoire du Bénin</button>
-              <button type="button" class="cat-btn" data-cat="Monuments et patrimoine">Monuments & patrimoine</button>
-              <button type="button" class="cat-btn" data-cat="Culture et traditions">Culture & traditions</button>
+              <button type="button" class="cat-btn" data-cat="Culture & traditions">Culture & traditions</button>
               <button type="button" class="cat-btn" data-cat="Gastronomie">Gastronomie</button>
               <button type="button" class="cat-btn" data-cat="Géographie">Géographie</button>
+              <button type="button" class="cat-btn" data-cat="Musique & arts">Musique & arts</button>
               <button type="button" class="cat-btn" data-cat="Sport">Sport</button>
-              <button type="button" class="cat-btn" data-cat="Musique et arts">Musique & arts</button>
-              <button type="button" class="cat-btn" data-cat="Vie étudiante et technologie">Vie étudiante & tech</button>
+              <button type="button" class="cat-btn" data-cat="Tech & vie étudiante">Tech & vie étudiante</button>
+              <button type="button" class="cat-btn" data-cat="Culture générale">Culture générale</button>
             </div>
-            <p class="cat-hint">Sélectionne une ou plusieurs catégories. Par défaut, les questions sont mélangées et ne se répètent pas d’une partie à l’autre dans la même salle.</p>
+            <p class="cat-hint">Plusieurs thèmes possibles. 10 questions, 3 faciles, 4 moyennes, 3 difficiles.</p>
           </fieldset>
         </div>
         <div class="lobby-actions">
-          <button class="btn btn--primary btn--xl w-full" id="btnStart">Lancer la partie</button>
-          <button class="btn btn--ghost btn--sm" id="btnLobbyClose">Fermer la salle</button>
+          <button class="btn btn--primary btn--xl w-full" id="btnStart" type="button">Lancer la partie</button>
+          <button class="btn btn--ghost btn--sm" id="btnLobbyClose" type="button">Fermer la salle</button>
         </div>
       </div>
     </div>
 
-    <button type="button" class="lobby-reopen hidden" id="btnLobbyOpen" aria-controls="hostLobby" aria-expanded="false" aria-label="Afficher le panneau d'invitation" title="Afficher le panneau d'invitation">
-      <span class="lobby-reopen-dot" aria-hidden="true"></span>
-      <span>Invitation</span>
-      <b id="lobbyReopenCode">-----</b>
-      <span class="lobby-reopen-arrow" aria-hidden="true">▸</span>
+    <button type="button" class="lobby-reopen hidden" id="btnLobbyOpen" aria-controls="hostLobby" aria-expanded="false" aria-label="Afficher le panneau d'invitation">
+      <span class="lobby-reopen-dot" aria-hidden="true"></span><span>Invitation</span><b id="lobbyReopenCode">-----</b><span aria-hidden="true">▸</span>
     </button>
 
-    <!-- Fin de partie animateur -->
-    <div class="modal hidden" id="hostEnd">
+    <div class="modal hidden" id="hostEnd" role="region" aria-label="Classement final">
       <div class="modal-card end-card">
         <div class="eyebrow">Fin de partie</div>
         <h2 class="end-title">Classement final</h2>
         <div class="winner-line" id="hostWinner"></div>
         <ol class="rank-list" id="hostRank"></ol>
         <div class="end-actions">
-          <button class="btn btn--secondary" id="btnLeaderboard">Classement général</button>
-          <button class="btn btn--primary" id="btnReplay">Rejouer</button>
-          <button class="btn btn--ghost" id="btnShare">Partager</button>
+          <button class="btn btn--secondary" id="btnLeaderboard" type="button">Classement général</button>
+          <button class="btn btn--primary" id="btnReplay" type="button">Rejouer</button>
+          <button class="btn btn--ghost" id="btnShare" type="button">Partager</button>
         </div>
       </div>
     </div>
 
-    <!-- Classement général (overlay) -->
-    <div class="modal hidden" id="hostLeaderboard">
+    <div class="modal hidden" id="hostLeaderboard" role="region" aria-label="Classement général">
       <div class="modal-card">
         <div class="eyebrow">Hall of fame</div>
         <h2>Top joueurs</h2>
         <p class="hint" id="hostLbHint">Chargement…</p>
         <ol class="rank-list" id="hostLbList"></ol>
-        <div class="lb-actions">
-          <button class="btn btn--danger btn--sm" id="btnHostLbReset">Réinitialiser le hall of fame</button>
-          <button class="btn btn--ghost w-full" id="btnHostLbBack">Retour</button>
-        </div>
+        <button class="btn btn--ghost w-full" id="btnHostLbBack" type="button">Retour</button>
       </div>
     </div>
 
-    <!-- QR en cours de partie -->
-    <div class="modal hidden" id="qrModal">
+    <div class="modal hidden" id="qrModal" role="region" aria-label="QR code de la salle">
       <div class="modal-card qr-card">
         <div class="eyebrow">Rejoindre</div>
         <h2>Salle <span id="qrCode">-----</span></h2>
         <img id="qrImgBig" alt="QR code de la salle" />
         <div class="join-url" id="qrUrl"></div>
-        <button class="btn btn--ghost w-full" id="btnQrClose">Fermer</button>
+        <button class="btn btn--ghost w-full" id="btnQrClose" type="button">Fermer</button>
       </div>
     </div>
 
     <div class="pause-overlay hidden" id="hostPaused">
-      <div class="pause-symbol">❚❚</div>
-      <div>Partie en pause</div>
-      <div class="hint">Reprends depuis les contrôles de l'animateur.</div>
+      <div class="pause-symbol">❚❚</div><div>Partie en pause</div>
+      <div class="hint">Reprends depuis les contrôles de l’animateur.</div>
     </div>
-
-    <div class="reconnect-banner hidden" id="hostReconnect"><span id="hostReconnectTxt">Connexion perdue — reconnexion…</span> <button class="btn btn--ghost btn--sm" id="btnHostRetry">Réessayer</button></div>
+    <div class="reconnect-banner hidden" id="hostReconnect"><span>Connexion au serveur… (peut prendre 30 s)</span> <button class="btn btn--ghost btn--sm" id="btnHostRetry" type="button">Réessayer</button></div>
     <div class="toast-container" id="hostToasts"></div>
     <canvas id="confetti" class="confetti hidden"></canvas>
   </section>
@@ -293,89 +257,67 @@
        ================================================================ -->
   <section id="playerView" class="phone hidden">
     <header class="phone-top">
-      <div class="brand brand--phone"><span class="brand-mark"></span> CREATOR<span class="brand-dot">.</span></div>
+      <div class="brand brand--phone" id="phoneLogo"><span class="brand-mark"></span> CREATOR<span class="brand-dot">.</span></div>
       <div class="phone-room" id="phoneRoom"></div>
-      <button class="icon-btn icon-btn--sm" id="btnLeave" title="Quitter">Quitter</button>
+      <button class="icon-btn icon-btn--sm hidden" id="btnLeave" type="button">Quitter</button>
     </header>
 
     <main class="phone-main">
 
-      <!-- Accueil -->
       <section class="screen" id="pHome">
         <div class="home-hero">
           <div class="hero-logo">CREATOR<span>.</span></div>
-          <div class="hero-sub">GUESS THEIR ANSWER</div>
-          <p class="hero-tagline">Devine les bonnes réponses.<br />Les quiz, les points et le classement, sur ton téléphone.</p>
+          <div class="hero-sub">QUIZ</div>
+          <p class="hero-tagline">10 questions. 4 réponses.<br />Un seul bon choix, le plus vite possible.</p>
         </div>
+        <div class="home-preview" id="homePreview"></div>
         <div class="home-card">
           <div class="room-chip" id="pRoomChip"></div>
           <p class="qr-welcome hidden" id="pQrWelcome"></p>
-          <label class="field">
-            <span>Ton pseudo</span>
-            <input id="pseudo" class="input" type="text" maxlength="16" placeholder="Ex. Awa" autocomplete="off" autocapitalize="words" />
+          <label class="field"><span>Ton pseudo</span>
+            <input id="pseudo" class="input" type="text" maxlength="24" placeholder="Ex. Awa" autocomplete="off" autocapitalize="words" />
           </label>
-          <label class="field field--code">
-            <span>Code de la salle</span>
-            <input id="codeIn" class="input input--code" type="text" maxlength="5" placeholder="ABCDE" autocomplete="off" autocapitalize="characters" />
+          <label class="field field--code"><span>Code de la salle</span>
+            <input id="codeIn" class="input input--code" type="text" maxlength="5" placeholder="ABCDE" autocomplete="off" autocapitalize="characters" inputmode="text" />
           </label>
-          <button class="btn btn--primary btn--xl w-full" id="btnJoin">Rejoindre la partie</button>
-          <button class="btn btn--secondary w-full demo-home-btn" id="btnDemoHome">Voir la démo</button>
+          <button class="btn btn--primary btn--xl w-full" id="btnJoin" type="button">Rejoindre la partie</button>
           <div class="home-links">
-            <button class="link-btn" id="btnAvatar">Personnaliser mon personnage</button>
-            <button class="link-btn" id="btnLeaderTop">Classement général</button>
-            <button class="link-btn" id="btnCreate">Je suis l’animateur</button>
+            <button class="link-btn" id="btnAvatar" type="button">Personnaliser mon personnage</button>
+            <button class="link-btn" id="btnLeaderTop" type="button">Classement général</button>
+            <button class="link-btn" id="btnCreate" type="button">Je suis l’animateur</button>
           </div>
         </div>
-        <div class="home-preview" id="homePreview"></div>
         <div class="home-foot">CREATOR · Epitech Bénin · 2026</div>
       </section>
 
-      <!-- Personnage -->
       <section class="screen hidden" id="pAvatar">
         <div class="avatar-head">
-          <button class="icon-btn icon-btn--sm" id="btnAvatarBack" aria-label="Retour">←</button>
-          <div>
-            <h2>Ton personnage</h2>
-            <p class="hint">Un seul modèle de base, plein de variantes.</p>
-          </div>
-          <button class="btn btn--ghost btn--sm" id="btnAvatarRandom">Aléatoire</button>
+          <button class="icon-btn icon-btn--sm" id="btnAvatarBack" type="button" aria-label="Retour">←</button>
+          <div><h2>Ton personnage</h2><p class="hint">Un seul modèle, plein de variantes.</p></div>
+          <button class="btn btn--ghost btn--sm" id="btnAvatarRandom" type="button">Aléatoire</button>
         </div>
         <div class="avatar-preview-wrap">
           <div class="avatar-preview" id="avatarPreview"></div>
           <div class="avatar-name" id="avatarName">Joueur</div>
-          <div class="avatar-badge" id="avatarBadge">Aperçu en direct</div>
+          <div class="avatar-badge">Aperçu en direct</div>
         </div>
         <div class="avatar-scroll">
-          <div class="avatar-group">
-            <div class="group-title">Silhouette</div>
-            <div class="choice-row" id="silhouetteGrid"></div>
-          </div>
-          <div class="avatar-group">
-            <div class="group-title">Coiffure</div>
-            <div class="choice-row" id="hairGrid"></div>
-          </div>
-          <div class="avatar-group">
-            <div class="group-title">Tenue</div>
-            <div class="choice-row" id="outfitGrid"></div>
-          </div>
-          <div class="avatar-group">
-            <div class="group-title">Accessoire</div>
-            <div class="choice-row" id="accessoryGrid"></div>
-          </div>
-          <div class="avatar-group">
-            <div class="group-title">Couleurs</div>
+          <div class="avatar-group"><div class="group-title">Silhouette</div><div class="choice-row" id="silhouetteGrid"></div></div>
+          <div class="avatar-group"><div class="group-title">Coiffure</div><div class="choice-row" id="hairGrid"></div></div>
+          <div class="avatar-group"><div class="group-title">Tenue</div><div class="choice-row" id="outfitGrid"></div></div>
+          <div class="avatar-group"><div class="group-title">Accessoire</div><div class="choice-row" id="accessoryGrid"></div></div>
+          <div class="avatar-group"><div class="group-title">Couleurs</div>
             <div class="color-block"><span>Cheveux</span><div class="color-row" id="hairColors"></div></div>
             <div class="color-block"><span>Peau</span><div class="color-row" id="skinColors"></div></div>
-            <div class="color-block"><span>Veste / haut</span><div class="color-row" id="jacketColors"></div></div>
+            <div class="color-block"><span>Veste</span><div class="color-row" id="jacketColors"></div></div>
             <div class="color-block"><span>T-shirt</span><div class="color-row" id="shirtColors"></div></div>
             <div class="color-block"><span>Pantalon</span><div class="color-row" id="pantsColors"></div></div>
             <div class="color-block"><span>Baskets</span><div class="color-row" id="shoeColors"></div></div>
           </div>
         </div>
-        <button class="btn btn--primary btn--xl w-full sticky-bottom" id="btnAvatarOk">C'est parti</button>
+        <button class="btn btn--primary btn--xl w-full sticky-bottom" id="btnAvatarOk" type="button">C’est parti</button>
       </section>
 
-      <!-- Lobby joueur -->
       <section class="screen hidden" id="pLobby">
         <div class="panel">
           <div class="eyebrow">Salle</div>
@@ -383,89 +325,55 @@
           <div class="lobby-preview" id="lobbyPreview"></div>
           <h2 class="h2-sm">Joueurs connectés</h2>
           <div class="lobby-list" id="pLobbyList"></div>
-          <p class="hint" id="pLobbyHint">En attente de l'animateur…</p>
-          <button class="btn btn--ghost w-full" id="btnPlayerAvatar">Changer de personnage</button>
-          <button class="btn btn--ghost w-full" id="btnLeaderLobby">Classement général</button>
+          <p class="hint">En attente de l’animateur…</p>
+          <button class="btn btn--ghost w-full" id="btnPlayerAvatar" type="button">Changer de personnage</button>
+          <button class="btn btn--ghost w-full" id="btnLeaderLobby" type="button">Classement général</button>
         </div>
       </section>
 
-      <!-- Jeu -->
       <section class="screen hidden" id="pGame">
         <div class="game-top">
           <div class="game-round" id="pQnum">MANCHE 1 / 10</div>
-          <div class="game-timer" id="pTimerWrap" aria-live="polite">
-            <img src="assets/ui/hourglass.webp" alt="" />
-            <span id="pTimer">--</span>
-          </div>
+          <div class="game-timer hidden" id="pTimerWrap" aria-live="polite"><img src="assets/ui/hourglass.webp" alt="" /><span id="pTimer">--</span></div>
           <div class="game-score" aria-live="polite"><span id="pScore">0</span> pts</div>
         </div>
-
         <div class="game-question" id="pQuestion">…</div>
-
-        <div class="mini-board" id="pMiniBoard" aria-live="polite" hidden>
-          <span class="mini-board-title">Top 3</span>
-          <ol class="mini-board-list" id="pMiniList"></ol>
-        </div>
-
         <div class="game-status" id="pStatus">En attente…</div>
-
-        <div class="answer-box">
-          <!-- Réponse ouverte (texte libre) -->
-          <input id="pAnswer" class="answer-input" type="text" maxlength="40" placeholder="Ta réponse…" autocomplete="off" autocorrect="off" spellcheck="false" disabled />
-          <button class="answer-send" id="btnSubmit" disabled>GO</button>
+        <div class="qcm-options" id="pQcmOptions" role="radiogroup" aria-label="Choix de réponse">
+          <button class="qcm-option" id="optA" data-idx="0" type="button"><span class="qcm-letter">A</span><span class="qcm-label"></span></button>
+          <button class="qcm-option" id="optB" data-idx="1" type="button"><span class="qcm-letter">B</span><span class="qcm-label"></span></button>
+          <button class="qcm-option" id="optC" data-idx="2" type="button"><span class="qcm-letter">C</span><span class="qcm-label"></span></button>
+          <button class="qcm-option" id="optD" data-idx="3" type="button"><span class="qcm-letter">D</span><span class="qcm-label"></span></button>
         </div>
-
-        <!-- Options QCM (affiché quand format === 'qcm') -->
-        <div class="qcm-options hidden" id="pQcmOptions" role="radiogroup" aria-label="Choix de réponse">
-          <button class="qcm-option" id="optA" data-idx="0">A</button>
-          <button class="qcm-option" id="optB" data-idx="1">B</button>
-          <button class="qcm-option" id="optC" data-idx="2">C</button>
-          <button class="qcm-option" id="optD" data-idx="3">D</button>
-        </div>
-
-        <!-- Spectateur actif : deviner en secret pour bonus -->
-        <div class="answer-box spectator-box hidden" id="pSpectatorBox">
-          <span class="spectator-label">Devine aussi (bonus)</span>
-          <input id="pSpectAnswer" class="answer-input" type="text" maxlength="40" placeholder="Ta proposition…" autocomplete="off" autocorrect="off" spellcheck="false" disabled />
-          <button class="answer-send answer-send--ghost" id="btnSpectSubmit" disabled>GO</button>
-        </div>
-        <div class="spectator-line" id="pSpectLine"></div>
-
-        <div class="found-list" id="pFound"></div>
-        <div class="pot-line hidden" id="pPot">Cagnotte : <b>0</b></div>
-
+        <div class="reveal-card hidden" id="pReveal" aria-live="assertive"></div>
         <div class="reaction hidden" id="pReaction"></div>
       </section>
 
-      <!-- Fin -->
       <section class="screen hidden" id="pEnd">
         <div class="panel">
           <div class="eyebrow">Fin de partie</div>
-          <h2 class="end-title" id="pEndTitle">Classement</h2>
+          <h2 class="end-title">Classement</h2>
           <div class="winner-line" id="pWinner"></div>
           <ol class="rank-list" id="pRank"></ol>
           <div class="end-actions">
-            <button class="btn btn--secondary w-full" id="btnLeaderEnd">Classement général</button>
-            <button class="btn btn--ghost w-full" id="btnHome">Accueil</button>
+            <button class="btn btn--secondary w-full" id="btnLeaderEnd" type="button">Classement général</button>
+            <button class="btn btn--ghost w-full" id="btnHome" type="button">Accueil</button>
           </div>
         </div>
       </section>
 
-      <!-- Classement général -->
       <section class="screen hidden" id="pLeaderboard">
         <div class="panel">
-          <button class="icon-btn icon-btn--sm" id="btnLbBack" aria-label="Retour">←</button>
-          <div class="eyebrow">Hall of fame</div>
-          <h2>Top joueurs</h2>
+          <button class="icon-btn icon-btn--sm" id="btnLbBack" type="button" aria-label="Retour">←</button>
+          <div class="eyebrow">Hall of fame</div><h2>Top joueurs</h2>
           <p class="hint" id="lbHint">Chargement…</p>
           <ol class="rank-list" id="lbList"></ol>
         </div>
       </section>
 
     </main>
-
     <div class="toast-container" id="phoneToasts"></div>
-    <div class="reconnect-banner hidden" id="phoneReconnect"><span id="phoneReconnectTxt">Connexion au serveur…</span> <button class="btn btn--ghost btn--sm" id="btnPhoneRetry">Réessayer</button></div>
+    <div class="reconnect-banner hidden" id="phoneReconnect"><span>Connexion au serveur… (peut prendre 30 s)</span> <button class="btn btn--ghost btn--sm" id="btnPhoneRetry" type="button">Réessayer</button></div>
   </section>
 </div>
 
@@ -476,9 +384,36 @@
 <script src="shared/rules.js"></script>
 <script src="js/app.js"></script>
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  }
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.register('/sw.js').then(function (reg) {
+    function notify() {
+      var update = reg.waiting || (reg.installing && reg.installing.state === 'installed' ? reg.installing : null);
+      if (update && !navigator.serviceWorker.controller) return;
+      if (update) {
+        document.getElementById('updateBanner').classList.remove('hidden');
+        window.__swUpdate = function () { update.postMessage({ type: 'SKIP_WAITING' }); };
+      }
+    }
+    reg.addEventListener('updatefound', function () {
+      if (!reg.installing) return;
+      reg.installing.addEventListener('statechange', function (event) {
+        if (event.target.state === 'installed') notify();
+      });
+    });
+    notify();
+    var reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (reloading) return;
+      reloading = true;
+      location.reload();
+    });
+  }).catch(function () {});
+  document.getElementById('btnUpdate').addEventListener('click', function () {
+    if (window.__swUpdate) window.__swUpdate();
+    else location.reload();
+  });
+})();
 </script>
 </body>
 </html>

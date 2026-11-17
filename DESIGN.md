@@ -9,7 +9,7 @@ Aucun texte technique anglais dans l’interface : tout est en français.
 | --- | --- | --- | --- |
 | Marque bleue | `--bleu` | `#0B35FE` | actions primaires, liens forts |
 | Bleu clair | `--bleu2` | `#2E85FF` | focus, survol, spectateur |
-| Orange | `--orange` | `#FF4E20` | erreurs, buzz, vol |
+| Orange | `--orange` | `#FF4E20` | erreurs, réponses incorrectes |
 | Vert | `--vert` | `#00E472` | succès, points, code de salle |
 | Nuit | `--nuit` | `#0C1A4B` | fonds de cartes |
 | Nuit profonde | `--nuit-fonce` | `#081033` | fond d’écran |
@@ -67,14 +67,14 @@ Pas d’emoji dans les libellés d’action. Les icônes décoratives sont
 - `--motion-fast` 120 ms : survol, focus, bascule d’état.
 - `--motion-base` 240 ms : apparition de carte, notification.
 - `--motion-slow` 400 ms : transitions d’écran.
-- `--ease-out` pour entrer, `--ease-bounce` pour les scores et le buzzer.
+- `--ease-out` pour entrer, `--ease-bounce` pour les scores et les révélations.
 - `prefers-reduced-motion: reduce` supprime animations et transitions.
 
 ## 8. Règles d’écran
 
 ### Animateur (projection)
 - Un seul message à la fois, lisible à 3 m.
-- Bandeau haut : phase + chrono. Plateau : 6 réponses maximum, 36 vh.
+- Bandeau haut : phase + chrono. Plateau : 4 options QCM, 36 vh maximum.
 - Bas : classement et commandes sur une seule ligne, jamais superposés.
 - Le public 3D ne doit jamais être masqué par le plateau HTML.
 
@@ -82,6 +82,6 @@ Pas d’emoji dans les libellés d’action. Les icônes décoratives sont
 - Action principale toujours visible sans défilement (`100dvh`).
 - Une notification à la fois, en bas, au-dessus de la zone sûre.
 - Mini-classement : top 3 + le joueur courant si hors top 3.
-- Spectateurs : « Devine aussi » en champ séparé, jamais à la place du buzzer.
+- Retardataires : ils rejoignent la manche suivante sans perturber la partie en cours.
 - Clavier : le champ actif reste visible (`scrollIntoView`), pas de zoom iOS
   (police ≥ 16 px sur les champs).

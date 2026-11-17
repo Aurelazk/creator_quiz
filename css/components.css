@@ -341,7 +341,6 @@
 .reaction.ok .r-big { color: var(--vert); text-shadow: 0 0 40px rgba(0,228,114,0.75); }
 .reaction.bad .r-big { color: var(--orange); text-shadow: 0 0 40px rgba(255,78,32,0.7); }
 .reaction.dup .r-big { color: var(--gold); text-shadow: 0 0 40px rgba(255,207,90,0.6); }
-.reaction.steal .r-big { color: var(--gold); text-shadow: 0 0 40px rgba(255,207,90,0.6); }
 
 /* ---------------- Confettis ---------------- */
 .confetti { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 55; pointer-events: none; }

@@ -1,962 +1,962 @@
 [
   {
-    "q": "Quel palais royal est classé au patrimoine mondial de l'UNESCO au Bénin ?",
+    "q": "Quel ensemble architectural est inscrit au patrimoine mondial de l’UNESCO à Abomey ?",
     "theme": "Monuments du Bénin",
     "difficulty": 1,
-    "options": ["Palais de la Marina", "Palais royaux d’Abomey", "Palais présidentiel de Porto-Novo", "Palais des Gouverneurs de Cotonou"],
+    "options": ["Palais de la Marina", "Palais royaux d’Abomey", "Palais du roi Toffa", "Palais présidentiel de Porto-Novo"],
     "correctIndex": 1,
-    "fact": "Les Palais royaux d’Abomey étaient la capitale du royaume du Dahomey du XVIIe au XIXe siècle."
+    "fact": "Les palais royaux d’Abomey, ancienne capitale du royaume du Dahomey, sont inscrits au patrimoine mondial depuis 1985."
   },
   {
-    "q": "À Ouidah, quel monument marque la fin de la Route de l Esclavage ?",
+    "q": "Quel monument commémore la déportation des captifs sur la plage d’Ouidah ?",
     "theme": "Monuments du Bénin",
     "difficulty": 1,
-    "options": ["Porte du Non-Retour", "Temple des Pythons", "Fort portugais", "Place Chacha"],
-    "correctIndex": 0,
-    "fact": "La Porte du Non-Retour symbolise le dernier point d'Afrique avant la traversée vers les Amériques."
-  },
-  {
-    "q": "Quel village lacustre est surnommé la \"Venise de l Afrique\" au Bénin ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 1,
-    "options": ["Ganvié", "Sô-Ava", "Dangbo", "Adjarra"],
-    "correctIndex": 0,
-    "fact": "Ganvié est construit sur pilotis sur le lac Nokoué, près de Cotonou."
-  },
-  {
-    "q": "À Ouidah, quel temple abrite des serpents sacrés ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 1,
-    "options": ["Temple des Pythons", "Temple du Vodun", "Sanctuaire des Éléphants", "Autel des Rois"],
-    "correctIndex": 0,
-    "fact": "Le Temple des Pythons abrite des pythons royaux considérés comme les gardiens de la ville."
-  },
-  {
-    "q": "Quelle forteresse européenne se trouve à Ouidah ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 2,
-    "options": ["Fort portugais", "Fort hollandais", "Fort britannique", "Fort espagnol"],
-    "correctIndex": 0,
-    "fact": "Le fort portugais de Ouidah était un comptoir important de la traite atlantique."
-  },
-  {
-    "q": "Quelle cité fortifiée traditionnelle se trouve dans le nord du Bénin ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 2,
-    "options": ["Tata Somba", "Grande Mosquée de Parakou", "Palais de Nikki", "Murs de Kandi"],
-    "correctIndex": 0,
-    "fact": "Les Tata Somba sont des maisons-forteresses des peuples Somba (Betammaribè) de l Atacora."
-  },
-  {
-    "q": "Quel parc national béninois est connu pour ses éléphants ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 2,
-    "options": ["Pendjari", "W du Bénin", "Désert de la Pendjari", "Forêt de la Lama"],
-    "correctIndex": 0,
-    "fact": "Le parc national de la Pendjari fait partie du complexe W-Arly-Pendjari (WAP)."
-  },
-  {
-    "q": "Quel monument à Cotonou rend hommage aux martyrs de l indépendance ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 2,
-    "options": ["Place des Martyrs", "Monument de l Amazone", "Palais de la Marina", "Étoile rouge"],
-    "correctIndex": 0,
-    "fact": "La Place des Martyrs commémore les victimes de la lutte pour l indépendance."
-  },
-  {
-    "q": "Quel ancien palais sert aujourd hui de musée à Porto-Novo ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 3,
-    "options": ["Musée Honmé", "Palais de la Marina", "Musée de Ouidah", "Fort français"],
-    "correctIndex": 0,
-    "fact": "Le musée Honmé à Porto-Novo présente l'histoire du royaume de Porto-Novo."
-  },
-  {
-    "q": "Quel site à Abomey était le centre du pouvoir des rois du Dahomey ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 1,
-    "options": ["Les Palais royaux", "Le marché central", "La cathédrale", "L'école des Amazones"],
-    "correctIndex": 0,
-    "fact": "Les Palais royaux d'Abomey sont inscrits au patrimoine mondial de l'UNESCO depuis 1985."
-  },
-  {
-    "q": "Quel fleuve marque la frontière naturelle entre le Bénin et le Togo ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 2,
-    "options": ["Mono", "Ouémé", "Niger", "Couffo"],
-    "correctIndex": 0,
-    "fact": "Le fleuve Mono forme une partie de la frontière entre le Bénin et le Togo."
-  },
-  {
-    "q": "Quel site de Ouidah est associé au culte du vodun et aux pèlerinages ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 2,
-    "options": ["Temple des Pythons", "Fort portugais", "Porte du Non-Retour", "Place Gbaguidi"],
-    "correctIndex": 0,
-    "fact": "Le Temple des Pythons est un lieu de culte vodun très fréquenté à Ouidah."
-  },
-  {
-    "q": "Quel monument d Abomey commémore les reines et guerrières du Dahomey ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 3,
-    "options": ["Monument de l Amazone", "Palais des Gouverneurs", "Fort français", "Cathédrale"],
-    "correctIndex": 0,
-    "fact": "Le monument de l Amazone rend hommage aux femmes guerrières du royaume du Dahomey."
-  },
-  {
-    "q": "Quelle colline de Ouidah est liée à l histoire des esclaves ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 3,
-    "options": ["Colline de Ouidah", "Mont de Sèmè", "Plateau de Parakou", "Colline de Dassa"],
-    "correctIndex": 0,
-    "fact": "La colline de Ouidah est associée à la mémoire de la traite et de l'esclavage."
-  },
-  {
-    "q": "Quel bâtiment colonial abrite des services publics à Cotonou ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 3,
-    "options": ["Palais des Gouverneurs", "Fort portugais", "Temple des Pythons", "Musée Honmé"],
-    "correctIndex": 0,
-    "fact": "Le Palais des Gouverneurs à Cotonou est un édifice colonial réutilisé."
-  },
-  {
-    "q": "Quel site de Ganvié est visité par les touristes pour son mode de vie lacustre ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 2,
-    "options": ["Le village sur pilotis", "Le marché sec", "Le fort", "Le palais"],
-    "correctIndex": 0,
-    "fact": "Ganvié est célèbre pour ses maisons sur pilotis sur le lac Nokoué."
-  },
-  {
-    "q": "Quel monument de Porto-Novo rappelle l histoire du royaume local ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 3,
-    "options": ["Musée Honmé", "Place des Martyrs", "Fort portugais", "Tata Somba"],
-    "correctIndex": 0,
-    "fact": "Le musée Honmé présente l'histoire et la culture du royaume de Porto-Novo."
-  },
-  {
-    "q": "Quel site du nord du Bénin est connu pour ses peintures rupestres ?",
-    "theme": "Monuments du Bénin",
-    "difficulty": 3,
-    "options": ["Pendjari", "Tata Somba", "Forêt classée de la Lama", "Grotte de Toucountouna"],
+    "options": ["Temple des Pythons", "Fort portugais", "Place aux enchères", "Porte du Non-Retour"],
     "correctIndex": 3,
-    "fact": "La région de Toucountouna dans l Atacora abrite des sites de peintures rupestres."
+    "fact": "La Porte du Non-Retour a été érigée en 1995 avec l’appui de l’UNESCO, sur la plage d’Ouidah."
   },
   {
-    "q": "Quel monument de Ouidah commémore l abolition de l esclavage ?",
+    "q": "Quel sanctuaire vodoun d’Ouidah abrite des pythons royaux ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 1,
+    "options": ["Temple des Pythons", "Basilique de l’Immaculée Conception", "Forêt sacrée de Savi", "Musée Zinsou"],
+    "correctIndex": 0,
+    "fact": "Le temple des Pythons d’Ouidah abrite des pythons royaux vénérés depuis la fin du XVIIe siècle."
+  },
+  {
+    "q": "Quel édifice religieux a été construit face au temple des Pythons à Ouidah entre 1903 et 1909 ?",
     "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "options": ["Porte du Non-Retour", "Fort portugais", "Temple des Pythons", "Place Chacha"],
-    "correctIndex": 0,
-    "fact": "La Porte du Non-Retour est un lieu de mémoire de l abolition de la traite."
+    "options": ["Séminaire Saint-Gall", "Mosquée centrale de Cotonou", "Basilique de l’Immaculée Conception", "Temple vodoun de Houhoué"],
+    "correctIndex": 2,
+    "fact": "La basilique de l’Immaculée Conception d’Ouidah a été bâtie de 1903 à 1909, en face du temple des Pythons."
   },
   {
-    "q": "Quel édifice de Abomey servait de demeure aux reines mères du Dahomey ?",
+    "q": "Quel fort du XVIIIe siècle, devenu musée de l’histoire, subsiste à Ouidah ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 2,
+    "options": ["Fort français", "Fort danois", "Fort portugais", "Fort hollandais"],
+    "correctIndex": 2,
+    "fact": "Le fort portugais São João Baptista de Ajuda, construit en 1721, est le seul fort d’Ouidah encore debout."
+  },
+  {
+    "q": "Comment appelle-t-on la place d’Ouidah où les captifs étaient vendus aux enchères ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 2,
+    "options": ["Place Chacha", "Place Toffa", "Place Singbodji", "Place Bayol"],
+    "correctIndex": 0,
+    "fact": "La place Chacha, ou place aux enchères, tire son nom du marchand Francisco Félix de Souza, dit Chacha."
+  },
+  {
+    "q": "Quel parcours mémoriel relie la place aux enchères à la porte du Non-Retour à Ouidah ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 1,
+    "options": ["Route des pêches", "Route du Vodoun", "Route de la lagune", "Route des Esclaves"],
+    "correctIndex": 3,
+    "fact": "La Route des Esclaves mesure environ 4 km et jalonne les derniers pas des captifs vers l’océan."
+  },
+  {
+    "q": "Quelle forêt sacrée d’Ouidah est liée au roi Kpassè, fondateur de la ville ?",
     "theme": "Monuments du Bénin",
     "difficulty": 3,
-    "options": ["Palais des reines", "Fort français", "Temple des Pythons", "Place des Martyrs"],
-    "correctIndex": 0,
-    "fact": "Dans les Palais royaux d Abomey, des espaces étaient réservés aux reines mères."
+    "options": ["Forêt sacrée de Savi", "Forêt sacrée de Kpassè", "Forêt sacrée d’Avlékété", "Forêt sacrée de Houakpè-Daho"],
+    "correctIndex": 1,
+    "fact": "La forêt sacrée de Kpassè, à Ouidah, doit son nom au roi Kpassè, figure fondatrice de la cité."
   },
   {
-    "q": "Quel royaume précéda le Dahomey dans la région d'Abomey ?",
-    "theme": "Histoire du Bénin",
+    "q": "Quel musée d’art contemporain d’Ouidah occupe une villa afro-brésilienne de 1922 ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Musée Honmè", "Musée de la famille de Souza", "Musée international de la mémoire", "Musée Zinsou"],
+    "correctIndex": 3,
+    "fact": "Le musée Zinsou d’Ouidah a ouvert en 2013 dans la villa Ajavon, construite en 1922."
+  },
+  {
+    "q": "Quel grand marché de Cotonou est l’un des plus importants d’Afrique de l’Ouest ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "options": ["Allada", "Ouidah", "Porto-Novo", "Nikki"],
-    "correctIndex": 0,
-    "fact": "Le royaume d’Allada était un État puissant avant la montée du Dahomey."
+    "options": ["Marché de Dassa", "Marché Dantokpa", "Marché de Nikki", "Marché de Ganvié"],
+    "correctIndex": 1,
+    "fact": "Le marché Dantokpa, à Cotonou, est le principal centre commercial du Bénin."
   },
   {
-    "q": "Quel roi du Dahomey a résisté à la colonisation française à la fin du XIXe siècle ?",
+    "q": "Quel ancien palais royal est devenu le musée Honmè à Porto-Novo ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 2,
+    "options": ["Palais du roi Glélé", "Palais du roi Béhanzin", "Palais des rois de Porto-Novo", "Palais du roi de Nikki"],
+    "correctIndex": 2,
+    "fact": "Le musée Honmè occupe l’ancien palais des rois de Porto-Novo, construit en 1688."
+  },
+  {
+    "q": "Quelle place de Porto-Novo abrite une statue du roi Toffa I ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 2,
+    "options": ["Place Toffa", "Place Chacha", "Place Singbodji", "Place Bayol"],
+    "correctIndex": 0,
+    "fact": "La place Toffa, au cœur de Porto-Novo, est dominée par une statue du roi Toffa I."
+  },
+  {
+    "q": "Quel musée ethnographique de Porto-Novo porte le nom d’Alexandre Senou Adande ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Musée Honmè", "Musée ethnographique Alexandre Senou Adande", "Musée Zinsou", "Musée des Trésors royaux"],
+    "correctIndex": 1,
+    "fact": "Le MEASA, musée ethnographique Alexandre Senou Adande, est situé à Porto-Novo."
+  },
+  {
+    "q": "Quel style architectural caractérise le bâtiment de l’Assemblée nationale à Porto-Novo ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Style néo-gothique", "Style contemporain nordique", "Style mauresque", "Style colonial afro-brésilien"],
+    "correctIndex": 3,
+    "fact": "Le bâtiment de l’Assemblée nationale à Porto-Novo mêle architectures coloniale et afro-brésilienne."
+  },
+  {
+    "q": "Quel palais de Cotonou a accueilli en 2021 l’exposition des trésors royaux restitués au Bénin ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Palais de la Marina", "Palais de l’Indépendance", "Palais du Gouverneur de Porto-Novo", "Palais des Congrès de Cotonou"],
+    "correctIndex": 0,
+    "fact": "Les trésors royaux du Danhomè restitués par la France ont été exposés au palais de la Marina en 2021."
+  },
+  {
+    "q": "Quel parc national du nord-ouest du Bénin est réputé pour ses buffles ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 2,
+    "options": ["Parc national du W", "Parc national du Mono", "Parc national de la Pendjari", "Parc national de l’Atacora"],
+    "correctIndex": 2,
+    "fact": "Le parc national de la Pendjari, dans l’Atacora, est l’un des sites majeurs de la faune béninoise."
+  },
+  {
+    "q": "Quel village lacustre est construit sur pilotis sur le lac Nokoué ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 1,
+    "options": ["Sô-Ava", "Dangbo", "Ganvié", "Adjarra"],
+    "correctIndex": 2,
+    "fact": "Ganvié est une cité lacustre bâtie sur pilotis sur le lac Nokoué, près de Cotonou."
+  },
+  {
+    "q": "Quelle place d’Abomey servait de lieu de tri des captifs avant leur acheminement vers Ouidah ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Place Singbodji", "Place Chacha", "Place Toffa", "Place aux enchères de Kétou"],
+    "correctIndex": 0,
+    "fact": "La place Singbodji à Abomey était un lieu de tri d’esclaves sur la Route de l’Esclave."
+  },
+  {
+    "q": "Comment se nomme l’ancienne porte royale de Kétou, site de la Route de l’Esclave ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Porte du Non-Retour", "Porte de Savi", "Porte de Toffa", "Akaba Idénan"],
+    "correctIndex": 3,
+    "fact": "Akaba Idénan, à Kétou, est une porte historique associée à la Route de l’Esclave au Bénin."
+  },
+  {
+    "q": "Comment se nomme le centre culturel de rencontre international installé à Ouidah ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Centre culturel Ouadada", "CCRI John Smith", "Centre culturel de Porto-Novo", "Institut français d’Abomey"],
+    "correctIndex": 1,
+    "fact": "Le CCRI John Smith d’Ouidah est un centre culturel de rencontre international dédié aux arts et au patrimoine."
+  },
+  {
+    "q": "En quelle année le Bénin a-t-il accédé à l’indépendance ?",
     "theme": "Histoire du Bénin",
     "difficulty": 1,
-    "options": ["Béhanzin", "Guézo", "Glèlè", "Agadja"],
-    "correctIndex": 0,
-    "fact": "Le roi Béhanzin a mené la résistance contre l'armée française en 1890-1894."
+    "options": ["1958", "1959", "1962", "1960"],
+    "correctIndex": 3,
+    "fact": "Le Dahomey est devenu indépendant le 1er août 1960."
   },
   {
-    "q": "En quelle année le Dahomey a-t-il accédé à l indépendance ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 1,
-    "options": ["1960", "1945", "1958", "1962"],
-    "correctIndex": 0,
-    "fact": "Le Dahomey (aujourd hui Bénin) est devenu indépendant le 1er août 1960."
-  },
-  {
-    "q": "Qui fut le premier président du Dahomey indépendant ?",
+    "q": "Sous quel nom le pays a-t-il accédé à l’indépendance en 1960 ?",
     "theme": "Histoire du Bénin",
     "difficulty": 2,
-    "options": ["Hubert Maga", "Sourou-Migan Apithy", "Justin Ahomadégbé", "Mathieu Kérékou"],
-    "correctIndex": 0,
-    "fact": "Hubert Maga fut le premier président de la République du Dahomey en 1960."
+    "options": ["République populaire du Bénin", "République du Dahomey", "République du Bénin", "Colonie du Dahomey"],
+    "correctIndex": 1,
+    "fact": "L’indépendance de 1960 a été proclamée sous le nom de République du Dahomey."
   },
   {
-    "q": "Quel président béninois a instauré la révolution populaire en 1972 ?",
+    "q": "Quelle date marque le passage à la République populaire du Bénin ?",
     "theme": "Histoire du Bénin",
     "difficulty": 2,
-    "options": ["Mathieu Kérékou", "Patrice Talon", "Nicéphore Soglo", "Boni Yayi"],
-    "correctIndex": 0,
-    "fact": "Mathieu Kérékou a pris le pouvoir par un coup d'État le 26 octobre 1972."
+    "options": ["26 octobre 1972", "1er août 1960", "30 novembre 1975", "19 février 1990"],
+    "correctIndex": 2,
+    "fact": "Le 30 novembre 1975, la République du Dahomey devient la République populaire du Bénin."
   },
   {
-    "q": "Quelle conférence a marqué le retour à la démocratie en 1990 ?",
+    "q": "Qui a pris le pouvoir lors du coup d’État du 26 octobre 1972 ?",
     "theme": "Histoire du Bénin",
     "difficulty": 2,
-    "options": ["Conférence nationale", "Conférence de Berlin", "Conférence de Lagos", "Sommet de Cotonou"],
+    "options": ["Mathieu Kérékou", "Christophe Soglo", "Hubert Maga", "Nicéphore Soglo"],
     "correctIndex": 0,
-    "fact": "La Conférence nationale des forces vives de la nation s'est tenue en février 1990."
+    "fact": "Mathieu Kérékou renverse le triumvirat au pouvoir le 26 octobre 1972."
   },
   {
-    "q": "Quel corps militaire exclusivement féminin était célèbre au royaume du Dahomey ?",
+    "q": "Quel événement majeur s’est tenu à Cotonou du 19 au 28 février 1990 ?",
     "theme": "Histoire du Bénin",
-    "difficulty": 1,
-    "options": ["Amazones du Dahomey", "Gardiennes du roi", "Soldates du Mono", "Femmes de Ouidah"],
-    "correctIndex": 0,
-    "fact": "Les Amazones du Dahomey étaient un corps d’élite de guerrières au service du roi."
+    "difficulty": 2,
+    "options": ["Conférence de Lomé", "Conférence nationale des forces vives", "Sommet de l’UEMOA", "Conférence de Ouagadougou"],
+    "correctIndex": 1,
+    "fact": "La Conférence nationale des forces vives de la nation ouvre la transition démocratique au Bénin."
   },
   {
-    "q": "Qui est le président actuel de la République du Bénin ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 1,
-    "options": ["Patrice Talon", "Mathieu Kérékou", "Boni Yayi", "Nicéphore Soglo"],
-    "correctIndex": 0,
-    "fact": "Patrice Talon est président de la République depuis avril 2016."
-  },
-  {
-    "q": "Quel roi du Dahomey a réorganisé l armée et l État au début du XIXe siècle ?",
+    "q": "Qui a présidé la Conférence nationale de 1990 au Bénin ?",
     "theme": "Histoire du Bénin",
     "difficulty": 3,
-    "options": ["Guézo", "Agadja", "Houégbadja", "Tégbessou"],
-    "correctIndex": 0,
-    "fact": "Le roi Guézo (1818-1858) a modernisé l administration et l armée du Dahomey."
+    "options": ["Mgr Théodore Nzue", "Nicéphore Soglo", "Mathieu Kérékou", "Mgr Isidore de Souza"],
+    "correctIndex": 3,
+    "fact": "La Conférence nationale de 1990 a été présidée par Mgr Isidore de Souza, évêque de Cotonou."
   },
   {
-    "q": "Quel événement a marqué la fin du parti unique au Bénin ?",
+    "q": "Qui a été nommé Premier ministre de la transition en 1990 ?",
     "theme": "Histoire du Bénin",
     "difficulty": 2,
-    "options": ["Conférence nationale de 1990", "Indépendance de 1960", "Révolution de 1972", "Élections de 1991"],
+    "options": ["Nicéphore Soglo", "Thomas Yayi Boni", "Justin Ahomadegbé", "Mathieu Kérékou"],
     "correctIndex": 0,
-    "fact": "La Conférence nationale de 1990 a ouvert la voie au multipartisme et à la démocratie."
+    "fact": "Nicéphore Soglo a dirigé le gouvernement de transition issu de la Conférence nationale."
   },
   {
-    "q": "Qui a fondé le royaume du Dahomey au XVIIe siècle ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 3,
-    "options": ["Houégbadja", "Agadja", "Guézo", "Béhanzin"],
-    "correctIndex": 0,
-    "fact": "Houégbadja (vers 1645-1685) est considéré comme le fondateur du royaume du Dahomey."
-  },
-  {
-    "q": "Quel roi a introduit le culte du python royal à Ouidah ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 3,
-    "options": ["Agadja", "Guézo", "Glèlè", "Béhanzin"],
-    "correctIndex": 0,
-    "fact": "Le roi Agadja est associé à l'introduction du culte du python à Ouidah après ses conquêtes."
-  },
-  {
-    "q": "Qui fut président du Bénin de 1991 à 1996 ?",
+    "q": "Qui a remporté l’élection présidentielle de mars 1991 au Bénin ?",
     "theme": "Histoire du Bénin",
     "difficulty": 2,
-    "options": ["Nicéphore Soglo", "Mathieu Kérékou", "Hubert Maga", "Boni Yayi"],
-    "correctIndex": 0,
-    "fact": "Nicéphore Soglo fut élu président lors de la transition démocratique de 1991."
+    "options": ["Mathieu Kérékou", "Hubert Maga", "Nicéphore Soglo", "Émile Zinsou"],
+    "correctIndex": 2,
+    "fact": "Nicéphore Soglo est élu président de la République en mars 1991."
   },
   {
-    "q": "Qui fut président du Bénin de 2006 à 2016 ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 1,
-    "options": ["Boni Yayi", "Patrice Talon", "Nicéphore Soglo", "Mathieu Kérékou"],
-    "correctIndex": 0,
-    "fact": "Thomas Boni Yayi a été président du Bénin de 2006 à 2016."
-  },
-  {
-    "q": "Quel traité a placé le Dahomey sous protectorat français ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 3,
-    "options": ["Protectorat de 1894", "Traité de Berlin", "Accord de 1960", "Convention de 1972"],
-    "correctIndex": 0,
-    "fact": "Le protectorat français sur le Dahomey a été établi en 1894."
-  },
-  {
-    "q": "Qui a mené la résistance anticoloniale dans le nord du Bénin ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 3,
-    "options": ["Kabiès de Nikki", "Béhanzin", "Guézo", "Agadja"],
-    "correctIndex": 0,
-    "fact": "Les souverains de Nikki ont résisté à la pénétration coloniale dans le nord du Bénin."
-  },
-  {
-    "q": "Quel jour est la fête nationale du Bénin ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 1,
-    "options": ["1er août", "10 janvier", "25 décembre", "14 juillet"],
-    "correctIndex": 0,
-    "fact": "Le 1er août 1960 marque l indépendance du Dahomey, aujourd hui fête nationale."
-  },
-  {
-    "q": "Quel président a organisé la Conférence nationale de 1990 ?",
+    "q": "Qui a été le premier président de la République du Dahomey indépendant ?",
     "theme": "Histoire du Bénin",
     "difficulty": 2,
-    "options": ["Mathieu Kérékou", "Patrice Talon", "Hubert Maga", "Sourou-Migan Apithy"],
-    "correctIndex": 0,
-    "fact": "Mathieu Kérékou a accepté l'organisation de la Conférence nationale en 1990."
+    "options": ["Sourou Migan Apithy", "Christophe Soglo", "Hubert Maga", "Justin Ahomadegbé"],
+    "correctIndex": 2,
+    "fact": "Hubert Maga devient le premier président du Dahomey indépendant en 1960."
   },
   {
-    "q": "Quel roi du Dahomey a étendu le royaume jusqu à la côte ?",
+    "q": "Quel militaire a renversé Hubert Maga en octobre 1963 ?",
     "theme": "Histoire du Bénin",
     "difficulty": 3,
-    "options": ["Agadja", "Houégbadja", "Guézo", "Glèlè"],
+    "options": ["Christophe Soglo", "Mathieu Kérékou", "Alphonse Alley", "Tahirou Congacou"],
     "correctIndex": 0,
-    "fact": "Le roi Agadja (1708-1732) a conquis le littoral et atteint Ouidah."
+    "fact": "Le colonel Christophe Soglo renverse Hubert Maga le 28 octobre 1963."
   },
   {
-    "q": "Quel jour est célébrée la fête du Vodun au Bénin ?",
-    "theme": "Culture & traditions",
+    "q": "Comment était surnommée la présidence tournante de 1970 à 1972 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Le collège des trois", "La troïka", "Le directoire", "Le monstre à trois têtes"],
+    "correctIndex": 3,
+    "fact": "Le triumvirat Maga-Apithy-Ahomadegbé était raillé comme un monstre à trois têtes."
+  },
+  {
+    "q": "Quelle était la capitale du royaume du Dahomey ?",
+    "theme": "Histoire du Bénin",
     "difficulty": 1,
-    "options": ["10 janvier", "1er août", "25 décembre", "14 juillet"],
-    "correctIndex": 0,
-    "fact": "La fête du Vodun est célébrée chaque année le 10 janvier, jour férié au Bénin."
+    "options": ["Porto-Novo", "Abomey", "Ouidah", "Kétou"],
+    "correctIndex": 1,
+    "fact": "Abomey était la capitale du royaume du Dahomey, du XVIIe au XIXe siècle."
   },
   {
-    "q": "Quelle danse traditionnelle implique des masques sacrés au Bénin ?",
-    "theme": "Culture & traditions",
+    "q": "Quel roi a dirigé le Dahomey de 1818 à 1858 ?",
+    "theme": "Histoire du Bénin",
     "difficulty": 2,
-    "options": ["Zangbeto", "Salsa", "Zumba", "Hip-hop"],
-    "correctIndex": 0,
-    "fact": "Le Zangbeto est une danse de masques sacrés vodun qui surveille les villages la nuit."
+    "options": ["Béhanzin", "Glélé", "Agoli-Agbo", "Ghézo"],
+    "correctIndex": 3,
+    "fact": "Le roi Ghézo règne sur le Dahomey de 1818 à 1858 et renforce son armée, y compris les amazones."
   },
   {
-    "q": "Quel tissu traditionnel est très porté par les femmes béninoises ?",
+    "q": "Quel souverain a régné sur le Dahomey de 1858 à 1889 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Ghézo", "Glélé", "Béhanzin", "Adandozan"],
+    "correctIndex": 1,
+    "fact": "Glélé succède à Ghézo en 1858 et règne jusqu’en 1889."
+  },
+  {
+    "q": "Quel roi du Dahomey a régné de 1889 à 1894 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Glélé", "Agoli-Agbo", "Béhanzin", "Kpengla"],
+    "correctIndex": 2,
+    "fact": "Béhanzin, fils de Glélé, règne de 1889 à 1894 et résiste à la conquête française."
+  },
+  {
+    "q": "Comment les Européens appelaient-elles les guerrières du corps Agodji du Dahomey ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Amazones", "Valkyries", "Jéquesses", "Guépardes"],
+    "correctIndex": 0,
+    "fact": "Les Agodji, guerrières du Dahomey, ont été surnommées Amazones par les voyageurs européens."
+  },
+  {
+    "q": "Quel officier français a conduit la campagne de conquête du Dahomey en 1892 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Général Borgnis-Desbordes", "Général Dodds", "Colonel Archinard", "Amiral Courbet"],
+    "correctIndex": 1,
+    "fact": "Le général Alfred Dodds entre dans Abomey en flammes en novembre 1892."
+  },
+  {
+    "q": "Vers quelle île le roi Béhanzin a-t-il été déporté en 1894 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["La Réunion", "La Guadeloupe", "Sainte-Hélène", "La Martinique"],
+    "correctIndex": 3,
+    "fact": "Béhanzin est déporté en Martinique en 1894, puis transféré en Algérie en 1906."
+  },
+  {
+    "q": "Avec quel roi de Porto-Novo la France a-t-elle signé un protectorat en 1863 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Le roi Toffa", "Le roi Béhanzin", "Le roi Ghézo", "Le roi de Kétou"],
+    "correctIndex": 0,
+    "fact": "En 1863, le roi Toffa de Porto-Novo signe un protectorat avec la France."
+  },
+  {
+    "q": "En quelle année la colonie du Dahomey et dépendances a-t-elle été créée ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["1863", "1885", "1894", "1904"],
+    "correctIndex": 2,
+    "fact": "Après la victoire française sur les rois locaux, la colonie du Dahomey est créée en 1894."
+  },
+  {
+    "q": "Quel grand rassemblement annuel se tient à Ouidah autour du culte vodoun ?",
     "theme": "Culture & traditions",
     "difficulty": 1,
-    "options": ["Pagne wax", "Kimono", "Sari", "Tartan"],
-    "correctIndex": 0,
-    "fact": "Le pagne (wax) est utilisé pour confectionner boubous, kabas et tenues de cérémonie."
+    "options": ["Gaani", "La Quintessence", "Fête nationale du Vodoun", "Fête de l’igname"],
+    "correctIndex": 2,
+    "fact": "La fête nationale du Vodoun est célébrée chaque année à Ouidah, principalement au temple de la Pyramide."
   },
   {
-    "q": "Quelle coiffure traditionnelle est portée par les femmes du nord du Bénin ?",
+    "q": "Quel titre porte le grand prêtre suprême du vodoun au Bénin ?",
     "theme": "Culture & traditions",
     "difficulty": 3,
-    "options": ["Gélé", "Tresse", "Rastafari", "Coupe courte"],
+    "options": ["Daagbo Hounon", "Oba", "Baba Egba", "Alafin"],
     "correctIndex": 0,
-    "fact": "Le gélé est un couvre-chef élégant noué, porté lors des cérémonies."
+    "fact": "Le Daagbo Hounon est reconnu comme le grand prêtre suprême du vodoun au Bénin."
   },
   {
-    "q": "Quel instrument accompagne les cérémonies vodun ?",
+    "q": "Quel peuple célèbre le festival Gaani dans le nord du Bénin ?",
     "theme": "Culture & traditions",
     "difficulty": 2,
-    "options": ["Tam-tam", "Piano", "Guitare électrique", "Synthétiseur"],
-    "correctIndex": 0,
-    "fact": "Le tam-tam rythme les chants et les danses des cérémonies traditionnelles."
+    "options": ["Peuple Fon", "Peuple Yoruba", "Peuple Adja", "Peuple Baatonu"],
+    "correctIndex": 3,
+    "fact": "Le Gaani est une fête traditionnelle du peuple Baatonu, ou Bariba, dans le nord du Bénin."
   },
   {
-    "q": "Quelle tenue traditionnelle est portée par les hommes lors des cérémonies ?",
-    "theme": "Culture & traditions",
-    "difficulty": 1,
-    "options": ["Boubou", "Costume cravate", "T-shirt", "Short"],
-    "correctIndex": 0,
-    "fact": "Le boubou est une tenue ample et élégante portée lors des grandes occasions."
-  },
-  {
-    "q": "Quel plat est souvent servi lors des mariages traditionnels béninois ?",
-    "theme": "Culture & traditions",
-    "difficulty": 2,
-    "options": ["Riz au gras", "Pizza", "Hamburger", "Sushi"],
-    "correctIndex": 0,
-    "fact": "Le riz au gras est un plat de fête courant lors des mariages et cérémonies."
-  },
-  {
-    "q": "Quelle danse est exécutée lors des funérailles traditionnelles dans le sud ?",
+    "q": "De quelle royauté le festival Gaani est-il une célébration majeure ?",
     "theme": "Culture & traditions",
     "difficulty": 3,
-    "options": ["Agbadja", "Tango", "Samba", "Flamenco"],
-    "correctIndex": 0,
-    "fact": "L Agbadja est une danse et musique traditionnelles du sud du Bénin."
+    "options": ["Royaume d’Abomey", "Royaume de Nikki", "Royaume de Porto-Novo", "Royaume de Kétou"],
+    "correctIndex": 1,
+    "fact": "Le Gaani est célébré à Nikki, capitale historique du royaume bariba."
   },
   {
-    "q": "Quel objet est utilisé pour la divination dans la tradition vodun ?",
+    "q": "Quel animal est au cœur des parades traditionnelles du Gaani ?",
+    "theme": "Culture & traditions",
+    "difficulty": 2,
+    "options": ["Le buffle", "Le léopard", "L’éléphant", "Le cheval"],
+    "correctIndex": 3,
+    "fact": "De superbes chevaux parés défilent lors des parades du Gaani à Nikki."
+  },
+  {
+    "q": "Comment appelle-t-on les esprits gardiens nocturnes incarnés par des costumes de paille à Cotonou ?",
     "theme": "Culture & traditions",
     "difficulty": 3,
-    "options": ["Fa (divination)", "Boussole", "Téléphone", "Livre"],
-    "correctIndex": 0,
-    "fact": "Le Fa est un système de divination traditionnel consulté pour prendre des décisions."
+    "options": ["Egungun", "Zangbeto", "Gelede", "Kankangi"],
+    "correctIndex": 1,
+    "fact": "Les Zangbeto sont des esprits gardiens nocturnes représentés par des masses de paille tournoyantes."
   },
   {
-    "q": "Quelle fête célèbre la fin du ramadan au Bénin ?",
+    "q": "Quel masque traditionnel est associé au culte des ancêtres chez les Yoruba du Bénin ?",
     "theme": "Culture & traditions",
-    "difficulty": 1,
-    "options": ["Aïd el-Fitr", "Noël", "Pâques", "Tabaski"],
-    "correctIndex": 0,
-    "fact": "L'Aïd el-Fitr marque la fin du jeûne du ramadan pour les musulmans béninois."
+    "difficulty": 2,
+    "options": ["Zangbeto", "Kankangi", "Egungun", "Sakpata"],
+    "correctIndex": 2,
+    "fact": "Le masque Egungun représente les ancêtres dans les traditions yoruba du sud du Bénin."
   },
   {
-    "q": "Quelle fête célèbre le sacrifice d Abraham ?",
-    "theme": "Culture & traditions",
-    "difficulty": 1,
-    "options": ["Tabaski (Aïd el-Kebir)", "Noël", "Pâques", "Vodun"],
-    "correctIndex": 0,
-    "fact": "La Tabaski (ou Aïd el-Kebir) commémore le sacrifice d'Abraham."
-  },
-  {
-    "q": "Quel instrument à cordes est joué dans la musique traditionnelle du nord ?",
+    "q": "Quel festival rend hommage aux « mères » et aux ancêtres féminines dans le sud du Bénin ?",
     "theme": "Culture & traditions",
     "difficulty": 3,
-    "options": ["Xalam", "Piano", "Violon", "Batterie"],
+    "options": ["Gelede", "Egungun", "Zangbeto", "Gaani"],
     "correctIndex": 0,
-    "fact": "Le xalam est un luth traditionnel joué dans les régions du nord du Bénin."
+    "fact": "Le Gelede honore les mères, les ancêtres féminines et les puissances féminines chez les Yoruba et les Fon."
   },
   {
-    "q": "Quelle coiffe est portée par les dignitaires lors des cérémonies royales ?",
-    "theme": "Culture & traditions",
-    "difficulty": 3,
-    "options": ["Foulard royal", "Casquette", "Chapeau melon", "Bonnet"],
-    "correctIndex": 0,
-    "fact": "Les dignitaires royaux portent des coiffes spécifiques lors des cérémonies."
-  },
-  {
-    "q": "Quel art décoratif orne les cases et les palais traditionnels ?",
+    "q": "Quel aliment ritualisé est partagé lors de nombreuses cérémonies traditionnelles au Bénin ?",
     "theme": "Culture & traditions",
     "difficulty": 2,
-    "options": ["Appliqués", "Fresques à l huile", "Mosaïque", "Graffiti"],
-    "correctIndex": 0,
-    "fact": "Les appliqués en tissu décorent les cases et les palais royaux du Dahomey."
+    "options": ["Maïs", "Igname", "Riz", "Manioc"],
+    "correctIndex": 1,
+    "fact": "L’igname occupe une place symbolique importante et donne lieu à des fêtes dédiées au Bénin."
   },
   {
-    "q": "Quel plat à base de maïs est très consommé au sud du Bénin ?",
-    "theme": "Gastronomie",
+    "q": "Quelle boisson fermentée à base de mil est courante dans le nord du Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 2,
+    "options": ["Sodabi", "Kpete", "Amiwo", "Tchoukoutou"],
+    "correctIndex": 3,
+    "fact": "Le tchoukoutou est une bière artisanale à base de mil ou de sorgho consommée dans le nord béninois."
+  },
+  {
+    "q": "Quel motif orne souvent les bas-reliefs des palais royaux d’Abomey ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Lion et buffle", "Aigle et serpent", "Cheval et chameau", "Poisson et lotus"],
+    "correctIndex": 0,
+    "fact": "Les bas-reliefs des palais d’Abomey représentent notamment des lions, des buffles et des guerriers."
+  },
+  {
+    "q": "Quelle langue véhiculaire est la plus parlée dans le sud du Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 2,
+    "options": ["Yoruba", "Bariba", "Fongbe", "Dendi"],
+    "correctIndex": 2,
+    "fact": "Le fongbe est l’une des principales langues du sud du Bénin, surtout dans l’ancien royaume du Dahomey."
+  },
+  {
+    "q": "Quelle langue est principalement parlée autour de Nikki, dans le nord du Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Fongbe", "Adja", "Bariba", "Mina"],
+    "correctIndex": 2,
+    "fact": "Le bariba, ou baatonum, est la langue du royaume de Nikki."
+  },
+  {
+    "q": "Quel titre honorifique porte le chef suprême des Baatonu à Nikki ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Suna", "Baba Egba", "Oba", "Daagbo"],
+    "correctIndex": 0,
+    "fact": "Le souverain des Baatonu de Nikki porte le titre de Sunɔ, souvent transcrit Suna."
+  },
+  {
+    "q": "Quel vêtement traditionnel, souvent en indigo, est porté dans plusieurs régions du Bénin ?",
+    "theme": "Culture & traditions",
     "difficulty": 1,
-    "options": ["Amiwo", "Riz au gras", "Yassa", "Thiéboudienne"],
-    "correctIndex": 0,
-    "fact": "L'amiwo (ou ablo) est une pâte de maïs fermentée, souvent servie avec du poisson."
+    "options": ["Kente", "Bazin", "Dashiki", "Boubou"],
+    "correctIndex": 3,
+    "fact": "Le boubou, parfois teint à l’indigo, est un vêtement traditionnel répandu au Bénin."
   },
   {
-    "q": "Quel plat typique associe riz et haricots au Bénin ?",
-    "theme": "Gastronomie",
-    "difficulty": 1,
-    "options": ["Atassi", "Yassa", "Mafé", "Couscous"],
-    "correctIndex": 0,
-    "fact": "L'atassi est un plat de riz et haricots, très populaire chez les étudiants."
-  },
-  {
-    "q": "Quel plat à base d'igname est pilé au mortier ?",
-    "theme": "Gastronomie",
-    "difficulty": 1,
-    "options": ["Igname pilée", "Foufou", "Attiéké", "Gari"],
-    "correctIndex": 0,
-    "fact": "L'igname pilée est un plat traditionnel du nord et du centre du Bénin."
-  },
-  {
-    "q": "Quelle boisson traditionnelle est tirée du palmier ?",
+    "q": "Quel plat à base de maïs fermenté est un incontournable du sud du Bénin ?",
     "theme": "Gastronomie",
     "difficulty": 2,
-    "options": ["Sodabi", "Bissap", "Gingembre", "Jus d ananas"],
-    "correctIndex": 0,
-    "fact": "Le sodabi est un alcool de palmier distillé, typique du sud du Bénin."
+    "options": ["Amiwo", "Akassa", "Wagasi", "Kuli-Kuli"],
+    "correctIndex": 1,
+    "fact": "L’akassa est une pâte de maïs fermenté très consommée dans le sud du Bénin."
   },
   {
-    "q": "Quel légume est au centre de la sauce d accompagnement du amiwo ?",
+    "q": "Quel accompagnement frit à base d’arachides est consommé au Bénin ?",
     "theme": "Gastronomie",
     "difficulty": 2,
-    "options": ["Tomate", "Pomme de terre", "Carotte", "Chou"],
-    "correctIndex": 0,
-    "fact": "La sauce tomate avec poisson ou viande accompagne souvent l'amiwo."
+    "options": ["Tchigan", "Amiwo", "Wagasi", "Kuli-Kuli"],
+    "correctIndex": 3,
+    "fact": "Le kuli-kuli est une friandise frite à base d’arachides, répandue au Bénin et au Nigeria."
   },
   {
-    "q": "Quel poisson est souvent fumé et consommé au Bénin ?",
+    "q": "Quel fromage frais de vache est une spécialité du nord du Bénin ?",
     "theme": "Gastronomie",
-    "difficulty": 1,
-    "options": ["Poisson fumé", "Saumon", "Thon", "Morue"],
-    "correctIndex": 0,
-    "fact": "Le poisson fumé est un aliment de base, souvent ajouté aux sauces."
+    "difficulty": 2,
+    "options": ["Kuli-Kuli", "Wagasi", "Akassa", "Monyo"],
+    "correctIndex": 1,
+    "fact": "Le wagasi est un fromage frais du nord du Bénin, particulièrement apprécié dans l’Atacora."
   },
   {
-    "q": "Quel fruit est très consommé au Bénin pendant la saison des pluies ?",
-    "theme": "Gastronomie",
-    "difficulty": 1,
-    "options": ["Mangue", "Pomme", "Raisin", "Kiwi"],
-    "correctIndex": 0,
-    "fact": "La mangue est abondante et très appréciée pendant la saison des pluies."
-  },
-  {
-    "q": "Quel plat à base de haricots est servi avec du riz ?",
-    "theme": "Gastronomie",
-    "difficulty": 1,
-    "options": ["Atassi", "Yassa", "Mafé", "Couscous"],
-    "correctIndex": 0,
-    "fact": "L'atassi combine riz et haricots cuits ensemble, un plat économique et nourrissant."
-  },
-  {
-    "q": "Quelle sauce est préparée avec des graines de palmier ?",
+    "q": "Comment appelle-t-on une sauce béninoise à base de tomates, d’oignons et de piments souvent servie crue ?",
     "theme": "Gastronomie",
     "difficulty": 3,
-    "options": ["Sauce graine", "Sauce tomate", "Sauce arachide", "Sauce blanche"],
-    "correctIndex": 0,
-    "fact": "La sauce graine (ou sauce de palme) est préparée avec des noix de palmier."
+    "options": ["Sauce gombo", "Tchigan", "Monyo", "Amiwo"],
+    "correctIndex": 2,
+    "fact": "Le monyo est une sauce béninoise à base de tomates, d’oignons et de piments, souvent servie crue."
   },
   {
-    "q": "Quel mets est préparé avec du gombo ?",
-    "theme": "Gastronomie",
-    "difficulty": 2,
-    "options": ["Sauce gombo", "Salade", "Gateau", "Boisson"],
-    "correctIndex": 0,
-    "fact": "La sauce au gombo est un accompagnement visqueux servi avec du riz ou du foufou."
-  },
-  {
-    "q": "Quel fruit est utilisé pour préparer le jus de bissap ?",
+    "q": "Quel plat est préparé avec une pâte de maïs cuite et une sauce ?",
     "theme": "Gastronomie",
     "difficulty": 1,
-    "options": ["Hibiscus", "Mangue", "Ananas", "Orange"],
+    "options": ["Amiwo", "Akassa", "Wagasi", "Kuli-Kuli"],
     "correctIndex": 0,
-    "fact": "Le bissap est une boisson rafraîchissante à base de fleurs d hibiscus séchées."
+    "fact": "L’amiwo est une pâte de maïs cuit accompagnée de sauce, plat quotidien au Bénin."
   },
   {
-    "q": "Quel tubercule est consommé bouilli ou pilé au Bénin ?",
+    "q": "Quel gâteau de haricots noirs est très répandu au Bénin ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Akassa", "Ata", "Wagasi", "Monyo"],
+    "correctIndex": 1,
+    "fact": "L’ata est un gâteau frit à base de haricots noirs, aussi connu sous le nom d’akara."
+  },
+  {
+    "q": "Comment se nomme la sauce au gombo servie avec du riz ou de la pâte au Bénin ?",
     "theme": "Gastronomie",
     "difficulty": 1,
-    "options": ["Igname", "Pomme de terre", "Carotte", "Betterave"],
-    "correctIndex": 0,
-    "fact": "L'igname est un tubercule de base, consommé bouilli, frit ou pilé."
+    "options": ["Monyo", "Amiwo", "Tchigan", "Sauce gombo"],
+    "correctIndex": 3,
+    "fact": "La sauce gombo est un accompagnement courant au Bénin, préparé avec du gombo frais ou séché."
   },
   {
-    "q": "Quel plat de rue est populaire à Cotonou le soir ?",
+    "q": "Quelle boisson artisanale est obtenue par distillation du vin de palme ?",
     "theme": "Gastronomie",
-    "difficulty": 2,
-    "options": ["Pâté", "Pizza", "Taco", "Sushi"],
+    "difficulty": 3,
+    "options": ["Sodabi", "Tchoukoutou", "Kpete", "Bouillie de mil"],
     "correctIndex": 0,
-    "fact": "Le pâté (beignet farci) est un snack de rue très apprécié à Cotonou."
+    "fact": "Le sodabi est une eau-de-vie artisanale obtenue par distillation du vin de palme."
   },
   {
-    "q": "Quel aliment est utilisé pour épaissir les sauces au Bénin ?",
+    "q": "Quelle bière traditionnelle à base de mil ou de sorgho est consommée dans le nord du Bénin ?",
     "theme": "Gastronomie",
     "difficulty": 2,
-    "options": ["Gombo", "Sucre", "Sel", "Vinaigre"],
-    "correctIndex": 0,
-    "fact": "Le gombo, une fois cuit, donne une consistance visqueuse qui épaissit les sauces."
+    "options": ["Sodabi", "Kpete", "Tchoukoutou", "Amiwo"],
+    "correctIndex": 2,
+    "fact": "Le tchoukoutou est une bière artisanale à base de mil ou de sorgho, surtout consommée dans le nord."
   },
   {
-    "q": "Quel plat est servi lors des grandes cérémonies familiales ?",
+    "q": "Quel ingrédient principal entre dans la préparation de l’Ata béninois ?",
     "theme": "Gastronomie",
     "difficulty": 2,
-    "options": ["Riz au gras", "Sandwich", "Salade", "Omelette"],
+    "options": ["Maïs", "Manioc", "Haricots noirs", "Arachides"],
+    "correctIndex": 2,
+    "fact": "L’ata est préparé à partir de haricots noirs mixés puis frits."
+  },
+  {
+    "q": "Quel est le principal ingrédient du Kuli-Kuli ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Arachides", "Sésame", "Soja", "Cacao"],
     "correctIndex": 0,
-    "fact": "Le riz au gras est un plat de fête servi lors des mariages et baptêmes."
+    "fact": "Le kuli-kuli est fait à partir d’arachides broyées, assaisonnées puis frites."
+  },
+  {
+    "q": "Quel produit laitier frais est vendu dans les marchés du nord sous le nom de Wagasi ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Beurre", "Yaourt", "Lait caillé", "Fromage frais"],
+    "correctIndex": 3,
+    "fact": "Le wagasi est un fromage frais, souvent présenté en boules ou en galettes dans les marchés du nord."
+  },
+  {
+    "q": "Quel est le principal ingrédient de l’Akassa ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Manioc", "Maïs fermenté", "Riz", "Mil"],
+    "correctIndex": 1,
+    "fact": "L’akassa est obtenu à partir de maïs fermenté, broyé puis cuit."
+  },
+  {
+    "q": "Sous quel autre nom ouest-africain désigne-t-on l’Ata béninois ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Ata", "Wagasi", "Kuli-Kuli", "Akara"],
+    "correctIndex": 3,
+    "fact": "L’ata béninois correspond à l’akara, beignet de haricots connu dans plusieurs pays d’Afrique de l’Ouest."
+  },
+  {
+    "q": "Quel ingrédient donne son goût particulier à la sauce Monyo ?",
+    "theme": "Gastronomie",
+    "difficulty": 3,
+    "options": ["Gombo", "Tomates et oignons", "Arachides", "Lait"],
+    "correctIndex": 1,
+    "fact": "Le monyo tire son goût des tomates et des oignons assaisonnés de piment."
   },
   {
     "q": "Quelle est la capitale officielle du Bénin ?",
     "theme": "Géographie",
     "difficulty": 1,
-    "options": ["Porto-Novo", "Cotonou", "Parakou", "Abomey"],
-    "correctIndex": 0,
-    "fact": "Porto-Novo est la capitale officielle ; Cotonou est la capitale économique."
+    "options": ["Cotonou", "Abomey", "Porto-Novo", "Parakou"],
+    "correctIndex": 2,
+    "fact": "Porto-Novo est la capitale constitutionnelle du Bénin, tandis que Cotonou est le grand centre économique."
   },
   {
-    "q": "Quelle ville est la capitale économique du Bénin ?",
+    "q": "Quelle est la plus grande ville et le centre économique du Bénin ?",
     "theme": "Géographie",
     "difficulty": 1,
-    "options": ["Cotonou", "Porto-Novo", "Parakou", "Ouidah"],
+    "options": ["Cotonou", "Porto-Novo", "Parakou", "Djougou"],
     "correctIndex": 0,
-    "fact": "Cotonou abrite le port autonome, les sièges d entreprises et les marchés."
+    "fact": "Cotonou est la plus grande ville du Bénin et son principal pôle économique."
   },
   {
-    "q": "Quel océan borde le sud du Bénin ?",
-    "theme": "Géographie",
-    "difficulty": 1,
-    "options": ["Océan Atlantique", "Océan Indien", "Mer Méditerranée", "Mer Rouge"],
-    "correctIndex": 0,
-    "fact": "Le Bénin a une courte côte sur le golfe de Guinée (océan Atlantique)."
-  },
-  {
-    "q": "Quel fleuve traverse le centre du Bénin ?",
+    "q": "Quel fleuve alimente le lac Nokoué ?",
     "theme": "Géographie",
     "difficulty": 2,
-    "options": ["Ouémé", "Niger", "Sénégal", "Volta"],
-    "correctIndex": 0,
-    "fact": "Le fleuve Ouémé coule du nord au sud du Bénin jusqu au lac Nokoué."
+    "options": ["Mono", "Ouémé", "Niger", "Volta"],
+    "correctIndex": 1,
+    "fact": "Le fleuve Ouémé se jette dans le lac Nokoué, au sud du Bénin."
   },
   {
-    "q": "Quel département béninois est connu pour ses Tata Somba ?",
+    "q": "Quel lac sépare Cotonou de Ganvié ?",
+    "theme": "Géographie",
+    "difficulty": 1,
+    "options": ["Lac Toho", "Lac Ahémé", "Baie de Porto-Novo", "Lac Nokoué"],
+    "correctIndex": 3,
+    "fact": "Ganvié est bâtie sur le lac Nokoué, à proximité immédiate de Cotonou."
+  },
+  {
+    "q": "Quel département du Bénin a Abomey pour chef-lieu ?",
     "theme": "Géographie",
     "difficulty": 2,
-    "options": ["Atacora", "Littoral", "Ouémé", "Plateau"],
+    "options": ["Zou", "Ouémé", "Mono", "Atacora"],
     "correctIndex": 0,
-    "fact": "L Atacora, au nord-ouest, est le territoire des Tata Somba (maisons-forteresses)."
+    "fact": "Abomey est le chef-lieu du département du Zou, au centre-sud du Bénin."
   },
   {
-    "q": "Quelle ville est la plus grande du nord du Bénin ?",
-    "theme": "Géographie",
-    "difficulty": 1,
-    "options": ["Parakou", "Cotonou", "Ouidah", "Abomey"],
-    "correctIndex": 0,
-    "fact": "Parakou est la principale ville du nord du Bénin et un carrefour commercial."
-  },
-  {
-    "q": "Quel lac est proche de Cotonou et de Ganvié ?",
+    "q": "Quelle ville est le chef-lieu du département de l’Atacora ?",
     "theme": "Géographie",
     "difficulty": 2,
-    "options": ["Lac Nokoué", "Lac Tchad", "Lac Victoria", "Lac Nyos"],
-    "correctIndex": 0,
-    "fact": "Le lac Nokoué est une lagune peu profonde proche de Cotonou et de Ganvié."
+    "options": ["Parakou", "Djougou", "Natitingou", "Kandi"],
+    "correctIndex": 2,
+    "fact": "Natitingou est le chef-lieu du département de l’Atacora, dans le nord-ouest."
   },
   {
-    "q": "Quelle région naturelle couvre le centre du Bénin ?",
-    "theme": "Géographie",
-    "difficulty": 3,
-    "options": ["Plateau", "Désert", "Toundra", "Marais"],
-    "correctIndex": 0,
-    "fact": "Le centre du Bénin est dominé par un plateau de savanes boisées."
-  },
-  {
-    "q": "Quel pays borde le Bénin à l est ?",
+    "q": "Quel pays borde le Bénin à l’ouest ?",
     "theme": "Géographie",
     "difficulty": 1,
-    "options": ["Nigeria", "Togo", "Burkina Faso", "Niger"],
-    "correctIndex": 0,
-    "fact": "Le Nigeria partage une longue frontière à l est du Bénin."
+    "options": ["Burkina Faso", "Nigeria", "Togo", "Ghana"],
+    "correctIndex": 2,
+    "fact": "Le Bénin est limité à l’ouest par le Togo."
   },
   {
-    "q": "Quel pays borde le Bénin à l ouest ?",
+    "q": "Quel pays borde le Bénin à l’est ?",
     "theme": "Géographie",
     "difficulty": 1,
-    "options": ["Togo", "Nigeria", "Burkina Faso", "Niger"],
+    "options": ["Nigeria", "Togo", "Mali", "Côte d’Ivoire"],
     "correctIndex": 0,
-    "fact": "Le Togo partage une frontière à l ouest du Bénin."
+    "fact": "Le Bénin est limité à l’est par le Nigeria."
   },
   {
-    "q": "Quelle musique moderne béninoise mélange traditions et sons actuels ?",
-    "theme": "Musique & arts",
-    "difficulty": 1,
-    "options": ["Afrobeat béninois", "Opera", "Lied", "Madrigal"],
-    "correctIndex": 0,
-    "fact": "L'afrobeat béninois s'inspire des rythmes traditionnels et du funk."
+    "q": "Quel climat caractérise le sud du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 2,
+    "options": ["Climat désertique", "Climat tempéré", "Climat montagnard", "Climat tropical humide"],
+    "correctIndex": 3,
+    "fact": "Le sud du Bénin bénéficie d’un climat tropical humide avec deux saisons de pluies."
   },
   {
-    "q": "Quel artiste béninois est connu internationalement pour sa musique ?",
+    "q": "Quelle chaîne montagneuse domine le nord-ouest du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 2,
+    "options": ["Monts du Nil", "Monts de l’Atacora", "Monts du Niger", "Monts de Guinée"],
+    "correctIndex": 1,
+    "fact": "Les monts de l’Atacora forment l’ossature montagneuse du nord-ouest béninois."
+  },
+  {
+    "q": "Quel groupe de Cotonou est devenu une référence mondiale de l’afrobeat et du funk ?",
     "theme": "Musique & arts",
     "difficulty": 2,
-    "options": ["Angélique Kidjo", "Youssou Ndour", "Salif Keïta", "Fela Kuti"],
-    "correctIndex": 0,
-    "fact": "Angélique Kidjo, originaire d Ouidah, est une icône de la musique africaine."
+    "options": ["Orchestre Poly-Rythmo d’Abomey", "Les Frères Guèdègbé", "La Quintessence Polyphonique de Cotonou", "Orchestre Poly-Rythmo de Cotonou"],
+    "correctIndex": 3,
+    "fact": "L’Orchestre Poly-Rythmo de Cotonou, fondé en 1968, est un pilier de la scène afro-funk béninoise."
   },
   {
-    "q": "Quelle sculpture est associée aux rois du Dahomey ?",
+    "q": "Quelle chanteuse béninoise, née à Ouidah, a remporté plusieurs Grammy Awards ?",
+    "theme": "Musique & arts",
+    "difficulty": 1,
+    "options": ["Marie-Claire Bannis", "Angélique Kidjo", "Shanice", "Folly Sotondji"],
+    "correctIndex": 1,
+    "fact": "Angélique Kidjo, née à Ouidah en 1960, a remporté plusieurs Grammy Awards."
+  },
+  {
+    "q": "Quel festival international de musique est organisé au Bénin autour des musiques du monde ?",
     "theme": "Musique & arts",
     "difficulty": 2,
-    "options": ["Statue en bronze", "Statue de glace", "Totem en bois", "Moai"],
-    "correctIndex": 0,
-    "fact": "Les arts du Dahomey incluent des bronzes, des appliqués et des statuettes royales."
+    "options": ["Festival des Plages", "Gaani", "La Quintessence", "Fête du Vodoun"],
+    "correctIndex": 2,
+    "fact": "Le festival La Quintessence, à Cotonou, met en valeur les polyphonies et les musiques du monde."
   },
   {
-    "q": "Quel rythme traditionnel est joué lors des cérémonies de couronnement ?",
+    "q": "Quel instrument de percussion est couramment utilisé dans les orchestres traditionnels béninois ?",
     "theme": "Musique & arts",
-    "difficulty": 3,
-    "options": ["Agbadja", "Samba", "Tango", "Vals"],
+    "difficulty": 1,
+    "options": ["Tambour", "Violon", "Flûte traversière", "Harpe"],
     "correctIndex": 0,
-    "fact": "L Agbadja est une musique et danse traditionnelles du sud du Bénin."
+    "fact": "Les tambours occupent une place centrale dans les ensembles musicaux traditionnels du Bénin."
   },
   {
-    "q": "Quel art visuel orne les cases et palais traditionnels ?",
-    "theme": "Musique & arts",
-    "difficulty": 2,
-    "options": ["Appliqués", "Fresques à l huile", "Mosaïque", "Graffiti"],
-    "correctIndex": 0,
-    "fact": "Les appliqués en tissu décorent les cases et les palais royaux du Dahomey."
-  },
-  {
-    "q": "Quel conte est transmis oralement par les griots béninois ?",
+    "q": "Quel groupe de Cotonou est cité parmi les formations majeures de la scène béninoise aux côtés de Poly-Rythmo ?",
     "theme": "Musique & arts",
     "difficulty": 3,
-    "options": ["Contes du Fa", "Roman policier", "Bande dessinée", "Poème épique"],
-    "correctIndex": 0,
-    "fact": "Les griots transmettent oralement l histoire, les légendes et les contes du Fa."
+    "options": ["La Quintessence", "Pili Pili", "Orchestre Poly-Rythmo d’Abomey", "Les Frères Guèdègbé"],
+    "correctIndex": 1,
+    "fact": "Pili Pili est l’un des groupes de la scène musicale de Cotonou mentionnés aux côtés de Poly-Rythmo."
   },
   {
-    "q": "Quelle forme d art corporel est pratiquée lors des cérémonies ?",
+    "q": "Quel nom désigne les chants à plusieurs voix mis en valeur par le festival La Quintessence ?",
+    "theme": "Musique & arts",
+    "difficulty": 3,
+    "options": ["Sodabi", "Egungun", "Boubou", "Polyphonies"],
+    "correctIndex": 3,
+    "fact": "La Quintessence célèbre les polyphonies vocales et instrumentales des traditions béninoises et africaines."
+  },
+  {
+    "q": "Quel objet d’art béninois est célèbre pour ses sculptures sur les portes des palais d’Abomey ?",
     "theme": "Musique & arts",
     "difficulty": 2,
-    "options": ["Tatouage", "Piercing", "Maquillage", "Perruque"],
+    "options": ["Portes sculptées", "Masques en laiton", "Tapisseries de laine", "Céramique bleue"],
     "correctIndex": 0,
-    "fact": "Les peintures corporelles et tatouages ornent les participants aux cérémonies."
+    "fact": "Les portes et bas-reliefs sculptés des palais d’Abomey racontent l’histoire du royaume."
   },
   {
-    "q": "Quel instrument à percussion est joué lors des funérailles traditionnelles ?",
+    "q": "Quel musée d’Ouidah expose des œuvres d’art contemporain africain ?",
     "theme": "Musique & arts",
-    "difficulty": 3,
-    "options": ["Gankogui", "Piano", "Saxophone", "Clavecin"],
-    "correctIndex": 0,
-    "fact": "Le gankogui est une cloche en fer jouée dans la musique traditionnelle ewe et fon."
+    "difficulty": 2,
+    "options": ["Musée Honmè", "MEASA", "Musée Zinsou", "Palais de la Marina"],
+    "correctIndex": 2,
+    "fact": "Le musée Zinsou d’Ouidah conserve et expose une collection d’art contemporain africain."
   },
   {
-    "q": "Quel musée d art contemporain se trouve à Cotonou ?",
+    "q": "Quel genre musical originaire de Côte d’Ivoire est très populaire au Bénin ?",
     "theme": "Musique & arts",
-    "difficulty": 3,
-    "options": ["Musée de la Fondation Zinsou", "Musée du Louvre", "Musée d Orsay", "Centre Pompidou"],
+    "difficulty": 2,
+    "options": ["Soukous", "Highlife", "Coupé-décalé", "Zouk"],
+    "correctIndex": 2,
+    "fact": "Le coupé-décalé, né en Côte d’Ivoire, s’est largement diffusé dans les villes béninoises."
+  },
+  {
+    "q": "Quel est le rôle principal des griots dans les traditions orales béninoises ?",
+    "theme": "Musique & arts",
+    "difficulty": 2,
+    "options": ["Transmettre l’histoire et les généalogies", "Soigner les malades", "Cultiver les champs", "Fabriquer les masques"],
     "correctIndex": 0,
-    "fact": "La Fondation Zinsou à Cotonou promeut l'art contemporain africain."
+    "fact": "Les griots sont des gardiens de la mémoire orale, des généalogies et des récits historiques."
+  },
+  {
+    "q": "Quel est le surnom actuel de l’équipe nationale de football du Bénin ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Guépards", "Amazones", "Lions", "Écureuils"],
+    "correctIndex": 3,
+    "fact": "La Fédération béninoise de football a adopté le surnom « Écureuils » pour l’équipe nationale en 2022."
+  },
+  {
+    "q": "Comment l’équipe nationale béninoise était-elle surnommée avant 2022 ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Écureuils", "Guépards", "Aigles", "Buffles"],
+    "correctIndex": 1,
+    "fact": "Avant 2022, l’équipe nationale béninoise était connue sous le nom de « Guépards du Bénin »."
+  },
+  {
+    "q": "Quel est le nom du principal stade national de football de Cotonou ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Stade Dantokpa", "Stade de la Paix", "Stade olympique de Porto-Novo", "Stade de l’Amitié Général Mathieu Kérékou"],
+    "correctIndex": 3,
+    "fact": "Le stade de l’Amitié Général Mathieu Kérékou est le principal stade de Cotonou."
+  },
+  {
+    "q": "Quel footballeur béninois est l’un des plus capés de l’histoire du pays ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Razak Omotoyossi", "Stéphane Sessègnon", "Fabrice Ondoa", "Moussa Latoundji"],
+    "correctIndex": 1,
+    "fact": "Stéphane Sessègnon figure parmi les joueurs les plus capés de l’équipe du Bénin."
+  },
+  {
+    "q": "Quel attaquant béninois a longtemps joué en Europe et inscrit des buts internationaux ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Stéphane Sessègnon", "Yoann Djidonou", "Razak Omotoyossi", "Ibrahim Atchani"],
+    "correctIndex": 2,
+    "fact": "Razak Omotoyossi a joué en Europe, notamment en Suède, et a marqué pour l’équipe du Bénin."
+  },
+  {
+    "q": "Dans quel pays Razak Omotoyossi a-t-il joué en club, notamment à Al-Hazm ?",
+    "theme": "Sport",
+    "difficulty": 3,
+    "options": ["Arabie saoudite", "Brésil", "Japon", "Maroc"],
+    "correctIndex": 0,
+    "fact": "Razak Omotoyossi a évolué à Al-Hazm, club d’Arabie saoudite."
   },
   {
     "q": "Quel sport est le plus populaire au Bénin ?",
     "theme": "Sport",
     "difficulty": 1,
-    "options": ["Football", "Rugby", "Cricket", "Baseball"],
-    "correctIndex": 0,
-    "fact": "Le football est le sport roi au Bénin, suivi par des milliers de fans."
+    "options": ["Basketball", "Football", "Volley-ball", "Handball"],
+    "correctIndex": 1,
+    "fact": "Le football est le sport le plus suivi et le plus pratiqué au Bénin."
   },
   {
-    "q": "Quel est le surnom de l équipe nationale de football du Bénin ?",
+    "q": "Quelle compétition continentale de clubs voit participer les champions béninois ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Ligue des champions de l’UEFA", "Copa Libertadores", "Ligue des champions féminine de l’OFC", "Ligue des champions de la CAF"],
+    "correctIndex": 3,
+    "fact": "Les clubs béninois peuvent représenter le pays en Ligue des champions de la CAF."
+  },
+  {
+    "q": "Quel nom porte la fédération béninoise de football ?",
     "theme": "Sport",
     "difficulty": 1,
-    "options": ["Les Écureuils", "Les Lions", "Les Aigles", "Les Éléphants"],
+    "options": ["Fédération Béninoise de Football", "Fédération Béninoise de Rugby", "Ligue de Football du Bénin", "Comité olympique béninois"],
     "correctIndex": 0,
-    "fact": "L'équipe nationale se surnomme les Écureuils du Bénin."
+    "fact": "La Fédération Béninoise de Football, ou FBF, gère le football national."
   },
   {
-    "q": "Quelle discipline olympique le Bénin a-t-il pratiquée aux Jeux ?",
-    "theme": "Sport",
-    "difficulty": 2,
-    "options": ["Athlétisme", "Ski alpin", "Hockey sur glace", "Bobsleigh"],
-    "correctIndex": 0,
-    "fact": "Le Bénin participe notamment à l athlétisme aux Jeux olympiques."
-  },
-  {
-    "q": "Quel sport de combat est pratiqué dans les écoles béninoises ?",
-    "theme": "Sport",
-    "difficulty": 2,
-    "options": ["Judo", "Boxe anglaise", "Sumo", "Catch"],
-    "correctIndex": 0,
-    "fact": "Le judo est enseigné et pratiqué dans plusieurs écoles et clubs béninois."
-  },
-  {
-    "q": "Quel sport de raquette est joué dans les lycées du Bénin ?",
-    "theme": "Sport",
-    "difficulty": 2,
-    "options": ["Tennis", "Golf", "Polo", "Cricket"],
-    "correctIndex": 0,
-    "fact": "Le tennis est pratiqué dans certains établissements scolaires et clubs."
-  },
-  {
-    "q": "Quel sport est très suivi à la télévision par les Béninois ?",
-    "theme": "Sport",
-    "difficulty": 1,
-    "options": ["Football", "Formule 1", "Golf", "Rugby"],
-    "correctIndex": 0,
-    "fact": "Les matchs de football, surtout ceux de l équipe nationale, rassemblent les familles."
-  },
-  {
-    "q": "Quel sport olympique le Bénin a-t-il représenté en escrime ?",
+    "q": "Quel est le nom du principal stade de Parakou ?",
     "theme": "Sport",
     "difficulty": 3,
-    "options": ["Escrime", "Natation", "Gymnastique", "Aviron"],
-    "correctIndex": 0,
-    "fact": "Le Bénin a participé à des compétitions d escrime aux Jeux olympiques."
+    "options": ["Stade de l’Amitié", "Stade Dantokpa", "Stade municipal de Parakou", "Stade de Nikki"],
+    "correctIndex": 2,
+    "fact": "Parakou dispose d’un stade municipal qui accueille les rencontres locales de football."
   },
   {
-    "q": "Quel sport de endurance est organisé dans les villes béninoises ?",
-    "theme": "Sport",
-    "difficulty": 3,
-    "options": ["Marathon", "Formule 1", "Ski", "Voile"],
-    "correctIndex": 0,
-    "fact": "Des courses à pied et marathons sont organisés dans plusieurs villes béninoises."
-  },
-  {
-    "q": "Quel sport de filet est pratiqué dans les écoles du Bénin ?",
-    "theme": "Sport",
+    "q": "Quelle université publique du Bénin est la plus ancienne ?",
+    "theme": "Tech & vie étudiante",
     "difficulty": 2,
-    "options": ["Volley-ball", "Baseball", "Golf", "Cricket"],
-    "correctIndex": 0,
-    "fact": "Le volley-ball est pratiqué dans plusieurs établissements scolaires."
+    "options": ["Université de Parakou", "Université de Natitingou", "Université d’Abomey-Calavi", "Université de Porto-Novo"],
+    "correctIndex": 2,
+    "fact": "L’Université d’Abomey-Calavi, créée en 1970, est la plus ancienne université publique du Bénin."
   },
   {
-    "q": "Quel sport de combat traditionnel existe dans le nord du Bénin ?",
-    "theme": "Sport",
-    "difficulty": 3,
-    "options": ["Lutte traditionnelle", "Sumo", "Catch", "Karaté"],
-    "correctIndex": 0,
-    "fact": "La lutte traditionnelle est pratiquée lors des fêtes dans le nord du Bénin."
-  },
-  {
-    "q": "Quelle école d ingénieurs est située à Cotonou et forme des informaticiens ?",
+    "q": "Dans quelle ville se trouve le campus principal de l’Université d’Abomey-Calavi ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 1,
-    "options": ["Epitech", "Polytechnique", "Centrale", "Mines"],
+    "options": ["Abomey-Calavi", "Parakou", "Natitingou", "Porto-Novo"],
     "correctIndex": 0,
-    "fact": "Epitech Bénin forme des étudiants aux métiers du numérique et de l'informatique."
+    "fact": "Le campus principal de l’UAC se trouve à Abomey-Calavi, au sud du Bénin."
   },
   {
-    "q": "Quelle application de messagerie est très utilisée par les étudiants béninois ?",
+    "q": "Quelle est la langue d’enseignement dans la plupart des universités béninoises ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 1,
-    "options": ["WhatsApp", "Telegram", "Signal", "Messenger"],
-    "correctIndex": 0,
-    "fact": "WhatsApp est l'application de messagerie la plus populaire chez les étudiants."
+    "options": ["Anglais", "Portugais", "Arabe", "Français"],
+    "correctIndex": 3,
+    "fact": "Le français est la principale langue d’enseignement supérieur au Bénin."
   },
   {
-    "q": "Quel langage de programmation est souvent enseigné en première année d informatique ?",
+    "q": "Quel opérateur de télécommunications est historiquement public au Bénin ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 2,
-    "options": ["Python", "Fortran", "Cobol", "Basic"],
-    "correctIndex": 0,
-    "fact": "Python est un langage d initiation courant grâce à sa syntaxe claire."
+    "options": ["MTN", "Bénin Telecoms", "Moov", "Cellcom"],
+    "correctIndex": 1,
+    "fact": "Bénin Telecoms est l’opérateur historique public des télécommunications au Bénin."
   },
   {
-    "q": "Quelle plateforme permet de suivre des cours en ligne gratuits ?",
+    "q": "Quelle autorité régule les télécommunications au Bénin ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 2,
-    "options": ["Coursera", "Facebook", "Instagram", "TikTok"],
-    "correctIndex": 0,
-    "fact": "Coursera propose des cours en ligne (MOOCs) accessibles gratuitement ou moyennant paiement."
+    "options": ["BCEAO", "ARCEP", "UEMOA", "Banque mondiale"],
+    "correctIndex": 1,
+    "fact": "L’ARCEP est l’Autorité de régulation des communications électroniques et de la poste au Bénin."
   },
   {
-    "q": "Quel outil est utilisé pour écrire du code informatique ?",
+    "q": "Quel réseau mobile est l’un des principaux opérateurs privés au Bénin ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 1,
-    "options": ["Éditeur de texte / IDE", "Traitement de texte", "Tableur", "Navigateur"],
-    "correctIndex": 0,
-    "fact": "Un IDE (comme VS Code) ou un éditeur de texte est utilisé pour écrire du code."
+    "options": ["Orange", "Vodacom", "Airtel", "MTN"],
+    "correctIndex": 3,
+    "fact": "MTN figure parmi les principaux opérateurs de réseau mobile au Bénin."
   },
   {
-    "q": "Que signifie l acronyme HTML ?",
-    "theme": "Tech & vie étudiante",
-    "difficulty": 2,
-    "options": ["HyperText Markup Language", "High Text Machine Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"],
-    "correctIndex": 0,
-    "fact": "HTML signifie HyperText Markup Language, le langage de structure des pages web."
-  },
-  {
-    "q": "Quel système d exploitation est largement utilisé sur les serveurs ?",
-    "theme": "Tech & vie étudiante",
-    "difficulty": 2,
-    "options": ["Linux", "Windows", "macOS", "iOS"],
-    "correctIndex": 0,
-    "fact": "Linux est très répandu sur les serveurs grâce à sa stabilité et son ouverture."
-  },
-  {
-    "q": "Quel réseau social professionnel est utilisé pour chercher un stage ?",
+    "q": "Quel diplôme national sanctionne la fin des études secondaires au Bénin ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 1,
-    "options": ["LinkedIn", "Instagram", "Snapchat", "TikTok"],
-    "correctIndex": 0,
-    "fact": "LinkedIn est le réseau social professionnel utilisé pour le recrutement et le réseautage."
+    "options": ["Brevet", "Certificat", "Baccalauréat", "Licence"],
+    "correctIndex": 2,
+    "fact": "Le baccalauréat sanctionne la fin des études secondaires et ouvre l’accès à l’université."
   },
   {
-    "q": "Quel langage est utilisé pour créer des pages web dynamiques ?",
+    "q": "Quel cycle d’études universitaires est généralement sanctionné par un mémoire ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 2,
-    "options": ["JavaScript", "Latin", "Grec", "Sanskrit"],
+    "options": ["Master", "Brevet", "Certificat", "CAP"],
     "correctIndex": 0,
-    "fact": "JavaScript permet d ajouter de l interactivité aux pages web."
+    "fact": "Le master est un cycle universitaire qui comporte généralement un mémoire de recherche ou de stage."
   },
   {
-    "q": "Quelle application est utilisée pour faire des visioconférences étudiantes ?",
+    "q": "Quel pays a influencé le système éducatif béninois pendant la période coloniale ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 2,
+    "options": ["Angleterre", "France", "Portugal", "Allemagne"],
+    "correctIndex": 1,
+    "fact": "Le système éducatif béninois a été fortement marqué par le modèle colonial français."
+  },
+  {
+    "q": "Dans quelle ville se trouve l’Université de Parakou ?",
     "theme": "Tech & vie étudiante",
     "difficulty": 1,
-    "options": ["Zoom", "Word", "Excel", "PowerPoint"],
-    "correctIndex": 0,
-    "fact": "Zoom est largement utilisé pour les cours en ligne et les réunions à distance."
+    "options": ["Natitingou", "Djougou", "Cotonou", "Parakou"],
+    "correctIndex": 3,
+    "fact": "L’Université de Parakou est implantée à Parakou, dans le centre-nord du Bénin."
   },
   {
-    "q": "Quelle est la plus grande démocratie d Afrique par sa population ?",
+    "q": "Quel organisme des Nations unies a inscrit les palais royaux d’Abomey au patrimoine mondial ?",
     "theme": "Culture générale",
     "difficulty": 1,
-    "options": ["Nigeria", "Égypte", "Afrique du Sud", "Kenya"],
+    "options": ["UNESCO", "UNICEF", "OMS", "FAO"],
     "correctIndex": 0,
-    "fact": "Le Nigeria est le pays le plus peuplé d Afrique avec plus de 200 millions d habitants."
+    "fact": "L’UNESCO a inscrit les palais royaux d’Abomey sur la liste du patrimoine mondial en 1985."
   },
   {
-    "q": "Quelle est la langue officielle du Bénin ?",
+    "q": "Quelle monnaie est utilisée au Bénin ?",
     "theme": "Culture générale",
     "difficulty": 1,
-    "options": ["Français", "Anglais", "Espagnol", "Portugais"],
-    "correctIndex": 0,
-    "fact": "Le français est la langue officielle, héritée de la colonisation."
+    "options": ["Naira", "Cedi", "Franc CFA", "Dinar"],
+    "correctIndex": 2,
+    "fact": "Le Bénin utilise le franc CFA, managé par la BCEAO."
   },
   {
-    "q": "Quelle est la capitale du Nigeria ?",
+    "q": "Quelle union monétaire d’Afrique de l’Ouest utilise le franc CFA et compte le Bénin ?",
     "theme": "Culture générale",
     "difficulty": 2,
-    "options": ["Abuja", "Lagos", "Kano", "Kaduna"],
-    "correctIndex": 0,
-    "fact": "Abuja est la capitale fédérale du Nigeria depuis 1991."
+    "options": ["CEDEAO", "SADC", "UEMOA", "COMESA"],
+    "correctIndex": 2,
+    "fact": "Le Bénin est membre de l’UEMOA, qui utilise le franc CFA."
   },
   {
     "q": "Quel est le plus grand désert du monde ?",
     "theme": "Culture générale",
     "difficulty": 1,
-    "options": ["Sahara", "Gobi", "Kalahari", "Atacama"],
+    "options": ["Sahara", "Gobi", "Kalahari", "Namib"],
     "correctIndex": 0,
-    "fact": "Le Sahara est le plus grand désert chaud du monde."
+    "fact": "Le Sahara est le plus grand désert chaud du monde, suivi notamment par le désert de Gobi."
   },
   {
-    "q": "Qui a peint la Joconde ?",
+    "q": "Quel océan borde le Bénin ?",
     "theme": "Culture générale",
     "difficulty": 1,
-    "options": ["Léonard de Vinci", "Pablo Picasso", "Vincent van Gogh", "Claude Monet"],
-    "correctIndex": 0,
-    "fact": "La Joconde (Mona Lisa) a été peinte par Léonard de Vinci au XVIe siècle."
+    "options": ["Océan Indien", "Océan Arctique", "Océan Pacifique", "Océan Atlantique"],
+    "correctIndex": 3,
+    "fact": "Le Bénin possède un littoral sur l’océan Atlantique, le long du golfe de Guinée."
   },
   {
-    "q": "Quelle est la plus longue rivière d Afrique ?",
-    "theme": "Culture générale",
-    "difficulty": 2,
-    "options": ["Nil", "Congo", "Niger", "Zambèze"],
-    "correctIndex": 0,
-    "fact": "Le Nil, avec ses quelque 6 650 km, est le plus long fleuve d Afrique."
-  },
-  {
-    "q": "Quel est le plus petit pays du monde ?",
+    "q": "Quel est le plus long fleuve d’Afrique ?",
     "theme": "Culture générale",
     "difficulty": 1,
-    "options": ["Vatican", "Monaco", "Nauru", "Saint-Marin"],
-    "correctIndex": 0,
-    "fact": "La Cité du Vatican est le plus petit État souverain du monde."
+    "options": ["Congo", "Nil", "Niger", "Zambeze"],
+    "correctIndex": 1,
+    "fact": "Le Nil est généralement considéré comme le plus long fleuve d’Afrique et du monde."
   },
   {
-    "q": "Qui a découvert la pénicilline ?",
+    "q": "Quelle organisation africaine a son siège à Addis-Abeba ?",
     "theme": "Culture générale",
-    "difficulty": 3,
-    "options": ["Alexander Fleming", "Louis Pasteur", "Robert Koch", "Edward Jenner"],
-    "correctIndex": 0,
-    "fact": "Alexander Fleming a découvert la pénicilline en 1928."
+    "difficulty": 2,
+    "options": ["ONU", "CEDEAO", "Banque mondiale", "Union africaine"],
+    "correctIndex": 3,
+    "fact": "L’Union africaine a son siège à Addis-Abeba, en Éthiopie."
   },
   {
-    "q": "Quelle est la devise de la France ?",
+    "q": "Quel pays est le plus peuplé d’Afrique en 2024 ?",
+    "theme": "Culture générale",
+    "difficulty": 2,
+    "options": ["Éthiopie", "Nigeria", "Égypte", "Afrique du Sud"],
+    "correctIndex": 1,
+    "fact": "Le Nigeria reste le pays le plus peuplé d’Afrique, devant l’Éthiopie."
+  },
+  {
+    "q": "Quel acronyme désigne l’Organisation des Nations unies ?",
     "theme": "Culture générale",
     "difficulty": 1,
-    "options": ["Liberté, Égalité, Fraternité", "Travail, Famille, Patrie", "Unité, Justice, Progrès", "Paix, Unité, Développement"],
-    "correctIndex": 0,
-    "fact": "La devise de la France est 'Liberté, Égalité, Fraternité'."
+    "options": ["OMS", "UNESCO", "ONU", "OUA"],
+    "correctIndex": 2,
+    "fact": "ONU est l’acronyme français de l’Organisation des Nations unies."
   },
   {
-    "q": "Quel organisme protège le patrimoine mondial ?",
+    "q": "Quel continent abrite le Bénin ?",
     "theme": "Culture générale",
-    "difficulty": 2,
-    "options": ["UNESCO", "UNICEF", "OMS", "FAO"],
-    "correctIndex": 0,
-    "fact": "L'UNESCO (Organisation des Nations unies pour l'éducation, la science et la culture) protège le patrimoine mondial."
-  },
-  {
-    "q": "Qui fut le roi Guézo du Dahomey ?",
-    "theme": "Histoire du Bénin",
-    "difficulty": 2,
-    "options": ["Un roi qui a modernisé l armée et l État", "Un explorateur européen", "Un missionnaire", "Un chef militaire français"],
-    "correctIndex": 0,
-    "fact": "Le roi Guézo (1818-1858) a modernisé l administration et l armée du royaume du Dahomey."
-  },
-  {
-    "q": "Quel instrument accompagne les danses de masques sacrés au Bénin ?",
-    "theme": "Culture & traditions",
     "difficulty": 1,
-    "options": ["Tam-tam", "Piano", "Guitare électrique", "Synthétiseur"],
+    "options": ["Afrique", "Asie", "Amérique", "Europe"],
     "correctIndex": 0,
-    "fact": "Le tam-tam rythme les chants et les danses des cérémonies traditionnelles et vodun."
-  },
-  {
-    "q": "Quel art décoratif orne les cases et les palais royaux du Dahomey ?",
-    "theme": "Musique & arts",
-    "difficulty": 2,
-    "options": ["Appliqués en tissu", "Fresques à l huile", "Mosaïque romaine", "Graffiti urbain"],
-    "correctIndex": 0,
-    "fact": "Les appliqués en tissu décorent les cases et les palais royaux du royaume du Dahomey."
+    "fact": "Le Bénin est un pays d’Afrique de l’Ouest, bordé par l’océan Atlantique."
   }
 ]

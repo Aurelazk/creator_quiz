@@ -4,9 +4,6 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/ws.js": {
-      "maxDuration": 10
-    },
     "api/*.js": {
       "maxDuration": 10
     }
@@ -19,20 +16,9 @@
       ]
     },
     {
-      "source": "/css/(.*)",
-      "headers": [
-        { "key": "cache-control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
-      ]
-    },
-    {
-      "source": "/js/(.*)",
-      "headers": [
-        { "key": "cache-control", "value": "public, max-age=300, stale-while-revalidate=86400" }
-      ]
-    },
-    {
       "source": "/(.*)",
       "headers": [
+        { "key": "cache-control", "value": "no-cache" },
         { "key": "x-content-type-options", "value": "nosniff" },
         { "key": "referrer-policy", "value": "strict-origin-when-cross-origin" },
         { "key": "x-frame-options", "value": "SAMEORIGIN" },

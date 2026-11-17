@@ -49,10 +49,10 @@ async function main() {
   }
 
   const browser = await chromium.launch({ headless: true, args: ['--disable-gpu'] });
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 }, serviceWorkers: 'block' });
   const page = await ctx.newPage();
   const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('pageerror', (e) => errors.push(e.stack || e.message));
 
   const a = await freeze(page, '2.0');
   assert.ok(a.lamp, 'lampe présente');
