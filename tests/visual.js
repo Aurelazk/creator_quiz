@@ -49,6 +49,30 @@ function watchErrors(page) {
   page.on('console', (m) => { if (m.type() === 'error') failures.push('console : ' + m.text()); });
 }
 
+async function crowdColors(page, shot) {
+  return page.evaluate(async (src) => {
+    const img = new Image();
+    img.src = src;
+    await img.decode();
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0);
+    const data = ctx.getImageData(450, 300, 1020, 400).data;
+    let total = 0;
+    let dark = 0;
+    let bright = 0;
+    for (let i = 0; i < data.length; i += 12) {
+      const max = Math.max(data[i], data[i + 1], data[i + 2]);
+      total++;
+      if (max < 45) dark++;
+      if (max > 110) bright++;
+    }
+    return { darkRatio: dark / total, brightRatio: bright / total };
+  }, 'data:image/png;base64,' + shot.toString('base64'));
+}
+
 async function metrics(page) {
   return page.evaluate(() => {
     const visible = (el) => {
@@ -133,15 +157,18 @@ async function run() {
   const hostRequests = [];
   host.on('request', (r) => hostRequests.push(r.url()));
   await host.goto(BASE + '/?host=1', { waitUntil: 'domcontentloaded' });
-  await host.waitForFunction(() => window.App && window.App.code, null, { timeout: 10000 });
+  await host.waitForFunction(() => window.App && window.App.code && window.Scene3D && window.Scene3D.ready, null, { timeout: 10000 });
   await host.waitForTimeout(1200);
-  await host.screenshot({ path: path.join(DIR, 'host-1920x1080.png'), fullPage: true });
+  const hostShot = await host.screenshot({ path: path.join(DIR, 'host-1920x1080.png'), fullPage: true });
+  const crowd = await crowdColors(host, hostShot);
   const hm = await metrics(host);
   check(hostRequests.some((u) => u.includes('three.min.js')), 'three.min.js chargé côté animateur');
   check(hostRequests.some((u) => u.includes('/js/scene.js')), 'scene.js chargé côté animateur');
   check(hm.scrollWidth <= hm.vw + 1, 'aucun débordement horizontal animateur');
   check(hm.scrollHeight <= hm.vh + 1, 'aucun débordement vertical animateur');
   check(await host.locator('#scene').isVisible(), 'canvas 3D présent');
+  check(crowd.darkRatio < 0.4 && crowd.brightRatio > 0.35,
+    'public 3D coloré, pas noir (' + Math.round(crowd.darkRatio * 100) + '% sombre, ' + Math.round(crowd.brightRatio * 100) + '% clair)');
   await ctxHost.close();
 
   const ctxSw = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });

@@ -857,10 +857,10 @@
     const hairGeo = new THREE.BoxGeometry(0.28, 0.2, 0.28); /* afro / gélé / casquette */
     const armGeo = new THREE.BoxGeometry(0.07, 0.5, 0.07);
 
-    const bodyMat = new THREE.MeshBasicMaterial({ color: '#00E472', vertexColors: true });
-    const headMat = new THREE.MeshBasicMaterial({ color: '#E0AC69', vertexColors: true });
-    const hairMat = new THREE.MeshBasicMaterial({ color: '#2B1B12', vertexColors: true });
-    const armMat = new THREE.MeshBasicMaterial({ color: '#00E472', vertexColors: true });
+    const bodyMat = new THREE.MeshBasicMaterial({ color: '#00E472' });
+    const headMat = new THREE.MeshBasicMaterial({ color: '#E0AC69' });
+    const hairMat = new THREE.MeshBasicMaterial({ color: '#2B1B12' });
+    const armMat = new THREE.MeshBasicMaterial({ color: '#00E472' });
 
     const bodies = new THREE.InstancedMesh(bodyGeo, bodyMat, totalCount);
     const heads = new THREE.InstancedMesh(headGeo, headMat, totalCount);
