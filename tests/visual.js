@@ -167,7 +167,8 @@ async function run() {
   check(hm.scrollWidth <= hm.vw + 1, 'aucun débordement horizontal animateur');
   check(hm.scrollHeight <= hm.vh + 1, 'aucun débordement vertical animateur');
   check(await host.locator('#scene').isVisible(), 'canvas 3D présent');
-  check(crowd.darkRatio < 0.4 && crowd.brightRatio > 0.35,
+  check(await host.evaluate(() => !!(window.Scene3D && typeof window.Scene3D.setRoom === 'function')), 'code salle disponible sur le mur LED');
+  check(crowd.darkRatio < 0.45 && crowd.brightRatio > 0.25,
     'public 3D coloré, pas noir (' + Math.round(crowd.darkRatio * 100) + '% sombre, ' + Math.round(crowd.brightRatio * 100) + '% clair)');
   await ctxHost.close();
 

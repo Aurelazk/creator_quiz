@@ -80,6 +80,7 @@ async function run() {
 
     await host.evaluate(() => window.Net.send('host:start'));
     await phone.waitForSelector('#pGame:not(.hidden)', { timeout: 10000 });
+    await phone.waitForFunction(() => window.App.state && window.App.state.phase === 'question', null, { timeout: 15000 });
     await phone.waitForFunction(() => (document.querySelector('#pQuestion') || {}).textContent.trim().length > 3, null, { timeout: 10000 });
     const q = await phone.evaluate(() => ({
       phase: window.App.state.phase,

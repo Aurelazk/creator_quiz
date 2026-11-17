@@ -179,6 +179,7 @@
       .then(() => {
         if (!global.Scene3D || !canvas) return;
         global.Scene3D.init(canvas);
+        try { global.Scene3D.setRoom && global.Scene3D.setRoom(App.code); } catch (e) {}
         try { global.Scene3D.setLobby && global.Scene3D.setLobby(true); } catch (e) {}
       })
       .catch(() => {})
@@ -528,6 +529,7 @@
     saveJSON(LS.host, { code: msg.code, token: msg.hostToken, at: Date.now() });
     history.replaceState(null, '', location.pathname + '?host=1');
     showHostView();
+    if (global.Scene3D && global.Scene3D.ready && global.Scene3D.setRoom) global.Scene3D.setRoom(msg.code);
     if (msg.state) onState({ state: msg.state, role: 'host' });
     refreshQr(msg.code);
     toast('#hostToasts', 'Salle créée : ' + msg.code, 'ok', 2500);
@@ -538,6 +540,7 @@
     App.code = msg.code;
     App.hostToken = msg.hostToken;
     showHostView();
+    if (global.Scene3D && global.Scene3D.ready && global.Scene3D.setRoom) global.Scene3D.setRoom(msg.code);
     if (msg.state) onState({ state: msg.state, role: 'host' });
     refreshQr(msg.code);
   }
