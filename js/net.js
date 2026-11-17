@@ -3,9 +3,9 @@
    Le serveur reste l'unique source de vérité : on ne fait qu'envoyer des
    intentions et afficher l'état reçu.
 
-   L'URL du serveur de jeu est lue depuis /api/config (variable GAME_WS_URL
-   sur Vercel). Si elle est absente, on retombe sur le même hôte (/ws),
-   ce qui fonctionne en local et sur un hôte Node persistant.
+   L'URL du serveur de jeu est lue depuis /api/config (variable GAME_WS_URL).
+   Sans GAME_WS_URL, on utilise le chemin renvoyé par /api/config :
+   /api/ws sur Vercel, /ws sur un hôte Node persistant.
    ===================================================================== */
 (function (global) {
   'use strict';
@@ -30,6 +30,7 @@
     onOpen: null,
     onStatus: null,
     wsBase: null,
+    wsPath: '/ws',
     publicUrl: null,
     configPromise: null,
     everConnected: false,
@@ -41,6 +42,8 @@
           .then((res) => (res.ok ? res.json() : null))
           .then((cfg) => {
             Net.wsBase = cfg ? normalizeWsUrl(cfg.wsUrl) : null;
+            Net.wsPath = cfg && typeof cfg.wsPath === 'string' && cfg.wsPath.startsWith('/')
+              ? cfg.wsPath : '/ws';
             Net.publicUrl = cfg && typeof cfg.publicUrl === 'string'
               ? cfg.publicUrl.replace(/\/+$/, '') : null;
             return Net.wsBase;
@@ -53,7 +56,7 @@
     url() {
       if (Net.wsBase) return Net.wsBase;
       const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-      return proto + '//' + location.host + '/ws';
+      return proto + '//' + location.host + Net.wsPath;
     },
 
     /* Origine HTTP du serveur de jeu ('' si même hôte). */

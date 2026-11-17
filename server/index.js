@@ -590,7 +590,7 @@ function handleHttp(req, res) {
         }
       } catch (e) { wsUrl = null; }
     }
-    json({ wsUrl, publicUrl: process.env.PUBLIC_URL || ('http://localhost:' + PORT) });
+    json({ wsUrl, wsPath: '/ws', publicUrl: process.env.PUBLIC_URL || ('http://localhost:' + PORT) });
     return;
   }
   if (pathname === '/api/leaderboard') {
@@ -622,16 +622,28 @@ function handleHttp(req, res) {
 const server = http.createServer(handleHttp);
 const wss = new WebSocketServer({ noServer: true, maxPayload: 16 * 1024 });
 
+function wsOriginAllowed(origin, proto, host) {
+  if (ALLOWED_ORIGIN === '*') return true;
+  const publicUrl = process.env.PUBLIC_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL : '');
+  const allowed = [ALLOWED_ORIGIN, publicUrl]
+    .filter(Boolean)
+    .map((value) => String(value).replace(/\/+$/, ''));
+  if (allowed.includes(origin)) return true;
+  if (origin === proto + '://' + host) return true;
+  if (process.env.NODE_ENV !== 'production' && /^(localhost|127\.|\[::1\])/.test(host)) return true;
+  if (process.env.VERCEL && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
+  return false;
+}
+
 server.on('upgrade', (req, socket, head) => {
   const pathname = new URL(req.url, 'http://localhost').pathname;
-  if (pathname !== '/ws') { socket.destroy(); return; }
+  if (pathname !== '/ws' && pathname !== '/api/ws') { socket.destroy(); return; }
   const origin = req.headers.origin || '';
   const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
   const proto = forwardedProto || (req.socket.encrypted ? 'https' : 'http');
   const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim();
-  const isSameOrigin = origin === proto + '://' + host;
-  const isLocalDev = process.env.NODE_ENV !== 'production' && /^(localhost|127\.|\[::1\])/.test(host);
-  if (ALLOWED_ORIGIN === '*' || isSameOrigin || isLocalDev) {
+  if (wsOriginAllowed(origin, proto, host)) {
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req));
   } else {
     socket.destroy();

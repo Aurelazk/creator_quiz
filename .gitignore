@@ -26,3 +26,4 @@ playwright-report/
 AssetStudio/
 ~/gtai/work/extract_assets*.py
 *.py
+.env*

@@ -2,9 +2,9 @@
 
 /* =====================================================================
    api/config.js — configuration runtime du client
-   Sans GAME_WS_URL, le client utilise le WebSocket du même domaine
-   (/api/ws), servi par api/ws.js sur Vercel. GAME_WS_URL permet de
-   pointer vers un serveur Node persistant (Render, VPS…).
+   Sans GAME_WS_URL, le client utilise /api/ws servi par api/ws.mjs
+   sur Vercel (WebSocket natif avec Fluid compute). GAME_WS_URL permet
+   de pointer vers un serveur Node persistant (Render, VPS…).
    ===================================================================== */
 
 module.exports = (req, res) => {
@@ -27,5 +27,5 @@ module.exports = (req, res) => {
 
   res.setHeader('content-type', 'application/json; charset=utf-8');
   res.setHeader('cache-control', 'no-store');
-  res.end(JSON.stringify({ wsUrl, publicUrl }));
+  res.end(JSON.stringify({ wsUrl, wsPath: '/api/ws', publicUrl }));
 };
