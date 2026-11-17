@@ -1,7 +1,7 @@
 /* =====================================================================
-   tests/questions.test.js — validation de la banque de questions
-   Structure : category, difficulty (1-3), source, fact, pointsEstimes.
-   Objectif : >= 15 questions Histoire/Monuments du Bénin.
+   tests/questions.test.js — validation de la banque de questions QCM
+   Structure : theme, difficulty (1-3), options[4], correctIndex (0-3), fact
+   Objectif : >= 20 Monuments du Bénin, >= 20 Histoire du Bénin.
    ===================================================================== */
 'use strict';
 
@@ -11,15 +11,15 @@ const path = require('path');
 const FILE = path.join(__dirname, '..', 'server', 'questions.json');
 const questions = require(FILE);
 
-const KNOWN_CATEGORIES = new Set([
+const KNOWN_THEMES = new Set([
+  'Monuments du Bénin',
   'Histoire du Bénin',
-  'Monuments et patrimoine',
-  'Culture et traditions',
+  'Culture & traditions',
   'Gastronomie',
   'Géographie',
+  'Musique & arts',
   'Sport',
-  'Musique et arts',
-  'Vie étudiante et technologie',
+  'Tech & vie étudiante',
   'Culture générale',
 ]);
 
@@ -36,33 +36,20 @@ function test(name, fn) {
   }
 }
 
-console.log('\nCREATOR · tests banque de questions\n');
+console.log('\nCREATOR · tests banque de questions QCM\n');
 
 test('banque non vide (' + questions.length + ' questions)', () => {
-  assert.ok(questions.length >= 40, 'trop peu de questions : ' + questions.length);
+  assert.ok(questions.length >= 100, 'trop peu de questions : ' + questions.length);
 });
 
-test('chaque question a category, difficulty, source, fact', () => {
+test('chaque question a theme, difficulty, options, correctIndex, fact', () => {
   for (const q of questions) {
-    assert.ok(KNOWN_CATEGORIES.has(q.category), 'catégorie inconnue : ' + q.category + ' (' + q.q + ')');
+    assert.ok(KNOWN_THEMES.has(q.theme), 'thème inconnu : ' + q.theme + ' (' + q.q + ')');
     assert.ok(Number.isInteger(q.difficulty) && q.difficulty >= 1 && q.difficulty <= 3, 'difficulté invalide : ' + q.q);
-    assert.ok(q.source && q.source.trim(), 'source manquante : ' + q.q);
-    assert.ok(q.fact && q.fact.trim(), 'fact manquant : ' + q.q);
-  }
-});
-
-test('total des points = 100, 5-8 réponses, alias non vides', () => {
-  for (const q of questions) {
-    const total = q.answers.reduce((s, a) => s + Number(a.pts || 0), 0);
-    assert.strictEqual(total, 100, 'total pts != 100 : ' + q.q + ' (' + total + ')');
-    assert.ok(q.answers.length >= 5 && q.answers.length <= 8, 'nombre de réponses : ' + q.q);
-    for (const a of q.answers) {
-      assert.ok(a.text && a.text.trim(), 'réponse sans texte : ' + q.q);
-      assert.ok(Array.isArray(a.aliases) && a.aliases.length > 0, 'aliases vides : ' + q.q + ' / ' + a.text);
-      for (const alias of a.aliases) {
-        assert.ok(typeof alias === 'string' && alias.trim().length > 0, 'alias vide : ' + q.q);
-      }
-    }
+    assert.ok(Array.isArray(q.options) && q.options.length === 4, 'pas 4 options : ' + q.q);
+    assert.ok(typeof q.correctIndex === 'number' && q.correctIndex >= 0 && q.correctIndex <= 3, 'correctIndex invalide : ' + q.q);
+    assert.ok(q.fact && q.fact.trim().length > 10, 'fact manquant ou trop court : ' + q.q);
+    assert.ok(!/citez/i.test(q.q), 'question commence par Citez : ' + q.q);
   }
 });
 
@@ -72,27 +59,28 @@ test('pas de doublons de questions', () => {
     assert.ok(!seen.has(q.q), 'question dupliquée : ' + q.q);
     seen.add(q.q);
   }
+  assert.ok(!/twitter/i.test(JSON.stringify(questions)), 'libellé anglais résiduel (Twitter)');
 });
 
-test('au moins 15 questions Histoire/Monuments du Bénin', () => {
-  const count = questions.filter(
-    (q) => q.category === 'Histoire du Bénin' || q.category === 'Monuments et patrimoine',
-  ).length;
-  assert.ok(count >= 15, 'seulement ' + count + ' questions Histoire/Monuments (attendu >= 15)');
-  console.log('     Histoire du Bénin : ' + questions.filter((q) => q.category === 'Histoire du Bénin').length);
-  console.log('     Monuments et patrimoine : ' + questions.filter((q) => q.category === 'Monuments et patrimoine').length);
+test('au moins 20 questions Histoire du Bénin', () => {
+  const count = questions.filter((q) => q.theme === 'Histoire du Bénin').length;
+  assert.ok(count >= 20, 'seulement ' + count + ' questions Histoire du Bénin (attendu >= 20)');
+  console.log('     Histoire du Bénin : ' + count);
 });
 
-test('pas de libellé anglais résiduel (Twitter corrigé en X)', () => {
+test('au moins 20 questions Monuments du Bénin', () => {
+  const count = questions.filter((q) => q.theme === 'Monuments du Bénin').length;
+  assert.ok(count >= 20, 'seulement ' + count + ' questions Monuments du Bénin (attendu >= 20)');
+  console.log('     Monuments du Bénin : ' + count);
+});
+
+test('pas de libellé anglais résiduel', () => {
   for (const q of questions) {
-    assert.ok(!/twitter/i.test(q.q), 'libellé anglais dans la question : ' + q.q);
-    for (const a of q.answers) {
-      assert.ok(!/twitter/i.test(a.text), 'libellé anglais dans une réponse : ' + q.q);
-      for (const alias of a.aliases) {
-        assert.ok(!/twitter/i.test(alias), 'alias anglais : ' + q.q + ' / ' + alias);
-      }
+    assert.ok(!/buzz|steal|strike|sondage|twitter/i.test(q.q), 'anglais dans la question : ' + q.q);
+    for (const o of q.options) {
+      assert.ok(!/buzz|steal|strike|sondage|twitter/i.test(o), 'anglais dans une option : ' + q.q);
     }
   }
 });
 
-console.log('\n  ✓ tests banque de questions réussis (' + passed + ')\n');
+console.log('\n  ✓ tests banque de questions QCM réussis (' + passed + ')\n');

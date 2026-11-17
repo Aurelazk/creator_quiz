@@ -5,7 +5,7 @@
   "trailingSlash": false,
   "functions": {
     "api/ws.js": {
-      "maxDuration": 300
+      "maxDuration": 10
     },
     "api/*.js": {
       "maxDuration": 10

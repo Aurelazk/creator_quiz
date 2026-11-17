@@ -1,25 +1,26 @@
 'use strict';
 
 /* =====================================================================
-   api/ws.js — point d'entrée WebSocket sur Vercel Functions
-   Vercel sert désormais les connexions WebSocket nativement (Fluid
-   compute). On réutilise le serveur autoritaire de server/index.js et on
-   exporte le http.Server comme export par défaut de la fonction.
+   api/ws.js — WebSocket sur Vercel (AVERTISSEMENT)
+   Le serveur de jeu CREATOR QCM nécessite un hôte Node persistant
+   (Render, Railway, VPS…) car les salles sont en mémoire (Map) et le
+   WebSocket ne fonctionne pas sur les fonctions serverless Vercel
+   (300 s max, instances éphémères).
+   
+   Pour le déploiement production :
+   1. Héberge server/index.js sur un Node persistant (GAME_WS_URL).
+   2. Configure la variable d'environnement GAME_WS_URL côté client.
+   3. Ce fichier retourne simplement un message d'erreur explicite.
    ===================================================================== */
 
-const http = require('http');
-const { createWebSocketServer } = require('../server/index.js');
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 426;
+module.exports = (req, res) => {
+  res.statusCode = 503;
   res.setHeader('content-type', 'application/json; charset=utf-8');
   res.setHeader('cache-control', 'no-store');
   res.end(JSON.stringify({
-    error: 'upgrade-required',
-    message: 'Cette route attend une connexion WebSocket (wss://…/api/ws).',
+    error: 'websocket-not-available',
+    message: 'Le serveur WebSocket CREATOR QCM n\'est pas disponible sur Vercel Functions.',
+    detail: 'Hébergez server/index.js sur un nœud Node persistant (Render, Railway, VPS) et configurez GAME_WS_URL.',
+    docs: 'Consultez DEPLOY.md pour la procédure de déploiement.',
   }));
-});
-
-createWebSocketServer(server, ['/ws', '/api/ws']);
-
-module.exports = server;
+};

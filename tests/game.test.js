@@ -1,12 +1,12 @@
 /* =====================================================================
-   tests/game.test.js — règles pures du serveur (sans réseau)
+   tests/game.test.js — règles pures du serveur QCM (sans réseau)
    ===================================================================== */
 'use strict';
 
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const G = require('../server/game');
+const G = require('../shared/rules');
 
 let passed = 0;
 function test(name, fn) {
@@ -21,125 +21,136 @@ function test(name, fn) {
   }
 }
 
-console.log('\nCREATOR · tests du moteur de jeu\n');
+console.log('\nCREATOR · tests du moteur de règles QCM\n');
 
-test('normalize : accents, casse, ponctuation et apostrophes', () => {
-  assert.strictEqual(G.normalize('  PÂTE  Rouge '), 'pate rouge');
-  assert.strictEqual(G.normalize("L'igname pilée"), 'l igname pilee');
-  assert.strictEqual(G.normalize('Coca-Cola !'), 'coca cola');
-  assert.strictEqual(G.normalize(null), '');
+/* ------------------------------------------------------------------ */
+/* PHASES                                                             */
+/* ------------------------------------------------------------------ */
+test('PHASES : LOBBY → COUNTDOWN → QUESTION → REVEAL → END', () => {
+  assert.strictEqual(G.PHASES.LOBBY, 'lobby');
+  assert.strictEqual(G.PHASES.COUNTDOWN, 'countdown');
+  assert.strictEqual(G.PHASES.QUESTION, 'question');
+  assert.strictEqual(G.PHASES.REVEAL, 'reveal');
+  assert.strictEqual(G.PHASES.END, 'end');
 });
 
-test('tokens : retire les mots vides', () => {
-  assert.deepStrictEqual(G.tokens('la pâte de maïs'), ['pate', 'mais']);
-  assert.deepStrictEqual(G.tokens('Le riz au gras'), ['riz', 'gras']);
-});
-
-test('levenshtein : distances de base', () => {
-  assert.strictEqual(G.levenshtein('chat', 'chat'), 0);
-  assert.strictEqual(G.levenshtein('chat', 'chats'), 1);
-  assert.strictEqual(G.levenshtein('amiwo', 'amio'), 1);
-  assert.strictEqual(G.levenshtein('', 'abc'), 3);
-});
-
-test('matches : texte exact, alias, pluriel, faute légère', () => {
-  const entry = { text: 'Pâte rouge (amiwo)', aliases: ['amiwo', 'pate rouge', 'sauce rouge'] };
-  assert.ok(G.matches('Pâte rouge', entry));
-  assert.ok(G.matches('amiwo', entry));
-  assert.ok(G.matches('amio', entry));
-  assert.ok(G.matches('pates rouges', entry));
-  assert.ok(!G.matches('sushi', entry));
-  assert.ok(!G.matches('', entry));
-});
-
-test('matches : tous les mots significatifs doivent être présents', () => {
-  const entry = { text: 'Riz au gras', aliases: ['riz gras', 'jollof'] };
-  assert.ok(G.matches('riz au gras', entry));
-  assert.ok(G.matches('du riz gras', entry));
-  assert.ok(!G.matches('riz', entry));
-  assert.ok(G.matches('jollof', entry));
-});
-
-test('matches : 60 saisies reelles (accents, pluriels, fautes, mots en trop, ordre)', () => {
-  const entry = { text: 'WhatsApp', aliases: ['whats app', 'whatsap', 'wathsapp', 'ouatsapp'] };
-  const ok = ['WhatsApp', 'whatsapp', 'WHATSAPP', 'whats app', 'whatsap', 'wathsapp', 'ouatsapp'];
-  const ko = ['Facebook', 'Telegram', 'banane', 'kiwi', 'sushi', 'pizza'];
-  for (const s of ok) assert.ok(G.matches(s, entry), 'doit matcher : ' + s);
-  for (const s of ko) assert.ok(!G.matches(s, entry), 'ne doit pas matcher : ' + s);
-
-  const entry2 = { text: 'Pâte rouge (amiwo)', aliases: ['amiwo', 'pate rouge', 'sauce rouge', 'amio'] };
-  const ok2 = ['Pâte rouge', 'pate rouge', 'PATE ROUGE', 'amiwo', 'amio', 'sauce rouge', 'pate rouge amiwo'];
-  const ko2 = ['Riz au gras', 'ami', 'pate', 'rouge', 'sushi', 'pizza', 'amiwo rouge', 'riz et haricots'];
-  for (const s of ok2) assert.ok(G.matches(s, entry2), 'doit matcher : ' + s);
-  for (const s of ko2) assert.ok(!G.matches(s, entry2), 'ne doit pas matcher : ' + s);
-
-  const entry3 = { text: 'Riz au gras', aliases: ['riz gras', 'jollof', 'riz djolof'] };
-  const ok3 = ['riz au gras', 'du riz gras', 'riz gras', 'jollof', 'riz djolof', 'riz au gras !', '  riz au gras  '];
-  const ko3 = ['pates', 'banane', 'kiwi', 'sushi', 'pizza', 'riz et haricots', 'pates seules'];
-  for (const s of ok3) assert.ok(G.matches(s, entry3), 'doit matcher : ' + s);
-  for (const s of ko3) assert.ok(!G.matches(s, entry3), 'ne doit pas matcher : ' + s);
-});
-
-test('judge : trouvé, doublon, raté', () => {
-  const q = {
-    answers: [
-      { text: 'Pâte rouge (amiwo)', pts: 25, aliases: ['amiwo'] },
-      { text: 'Riz au gras', pts: 20, aliases: ['riz gras'] },
-    ],
-  };
-  let res = G.judge(q, 'amiwo', []);
+/* ------------------------------------------------------------------ */
+/* JUGE QCM                                                           */
+/* ------------------------------------------------------------------ */
+test('judgeQCM : bonne réponse', () => {
+  const q = { options: ['A', 'B', 'C', 'D'], correctIndex: 1 };
+  const res = G.judgeQCM(q, 1, []);
   assert.strictEqual(res.kind, 'found');
-  assert.strictEqual(res.index, 0);
+  assert.strictEqual(res.index, 1);
+});
 
-  res = G.judge(q, 'AMIWO', [{ i: 0 }]);
-  assert.strictEqual(res.kind, 'dup');
-  assert.strictEqual(res.index, 0);
-
-  res = G.judge(q, 'pizza', []);
+test('judgeQCM : mauvaise réponse', () => {
+  const q = { options: ['A', 'B', 'C', 'D'], correctIndex: 1 };
+  const res = G.judgeQCM(q, 0, []);
   assert.strictEqual(res.kind, 'miss');
-
-  res = G.judge(q, '', []);
-  assert.strictEqual(res.kind, 'empty');
 });
 
-test('clampText : nettoie et limite à 40 caractères', () => {
-  assert.strictEqual(G.clampText('  <script>  '), 'script');
-  assert.strictEqual(G.clampText('a'.repeat(60)).length, 40);
-  assert.strictEqual(G.clampText(42), '');
+test('judgeQCM : doublon (déjà trouvé)', () => {
+  const q = { options: ['A', 'B', 'C', 'D'], correctIndex: 1 };
+  const res = G.judgeQCM(q, 1, [1]);
+  assert.strictEqual(res.kind, 'dup');
 });
 
-test('multiplicateurs et points', () => {
-  assert.strictEqual(G.multiplierFor(0), 1);
-  assert.strictEqual(G.multiplierFor(4), 1);
-  assert.strictEqual(G.multiplierFor(5), 1.5);
-  assert.strictEqual(G.multiplierFor(6), 1.5);
-  assert.strictEqual(G.multiplierFor(7), 2);
-  assert.strictEqual(G.pointsFor({ pts: 25 }, 1), 25);
-  assert.strictEqual(G.pointsFor({ pts: 25 }, 1.5), 38);
-  assert.strictEqual(G.pointsFor({ pts: 25 }, 2), 50);
-  assert.strictEqual(G.pointsFor({ pts: 0 }, 1), 1);
+test('judgeQCM : option invalide', () => {
+  const q = { options: ['A', 'B', 'C', 'D'], correctIndex: 1 };
+  const res = G.judgeQCM(q, 99, []);
+  assert.strictEqual(res.kind, 'miss');
 });
 
+/* ------------------------------------------------------------------ */
+/* POINTS                                                             */
+/* ------------------------------------------------------------------ */
+test('pointsForResponse : 10 pts de base + bonus rapidité', () => {
+  assert.strictEqual(G.pointsForResponse(15000, 15000), 15); // 10 + 5
+  assert.strictEqual(G.pointsForResponse(7500, 15000), 12);   // 10 + 2
+  assert.strictEqual(G.pointsForResponse(0, 15000), 10);      // 10 + 0
+  assert.strictEqual(G.pointsForResponse(-1, 15000), 10);     // 10 + 0
+});
+
+/* ------------------------------------------------------------------ */
+/* SÉLECTION DE QUESTIONS                                             */
+/* ------------------------------------------------------------------ */
 test('pickQuestions : nombre demandé, sans doublon', () => {
   const bank = Array.from({ length: 20 }, (_, i) => ({ q: 'Q' + i }));
   const picked = G.pickQuestions(bank, 10);
   assert.strictEqual(picked.length, 10);
   assert.strictEqual(new Set(picked.map((x) => x.q)).size, 10);
-  assert.strictEqual(G.pickQuestions(bank, 50).length, 20);
 });
 
-test('questions.json : 10 questions, réponses et sommes valides', () => {
+test('pickQuestionsByTheme : filtre par thème', () => {
+  const bank = [
+    { q: 'Q1', theme: 'Histoire du Bénin' },
+    { q: 'Q2', theme: 'Monuments du Bénin' },
+    { q: 'Q3', theme: 'Histoire du Bénin' },
+  ];
+  const picked = G.pickQuestionsByTheme(bank, 10, ['Histoire du Bénin'], new Set());
+  assert.strictEqual(picked.length, 2);
+  assert.ok(picked.every((q) => q.theme === 'Histoire du Bénin'));
+});
+
+test('pickQuestionsByTheme : tout mélanger', () => {
+  const bank = [
+    { q: 'Q1', theme: 'Histoire du Bénin' },
+    { q: 'Q2', theme: 'Monuments du Bénin' },
+  ];
+  const picked = G.pickQuestionsByTheme(bank, 10, ['tout'], new Set());
+  assert.strictEqual(picked.length, 2);
+});
+
+test('balanceDifficulty : 3 faciles, 4 moyennes, 3 difficiles', () => {
+  const questions = [
+    ...Array.from({ length: 5 }, (_, i) => ({ q: 'E' + i, difficulty: 1 })),
+    ...Array.from({ length: 5 }, (_, i) => ({ q: 'M' + i, difficulty: 2 })),
+    ...Array.from({ length: 5 }, (_, i) => ({ q: 'H' + i, difficulty: 3 })),
+  ];
+  const balanced = G.balanceDifficulty(questions);
+  assert.strictEqual(balanced.length, 10);
+  assert.strictEqual(balanced.filter((q) => q.difficulty === 1).length, 3);
+  assert.strictEqual(balanced.filter((q) => q.difficulty === 2).length, 4);
+  assert.strictEqual(balanced.filter((q) => q.difficulty === 3).length, 3);
+});
+
+/* ------------------------------------------------------------------ */
+/* BANQUE DE QUESTIONS                                                */
+/* ------------------------------------------------------------------ */
+test('questions.json : 120 questions, structure QCM valide', () => {
   const file = path.join(__dirname, '..', 'server', 'questions.json');
   const questions = JSON.parse(fs.readFileSync(file, 'utf8'));
-  assert.ok(questions.length >= 10, 'au moins 10 questions pour une partie');
+  assert.ok(questions.length >= 100, 'au moins 100 questions : ' + questions.length);
+  let monuments = 0, histoire = 0;
   for (const q of questions) {
-    assert.ok(q.q && typeof q.q === 'string');
-    assert.ok(Array.isArray(q.answers) && q.answers.length >= 4);
-    const total = q.answers.reduce((sum, a) => sum + a.pts, 0);
-    assert.strictEqual(total, 100, 'la somme des points doit faire 100 : ' + q.q);
-    for (const a of q.answers) {
-      assert.ok(a.text && a.pts > 0);
-      assert.ok(Array.isArray(a.aliases));
+    assert.ok(q.q && typeof q.q === 'string', 'question sans texte');
+    assert.ok(!/citez/i.test(q.q), 'question commence par Citez : ' + q.q);
+    assert.ok(Array.isArray(q.options) && q.options.length === 4, 'pas 4 options : ' + q.q);
+    assert.ok(typeof q.correctIndex === 'number' && q.correctIndex >= 0 && q.correctIndex <= 3, 'correctIndex invalide : ' + q.q);
+    assert.ok(q.fact && q.fact.length > 10, 'fact manquant : ' + q.q);
+    assert.ok(q.theme, 'thème manquant : ' + q.q);
+    assert.ok(q.difficulty >= 1 && q.difficulty <= 3, 'difficulté invalide : ' + q.q);
+    const seen = new Set();
+    for (const o of q.options) {
+      assert.ok(typeof o === 'string' && o.length > 0, 'option vide : ' + q.q);
+      assert.ok(!seen.has(o), 'option dupliquée : ' + q.q);
+      seen.add(o);
+    }
+    if (q.theme === 'Monuments du Bénin') monuments++;
+    if (q.theme === 'Histoire du Bénin') histoire++;
+  }
+  assert.ok(monuments >= 20, 'moins de 20 Monuments du Bénin : ' + monuments);
+  assert.ok(histoire >= 20, 'moins de 20 Histoire du Bénin : ' + histoire);
+});
+
+test('pas de libellé anglais résiduel', () => {
+  const file = path.join(__dirname, '..', 'server', 'questions.json');
+  const questions = JSON.parse(fs.readFileSync(file, 'utf8'));
+  for (const q of questions) {
+    assert.ok(!/buzz|steal|strike|sondage|twitter/i.test(q.q), 'anglais dans la question : ' + q.q);
+    for (const o of q.options) {
+      assert.ok(!/buzz|steal|strike|sondage|twitter/i.test(o), 'anglais dans une option : ' + q.q);
     }
   }
 });

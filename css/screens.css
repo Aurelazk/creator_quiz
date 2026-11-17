@@ -687,6 +687,101 @@
   .wrong-banner { bottom: 150px; width: 88vw; }
 }
 
+/* -------- affichage QCM côté hôte -------- */
+.host-answers {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.ans-stat {
+  display: flex; align-items: center; gap: 0.3rem;
+  font-size: 0.8rem; color: rgba(244,246,252,0.8);
+}
+.ans-stat span { font-family: var(--font-display); font-weight: 700; }
+
+.q-theme {
+  font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--bleu2); margin-bottom: 0.4rem;
+}
+.q-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  line-height: 1.2; margin-bottom: 1rem;
+  color: var(--blanc);
+}
+.q-options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.q-opt {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--r-md);
+  border: 2px solid rgba(255,255,255,0.16);
+  background: rgba(5,11,38,0.6);
+  color: var(--blanc);
+  font-size: 1rem;
+  cursor: default;
+}
+.q-opt-letter {
+  font-family: var(--font-display);
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--bleu2);
+  min-width: 1.4rem;
+}
+.q-opt-text { flex: 1; }
+.q-opt-correct {
+  border-color: #00E472;
+  background: rgba(0,228,114,0.2);
+  color: #00E472;
+}
+.q-opt-correct .q-opt-letter { color: #00E472; }
+.q-timer {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #FF4E20;
+}
+
+/* téléphone : options QCM */
+.qcm-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
+.qcm-option {
+  min-height: 64px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.4rem;
+  border-radius: var(--r-md);
+  border: 2px solid rgba(255,255,255,0.16);
+  background: rgba(5,11,38,0.7);
+  color: var(--blanc);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--trans-base);
+}
+.qcm-option .letter { font-size: 1.1rem; font-weight: 700; color: var(--bleu2); }
+.qcm-option:hover:not(:disabled) { border-color: var(--vert); background: rgba(0,228,114,0.15); }
+.qcm-option:disabled { opacity: 0.45; cursor: not-allowed; }
+.qcm-option.selected { border-color: var(--vert); background: rgba(0,228,114,0.25); color: var(--vert); }
+.qcm-option.selected .letter { color: var(--vert); }
+.qcm-option.correct { border-color: var(--vert); background: rgba(0,228,114,0.25); color: var(--vert); }
+.qcm-option.wrong { border-color: var(--orange); background: rgba(255,78,32,0.15); color: var(--orange); }
+
+.found-ok {
+  background: rgba(0,228,114,0.14);
+  border: 1px solid rgba(0,228,114,0.45);
+  color: #b8ffd9;
+  border-radius: var(--r-full);
+  padding: 0.22rem 0.55rem;
+  font-size: 0.7rem;
+}
+.found-miss {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.15);
+  color: rgba(244,246,252,0.5);
+  border-radius: var(--r-full);
+  padding: 0.22rem 0.55rem;
+  font-size: 0.7rem;
+}
+
 @media (max-height: 720px) and (min-width: 701px) {
   .host-lower { padding: 0.4rem 1rem calc(0.6rem + env(safe-area-inset-bottom)); max-height: 68vh; }
   .host-controls .btn { min-height: 40px; font-size: 0.72rem; padding: 0.45rem 0.7rem; }

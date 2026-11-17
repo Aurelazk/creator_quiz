@@ -1,5448 +1,962 @@
 [
   {
-    "q": "Citez un plat béninois que tout le monde adore.",
-    "answers": [
-      {
-        "text": "Pâte rouge (amiwo)",
-        "pts": 25,
-        "aliases": [
-          "amiwo",
-          "amio",
-          "pate rouge",
-          "pâte rouge",
-          "sauce rouge",
-          "amiwo rouge"
-        ]
-      },
-      {
-        "text": "Riz au gras",
-        "pts": 20,
-        "aliases": [
-          "riz gras",
-          "riz djolof",
-          "jollof",
-          "djolof rice",
-          "riz jollof"
-        ]
-      },
-      {
-        "text": "Akassa",
-        "pts": 15,
-        "aliases": [
-          "akasan",
-          "akassa",
-          "pate de mais",
-          "pâte de maïs"
-        ]
-      },
-      {
-        "text": "Igname pilée",
-        "pts": 12,
-        "aliases": [
-          "igname pilee",
-          "igname pilé",
-          "pilee d'igname",
-          "pilé d'igname",
-          "igname"
-        ]
-      },
-      {
-        "text": "Poisson braisé",
-        "pts": 10,
-        "aliases": [
-          "poisson braise",
-          "poisson grillé",
-          "poisson grille",
-          "poisson au feu"
-        ]
-      },
-      {
-        "text": "Atassi",
-        "pts": 8,
-        "aliases": [
-          "atasi",
-          "haricots riz",
-          "riz haricots",
-          "haricot riz",
-          "watasi"
-        ]
-      },
-      {
-        "text": "Wô",
-        "pts": 6,
-        "aliases": [
-          "wo",
-          "wô",
-          "pate noire",
-          "pâte noire",
-          "amiwo noire",
-          "pate noir"
-        ]
-      },
-      {
-        "text": "Gari",
-        "pts": 4,
-        "aliases": [
-          "gari",
-          "tapioca",
-          "semoule de manioc"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 2,
-    "source": "Cuisine béninoise traditionnelle",
-    "fact": "L'amiwo (pâte rouge) est à base de maïs fermenté, souvent servi avec du poisson.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "La trompette",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Pâte rouge (amiwo)",
-        "correct": true,
-        "pts": 25
-      },
-      {
-        "id": "C",
-        "text": "Figma",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Stack Overflow",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une technologie que les étudiants utilisent tous les jours.",
-    "answers": [
-      {
-        "text": "WhatsApp",
-        "pts": 30,
-        "aliases": [
-          "whats app",
-          "whatsap",
-          "wathsapp",
-          "ouatsapp"
-        ]
-      },
-      {
-        "text": "Le téléphone",
-        "pts": 22,
-        "aliases": [
-          "telephone",
-          "téléphone",
-          "smartphone",
-          "portable",
-          "tel"
-        ]
-      },
-      {
-        "text": "Internet",
-        "pts": 15,
-        "aliases": [
-          "internet",
-          "wifi",
-          "wi-fi",
-          "connexion",
-          "data",
-          "reseau",
-          "réseau"
-        ]
-      },
-      {
-        "text": "L'ordinateur",
-        "pts": 10,
-        "aliases": [
-          "ordinateur",
-          "pc",
-          "laptop",
-          "ordi",
-          "computer"
-        ]
-      },
-      {
-        "text": "Google",
-        "pts": 8,
-        "aliases": [
-          "google",
-          "google search",
-          "moteur de recherche"
-        ]
-      },
-      {
-        "text": "L'intelligence artificielle",
-        "pts": 8,
-        "aliases": [
-          "ia",
-          "intelligence artificielle",
-          "chatgpt",
-          "chat gpt",
-          "gpt",
-          "copilot"
-        ]
-      },
-      {
-        "text": "TikTok",
-        "pts": 7,
-        "aliases": [
-          "tiktok",
-          "tik tok",
-          "tiktok"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
+    "q": "Quel palais royal est classé au patrimoine mondial de l'UNESCO au Bénin ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 1,
-    "source": "Usages numériques étudiants",
-    "fact": "WhatsApp est l'application de messagerie la plus utilisée chez les étudiants béninois.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Pendjari",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Banku",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Avocat",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "WhatsApp",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Palais de la Marina", "Palais royaux d’Abomey", "Palais présidentiel de Porto-Novo", "Palais des Gouverneurs de Cotonou"],
+    "correctIndex": 1,
+    "fact": "Les Palais royaux d’Abomey étaient la capitale du royaume du Dahomey du XVIIe au XIXe siècle."
   },
   {
-    "q": "Citez une boisson qu'on trouve facilement au Bénin.",
-    "answers": [
-      {
-        "text": "L'eau",
-        "pts": 25,
-        "aliases": [
-          "eau",
-          "eau minerale",
-          "eau minérale",
-          "eau pure"
-        ]
-      },
-      {
-        "text": "Le sodabi",
-        "pts": 18,
-        "aliases": [
-          "sodabi",
-          "sodabe",
-          "eau de vie",
-          "alcool de palme"
-        ]
-      },
-      {
-        "text": "Le bissap",
-        "pts": 15,
-        "aliases": [
-          "bissap",
-          "jus d'hibiscus",
-          "jus hibiscus",
-          "hibiscus"
-        ]
-      },
-      {
-        "text": "Le jus d'orange",
-        "pts": 12,
-        "aliases": [
-          "jus d'orange",
-          "jus orange",
-          "orange",
-          "jus de fruit"
-        ]
-      },
-      {
-        "text": "Le Coca-Cola",
-        "pts": 10,
-        "aliases": [
-          "coca",
-          "coca-cola",
-          "coca cola",
-          "coke"
-        ]
-      },
-      {
-        "text": "La bière",
-        "pts": 10,
-        "aliases": [
-          "biere",
-          "bière",
-          "beer",
-          "beninoise",
-          "béninoise",
-          "castel",
-          "la beninoise"
-        ]
-      },
-      {
-        "text": "Le café",
-        "pts": 6,
-        "aliases": [
-          "cafe",
-          "café",
-          "nescafe",
-          "nEscafé"
-        ]
-      },
-      {
-        "text": "Le lait",
-        "pts": 4,
-        "aliases": [
-          "lait",
-          "lait en poudre",
-          "milk"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 2,
-    "source": "Boissons du Bénin",
-    "fact": "Le sodabi est un alcool de palmier distillé, typique du sud du Bénin.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Atassi",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "WhatsApp",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Le café",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "L'eau",
-        "correct": true,
-        "pts": 25
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Quel est le premier réflexe d'un étudiant le matin ?",
-    "answers": [
-      {
-        "text": "Regarder son téléphone",
-        "pts": 30,
-        "aliases": [
-          "regarder le telephone",
-          "regarder son telephone",
-          "telephone",
-          "checker le phone",
-          "consulter son tel"
-        ]
-      },
-      {
-        "text": "Dormir encore",
-        "pts": 20,
-        "aliases": [
-          "dormir encore",
-          "se rendormir",
-          "snooze",
-          "rester au lit",
-          "dormir"
-        ]
-      },
-      {
-        "text": "Se laver",
-        "pts": 15,
-        "aliases": [
-          "se laver",
-          "prendre sa douche",
-          "douche",
-          "se brosser les dents",
-          "faire sa toilette"
-        ]
-      },
-      {
-        "text": "Petit-déjeuner",
-        "pts": 12,
-        "aliases": [
-          "petit dejeuner",
-          "petit-déjeuner",
-          "manger",
-          "prendre le petit dej",
-          "dejeuner"
-        ]
-      },
-      {
-        "text": "Aller en cours",
-        "pts": 10,
-        "aliases": [
-          "aller en cours",
-          "aller a l'ecole",
-          "partir en cours",
-          "aller au campus",
-          "aller a la fac"
-        ]
-      },
-      {
-        "text": "Prier",
-        "pts": 8,
-        "aliases": [
-          "prier",
-          "faire la priere",
-          "prière",
-          "salat",
-          "aller a la mosquee"
-        ]
-      },
-      {
-        "text": "Scroller les réseaux",
-        "pts": 5,
-        "aliases": [
-          "scroller",
-          "reseau sociaux",
-          "réseaux sociaux",
-          "facebook",
-          "instagram",
-          "tik tok"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
+    "q": "À Ouidah, quel monument marque la fin de la Route de l Esclavage ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 1,
-    "source": "Vie étudiante",
-    "fact": "Consulter son téléphone est le premier réflexe matinal d'une grande majorité d'étudiants.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Regarder son téléphone",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Masques et danses",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Mathématiques",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Pâte rouge (amiwo)",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Porte du Non-Retour", "Temple des Pythons", "Fort portugais", "Place Chacha"],
+    "correctIndex": 0,
+    "fact": "La Porte du Non-Retour symbolise le dernier point d'Afrique avant la traversée vers les Amériques."
   },
   {
-    "q": "Citez une matière qui fait peur aux étudiants.",
-    "answers": [
-      {
-        "text": "Les maths",
-        "pts": 32,
-        "aliases": [
-          "maths",
-          "mathematiques",
-          "mathématiques",
-          "math",
-          "algebre",
-          "algèbre",
-          "analyse"
-        ]
-      },
-      {
-        "text": "La physique",
-        "pts": 20,
-        "aliases": [
-          "physique",
-          "physique chimie",
-          "mecanique",
-          "mécanique",
-          "electricite"
-        ]
-      },
-      {
-        "text": "La programmation",
-        "pts": 15,
-        "aliases": [
-          "programmation",
-          "programmer",
-          "informatique",
-          "code",
-          "algorithmique",
-          "algo"
-        ]
-      },
-      {
-        "text": "La comptabilité",
-        "pts": 10,
-        "aliases": [
-          "comptabilite",
-          "comptabilité",
-          "compta",
-          "accounting"
-        ]
-      },
-      {
-        "text": "L'économie",
-        "pts": 8,
-        "aliases": [
-          "economie",
-          "économie",
-          "eco",
-          "macro",
-          "micro"
-        ]
-      },
-      {
-        "text": "L'anglais",
-        "pts": 8,
-        "aliases": [
-          "anglais",
-          "english",
-          "langue anglaise"
-        ]
-      },
-      {
-        "text": "Le droit",
-        "pts": 7,
-        "aliases": [
-          "droit",
-          "juridique",
-          "droit civil",
-          "law"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
-    "difficulty": 2,
-    "source": "Programme scolaire",
-    "fact": "Les mathématiques figurent parmi les matières les plus redoutées des élèves.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Boni Yayi",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Les maths",
-        "correct": true,
-        "pts": 32
-      },
-      {
-        "id": "C",
-        "text": "Abomey-Calavi",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Ouidah",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un endroit où les jeunes se retrouvent à Cotonou.",
-    "answers": [
-      {
-        "text": "La plage",
-        "pts": 25,
-        "aliases": [
-          "plage",
-          "la plage",
-          "fidjrosse",
-          "fidjrossè",
-          "cotonou plage",
-          "bord de mer"
-        ]
-      },
-      {
-        "text": "Le marché Dantokpa",
-        "pts": 18,
-        "aliases": [
-          "dantokpa",
-          "dantokpa",
-          "marche dantokpa",
-          "marché dantokpa",
-          "toko",
-          "grand marche",
-          "grand marché"
-        ]
-      },
-      {
-        "text": "Le campus",
-        "pts": 15,
-        "aliases": [
-          "campus",
-          "l'universite",
-          "université",
-          "fac",
-          "uac",
-          "l'ecole",
-          "école"
-        ]
-      },
-      {
-        "text": "Les maquis",
-        "pts": 14,
-        "aliases": [
-          "maquis",
-          "bar",
-          "resto",
-          "restaurant",
-          "buvette"
-        ]
-      },
-      {
-        "text": "Le cybercafé",
-        "pts": 10,
-        "aliases": [
-          "cybercafe",
-          "cybercafé",
-          "cyber",
-          "cafe internet",
-          "café internet"
-        ]
-      },
-      {
-        "text": "Le cinéma",
-        "pts": 10,
-        "aliases": [
-          "cinema",
-          "cinéma",
-          "le cinema",
-          "movie theater"
-        ]
-      },
-      {
-        "text": "L'église",
-        "pts": 8,
-        "aliases": [
-          "eglise",
-          "église",
-          "la messe",
-          "temple",
-          "mosquee",
-          "mosquée"
-        ]
-      }
-    ],
-    "category": "Géographie",
-    "difficulty": 2,
-    "source": "Géographie du Bénin",
-    "fact": "Le marché international de Dantokpa (Cotonou) est l'un des plus grands marchés d'Afrique de l'Ouest.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Zinkpo",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "La plage",
-        "correct": true,
-        "pts": 25
-      },
-      {
-        "id": "C",
-        "text": "Autre amazone",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Snapchat",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un fruit jaune.",
-    "answers": [
-      {
-        "text": "La banane",
-        "pts": 35,
-        "aliases": [
-          "banane",
-          "bananes",
-          "bananier"
-        ]
-      },
-      {
-        "text": "La mangue",
-        "pts": 25,
-        "aliases": [
-          "mangue",
-          "mangues",
-          "mango"
-        ]
-      },
-      {
-        "text": "L'ananas",
-        "pts": 15,
-        "aliases": [
-          "ananas",
-          "anana",
-          "pineapple"
-        ]
-      },
-      {
-        "text": "Le citron",
-        "pts": 10,
-        "aliases": [
-          "citron",
-          "citrons",
-          "lemon"
-        ]
-      },
-      {
-        "text": "La papaye",
-        "pts": 8,
-        "aliases": [
-          "papaye",
-          "papayes",
-          "papaya"
-        ]
-      },
-      {
-        "text": "L'orange",
-        "pts": 7,
-        "aliases": [
-          "orange",
-          "oranges",
-          "orange jaune"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
+    "q": "Quel village lacustre est surnommé la \"Venise de l Afrique\" au Bénin ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 1,
-    "source": "Gastronomie",
-    "fact": "La mangue est largement consommée au Bénin pendant la saison des pluies.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Dantokpa",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Zinkpo",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "La banane",
-        "correct": true,
-        "pts": 35
-      },
-      {
-        "id": "D",
-        "text": "Lapin",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Ganvié", "Sô-Ava", "Dangbo", "Adjarra"],
+    "correctIndex": 0,
+    "fact": "Ganvié est construit sur pilotis sur le lac Nokoué, près de Cotonou."
   },
   {
-    "q": "Citez un métier que les enfants veulent faire plus tard.",
-    "answers": [
-      {
-        "text": "Médecin",
-        "pts": 25,
-        "aliases": [
-          "medecin",
-          "médecin",
-          "docteur",
-          "doctor",
-          "medecine"
-        ]
-      },
-      {
-        "text": "Ingénieur",
-        "pts": 20,
-        "aliases": [
-          "ingenieur",
-          "ingénieur",
-          "engineer",
-          "ingenierie",
-          "ingénierie"
-        ]
-      },
-      {
-        "text": "Footballeur",
-        "pts": 18,
-        "aliases": [
-          "footballeur",
-          "footballer",
-          "joueur de foot",
-          "foot",
-          "sportif"
-        ]
-      },
-      {
-        "text": "Enseignant",
-        "pts": 12,
-        "aliases": [
-          "enseignant",
-          "professeur",
-          "prof",
-          "teacher",
-          "maitre",
-          "maîtresse"
-        ]
-      },
-      {
-        "text": "Avocat",
-        "pts": 10,
-        "aliases": [
-          "avocat",
-          "avocate",
-          "lawyer",
-          "juriste"
-        ]
-      },
-      {
-        "text": "Pilote",
-        "pts": 8,
-        "aliases": [
-          "pilote",
-          "pilote d'avion",
-          "pilot",
-          "aviateur"
-        ]
-      },
-      {
-        "text": "Influenceur",
-        "pts": 7,
-        "aliases": [
-          "influenceur",
-          "influenceuse",
-          "youtubeur",
-          "createur de contenu",
-          "créateur de contenu",
-          "influencer"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Culture générale",
-    "fact": "Médecin, ingénieur et footballeur figurent parmi les métiers les plus cités par les enfants.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Pilote",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Médecin",
-        "correct": true,
-        "pts": 25
-      },
-      {
-        "id": "C",
-        "text": "La bière",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Moto taxi",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une application que tu ouvres au moins une fois par jour.",
-    "answers": [
-      {
-        "text": "WhatsApp",
-        "pts": 30,
-        "aliases": [
-          "whatsapp",
-          "whats app",
-          "whatsap",
-          "wathsapp"
-        ]
-      },
-      {
-        "text": "Instagram",
-        "pts": 20,
-        "aliases": [
-          "instagram",
-          "insta",
-          "ig"
-        ]
-      },
-      {
-        "text": "TikTok",
-        "pts": 18,
-        "aliases": [
-          "tiktok",
-          "tik tok",
-          "tik-tok"
-        ]
-      },
-      {
-        "text": "Facebook",
-        "pts": 12,
-        "aliases": [
-          "facebook",
-          "fb",
-          "meta"
-        ]
-      },
-      {
-        "text": "YouTube",
-        "pts": 8,
-        "aliases": [
-          "youtube",
-          "you tube",
-          "yt"
-        ]
-      },
-      {
-        "text": "Snapchat",
-        "pts": 6,
-        "aliases": [
-          "snapchat",
-          "snap"
-        ]
-      },
-      {
-        "text": "Telegram",
-        "pts": 6,
-        "aliases": [
-          "telegram",
-          "telgram"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
+    "q": "À Ouidah, quel temple abrite des serpents sacrés ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 1,
-    "source": "Usages numériques",
-    "fact": "WhatsApp, Instagram et TikTok dominent les usages quotidiens des étudiants.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Yoruba",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Riz au gras",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "WhatsApp",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "D",
-        "text": "Marche à pied",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Temple des Pythons", "Temple du Vodun", "Sanctuaire des Éléphants", "Autel des Rois"],
+    "correctIndex": 0,
+    "fact": "Le Temple des Pythons abrite des pythons royaux considérés comme les gardiens de la ville."
   },
   {
-    "q": "Citez un instrument de musique béninois.",
-    "answers": [
-      {
-        "text": "Le tam-tam",
-        "pts": 30,
-        "aliases": [
-          "tam tam",
-          "tam-tam",
-          "tamtam",
-          "tambour",
-          "drum"
-        ]
-      },
-      {
-        "text": "Le djembé",
-        "pts": 20,
-        "aliases": [
-          "djembe",
-          "djembé",
-          "jembe",
-          "djembe"
-        ]
-      },
-      {
-        "text": "La kora",
-        "pts": 15,
-        "aliases": [
-          "kora",
-          "coras",
-          "kora africaine"
-        ]
-      },
-      {
-        "text": "L'agogo",
-        "pts": 12,
-        "aliases": [
-          "agogo",
-          "agogos",
-          "cloche",
-          "gong"
-        ]
-      },
-      {
-        "text": "La guitare",
-        "pts": 8,
-        "aliases": [
-          "guitare",
-          "guitar",
-          "guitare acoustique"
-        ]
-      },
-      {
-        "text": "La trompette",
-        "pts": 8,
-        "aliases": [
-          "trompette",
-          "trompete",
-          "trumpet",
-          "cuivre"
-        ]
-      },
-      {
-        "text": "La flûte",
-        "pts": 7,
-        "aliases": [
-          "flute",
-          "flûte",
-          "flute traversiere",
-          "flûte traversière"
-        ]
-      }
-    ],
-    "category": "Musique et arts",
+    "q": "Quelle forteresse européenne se trouve à Ouidah ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "source": "Patrimoine musical béninois",
-    "fact": "Le tam-tam et le gong agogo accompagnent les cérémonies traditionnelles et vodoun.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Le tam-tam",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Foufou",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Anglais",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Bariba",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Fort portugais", "Fort hollandais", "Fort britannique", "Fort espagnol"],
+    "correctIndex": 0,
+    "fact": "Le fort portugais de Ouidah était un comptoir important de la traite atlantique."
   },
   {
-    "q": "Citez un plat du quotidien étudiant pas cher.",
-    "answers": [
-      {
-        "text": "Riz et haricots",
-        "pts": 28,
-        "aliases": [
-          "riz haricots",
-          "riz et haricots",
-          "atassi",
-          "riz poisson"
-        ]
-      },
-      {
-        "text": "Pâte rouge",
-        "pts": 22,
-        "aliases": [
-          "pate rouge",
-          "pâte rouge",
-          "amiwo",
-          "sauce tomate"
-        ]
-      },
-      {
-        "text": "Omelette",
-        "pts": 15,
-        "aliases": [
-          "omelette",
-          "oeufs",
-          "œufs",
-          "omelette au fromage"
-        ]
-      },
-      {
-        "text": "Macaronis",
-        "pts": 12,
-        "aliases": [
-          "macaronis",
-          "pates",
-          "pâtes",
-          "spaghetti",
-          "spaghettis"
-        ]
-      },
-      {
-        "text": "Pain beurre",
-        "pts": 10,
-        "aliases": [
-          "pain beurre",
-          "baguette",
-          "pain",
-          "tartine"
-        ]
-      },
-      {
-        "text": "Bouillie",
-        "pts": 8,
-        "aliases": [
-          "bouillie",
-          "akassa",
-          "degue",
-          "dégué"
-        ]
-      },
-      {
-        "text": "Sandwich",
-        "pts": 5,
-        "aliases": [
-          "sandwich",
-          "panini",
-          "snack"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 1,
-    "source": "Vie étudiante",
-    "fact": "L'atassi (riz et haricots) est un plat étudiant classique et abordable.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Se laver",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Le bissap",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Riz et haricots",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "D",
-        "text": "Hubert Maga",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une boisson chaude pour se réveiller.",
-    "answers": [
-      {
-        "text": "Café",
-        "pts": 35,
-        "aliases": [
-          "cafe",
-          "café",
-          "expresso",
-          "espresso",
-          "cafeine"
-        ]
-      },
-      {
-        "text": "Thé",
-        "pts": 20,
-        "aliases": [
-          "the",
-          "thé",
-          "infusion",
-          "tisane"
-        ]
-      },
-      {
-        "text": "Lait",
-        "pts": 15,
-        "aliases": [
-          "lait",
-          "chocolat chaud",
-          "cacao",
-          "milo"
-        ]
-      },
-      {
-        "text": "Nescafé",
-        "pts": 12,
-        "aliases": [
-          "nescafe",
-          "nescafé",
-          "cafe soluble",
-          "café soluble"
-        ]
-      },
-      {
-        "text": "Eau chaude",
-        "pts": 10,
-        "aliases": [
-          "eau chaude",
-          "eau",
-          "eau plume"
-        ]
-      },
-      {
-        "text": "Maté",
-        "pts": 8,
-        "aliases": [
-          "mate",
-          "maté"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 1,
-    "source": "Gastronomie",
-    "fact": "Le café et le thé sont les boissons chaudes les plus courantes au petit-déjeuner.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Café",
-        "correct": true,
-        "pts": 35
-      },
-      {
-        "id": "B",
-        "text": "Pâte de maïs",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Kwanzaa",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Télévision",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un moyen de transport pour aller au campus.",
-    "answers": [
-      {
-        "text": "Moto taxi",
-        "pts": 35,
-        "aliases": [
-          "zemidjan",
-          "zemi",
-          "moto",
-          "taxi moto",
-          "moto-taxi"
-        ]
-      },
-      {
-        "text": "Marche à pied",
-        "pts": 22,
-        "aliases": [
-          "marche",
-          "a pied",
-          "pied",
-          "pieds",
-          "marche a pied"
-        ]
-      },
-      {
-        "text": "Bus",
-        "pts": 15,
-        "aliases": [
-          "bus",
-          "autobus",
-          "transport en commun"
-        ]
-      },
-      {
-        "text": "Voiture personnelle",
-        "pts": 12,
-        "aliases": [
-          "voiture",
-          "ma voiture",
-          "auto",
-          "carrosse"
-        ]
-      },
-      {
-        "text": "Vélo",
-        "pts": 10,
-        "aliases": [
-          "velo",
-          "vélo",
-          "bicyclette",
-          "bike"
-        ]
-      },
-      {
-        "text": "Taxi",
-        "pts": 6,
-        "aliases": [
-          "taxi",
-          "cab",
-          "chauffeur"
-        ]
-      }
-    ],
-    "category": "Géographie",
-    "difficulty": 1,
-    "source": "Géographie du Bénin",
-    "fact": "Le zemidjan (moto-taxi) est le moyen de transport le plus répandu pour aller au campus.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Moto taxi",
-        "correct": true,
-        "pts": 35
-      },
-      {
-        "id": "B",
-        "text": "Scroller les réseaux",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Nikki",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Chaussures",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un site web que les étudiants consultent souvent.",
-    "answers": [
-      {
-        "text": "YouTube",
-        "pts": 30,
-        "aliases": [
-          "youtube",
-          "you tube",
-          "yt"
-        ]
-      },
-      {
-        "text": "Google",
-        "pts": 25,
-        "aliases": [
-          "google",
-          "google search",
-          "moteur de recherche"
-        ]
-      },
-      {
-        "text": "Wikipédia",
-        "pts": 18,
-        "aliases": [
-          "wikipedia",
-          "wiki",
-          "wikipédia"
-        ]
-      },
-      {
-        "text": "Discord",
-        "pts": 12,
-        "aliases": [
-          "discord",
-          "discordapp"
-        ]
-      },
-      {
-        "text": "Stack Overflow",
-        "pts": 10,
-        "aliases": [
-          "stackoverflow",
-          "stack overflow",
-          "stack"
-        ]
-      },
-      {
-        "text": "GitHub",
-        "pts": 5,
-        "aliases": [
-          "github",
-          "git hub"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
-    "difficulty": 1,
-    "source": "Usages numériques",
-    "fact": "YouTube et Google figurent parmi les sites les plus consultés par les étudiants.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Taxi",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Ingénieur",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Twitch",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "YouTube",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une matière scientifique du cursus.",
-    "answers": [
-      {
-        "text": "Mathématiques",
-        "pts": 30,
-        "aliases": [
-          "maths",
-          "mathematiques",
-          "mathematique",
-          "math",
-          "analyse",
-          "algebre"
-        ]
-      },
-      {
-        "text": "Physique",
-        "pts": 22,
-        "aliases": [
-          "physique",
-          "physique chimie",
-          "chimie",
-          "mecanique"
-        ]
-      },
-      {
-        "text": "Algorithmique",
-        "pts": 15,
-        "aliases": [
-          "algo",
-          "algorithme",
-          "algorithmique",
-          "pseudocode"
-        ]
-      },
-      {
-        "text": "Programmation",
-        "pts": 12,
-        "aliases": [
-          "programmation",
-          "coder",
-          "code",
-          "dev",
-          "developpement"
-        ]
-      },
-      {
-        "text": "Logique",
-        "pts": 10,
-        "aliases": [
-          "logique",
-          "logique informatique",
-          "structures de donnees"
-        ]
-      },
-      {
-        "text": "Droit",
-        "pts": 8,
-        "aliases": [
-          "droit",
-          "juridique",
-          "loi"
-        ]
-      },
-      {
-        "text": "Anglais",
-        "pts": 3,
-        "aliases": [
-          "anglais",
-          "english"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
+    "q": "Quelle cité fortifiée traditionnelle se trouve dans le nord du Bénin ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "source": "Programme scolaire",
-    "fact": "Mathématiques, physique et algorithmique sont au cœur des cursus scientifiques.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Logique",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Carte bancaire",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Mathématiques",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "D",
-        "text": "Coca-Cola",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Tata Somba", "Grande Mosquée de Parakou", "Palais de Nikki", "Murs de Kandi"],
+    "correctIndex": 0,
+    "fact": "Les Tata Somba sont des maisons-forteresses des peuples Somba (Betammaribè) de l Atacora."
   },
   {
-    "q": "Citez un fruit tropical.",
-    "answers": [
-      {
-        "text": "Mangue",
-        "pts": 29,
-        "aliases": [
-          "mangue",
-          "mangues",
-          "mango"
-        ]
-      },
-      {
-        "text": "Ananas",
-        "pts": 22,
-        "aliases": [
-          "ananas",
-          "anana",
-          "pineapple"
-        ]
-      },
-      {
-        "text": "Banane",
-        "pts": 18,
-        "aliases": [
-          "banane",
-          "bananes"
-        ]
-      },
-      {
-        "text": "Papaye",
-        "pts": 12,
-        "aliases": [
-          "papaye",
-          "papayes",
-          "papaya"
-        ]
-      },
-      {
-        "text": "Avocat",
-        "pts": 10,
-        "aliases": [
-          "avocat",
-          "avocats"
-        ]
-      },
-      {
-        "text": "Goyave",
-        "pts": 8,
-        "aliases": [
-          "goyave",
-          "goyaves"
-        ]
-      },
-      {
-        "text": "Noix de coco",
-        "pts": 1,
-        "aliases": [
-          "coco",
-          "noix de coco"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 1,
-    "source": "Gastronomie",
-    "fact": "L'ananas est cultivé au Bénin, particulièrement dans la zone sud du pays.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Mangue",
-        "correct": true,
-        "pts": 29
-      },
-      {
-        "id": "B",
-        "text": "Dendi",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Azilèi (Parakou)",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Route de l Esclavage (Ouidah)",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un instrument de musique occidental.",
-    "answers": [
-      {
-        "text": "Guitare",
-        "pts": 28,
-        "aliases": [
-          "guitare",
-          "guitar",
-          "guitare acoustique",
-          "guitare electrique"
-        ]
-      },
-      {
-        "text": "Piano",
-        "pts": 22,
-        "aliases": [
-          "piano",
-          "clavier",
-          "clavier electronique"
-        ]
-      },
-      {
-        "text": "Batterie",
-        "pts": 15,
-        "aliases": [
-          "batterie",
-          "drums",
-          "percussion"
-        ]
-      },
-      {
-        "text": "Violon",
-        "pts": 12,
-        "aliases": [
-          "violon",
-          "violine",
-          "cordes"
-        ]
-      },
-      {
-        "text": "Trompette",
-        "pts": 10,
-        "aliases": [
-          "trompette",
-          "trumpet"
-        ]
-      },
-      {
-        "text": "Saxophone",
-        "pts": 8,
-        "aliases": [
-          "saxophone",
-          "sax"
-        ]
-      },
-      {
-        "text": "Flûte traversière",
-        "pts": 5,
-        "aliases": [
-          "flute",
-          "flûte",
-          "flute traversiere"
-        ]
-      }
-    ],
-    "category": "Culture générale",
+    "q": "Quel parc national béninois est connu pour ses éléphants ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "source": "Culture générale / international",
-    "fact": "Guitare, piano et batterie sont des instruments de musique occidentaux très connus.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Guitare",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "B",
-        "text": "Tinder",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Le cinéma",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "L'agogo",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Pendjari", "W du Bénin", "Désert de la Pendjari", "Forêt de la Lama"],
+    "correctIndex": 0,
+    "fact": "Le parc national de la Pendjari fait partie du complexe W-Arly-Pendjari (WAP)."
   },
   {
-    "q": "Citez un sport collectif populaire.",
-    "answers": [
-      {
-        "text": "Football",
-        "pts": 40,
-        "aliases": [
-          "foot",
-          "football",
-          "soccer",
-          "le foot"
-        ]
-      },
-      {
-        "text": "Basketball",
-        "pts": 20,
-        "aliases": [
-          "basket",
-          "basketball",
-          "panier"
-        ]
-      },
-      {
-        "text": "Handball",
-        "pts": 15,
-        "aliases": [
-          "hand",
-          "handball"
-        ]
-      },
-      {
-        "text": "Volleyball",
-        "pts": 10,
-        "aliases": [
-          "volley",
-          "volleyball"
-        ]
-      },
-      {
-        "text": "Rugby",
-        "pts": 8,
-        "aliases": [
-          "rugby"
-        ]
-      },
-      {
-        "text": "Baseball",
-        "pts": 7,
-        "aliases": [
-          "baseball"
-        ]
-      }
-    ],
-    "category": "Sport",
-    "difficulty": 1,
-    "source": "Sport",
-    "fact": "Le football est le sport collectif le plus populaire au Bénin comme dans le monde.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Hippopotame",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Football",
-        "correct": true,
-        "pts": 40
-      },
-      {
-        "id": "C",
-        "text": "Dendi",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Baseball",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une ville du Bénin.",
-    "answers": [
-      {
-        "text": "Cotonou",
-        "pts": 32,
-        "aliases": [
-          "cotou",
-          "kotonou",
-          "cotono"
-        ]
-      },
-      {
-        "text": "Porto-Novo",
-        "pts": 22,
-        "aliases": [
-          "porto novo",
-          "porto-novo"
-        ]
-      },
-      {
-        "text": "Parakou",
-        "pts": 15,
-        "aliases": [
-          "parakou"
-        ]
-      },
-      {
-        "text": "Abomey-Calavi",
-        "pts": 12,
-        "aliases": [
-          "calavi",
-          "abomey calavi",
-          "abomey-calavi"
-        ]
-      },
-      {
-        "text": "Ouidah",
-        "pts": 10,
-        "aliases": [
-          "ouidah"
-        ]
-      },
-      {
-        "text": "Bohicon",
-        "pts": 8,
-        "aliases": [
-          "bohicon"
-        ]
-      },
-      {
-        "text": "Natitingou",
-        "pts": 1,
-        "aliases": [
-          "natitingou"
-        ]
-      }
-    ],
-    "category": "Géographie",
+    "q": "Quel monument à Cotonou rend hommage aux martyrs de l indépendance ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "source": "Géographie du Bénin",
-    "fact": "Cotonou est la capitale économique ; Porto-Novo est la capitale officielle.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Cotonou",
-        "correct": true,
-        "pts": 32
-      },
-      {
-        "id": "B",
-        "text": "Casquette",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Telegram",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Ouidah",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Place des Martyrs", "Monument de l Amazone", "Palais de la Marina", "Étoile rouge"],
+    "correctIndex": 0,
+    "fact": "La Place des Martyrs commémore les victimes de la lutte pour l indépendance."
   },
   {
-    "q": "Citez un plat à base de maïs.",
-    "answers": [
-      {
-        "text": "Akassa",
-        "pts": 30,
-        "aliases": [
-          "akassa",
-          "akasan",
-          "pate de mais",
-          "pâte de maïs"
-        ]
-      },
-      {
-        "text": "Pâte de maïs",
-        "pts": 22,
-        "aliases": [
-          "pate mais",
-          "pâte de maïs",
-          "pate de maïs"
-        ]
-      },
-      {
-        "text": "Degue",
-        "pts": 15,
-        "aliases": [
-          "degue",
-          "dégué",
-          "degue yaourt"
-        ]
-      },
-      {
-        "text": "Ablo",
-        "pts": 12,
-        "aliases": [
-          "ablo"
-        ]
-      },
-      {
-        "text": "Ugali",
-        "pts": 10,
-        "aliases": [
-          "ugali",
-          "posho"
-        ]
-      },
-      {
-        "text": "Banku",
-        "pts": 8,
-        "aliases": [
-          "banku"
-        ]
-      },
-      {
-        "text": "Foufou",
-        "pts": 3,
-        "aliases": [
-          "foufou",
-          "fufu"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 2,
-    "source": "Cuisine à base de maïs",
-    "fact": "L'akassa est une pâte de maïs fermentée consommée avec une sauce.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Rugby",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "L'agogo",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Akassa",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "D",
-        "text": "Se laver",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un légume courant au marché.",
-    "answers": [
-      {
-        "text": "Tomate",
-        "pts": 28,
-        "aliases": [
-          "tomate",
-          "tomates",
-          "toma"
-        ]
-      },
-      {
-        "text": "Oignon",
-        "pts": 22,
-        "aliases": [
-          "oignon",
-          "oignons"
-        ]
-      },
-      {
-        "text": "Piment",
-        "pts": 15,
-        "aliases": [
-          "piment",
-          "piments",
-          "piment fort"
-        ]
-      },
-      {
-        "text": "Aubergine",
-        "pts": 12,
-        "aliases": [
-          "aubergine",
-          "gombo"
-        ]
-      },
-      {
-        "text": "Gombo",
-        "pts": 10,
-        "aliases": [
-          "gombo",
-          "okra"
-        ]
-      },
-      {
-        "text": "Carotte",
-        "pts": 8,
-        "aliases": [
-          "carotte",
-          "carottes"
-        ]
-      },
-      {
-        "text": "Chou",
-        "pts": 5,
-        "aliases": [
-          "chou",
-          "choux"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 1,
-    "source": "Marchés béninois",
-    "fact": "La tomate, l oignon et le piment figurent parmi les légumes les plus vendus aux marchés.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Baseball",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Casquette",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Bariba",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Tomate",
-        "correct": true,
-        "pts": 28
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un outil informatique indispensable.",
-    "answers": [
-      {
-        "text": "Ordinateur",
-        "pts": 29,
-        "aliases": [
-          "ordinateur",
-          "pc",
-          "laptop",
-          "ordi",
-          "computer"
-        ]
-      },
-      {
-        "text": "Smartphone",
-        "pts": 25,
-        "aliases": [
-          "smartphone",
-          "telephone",
-          "téléphone",
-          "mobile"
-        ]
-      },
-      {
-        "text": "Clé USB",
-        "pts": 15,
-        "aliases": [
-          "cle usb",
-          "clé usb",
-          "usb",
-          "clef usb"
-        ]
-      },
-      {
-        "text": "Imprimante",
-        "pts": 12,
-        "aliases": [
-          "imprimante",
-          "print",
-          "impression"
-        ]
-      },
-      {
-        "text": "Casque",
-        "pts": 10,
-        "aliases": [
-          "casque",
-          "ecouteurs",
-          "écouteurs",
-          "headset"
-        ]
-      },
-      {
-        "text": "Disque dur",
-        "pts": 8,
-        "aliases": [
-          "disque dur",
-          "hdd",
-          "ssd",
-          "stockage"
-        ]
-      },
-      {
-        "text": "Souris",
-        "pts": 1,
-        "aliases": [
-          "souris",
-          "mouse"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
-    "difficulty": 1,
-    "source": "Usages numériques",
-    "fact": "L'ordinateur et le smartphone sont des outils informatiques indispensables aux étudiants.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Musée Honmé (Porto-Novo)",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Noix de coco",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Goungoun",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Ordinateur",
-        "correct": true,
-        "pts": 29
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une langue parlée au Bénin.",
-    "answers": [
-      {
-        "text": "Français",
-        "pts": 29,
-        "aliases": [
-          "francais",
-          "français",
-          "fr"
-        ]
-      },
-      {
-        "text": "Fon",
-        "pts": 25,
-        "aliases": [
-          "fon",
-          "fongbe"
-        ]
-      },
-      {
-        "text": "Yoruba",
-        "pts": 15,
-        "aliases": [
-          "yoruba",
-          "yorouba"
-        ]
-      },
-      {
-        "text": "Bariba",
-        "pts": 12,
-        "aliases": [
-          "bariba",
-          "baatonum"
-        ]
-      },
-      {
-        "text": "Dendi",
-        "pts": 10,
-        "aliases": [
-          "dendi"
-        ]
-      },
-      {
-        "text": "Adja",
-        "pts": 8,
-        "aliases": [
-          "adja"
-        ]
-      },
-      {
-        "text": "Goun",
-        "pts": 1,
-        "aliases": [
-          "goun"
-        ]
-      }
-    ],
-    "category": "Culture et traditions",
-    "difficulty": 2,
-    "source": "Langues du Bénin",
-    "fact": "Le français est la langue officielle ; le fon, le yoruba, le bariba sont parmi les langues nationales.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Français",
-        "correct": true,
-        "pts": 29
-      },
-      {
-        "id": "B",
-        "text": "Ouidah",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Temple des Pythons",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "WhatsApp",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une boisson gazeuse connue.",
-    "answers": [
-      {
-        "text": "Coca-Cola",
-        "pts": 32,
-        "aliases": [
-          "coca",
-          "coca-cola",
-          "coca cola",
-          "coke"
-        ]
-      },
-      {
-        "text": "Fanta",
-        "pts": 22,
-        "aliases": [
-          "fanta"
-        ]
-      },
-      {
-        "text": "Sprite",
-        "pts": 15,
-        "aliases": [
-          "sprite"
-        ]
-      },
-      {
-        "text": "Orangina",
-        "pts": 12,
-        "aliases": [
-          "orangina"
-        ]
-      },
-      {
-        "text": "Schweppes",
-        "pts": 10,
-        "aliases": [
-          "schweppes"
-        ]
-      },
-      {
-        "text": "Limonade",
-        "pts": 8,
-        "aliases": [
-          "limonade"
-        ]
-      },
-      {
-        "text": "Red Bull",
-        "pts": 1,
-        "aliases": [
-          "red bull",
-          "energisant"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 1,
-    "source": "Boissons internationales",
-    "fact": "Coca-Cola, Fanta et Sprite sont des boissons gazeuses commercialisées mondialement.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Coca-Cola",
-        "correct": true,
-        "pts": 32
-      },
-      {
-        "id": "B",
-        "text": "Houégbadja",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Palais royaux d Abomey",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "République populaire du Bénin (1975)",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un site de rencontre ou réseau pro.",
-    "answers": [
-      {
-        "text": "LinkedIn",
-        "pts": 28,
-        "aliases": [
-          "linkedin",
-          "linkdin"
-        ]
-      },
-      {
-        "text": "Instagram",
-        "pts": 22,
-        "aliases": [
-          "instagram",
-          "insta",
-          "ig"
-        ]
-      },
-      {
-        "text": "X",
-        "pts": 15,
-        "aliases": [
-          "x",
-          "reseau x",
-          "tweeter",
-          "ancien reseau",
-          "oiseau bleu"
-        ]
-      },
-      {
-        "text": "Facebook",
-        "pts": 12,
-        "aliases": [
-          "facebook",
-          "fb"
-        ]
-      },
-      {
-        "text": "Tinder",
-        "pts": 10,
-        "aliases": [
-          "tinder"
-        ]
-      },
-      {
-        "text": "Bumble",
-        "pts": 8,
-        "aliases": [
-          "bumble"
-        ]
-      },
-      {
-        "text": "WhatsApp",
-        "pts": 5,
-        "aliases": [
-          "whatsapp",
-          "wa"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Réseaux sociaux et vie pro",
-    "fact": "Le réseau anciennement appelé Twitter s'appelle désormais X.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "1er août",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "LinkedIn",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "C",
-        "text": "Les maths",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Smartphone",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un animal de la savane africaine.",
-    "answers": [
-      {
-        "text": "Lion",
-        "pts": 30,
-        "aliases": [
-          "lion",
-          "lionne"
-        ]
-      },
-      {
-        "text": "Éléphant",
-        "pts": 22,
-        "aliases": [
-          "elephant",
-          "éléphant"
-        ]
-      },
-      {
-        "text": "Girafe",
-        "pts": 15,
-        "aliases": [
-          "girafe",
-          "giraffes"
-        ]
-      },
-      {
-        "text": "Zèbre",
-        "pts": 12,
-        "aliases": [
-          "zebre",
-          "zèbre"
-        ]
-      },
-      {
-        "text": "Hippopotame",
-        "pts": 10,
-        "aliases": [
-          "hippopotame",
-          "hippo"
-        ]
-      },
-      {
-        "text": "Crocodile",
-        "pts": 8,
-        "aliases": [
-          "crocodile",
-          "caiman"
-        ]
-      },
-      {
-        "text": "Guépard",
-        "pts": 3,
-        "aliases": [
-          "guépard",
-          "gepard"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Faune africaine",
-    "fact": "Lion, éléphant et girafe peuplent les savanes africaines, notamment dans les parcs.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Lion",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Rugby",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Riz jambon",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Canal+",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un jour férié ou événement béninois.",
-    "answers": [
-      {
-        "text": "1er août",
-        "pts": 32,
-        "aliases": [
-          "1er aout",
-          "independance",
-          "indépendance",
-          "fete nationale",
-          "fête nationale"
-        ]
-      },
-      {
-        "text": "Noël",
-        "pts": 22,
-        "aliases": [
-          "noel",
-          "noël"
-        ]
-      },
-      {
-        "text": "Pâques",
-        "pts": 15,
-        "aliases": [
-          "paques",
-          "pâques"
-        ]
-      },
-      {
-        "text": "Tabaski",
-        "pts": 12,
-        "aliases": [
-          "tabaski",
-          "aid",
-          "aid el kebir"
-        ]
-      },
-      {
-        "text": "Kwanzaa",
-        "pts": 10,
-        "aliases": [
-          "kwanzaa"
-        ]
-      },
-      {
-        "text": "Vodoun",
-        "pts": 8,
-        "aliases": [
-          "vodoun",
-          "vodun",
-          "fete vodoun",
-          "fête vodoun"
-        ]
-      },
-      {
-        "text": "Nouvel an",
-        "pts": 1,
-        "aliases": [
-          "nouvel an",
-          "janvier"
-        ]
-      }
-    ],
-    "category": "Histoire du Bénin",
-    "difficulty": 2,
-    "source": "Programme d histoire du Bénin",
-    "fact": "Le 1er août 1960 marque l accession du Bénin à l indépendance (alors Dahomey).",
-    "pointsEstimes": true,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Le Nil",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Thé",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "1er août",
-        "correct": true,
-        "pts": 32
-      },
-      {
-        "id": "D",
-        "text": "Virement",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un logiciel de retouche photo.",
-    "answers": [
-      {
-        "text": "Photoshop",
-        "pts": 30,
-        "aliases": [
-          "photoshop",
-          "ps",
-          "adobe photoshop"
-        ]
-      },
-      {
-        "text": "Canva",
-        "pts": 22,
-        "aliases": [
-          "canva"
-        ]
-      },
-      {
-        "text": "GIMP",
-        "pts": 15,
-        "aliases": [
-          "gimp"
-        ]
-      },
-      {
-        "text": "Lightroom",
-        "pts": 12,
-        "aliases": [
-          "lightroom",
-          "lr"
-        ]
-      },
-      {
-        "text": "Snapseed",
-        "pts": 10,
-        "aliases": [
-          "snapseed"
-        ]
-      },
-      {
-        "text": "Paint",
-        "pts": 8,
-        "aliases": [
-          "paint",
-          "dessin"
-        ]
-      },
-      {
-        "text": "Figma",
-        "pts": 3,
-        "aliases": [
-          "figma"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Outils numériques",
-    "fact": "Photoshop, Canva et GIMP sont des logiciels de retouche photo.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Guézo",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Ouidah (vodoun)",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Chèche",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Photoshop",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une marque de téléphone connue.",
-    "answers": [
-      {
-        "text": "Samsung",
-        "pts": 26,
-        "aliases": [
-          "samsung"
-        ]
-      },
-      {
-        "text": "iPhone",
-        "pts": 25,
-        "aliases": [
-          "iphone",
-          "apple",
-          "mac"
-        ]
-      },
-      {
-        "text": "Xiaomi",
-        "pts": 18,
-        "aliases": [
-          "xiaomi",
-          "redmi"
-        ]
-      },
-      {
-        "text": "Infinix",
-        "pts": 12,
-        "aliases": [
-          "infinix"
-        ]
-      },
-      {
-        "text": "Tecno",
-        "pts": 10,
-        "aliases": [
-          "tecno"
-        ]
-      },
-      {
-        "text": "Nokia",
-        "pts": 8,
-        "aliases": [
-          "nokia"
-        ]
-      },
-      {
-        "text": "Huawei",
-        "pts": 1,
-        "aliases": [
-          "huawei"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 1,
-    "source": "Marques de téléphone",
-    "fact": "Samsung, iPhone et Xiaomi sont parmi les marques de téléphone les plus connues.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Samsung",
-        "correct": true,
-        "pts": 26
-      },
-      {
-        "id": "B",
-        "text": "Dormir encore",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Le djembé",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Porto-Novo",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un accessoire de mode populaire.",
-    "answers": [
-      {
-        "text": "Montre",
-        "pts": 28,
-        "aliases": [
-          "montre",
-          "bracelet",
-          "gousset"
-        ]
-      },
-      {
-        "text": "Lunettes de soleil",
-        "pts": 22,
-        "aliases": [
-          "lunettes",
-          "lunettes de soleil",
-          "soleil"
-        ]
-      },
-      {
-        "text": "Casquette",
-        "pts": 15,
-        "aliases": [
-          "casquette",
-          "cap",
-          "bonnet"
-        ]
-      },
-      {
-        "text": "Sac à dos",
-        "pts": 12,
-        "aliases": [
-          "sac a dos",
-          "sac",
-          "dos",
-          "backpack"
-        ]
-      },
-      {
-        "text": "Chaussures",
-        "pts": 10,
-        "aliases": [
-          "chaussures",
-          "sneakers",
-          "baskets",
-          "chaussure"
-        ]
-      },
-      {
-        "text": "Ceinture",
-        "pts": 8,
-        "aliases": [
-          "ceinture"
-        ]
-      },
-      {
-        "text": "Bijoux",
-        "pts": 5,
-        "aliases": [
-          "bijoux",
-          "bague",
-          "collier"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Accessoires de mode",
-    "fact": "Montre, lunettes, casquette et sac à dos sont des accessoires de mode populaires.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Photoshop",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Kwanzaa",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Montre",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "D",
-        "text": "Riz au lait",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une plateforme de streaming vidéo.",
-    "answers": [
-      {
-        "text": "Netflix",
-        "pts": 29,
-        "aliases": [
-          "netflix"
-        ]
-      },
-      {
-        "text": "YouTube",
-        "pts": 25,
-        "aliases": [
-          "youtube",
-          "you tube",
-          "yt"
-        ]
-      },
-      {
-        "text": "Amazon Prime",
-        "pts": 15,
-        "aliases": [
-          "prime video",
-          "amazon prime",
-          "prime"
-        ]
-      },
-      {
-        "text": "Disney+",
-        "pts": 12,
-        "aliases": [
-          "disney",
-          "disney plus",
-          "disney+"
-        ]
-      },
-      {
-        "text": "Canal+",
-        "pts": 10,
-        "aliases": [
-          "canal",
-          "canal plus",
-          "canal+"
-        ]
-      },
-      {
-        "text": "Showmax",
-        "pts": 8,
-        "aliases": [
-          "showmax"
-        ]
-      },
-      {
-        "text": "Twitch",
-        "pts": 1,
-        "aliases": [
-          "twitch"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Streaming vidéo",
-    "fact": "Netflix, YouTube et Amazon Prime figurent parmi les plateformes de streaming vidéo.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Netflix",
-        "correct": true,
-        "pts": 29
-      },
-      {
-        "id": "B",
-        "text": "Ghésu / Ghézo",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Snapchat",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Instagram",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un vêtement traditionnel béninois.",
-    "answers": [
-      {
-        "text": "Pagne",
-        "pts": 26,
-        "aliases": [
-          "pagne",
-          "tissu",
-          "wax"
-        ]
-      },
-      {
-        "text": "Boubou",
-        "pts": 25,
-        "aliases": [
-          "boubou",
-          "habit",
-          "tenue"
-        ]
-      },
-      {
-        "text": "Kaba",
-        "pts": 18,
-        "aliases": [
-          "kaba",
-          "femme"
-        ]
-      },
-      {
-        "text": "Tapis",
-        "pts": 12,
-        "aliases": [
-          "tapis"
-        ]
-      },
-      {
-        "text": "Chèche",
-        "pts": 10,
-        "aliases": [
-          "cheche",
-          "cheche",
-          "foulard"
-        ]
-      },
-      {
-        "text": "Sandales",
-        "pts": 8,
-        "aliases": [
-          "sandales",
-          "nu-pieds"
-        ]
-      },
-      {
-        "text": "Chapeau",
-        "pts": 1,
-        "aliases": [
-          "chapeau",
-          "casque"
-        ]
-      }
-    ],
-    "category": "Culture et traditions",
-    "difficulty": 2,
-    "source": "Vêtement traditionnel béninois",
-    "fact": "Le pagne (wax), le boubou et le kaba figurent parmi les tenues traditionnelles du Bénin.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Tinder",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "L'eau",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Instagram",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Pagne",
-        "correct": true,
-        "pts": 26
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une matière artistique.",
-    "answers": [
-      {
-        "text": "Dessin",
-        "pts": 28,
-        "aliases": [
-          "dessin",
-          "dessiner",
-          "croquis"
-        ]
-      },
-      {
-        "text": "Peinture",
-        "pts": 22,
-        "aliases": [
-          "peinture",
-          "peindre",
-          "toile"
-        ]
-      },
-      {
-        "text": "Sculpture",
-        "pts": 15,
-        "aliases": [
-          "sculpture",
-          "sculpter"
-        ]
-      },
-      {
-        "text": "Musique",
-        "pts": 12,
-        "aliases": [
-          "musique",
-          "jouer de la musique"
-        ]
-      },
-      {
-        "text": "Théâtre",
-        "pts": 10,
-        "aliases": [
-          "theatre",
-          "théâtre",
-          "comedie"
-        ]
-      },
-      {
-        "text": "Danse",
-        "pts": 8,
-        "aliases": [
-          "danse",
-          "danser"
-        ]
-      },
-      {
-        "text": "Cinéma",
-        "pts": 5,
-        "aliases": [
-          "cinema",
-          "cinéma"
-        ]
-      }
-    ],
-    "category": "Culture et traditions",
-    "difficulty": 2,
-    "source": "Arts et culture",
-    "fact": "Dessin, peinture, sculpture, musique, théâtre et danse sont des matières artistiques.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Dessin",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "B",
-        "text": "Ouidah (vodoun)",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Batterie",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Omelette",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un moyen de paiement courant.",
-    "answers": [
-      {
-        "text": "Espèces",
-        "pts": 35,
-        "aliases": [
-          "especes",
-          "espèces",
-          "cash",
-          "argent liquide"
-        ]
-      },
-      {
-        "text": "Mobile money",
-        "pts": 25,
-        "aliases": [
-          "mtn money",
-          "moov money",
-          "mobile money",
-          "momo"
-        ]
-      },
-      {
-        "text": "Carte bancaire",
-        "pts": 15,
-        "aliases": [
-          "carte bancaire",
-          "cb",
-          "visa",
-          "mastercard"
-        ]
-      },
-      {
-        "text": "Virement",
-        "pts": 12,
-        "aliases": [
-          "virement",
-          "transfert"
-        ]
-      },
-      {
-        "text": "Chèque",
-        "pts": 10,
-        "aliases": [
-          "cheque",
-          "chèque"
-        ]
-      },
-      {
-        "text": "PayPal",
-        "pts": 3,
-        "aliases": [
-          "paypal"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Moyens de paiement",
-    "fact": "Espèces, mobile money et carte bancaire figurent parmi les moyens de paiement courants.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Espèces",
-        "correct": true,
-        "pts": 35
-      },
-      {
-        "id": "B",
-        "text": "Porte du Non-Retour (Ouidah)",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Se laver",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Kandi",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une application de messagerie instantanée.",
-    "answers": [
-      {
-        "text": "WhatsApp",
-        "pts": 35,
-        "aliases": [
-          "whatsapp",
-          "wa",
-          "whats app"
-        ]
-      },
-      {
-        "text": "Telegram",
-        "pts": 20,
-        "aliases": [
-          "telegram",
-          "tg"
-        ]
-      },
-      {
-        "text": "Messenger",
-        "pts": 15,
-        "aliases": [
-          "messenger",
-          "facebook messenger"
-        ]
-      },
-      {
-        "text": "Signal",
-        "pts": 12,
-        "aliases": [
-          "signal"
-        ]
-      },
-      {
-        "text": "Discord",
-        "pts": 10,
-        "aliases": [
-          "discord"
-        ]
-      },
-      {
-        "text": "iMessage",
-        "pts": 8,
-        "aliases": [
-          "imessage"
-        ]
-      }
-    ],
-    "category": "Vie étudiante et technologie",
-    "difficulty": 1,
-    "source": "Messagerie instantanée",
-    "fact": "WhatsApp, Telegram et Messenger figurent parmi les applications de messagerie les plus utilisées.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "WhatsApp",
-        "correct": true,
-        "pts": 35
-      },
-      {
-        "id": "B",
-        "text": "Musée Honmé (Porto-Novo)",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Schweppes",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Paint",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un réseau social pour partager des photos.",
-    "answers": [
-      {
-        "text": "Instagram",
-        "pts": 40,
-        "aliases": [
-          "instagram",
-          "insta",
-          "ig"
-        ]
-      },
-      {
-        "text": "Facebook",
-        "pts": 20,
-        "aliases": [
-          "facebook",
-          "fb"
-        ]
-      },
-      {
-        "text": "Snapchat",
-        "pts": 15,
-        "aliases": [
-          "snapchat",
-          "snap"
-        ]
-      },
-      {
-        "text": "Pinterest",
-        "pts": 12,
-        "aliases": [
-          "pinterest"
-        ]
-      },
-      {
-        "text": "TikTok",
-        "pts": 8,
-        "aliases": [
-          "tiktok"
-        ]
-      },
-      {
-        "text": "Flickr",
-        "pts": 5,
-        "aliases": [
-          "flickr"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Réseaux sociaux",
-    "fact": "Instagram, Facebook et Snapchat figurent parmi les réseaux sociaux de partage de photos.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Instagram",
-        "correct": true,
-        "pts": 40
-      },
-      {
-        "id": "B",
-        "text": "Clé USB",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Autre site colonial",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Fon",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un plat à base de riz.",
-    "answers": [
-      {
-        "text": "Riz au gras",
-        "pts": 30,
-        "aliases": [
-          "riz gras",
-          "riz djolof",
-          "jollof"
-        ]
-      },
-      {
-        "text": "Riz cantonais",
-        "pts": 22,
-        "aliases": [
-          "riz cantonais",
-          "riz frit"
-        ]
-      },
-      {
-        "text": "Riz sauce arachide",
-        "pts": 18,
-        "aliases": [
-          "riz sauce arachide",
-          "riz pâte rouge"
-        ]
-      },
-      {
-        "text": "Riz au lait",
-        "pts": 15,
-        "aliases": [
-          "riz au lait",
-          "riz creme"
-        ]
-      },
-      {
-        "text": "Riz jambon",
-        "pts": 10,
-        "aliases": [
-          "riz jambon"
-        ]
-      },
-      {
-        "text": "Riz pois",
-        "pts": 5,
-        "aliases": [
-          "riz pois",
-          "riz haricots"
-        ]
-      }
-    ],
-    "category": "Gastronomie",
-    "difficulty": 2,
-    "source": "Cuisine à base de riz",
-    "fact": "Le riz au gras et le riz cantonais figurent parmi les plats à base de riz les plus appréciés.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Infinix",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Autre ville historique",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Google",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Riz au gras",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un animal de compagnie courant.",
-    "answers": [
-      {
-        "text": "Chien",
-        "pts": 35,
-        "aliases": [
-          "chien",
-          "chien de compagnie"
-        ]
-      },
-      {
-        "text": "Chat",
-        "pts": 30,
-        "aliases": [
-          "chat",
-          "chaton"
-        ]
-      },
-      {
-        "text": "Poisson rouge",
-        "pts": 15,
-        "aliases": [
-          "poisson rouge",
-          "poisson"
-        ]
-      },
-      {
-        "text": "Hamster",
-        "pts": 10,
-        "aliases": [
-          "hamster"
-        ]
-      },
-      {
-        "text": "Lapin",
-        "pts": 7,
-        "aliases": [
-          "lapin"
-        ]
-      },
-      {
-        "text": "Perroquet",
-        "pts": 3,
-        "aliases": [
-          "perroquet",
-          "oiseau"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Animaux de compagnie",
-    "fact": "Le chien et le chat sont les animaux de compagnie les plus courants.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Tinder",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Riz au lait",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Chien",
-        "correct": true,
-        "pts": 35
-      },
-      {
-        "id": "D",
-        "text": "Peulha / Peul",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un moyen de se divertir à la maison.",
-    "answers": [
-      {
-        "text": "Télévision",
-        "pts": 30,
-        "aliases": [
-          "télévision",
-          "tele",
-          "tv",
-          "television"
-        ]
-      },
-      {
-        "text": "Jeux vidéo",
-        "pts": 25,
-        "aliases": [
-          "jeux video",
-          "jeux vidéo",
-          "console",
-          "gaming"
-        ]
-      },
-      {
-        "text": "Lecture",
-        "pts": 20,
-        "aliases": [
-          "lecture",
-          "livre",
-          "lire"
-        ]
-      },
-      {
-        "text": "Musique",
-        "pts": 15,
-        "aliases": [
-          "musique",
-          "ecouter de la musique"
-        ]
-      },
-      {
-        "text": "Cinéma à la maison",
-        "pts": 7,
-        "aliases": [
-          "cinema",
-          "film",
-          "netflix"
-        ]
-      },
-      {
-        "text": "Bricolage",
-        "pts": 3,
-        "aliases": [
-          "bricolage",
-          "diy"
-        ]
-      }
-    ],
-    "category": "Culture générale",
-    "difficulty": 2,
-    "source": "Loisirs",
-    "fact": "Télévision, jeux vidéo, lecture et musique figurent parmi les divertissements à la maison.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Lion",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Télévision",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "C",
-        "text": "Trône du roi",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Porto-Novo",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un grand fleuve ou cours d'eau.",
-    "answers": [
-      {
-        "text": "Le Niger",
-        "pts": 30,
-        "aliases": [
-          "niger",
-          "fleuve niger"
-        ]
-      },
-      {
-        "text": "La Seine",
-        "pts": 20,
-        "aliases": [
-          "seine",
-          "la seine"
-        ]
-      },
-      {
-        "text": "Le Nil",
-        "pts": 18,
-        "aliases": [
-          "nil",
-          "le nil"
-        ]
-      },
-      {
-        "text": "L'Amazone",
-        "pts": 15,
-        "aliases": [
-          "amazone",
-          "amazon"
-        ]
-      },
-      {
-        "text": "Le Mékong",
-        "pts": 10,
-        "aliases": [
-          "mekong",
-          "le mekong"
-        ]
-      },
-      {
-        "text": "Le Danube",
-        "pts": 7,
-        "aliases": [
-          "danube",
-          "le danube"
-        ]
-      }
-    ],
-    "category": "Géographie",
-    "difficulty": 2,
-    "source": "Grands fleuves",
-    "fact": "Le Niger traverse plusieurs pays d'Afrique de l'Ouest, dont le Bénin.",
-    "pointsEstimes": false,
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Le Niger",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Le téléphone",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Akassa",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Trompette",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un monument ou un site historique du Bénin.",
-    "category": "Monuments et patrimoine",
-    "difficulty": 2,
-    "source": "Programme d histoire du Bénin / monuments classés",
-    "fact": "Les Palais royaux d'Abomey sont inscrits au patrimoine mondial de l'UNESCO.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Palais royaux d Abomey",
-        "pts": 28,
-        "aliases": [
-          "abomey",
-          "palais royaux",
-          "palais d abomey",
-          "royaume du dahomey"
-        ]
-      },
-      {
-        "text": "Porte du Non-Retour (Ouidah)",
-        "pts": 20,
-        "aliases": [
-          "porte du non retour",
-          "ouidah",
-          "route des esclaves",
-          "non retour"
-        ]
-      },
-      {
-        "text": "Cité lacustre de Ganvié",
-        "pts": 15,
-        "aliases": [
-          "ganvie",
-          "ganvié",
-          "cite lacustre",
-          "village sur pilotis"
-        ]
-      },
-      {
-        "text": "Temple des Pythons (Ouidah)",
-        "pts": 12,
-        "aliases": [
-          "temple des pythons",
-          "pythons",
-          "ouidah temple",
-          "serpents"
-        ]
-      },
-      {
-        "text": "Fort portugais de Ouidah",
-        "pts": 10,
-        "aliases": [
-          "fort portugais",
-          "fort de ouidah",
-          "château portugais"
-        ]
-      },
-      {
-        "text": "Tata Somba",
-        "pts": 8,
-        "aliases": [
-          "tata somba",
-          "tata",
-          "somba",
-          "maison tata"
-        ]
-      },
-      {
-        "text": "Place Gbaguidi / place publique",
-        "pts": 4,
-        "aliases": [
-          "place publique",
-          "place de ville",
-          "place gbaguidi"
-        ]
-      },
-      {
-        "text": "Autre site historique",
-        "pts": 3,
-        "aliases": [
-          "site historique",
-          "monument",
-          "patrimoine"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Masques et danses",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Lecture",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Palais royaux d Abomey",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "D",
-        "text": "Français",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un roi du royaume du Dahomey.",
-    "category": "Histoire du Bénin",
-    "difficulty": 2,
-    "source": "Programme d histoire du Bénin / rois du Dahomey",
-    "fact": "Le roi Béhanzin a résisté à la colonisation française à la fin du XIXe siècle.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Béhanzin",
-        "pts": 30,
-        "aliases": [
-          "behanzin",
-          "béhanzin",
-          "kondo behanzin"
-        ]
-      },
-      {
-        "text": "Guézo",
-        "pts": 22,
-        "aliases": [
-          "gezo",
-          "guézo",
-          "roi gezo"
-        ]
-      },
-      {
-        "text": "Glèlè",
-        "pts": 15,
-        "aliases": [
-          "glele",
-          "glèlè",
-          "roi glele"
-        ]
-      },
-      {
-        "text": "Agadja",
-        "pts": 10,
-        "aliases": [
-          "agadja",
-          "agaja"
-        ]
-      },
-      {
-        "text": "Houégbadja",
-        "pts": 8,
-        "aliases": [
-          "houegbadja",
-          "houégbadja",
-          "wegbaja"
-        ]
-      },
-      {
-        "text": "Tégbessou",
-        "pts": 6,
-        "aliases": [
-          "tegbessou",
-          "tégbessou"
-        ]
-      },
-      {
-        "text": "Ghésu / Ghézo",
-        "pts": 5,
-        "aliases": [
-          "ghesu",
-          "ghezo",
-          "guizo"
-        ]
-      },
-      {
-        "text": "Autre roi du Dahomey",
-        "pts": 4,
-        "aliases": [
-          "roi dahomey",
-          "souverain dahomey"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Béhanzin",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Moto taxi",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Pâte rouge",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Riz sauce arachide",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un président de la République du Bénin.",
-    "category": "Histoire du Bénin",
-    "difficulty": 2,
-    "source": "Histoire politique du Bénin",
-    "fact": "Patrice Talon est le président actuel de la République du Bénin.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Patrice Talon",
-        "pts": 28,
-        "aliases": [
-          "talon",
-          "patrice talon",
-          "president talon"
-        ]
-      },
-      {
-        "text": "Mathieu Kérékou",
-        "pts": 20,
-        "aliases": [
-          "kerekou",
-          "mathieu kerekou",
-          "matieu kerekou"
-        ]
-      },
-      {
-        "text": "Boni Yayi",
-        "pts": 15,
-        "aliases": [
-          "boni yayi",
-          "yayi",
-          "yayi boni"
-        ]
-      },
-      {
-        "text": "Nicéphore Soglo",
-        "pts": 12,
-        "aliases": [
-          "soglo",
-          "nicephore soglo",
-          "nicéphore soglo"
-        ]
-      },
-      {
-        "text": "Hubert Maga",
-        "pts": 10,
-        "aliases": [
-          "maga",
-          "hubert maga"
-        ]
-      },
-      {
-        "text": "Sourou Migan Apithy",
-        "pts": 8,
-        "aliases": [
-          "apithy",
-          "sourou migan apithy"
-        ]
-      },
-      {
-        "text": "Justin Ahomadégbé",
-        "pts": 4,
-        "aliases": [
-          "ahomadegbe",
-          "justin ahomadegbe"
-        ]
-      },
-      {
-        "text": "Autre président",
-        "pts": 3,
-        "aliases": [
-          "president du benin",
-          "chef de l etat"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Patrice Talon",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "B",
-        "text": "Sourou Migan Apithy",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Le Mékong",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Autre parc ou réserve",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un royaume ou une cité historique du Bénin.",
-    "category": "Histoire du Bénin",
-    "difficulty": 2,
-    "source": "Programme d histoire du Bénin / royaumes précoloniaux",
-    "fact": "Le royaume de Porto-Novo (Hogbonou) coexistait avec le royaume du Dahomey.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Dahomey",
-        "pts": 30,
-        "aliases": [
-          "dahomey",
-          "royaume du dahomey"
-        ]
-      },
-      {
-        "text": "Porto-Novo",
-        "pts": 22,
-        "aliases": [
-          "porto novo",
-          "porto-novo",
-          "hogbonou"
-        ]
-      },
-      {
-        "text": "Abomey",
-        "pts": 15,
-        "aliases": [
-          "abomey",
-          "capitale du dahomey"
-        ]
-      },
-      {
-        "text": "Ouidah",
-        "pts": 12,
-        "aliases": [
-          "ouidah",
-          "whydah",
-          "juda"
-        ]
-      },
-      {
-        "text": "Nikki",
-        "pts": 10,
-        "aliases": [
-          "nikki",
-          "royaume de nikki",
-          "borgou"
-        ]
-      },
-      {
-        "text": "Allada",
-        "pts": 8,
-        "aliases": [
-          "allada",
-          "ardra",
-          "grand ardra"
-        ]
-      },
-      {
-        "text": "Savi / capitale du Dahomey",
-        "pts": 3,
-        "aliases": [
-          "savi",
-          "xabagbo"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Dahomey",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Le Mékong",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Aller en cours",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Bouillie",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une date ou un événement marquant de l histoire du Bénin.",
-    "category": "Histoire du Bénin",
-    "difficulty": 2,
-    "source": "Programme d histoire du Bénin",
-    "fact": "Le 1er août 1960 est la fête nationale (indépendance du Dahomey).",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "1er août 1960",
-        "pts": 30,
-        "aliases": [
-          "1er aout 1960",
-          "independance",
-          "indépendance",
-          "fete nationale",
-          "fête nationale"
-        ]
-      },
-      {
-        "text": "Conférence nationale (1990)",
-        "pts": 22,
-        "aliases": [
-          "conference nationale",
-          "conférence nationale",
-          "1990",
-          "cnpr"
-        ]
-      },
-      {
-        "text": "Avènement de la démocratie (1991)",
-        "pts": 15,
-        "aliases": [
-          "1991",
-          "democratie",
-          "démocratie",
-          "premiere election"
-        ]
-      },
-      {
-        "text": "Colonisation française",
-        "pts": 12,
-        "aliases": [
-          "colonisation",
-          "protectorat",
-          "francais",
-          "français"
-        ]
-      },
-      {
-        "text": "République populaire du Bénin (1975)",
-        "pts": 10,
-        "aliases": [
-          "republique populaire",
-          "1975",
-          "marxisme"
-        ]
-      },
-      {
-        "text": "Kérékou prend le pouvoir (1972)",
-        "pts": 8,
-        "aliases": [
-          "1972",
-          "coup detat",
-          "kerekou 1972"
-        ]
-      },
-      {
-        "text": "Autre événement historique",
-        "pts": 3,
-        "aliases": [
-          "evenement historique",
-          "date historique"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Limonade",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Béhanzin",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "La plage",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "1er août 1960",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un lieu associé à la Route de l Esclavage au Bénin.",
-    "category": "Monuments et patrimoine",
-    "difficulty": 2,
-    "source": "UNESCO / Route de l Esclavage",
-    "fact": "Ouidah était l un des principaux ports de traite de la Route de l'Esclavage.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Porte du Non-Retour (Ouidah)",
-        "pts": 30,
-        "aliases": [
-          "porte du non retour",
-          "ouidah",
-          "route des esclaves"
-        ]
-      },
-      {
-        "text": "Ouidah",
-        "pts": 22,
-        "aliases": [
-          "ouidah",
-          "whydah"
-        ]
-      },
-      {
-        "text": "Temple des Pythons",
-        "pts": 15,
-        "aliases": [
-          "temple des pythons",
-          "serpents ouidah"
-        ]
-      },
-      {
-        "text": "Fort portugais de Ouidah",
-        "pts": 12,
-        "aliases": [
-          "fort portugais",
-          "fort de ouidah"
-        ]
-      },
-      {
-        "text": "Chemin de l esclavage",
-        "pts": 10,
-        "aliases": [
-          "chemin de l esclavage",
-          "route des esclaves"
-        ]
-      },
-      {
-        "text": "Place Chacha",
-        "pts": 8,
-        "aliases": [
-          "place chacha",
-          "chacha ouidah"
-        ]
-      },
-      {
-        "text": "Autre site mémoire",
-        "pts": 3,
-        "aliases": [
-          "mémoire de l esclavage",
-          "site mémoire"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Forêt classée",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Boissons et offrandes",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Théâtre",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Porte du Non-Retour (Ouidah)",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un parc national ou une réserve naturelle du Bénin.",
-    "category": "Monuments et patrimoine",
-    "difficulty": 2,
-    "source": "Géographie et environnement du Bénin",
-    "fact": "Le parc national de la Pendjari est une réserve de biosphère et refuge d éléphants et lions.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Pendjari",
-        "pts": 30,
-        "aliases": [
-          "pendjari",
-          "parc national de la pendjari"
-        ]
-      },
-      {
-        "text": "Parc national du W",
-        "pts": 22,
-        "aliases": [
-          "parc du w",
-          "parc w",
-          "w national"
-        ]
-      },
-      {
-        "text": "Réserve de la biosphère",
-        "pts": 15,
-        "aliases": [
-          "reserve de biosphere",
-          "biosphere"
-        ]
-      },
-      {
-        "text": "Forêt classée",
-        "pts": 10,
-        "aliases": [
-          "foret classee",
-          "forêt classée"
-        ]
-      },
-      {
-        "text": "Pendjari (faune)",
-        "pts": 18,
-        "aliases": [
-          "elephant",
-          "lion",
-          "faune"
-        ]
-      },
-      {
-        "text": "Autre parc ou réserve",
-        "pts": 5,
-        "aliases": [
-          "parc national",
-          "reserve naturelle"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Pendjari",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Le sodabi",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Guépard",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Goungoun",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une pratique ou une fête liée au vodoun au Bénin.",
-    "category": "Culture et traditions",
-    "difficulty": 2,
-    "source": "Culture et traditions du Bénin",
-    "fact": "La fête du vodoun est célébrée chaque année le 10 janvier, jour férié au Bénin.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Fête du vodoun (10 janvier)",
-        "pts": 28,
-        "aliases": [
-          "vodoun",
-          "vodun",
-          "fete vodoun",
-          "fête du vodoun",
-          "10 janvier"
-        ]
-      },
-      {
-        "text": "Temple des Pythons",
-        "pts": 20,
-        "aliases": [
-          "temple des pythons",
-          "serpents"
-        ]
-      },
-      {
-        "text": "Cultes aux divinités",
-        "pts": 15,
-        "aliases": [
-          "divinité",
-          "culte",
-          "fétiche"
-        ]
-      },
-      {
-        "text": "Ouidah (vodoun)",
-        "pts": 12,
-        "aliases": [
-          "ouidah vodoun",
-          "capitale du vodoun"
-        ]
-      },
-      {
-        "text": "Masques et danses",
-        "pts": 10,
-        "aliases": [
-          "masque",
-          "danse traditionnelle",
-          "egungun"
-        ]
-      },
-      {
-        "text": "Boissons et offrandes",
-        "pts": 8,
-        "aliases": [
-          "offrande",
-          "libation",
-          "boisson sacrée"
-        ]
-      },
-      {
-        "text": "Autre pratique vodoun",
-        "pts": 7,
-        "aliases": [
-          "pratique vodoun",
-          "tradition vodoun"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Abomey",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Cérémonie de divination Fa",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Fête du vodoun (10 janvier)",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "D",
-        "text": "Avènement de la démocratie (1991)",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une ville historique ou royale du Bénin.",
-    "category": "Monuments et patrimoine",
-    "difficulty": 2,
-    "source": "Géographie et histoire du Bénin",
-    "fact": "Abomey fut la capitale du royaume du Dahomey ; Porto-Novo la capitale actuelle.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Abomey",
-        "pts": 28,
-        "aliases": [
-          "abomey",
-          "capitale royale",
-          "royaume du dahomey"
-        ]
-      },
-      {
-        "text": "Porto-Novo",
-        "pts": 22,
-        "aliases": [
-          "porto novo",
-          "porto-novo",
-          "capitale"
-        ]
-      },
-      {
-        "text": "Ouidah",
-        "pts": 15,
-        "aliases": [
-          "ouidah",
-          "ville historique"
-        ]
-      },
-      {
-        "text": "Cotonou",
-        "pts": 12,
-        "aliases": [
-          "cotou",
-          "cotonou"
-        ]
-      },
-      {
-        "text": "Allada",
-        "pts": 10,
-        "aliases": [
-          "allada",
-          "grand ardra"
-        ]
-      },
-      {
-        "text": "Bohicon",
-        "pts": 8,
-        "aliases": [
-          "bohicon"
-        ]
-      },
-      {
-        "text": "Autre ville historique",
-        "pts": 5,
-        "aliases": [
-          "ville historique",
-          "cite royale"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Abomey",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "B",
-        "text": "Adja",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Dantokpa (Cotonou)",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Flûte traversière",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un grand marché du Bénin.",
-    "category": "Culture et traditions",
-    "difficulty": 1,
-    "source": "Vie économique et marchés béninois",
-    "fact": "Le marché Dantokpa à Cotonou est l'un des plus grands marchés à ciel ouvert d'Afrique de l'Ouest.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Dantokpa",
-        "pts": 30,
-        "aliases": [
-          "dantokpa",
-          "marche dantokpa",
-          "marché dantokpa",
-          "toko"
-        ]
-      },
-      {
-        "text": "Azilèi (Parakou)",
-        "pts": 20,
-        "aliases": [
-          "azeke",
-          "azilei",
-          "parakou marche",
-          "marche de parakou"
-        ]
-      },
-      {
-        "text": "Dantokpa (Cotonou)",
-        "pts": 15,
-        "aliases": [
-          "cotonou marche",
-          "grand marche cotonou"
-        ]
-      },
-      {
-        "text": "Marché de Ouando",
-        "pts": 12,
-        "aliases": [
-          "ouando",
-          "marche ouando",
-          "porto-novo marche"
-        ]
-      },
-      {
-        "text": "Azilèi",
-        "pts": 10,
-        "aliases": [
-          "azilei",
-          "azilèi"
-        ]
-      },
-      {
-        "text": "Marché de Banikanni",
-        "pts": 8,
-        "aliases": [
-          "banikanni",
-          "parakou"
-        ]
-      },
-      {
-        "text": "Autre grand marché",
-        "pts": 5,
-        "aliases": [
-          "grand marche",
-          "marche benin"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Pain beurre",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Se laver",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Dantokpa",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "D",
-        "text": "Souris",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez une Amazone du Dahomey ou le corps des femmes guerrières.",
-    "category": "Histoire du Bénin",
-    "difficulty": 2,
-    "source": "Programme d histoire du Bénin / Amazones du Dahomey",
-    "fact": "Les Amazones du Dahomey étaient un corps militaire exclusivement féminin, célèbre dans le monde.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Amazones du Dahomey",
-        "pts": 30,
-        "aliases": [
-          "amazones",
-          "amazones du dahomey",
-          "femmes guerrières",
-          "femmes guerrieres"
-        ]
-      },
-      {
-        "text": "Seh-Dong Hong-Behon",
-        "pts": 22,
-        "aliases": [
-          "seh dong",
-          "seh-dong",
-          "hong-behon"
-        ]
-      },
-      {
-        "text": "Goungoun",
-        "pts": 15,
-        "aliases": [
-          "goungoun",
-          "gungun"
-        ]
-      },
-      {
-        "text": "Reine Tassi Hangbé",
-        "pts": 12,
-        "aliases": [
-          "tassi hangbe",
-          "tassi-hangbe",
-          "reine"
-        ]
-      },
-      {
-        "text": "Corps féminin guerrier",
-        "pts": 10,
-        "aliases": [
-          "corps feminin",
-          "soldates",
-          "armée des femmes"
-        ]
-      },
-      {
-        "text": "Gbeto",
-        "pts": 8,
-        "aliases": [
-          "gbeto"
-        ]
-      },
-      {
-        "text": "Autre amazone",
-        "pts": 3,
-        "aliases": [
-          "amazone dahomey",
-          "guerriere"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "WhatsApp",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Amazones du Dahomey",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "C",
-        "text": "Musée d art contemporain",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Scroller les réseaux",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un musée du Bénin.",
-    "category": "Monuments et patrimoine",
-    "difficulty": 2,
-    "source": "Culture et musées du Bénin",
-    "fact": "Le musée des Palais royaux d'Abomey présente l'histoire du royaume du Dahomey.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Musée des Palais royaux d Abomey",
-        "pts": 30,
-        "aliases": [
-          "musee abomey",
-          "musée abomey",
-          "palais royaux abomey musee"
-        ]
-      },
-      {
-        "text": "Musée Honmé (Porto-Novo)",
-        "pts": 22,
-        "aliases": [
-          "musee honme",
-          "musée honmé",
-          "musee porto novo"
-        ]
-      },
-      {
-        "text": "Musée de Ouidah",
-        "pts": 15,
-        "aliases": [
-          "musee ouidah",
-          "musée ouidah",
-          "musee esclavage ouidah"
-        ]
-      },
-      {
-        "text": "Musée ethnographique",
-        "pts": 12,
-        "aliases": [
-          "musee ethnographique",
-          "ethnographie"
-        ]
-      },
-      {
-        "text": "Musée d art contemporain",
-        "pts": 10,
-        "aliases": [
-          "musee art contemporain",
-          "cotonou musee"
-        ]
-      },
-      {
-        "text": "Palais de la Marina",
-        "pts": 8,
-        "aliases": [
-          "marina",
-          "palais de la marina"
-        ]
-      },
-      {
-        "text": "Autre musée",
-        "pts": 3,
-        "aliases": [
-          "musee benin",
-          "musee du benin"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Eau chaude",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Facebook",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Yoruba",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Musée des Palais royaux d Abomey",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "q": "Citez un site classé au patrimoine mondial de l UNESCO au Bénin.",
-    "category": "Monuments et patrimoine",
+    "q": "Quel ancien palais sert aujourd hui de musée à Porto-Novo ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 3,
-    "source": "UNESCO / patrimoine mondial",
-    "fact": "Les Palais royaux d'Abomey sont inscrits au patrimoine mondial de l'UNESCO.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Palais royaux d Abomey",
-        "pts": 35,
-        "aliases": [
-          "abomey",
-          "palais royaux",
-          "unesco",
-          "patrimoine mondial"
-        ]
-      },
-      {
-        "text": "Route de l Esclavage (Ouidah)",
-        "pts": 25,
-        "aliases": [
-          "route des esclaves",
-          "ouidah unesco",
-          "mémoire esclavage"
-        ]
-      },
-      {
-        "text": "Autre site UNESCO",
-        "pts": 15,
-        "aliases": [
-          "site unesco",
-          "patrimoine mondial benin"
-        ]
-      },
-      {
-        "text": "Aucun / ne sait pas",
-        "pts": 20,
-        "aliases": [
-          "aucun",
-          "ne sait pas",
-          "pas de site"
-        ]
-      },
-      {
-        "text": "Autre site du patrimoine",
-        "pts": 5,
-        "aliases": [
-          "autre site",
-          "patrimoine",
-          "monument historique"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Seh-Dong Hong-Behon",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Palais royaux d Abomey",
-        "correct": true,
-        "pts": 35
-      },
-      {
-        "id": "C",
-        "text": "Autre événement historique",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Temple des Pythons",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Musée Honmé", "Palais de la Marina", "Musée de Ouidah", "Fort français"],
+    "correctIndex": 0,
+    "fact": "Le musée Honmé à Porto-Novo présente l'histoire du royaume de Porto-Novo."
   },
   {
-    "q": "Citez un royaume ou une chefferie traditionnelle du Nord du Bénin.",
-    "category": "Histoire du Bénin",
-    "difficulty": 2,
-    "source": "Histoire du Nord-Bénin / chefferies traditionnelles",
-    "fact": "Le royaume de Nikki (Bariba) est l une des chefferies traditionnelles importantes du Nord-Bénin.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Nikki",
-        "pts": 30,
-        "aliases": [
-          "nikki",
-          "royaume de nikki",
-          "bariba"
-        ]
-      },
-      {
-        "text": "Parakou",
-        "pts": 22,
-        "aliases": [
-          "parakou",
-          "nord benin"
-        ]
-      },
-      {
-        "text": "Borgou",
-        "pts": 15,
-        "aliases": [
-          "borgou",
-          "departement du borgou"
-        ]
-      },
-      {
-        "text": "Chefferie de Nikki",
-        "pts": 12,
-        "aliases": [
-          "chefferie",
-          "roi de nikki"
-        ]
-      },
-      {
-        "text": "Kandi",
-        "pts": 10,
-        "aliases": [
-          "kandi"
-        ]
-      },
-      {
-        "text": "Peulha / Peul",
-        "pts": 8,
-        "aliases": [
-          "peul",
-          "peulha",
-          "mbororo"
-        ]
-      },
-      {
-        "text": "Autre chefferie du Nord",
-        "pts": 3,
-        "aliases": [
-          "chefferie du nord",
-          "royaume nord"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Nikki",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "Aubergine",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "WhatsApp",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Goyave",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "q": "Quel site à Abomey était le centre du pouvoir des rois du Dahomey ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 1,
+    "options": ["Les Palais royaux", "Le marché central", "La cathédrale", "L'école des Amazones"],
+    "correctIndex": 0,
+    "fact": "Les Palais royaux d'Abomey sont inscrits au patrimoine mondial de l'UNESCO depuis 1985."
   },
   {
-    "q": "Citez un fort ou un poste colonial au Bénin.",
-    "category": "Monuments et patrimoine",
+    "q": "Quel fleuve marque la frontière naturelle entre le Bénin et le Togo ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "source": "Histoire coloniale du Bénin / forts et comptoirs",
-    "fact": "Le fort portugais de Ouidah fut un comptoir important de la traite atlantique.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Fort portugais de Ouidah",
-        "pts": 30,
-        "aliases": [
-          "fort portugais",
-          "fort de ouidah",
-          "château portugais"
-        ]
-      },
-      {
-        "text": "Fort français",
-        "pts": 22,
-        "aliases": [
-          "fort français",
-          "comptoir français",
-          "fort colonial"
-        ]
-      },
-      {
-        "text": "Fort de Ouidah",
-        "pts": 15,
-        "aliases": [
-          "fort de ouidah",
-          "fort ouidah"
-        ]
-      },
-      {
-        "text": "Poste de traite",
-        "pts": 12,
-        "aliases": [
-          "poste de traite",
-          "comptoir"
-        ]
-      },
-      {
-        "text": "Autre fort colonial",
-        "pts": 10,
-        "aliases": [
-          "fort colonial",
-          "poste colonial"
-        ]
-      },
-      {
-        "text": "Factory britannique / portugaise",
-        "pts": 6,
-        "aliases": [
-          "factory",
-          "comptoir britannique",
-          "comptoir portugais"
-        ]
-      },
-      {
-        "text": "Autre site colonial",
-        "pts": 5,
-        "aliases": [
-          "site colonial",
-          "poste"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Fort portugais de Ouidah",
-        "correct": true,
-        "pts": 30
-      },
-      {
-        "id": "B",
-        "text": "TikTok",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Le djembé",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "LinkedIn",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Mono", "Ouémé", "Niger", "Couffo"],
+    "correctIndex": 0,
+    "fact": "Le fleuve Mono forme une partie de la frontière entre le Bénin et le Togo."
   },
   {
-    "q": "Citez une danse ou une cérémonie traditionnelle du Bénin.",
-    "category": "Culture et traditions",
+    "q": "Quel site de Ouidah est associé au culte du vodun et aux pèlerinages ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "source": "Culture et traditions du Bénin / danses et cérémonies",
-    "fact": "Le zinkpo et l akpalla figurent parmi les danses traditionnelles du Bénin.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Zinkpo",
-        "pts": 28,
-        "aliases": [
-          "zinkpo",
-          "danse zinkpo"
-        ]
-      },
-      {
-        "text": "Akpalla",
-        "pts": 22,
-        "aliases": [
-          "akpalla",
-          "akpalla danse"
-        ]
-      },
-      {
-        "text": "Cérémonie de divination Fa",
-        "pts": 15,
-        "aliases": [
-          "fa",
-          "divination fa",
-          "ifá",
-          "divination"
-        ]
-      },
-      {
-        "text": "Cérémonie vodoun",
-        "pts": 12,
-        "aliases": [
-          "ceremonie vodoun",
-          "fête vodoun",
-          "vodoun"
-        ]
-      },
-      {
-        "text": "Danse des masques (egungun)",
-        "pts": 10,
-        "aliases": [
-          "egungun",
-          "masque",
-          "danse des masques"
-        ]
-      },
-      {
-        "text": "Danse traditionnelle",
-        "pts": 10,
-        "aliases": [
-          "danse traditionnelle",
-          "danse du benin"
-        ]
-      },
-      {
-        "text": "Autre danse ou cérémonie",
-        "pts": 3,
-        "aliases": [
-          "danse traditionnelle",
-          "cérémonie traditionnelle"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Zinkpo",
-        "correct": true,
-        "pts": 28
-      },
-      {
-        "id": "B",
-        "text": "L'économie",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Le jus d'orange",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Lunettes de soleil",
-        "correct": false
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Temple des Pythons", "Fort portugais", "Porte du Non-Retour", "Place Gbaguidi"],
+    "correctIndex": 0,
+    "fact": "Le Temple des Pythons est un lieu de culte vodun très fréquenté à Ouidah."
   },
   {
-    "q": "Citez un objet royal ou un symbole du pouvoir du royaume du Dahomey.",
-    "category": "Monuments et patrimoine",
+    "q": "Quel monument d Abomey commémore les reines et guerrières du Dahomey ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Monument de l Amazone", "Palais des Gouverneurs", "Fort français", "Cathédrale"],
+    "correctIndex": 0,
+    "fact": "Le monument de l Amazone rend hommage aux femmes guerrières du royaume du Dahomey."
+  },
+  {
+    "q": "Quelle colline de Ouidah est liée à l histoire des esclaves ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Colline de Ouidah", "Mont de Sèmè", "Plateau de Parakou", "Colline de Dassa"],
+    "correctIndex": 0,
+    "fact": "La colline de Ouidah est associée à la mémoire de la traite et de l'esclavage."
+  },
+  {
+    "q": "Quel bâtiment colonial abrite des services publics à Cotonou ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Palais des Gouverneurs", "Fort portugais", "Temple des Pythons", "Musée Honmé"],
+    "correctIndex": 0,
+    "fact": "Le Palais des Gouverneurs à Cotonou est un édifice colonial réutilisé."
+  },
+  {
+    "q": "Quel site de Ganvié est visité par les touristes pour son mode de vie lacustre ?",
+    "theme": "Monuments du Bénin",
     "difficulty": 2,
-    "source": "Patrimoine culturel du royaume du Dahomey",
-    "fact": "Le sceptre, le trône et les statues royales sont des symboles du pouvoir des rois du Dahomey.",
-    "pointsEstimes": true,
-    "answers": [
-      {
-        "text": "Sceptre royal",
-        "pts": 30,
-        "aliases": [
-          "sceptre",
-          "sceptre royal",
-          "baton de commandement"
-        ]
-      },
-      {
-        "text": "Trône du roi",
-        "pts": 22,
-        "aliases": [
-          "trône",
-          "trone du roi",
-          "siege royal"
-        ]
-      },
-      {
-        "text": "Statue royale",
-        "pts": 15,
-        "aliases": [
-          "statue",
-          "statue royale",
-          "objet royal"
-        ]
-      },
-      {
-        "text": "Asen (autel du vodoun)",
-        "pts": 12,
-        "aliases": [
-          "asen",
-          "autel vodoun"
-        ]
-      },
-      {
-        "text": "Tissage ou pagne royal",
-        "pts": 10,
-        "aliases": [
-          "pagne royal",
-          "tissage royal",
-          "wax royal"
-        ]
-      },
-      {
-        "text": "Autre objet royal",
-        "pts": 6,
-        "aliases": [
-          "objet royal",
-          "symbole du pouvoir"
-        ]
-      },
-      {
-        "text": "Aucun / ne sait pas",
-        "pts": 5,
-        "aliases": [
-          "aucun",
-          "ne sait pas"
-        ]
-      }
-    ],
-    "format": "qcm",
-    "options": [
-      {
-        "id": "A",
-        "text": "Boissons et offrandes",
-        "correct": false
-      },
-      {
-        "id": "B",
-        "text": "Mangue",
-        "correct": false
-      },
-      {
-        "id": "C",
-        "text": "Corps féminin guerrier",
-        "correct": false
-      },
-      {
-        "id": "D",
-        "text": "Sceptre royal",
-        "correct": true,
-        "pts": 30
-      }
-    ],
-    "correctAnswerIndex": 0
+    "options": ["Le village sur pilotis", "Le marché sec", "Le fort", "Le palais"],
+    "correctIndex": 0,
+    "fact": "Ganvié est célèbre pour ses maisons sur pilotis sur le lac Nokoué."
+  },
+  {
+    "q": "Quel monument de Porto-Novo rappelle l histoire du royaume local ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Musée Honmé", "Place des Martyrs", "Fort portugais", "Tata Somba"],
+    "correctIndex": 0,
+    "fact": "Le musée Honmé présente l'histoire et la culture du royaume de Porto-Novo."
+  },
+  {
+    "q": "Quel site du nord du Bénin est connu pour ses peintures rupestres ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Pendjari", "Tata Somba", "Forêt classée de la Lama", "Grotte de Toucountouna"],
+    "correctIndex": 3,
+    "fact": "La région de Toucountouna dans l Atacora abrite des sites de peintures rupestres."
+  },
+  {
+    "q": "Quel monument de Ouidah commémore l abolition de l esclavage ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 2,
+    "options": ["Porte du Non-Retour", "Fort portugais", "Temple des Pythons", "Place Chacha"],
+    "correctIndex": 0,
+    "fact": "La Porte du Non-Retour est un lieu de mémoire de l abolition de la traite."
+  },
+  {
+    "q": "Quel édifice de Abomey servait de demeure aux reines mères du Dahomey ?",
+    "theme": "Monuments du Bénin",
+    "difficulty": 3,
+    "options": ["Palais des reines", "Fort français", "Temple des Pythons", "Place des Martyrs"],
+    "correctIndex": 0,
+    "fact": "Dans les Palais royaux d Abomey, des espaces étaient réservés aux reines mères."
+  },
+  {
+    "q": "Quel royaume précéda le Dahomey dans la région d'Abomey ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Allada", "Ouidah", "Porto-Novo", "Nikki"],
+    "correctIndex": 0,
+    "fact": "Le royaume d’Allada était un État puissant avant la montée du Dahomey."
+  },
+  {
+    "q": "Quel roi du Dahomey a résisté à la colonisation française à la fin du XIXe siècle ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 1,
+    "options": ["Béhanzin", "Guézo", "Glèlè", "Agadja"],
+    "correctIndex": 0,
+    "fact": "Le roi Béhanzin a mené la résistance contre l'armée française en 1890-1894."
+  },
+  {
+    "q": "En quelle année le Dahomey a-t-il accédé à l indépendance ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 1,
+    "options": ["1960", "1945", "1958", "1962"],
+    "correctIndex": 0,
+    "fact": "Le Dahomey (aujourd hui Bénin) est devenu indépendant le 1er août 1960."
+  },
+  {
+    "q": "Qui fut le premier président du Dahomey indépendant ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Hubert Maga", "Sourou-Migan Apithy", "Justin Ahomadégbé", "Mathieu Kérékou"],
+    "correctIndex": 0,
+    "fact": "Hubert Maga fut le premier président de la République du Dahomey en 1960."
+  },
+  {
+    "q": "Quel président béninois a instauré la révolution populaire en 1972 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Mathieu Kérékou", "Patrice Talon", "Nicéphore Soglo", "Boni Yayi"],
+    "correctIndex": 0,
+    "fact": "Mathieu Kérékou a pris le pouvoir par un coup d'État le 26 octobre 1972."
+  },
+  {
+    "q": "Quelle conférence a marqué le retour à la démocratie en 1990 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Conférence nationale", "Conférence de Berlin", "Conférence de Lagos", "Sommet de Cotonou"],
+    "correctIndex": 0,
+    "fact": "La Conférence nationale des forces vives de la nation s'est tenue en février 1990."
+  },
+  {
+    "q": "Quel corps militaire exclusivement féminin était célèbre au royaume du Dahomey ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 1,
+    "options": ["Amazones du Dahomey", "Gardiennes du roi", "Soldates du Mono", "Femmes de Ouidah"],
+    "correctIndex": 0,
+    "fact": "Les Amazones du Dahomey étaient un corps d’élite de guerrières au service du roi."
+  },
+  {
+    "q": "Qui est le président actuel de la République du Bénin ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 1,
+    "options": ["Patrice Talon", "Mathieu Kérékou", "Boni Yayi", "Nicéphore Soglo"],
+    "correctIndex": 0,
+    "fact": "Patrice Talon est président de la République depuis avril 2016."
+  },
+  {
+    "q": "Quel roi du Dahomey a réorganisé l armée et l État au début du XIXe siècle ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Guézo", "Agadja", "Houégbadja", "Tégbessou"],
+    "correctIndex": 0,
+    "fact": "Le roi Guézo (1818-1858) a modernisé l administration et l armée du Dahomey."
+  },
+  {
+    "q": "Quel événement a marqué la fin du parti unique au Bénin ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Conférence nationale de 1990", "Indépendance de 1960", "Révolution de 1972", "Élections de 1991"],
+    "correctIndex": 0,
+    "fact": "La Conférence nationale de 1990 a ouvert la voie au multipartisme et à la démocratie."
+  },
+  {
+    "q": "Qui a fondé le royaume du Dahomey au XVIIe siècle ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Houégbadja", "Agadja", "Guézo", "Béhanzin"],
+    "correctIndex": 0,
+    "fact": "Houégbadja (vers 1645-1685) est considéré comme le fondateur du royaume du Dahomey."
+  },
+  {
+    "q": "Quel roi a introduit le culte du python royal à Ouidah ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Agadja", "Guézo", "Glèlè", "Béhanzin"],
+    "correctIndex": 0,
+    "fact": "Le roi Agadja est associé à l'introduction du culte du python à Ouidah après ses conquêtes."
+  },
+  {
+    "q": "Qui fut président du Bénin de 1991 à 1996 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Nicéphore Soglo", "Mathieu Kérékou", "Hubert Maga", "Boni Yayi"],
+    "correctIndex": 0,
+    "fact": "Nicéphore Soglo fut élu président lors de la transition démocratique de 1991."
+  },
+  {
+    "q": "Qui fut président du Bénin de 2006 à 2016 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 1,
+    "options": ["Boni Yayi", "Patrice Talon", "Nicéphore Soglo", "Mathieu Kérékou"],
+    "correctIndex": 0,
+    "fact": "Thomas Boni Yayi a été président du Bénin de 2006 à 2016."
+  },
+  {
+    "q": "Quel traité a placé le Dahomey sous protectorat français ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Protectorat de 1894", "Traité de Berlin", "Accord de 1960", "Convention de 1972"],
+    "correctIndex": 0,
+    "fact": "Le protectorat français sur le Dahomey a été établi en 1894."
+  },
+  {
+    "q": "Qui a mené la résistance anticoloniale dans le nord du Bénin ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Kabiès de Nikki", "Béhanzin", "Guézo", "Agadja"],
+    "correctIndex": 0,
+    "fact": "Les souverains de Nikki ont résisté à la pénétration coloniale dans le nord du Bénin."
+  },
+  {
+    "q": "Quel jour est la fête nationale du Bénin ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 1,
+    "options": ["1er août", "10 janvier", "25 décembre", "14 juillet"],
+    "correctIndex": 0,
+    "fact": "Le 1er août 1960 marque l indépendance du Dahomey, aujourd hui fête nationale."
+  },
+  {
+    "q": "Quel président a organisé la Conférence nationale de 1990 ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Mathieu Kérékou", "Patrice Talon", "Hubert Maga", "Sourou-Migan Apithy"],
+    "correctIndex": 0,
+    "fact": "Mathieu Kérékou a accepté l'organisation de la Conférence nationale en 1990."
+  },
+  {
+    "q": "Quel roi du Dahomey a étendu le royaume jusqu à la côte ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 3,
+    "options": ["Agadja", "Houégbadja", "Guézo", "Glèlè"],
+    "correctIndex": 0,
+    "fact": "Le roi Agadja (1708-1732) a conquis le littoral et atteint Ouidah."
+  },
+  {
+    "q": "Quel jour est célébrée la fête du Vodun au Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 1,
+    "options": ["10 janvier", "1er août", "25 décembre", "14 juillet"],
+    "correctIndex": 0,
+    "fact": "La fête du Vodun est célébrée chaque année le 10 janvier, jour férié au Bénin."
+  },
+  {
+    "q": "Quelle danse traditionnelle implique des masques sacrés au Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 2,
+    "options": ["Zangbeto", "Salsa", "Zumba", "Hip-hop"],
+    "correctIndex": 0,
+    "fact": "Le Zangbeto est une danse de masques sacrés vodun qui surveille les villages la nuit."
+  },
+  {
+    "q": "Quel tissu traditionnel est très porté par les femmes béninoises ?",
+    "theme": "Culture & traditions",
+    "difficulty": 1,
+    "options": ["Pagne wax", "Kimono", "Sari", "Tartan"],
+    "correctIndex": 0,
+    "fact": "Le pagne (wax) est utilisé pour confectionner boubous, kabas et tenues de cérémonie."
+  },
+  {
+    "q": "Quelle coiffure traditionnelle est portée par les femmes du nord du Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Gélé", "Tresse", "Rastafari", "Coupe courte"],
+    "correctIndex": 0,
+    "fact": "Le gélé est un couvre-chef élégant noué, porté lors des cérémonies."
+  },
+  {
+    "q": "Quel instrument accompagne les cérémonies vodun ?",
+    "theme": "Culture & traditions",
+    "difficulty": 2,
+    "options": ["Tam-tam", "Piano", "Guitare électrique", "Synthétiseur"],
+    "correctIndex": 0,
+    "fact": "Le tam-tam rythme les chants et les danses des cérémonies traditionnelles."
+  },
+  {
+    "q": "Quelle tenue traditionnelle est portée par les hommes lors des cérémonies ?",
+    "theme": "Culture & traditions",
+    "difficulty": 1,
+    "options": ["Boubou", "Costume cravate", "T-shirt", "Short"],
+    "correctIndex": 0,
+    "fact": "Le boubou est une tenue ample et élégante portée lors des grandes occasions."
+  },
+  {
+    "q": "Quel plat est souvent servi lors des mariages traditionnels béninois ?",
+    "theme": "Culture & traditions",
+    "difficulty": 2,
+    "options": ["Riz au gras", "Pizza", "Hamburger", "Sushi"],
+    "correctIndex": 0,
+    "fact": "Le riz au gras est un plat de fête courant lors des mariages et cérémonies."
+  },
+  {
+    "q": "Quelle danse est exécutée lors des funérailles traditionnelles dans le sud ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Agbadja", "Tango", "Samba", "Flamenco"],
+    "correctIndex": 0,
+    "fact": "L Agbadja est une danse et musique traditionnelles du sud du Bénin."
+  },
+  {
+    "q": "Quel objet est utilisé pour la divination dans la tradition vodun ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Fa (divination)", "Boussole", "Téléphone", "Livre"],
+    "correctIndex": 0,
+    "fact": "Le Fa est un système de divination traditionnel consulté pour prendre des décisions."
+  },
+  {
+    "q": "Quelle fête célèbre la fin du ramadan au Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 1,
+    "options": ["Aïd el-Fitr", "Noël", "Pâques", "Tabaski"],
+    "correctIndex": 0,
+    "fact": "L'Aïd el-Fitr marque la fin du jeûne du ramadan pour les musulmans béninois."
+  },
+  {
+    "q": "Quelle fête célèbre le sacrifice d Abraham ?",
+    "theme": "Culture & traditions",
+    "difficulty": 1,
+    "options": ["Tabaski (Aïd el-Kebir)", "Noël", "Pâques", "Vodun"],
+    "correctIndex": 0,
+    "fact": "La Tabaski (ou Aïd el-Kebir) commémore le sacrifice d'Abraham."
+  },
+  {
+    "q": "Quel instrument à cordes est joué dans la musique traditionnelle du nord ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Xalam", "Piano", "Violon", "Batterie"],
+    "correctIndex": 0,
+    "fact": "Le xalam est un luth traditionnel joué dans les régions du nord du Bénin."
+  },
+  {
+    "q": "Quelle coiffe est portée par les dignitaires lors des cérémonies royales ?",
+    "theme": "Culture & traditions",
+    "difficulty": 3,
+    "options": ["Foulard royal", "Casquette", "Chapeau melon", "Bonnet"],
+    "correctIndex": 0,
+    "fact": "Les dignitaires royaux portent des coiffes spécifiques lors des cérémonies."
+  },
+  {
+    "q": "Quel art décoratif orne les cases et les palais traditionnels ?",
+    "theme": "Culture & traditions",
+    "difficulty": 2,
+    "options": ["Appliqués", "Fresques à l huile", "Mosaïque", "Graffiti"],
+    "correctIndex": 0,
+    "fact": "Les appliqués en tissu décorent les cases et les palais royaux du Dahomey."
+  },
+  {
+    "q": "Quel plat à base de maïs est très consommé au sud du Bénin ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Amiwo", "Riz au gras", "Yassa", "Thiéboudienne"],
+    "correctIndex": 0,
+    "fact": "L'amiwo (ou ablo) est une pâte de maïs fermentée, souvent servie avec du poisson."
+  },
+  {
+    "q": "Quel plat typique associe riz et haricots au Bénin ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Atassi", "Yassa", "Mafé", "Couscous"],
+    "correctIndex": 0,
+    "fact": "L'atassi est un plat de riz et haricots, très populaire chez les étudiants."
+  },
+  {
+    "q": "Quel plat à base d'igname est pilé au mortier ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Igname pilée", "Foufou", "Attiéké", "Gari"],
+    "correctIndex": 0,
+    "fact": "L'igname pilée est un plat traditionnel du nord et du centre du Bénin."
+  },
+  {
+    "q": "Quelle boisson traditionnelle est tirée du palmier ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Sodabi", "Bissap", "Gingembre", "Jus d ananas"],
+    "correctIndex": 0,
+    "fact": "Le sodabi est un alcool de palmier distillé, typique du sud du Bénin."
+  },
+  {
+    "q": "Quel légume est au centre de la sauce d accompagnement du amiwo ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Tomate", "Pomme de terre", "Carotte", "Chou"],
+    "correctIndex": 0,
+    "fact": "La sauce tomate avec poisson ou viande accompagne souvent l'amiwo."
+  },
+  {
+    "q": "Quel poisson est souvent fumé et consommé au Bénin ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Poisson fumé", "Saumon", "Thon", "Morue"],
+    "correctIndex": 0,
+    "fact": "Le poisson fumé est un aliment de base, souvent ajouté aux sauces."
+  },
+  {
+    "q": "Quel fruit est très consommé au Bénin pendant la saison des pluies ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Mangue", "Pomme", "Raisin", "Kiwi"],
+    "correctIndex": 0,
+    "fact": "La mangue est abondante et très appréciée pendant la saison des pluies."
+  },
+  {
+    "q": "Quel plat à base de haricots est servi avec du riz ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Atassi", "Yassa", "Mafé", "Couscous"],
+    "correctIndex": 0,
+    "fact": "L'atassi combine riz et haricots cuits ensemble, un plat économique et nourrissant."
+  },
+  {
+    "q": "Quelle sauce est préparée avec des graines de palmier ?",
+    "theme": "Gastronomie",
+    "difficulty": 3,
+    "options": ["Sauce graine", "Sauce tomate", "Sauce arachide", "Sauce blanche"],
+    "correctIndex": 0,
+    "fact": "La sauce graine (ou sauce de palme) est préparée avec des noix de palmier."
+  },
+  {
+    "q": "Quel mets est préparé avec du gombo ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Sauce gombo", "Salade", "Gateau", "Boisson"],
+    "correctIndex": 0,
+    "fact": "La sauce au gombo est un accompagnement visqueux servi avec du riz ou du foufou."
+  },
+  {
+    "q": "Quel fruit est utilisé pour préparer le jus de bissap ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Hibiscus", "Mangue", "Ananas", "Orange"],
+    "correctIndex": 0,
+    "fact": "Le bissap est une boisson rafraîchissante à base de fleurs d hibiscus séchées."
+  },
+  {
+    "q": "Quel tubercule est consommé bouilli ou pilé au Bénin ?",
+    "theme": "Gastronomie",
+    "difficulty": 1,
+    "options": ["Igname", "Pomme de terre", "Carotte", "Betterave"],
+    "correctIndex": 0,
+    "fact": "L'igname est un tubercule de base, consommé bouilli, frit ou pilé."
+  },
+  {
+    "q": "Quel plat de rue est populaire à Cotonou le soir ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Pâté", "Pizza", "Taco", "Sushi"],
+    "correctIndex": 0,
+    "fact": "Le pâté (beignet farci) est un snack de rue très apprécié à Cotonou."
+  },
+  {
+    "q": "Quel aliment est utilisé pour épaissir les sauces au Bénin ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Gombo", "Sucre", "Sel", "Vinaigre"],
+    "correctIndex": 0,
+    "fact": "Le gombo, une fois cuit, donne une consistance visqueuse qui épaissit les sauces."
+  },
+  {
+    "q": "Quel plat est servi lors des grandes cérémonies familiales ?",
+    "theme": "Gastronomie",
+    "difficulty": 2,
+    "options": ["Riz au gras", "Sandwich", "Salade", "Omelette"],
+    "correctIndex": 0,
+    "fact": "Le riz au gras est un plat de fête servi lors des mariages et baptêmes."
+  },
+  {
+    "q": "Quelle est la capitale officielle du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 1,
+    "options": ["Porto-Novo", "Cotonou", "Parakou", "Abomey"],
+    "correctIndex": 0,
+    "fact": "Porto-Novo est la capitale officielle ; Cotonou est la capitale économique."
+  },
+  {
+    "q": "Quelle ville est la capitale économique du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 1,
+    "options": ["Cotonou", "Porto-Novo", "Parakou", "Ouidah"],
+    "correctIndex": 0,
+    "fact": "Cotonou abrite le port autonome, les sièges d entreprises et les marchés."
+  },
+  {
+    "q": "Quel océan borde le sud du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 1,
+    "options": ["Océan Atlantique", "Océan Indien", "Mer Méditerranée", "Mer Rouge"],
+    "correctIndex": 0,
+    "fact": "Le Bénin a une courte côte sur le golfe de Guinée (océan Atlantique)."
+  },
+  {
+    "q": "Quel fleuve traverse le centre du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 2,
+    "options": ["Ouémé", "Niger", "Sénégal", "Volta"],
+    "correctIndex": 0,
+    "fact": "Le fleuve Ouémé coule du nord au sud du Bénin jusqu au lac Nokoué."
+  },
+  {
+    "q": "Quel département béninois est connu pour ses Tata Somba ?",
+    "theme": "Géographie",
+    "difficulty": 2,
+    "options": ["Atacora", "Littoral", "Ouémé", "Plateau"],
+    "correctIndex": 0,
+    "fact": "L Atacora, au nord-ouest, est le territoire des Tata Somba (maisons-forteresses)."
+  },
+  {
+    "q": "Quelle ville est la plus grande du nord du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 1,
+    "options": ["Parakou", "Cotonou", "Ouidah", "Abomey"],
+    "correctIndex": 0,
+    "fact": "Parakou est la principale ville du nord du Bénin et un carrefour commercial."
+  },
+  {
+    "q": "Quel lac est proche de Cotonou et de Ganvié ?",
+    "theme": "Géographie",
+    "difficulty": 2,
+    "options": ["Lac Nokoué", "Lac Tchad", "Lac Victoria", "Lac Nyos"],
+    "correctIndex": 0,
+    "fact": "Le lac Nokoué est une lagune peu profonde proche de Cotonou et de Ganvié."
+  },
+  {
+    "q": "Quelle région naturelle couvre le centre du Bénin ?",
+    "theme": "Géographie",
+    "difficulty": 3,
+    "options": ["Plateau", "Désert", "Toundra", "Marais"],
+    "correctIndex": 0,
+    "fact": "Le centre du Bénin est dominé par un plateau de savanes boisées."
+  },
+  {
+    "q": "Quel pays borde le Bénin à l est ?",
+    "theme": "Géographie",
+    "difficulty": 1,
+    "options": ["Nigeria", "Togo", "Burkina Faso", "Niger"],
+    "correctIndex": 0,
+    "fact": "Le Nigeria partage une longue frontière à l est du Bénin."
+  },
+  {
+    "q": "Quel pays borde le Bénin à l ouest ?",
+    "theme": "Géographie",
+    "difficulty": 1,
+    "options": ["Togo", "Nigeria", "Burkina Faso", "Niger"],
+    "correctIndex": 0,
+    "fact": "Le Togo partage une frontière à l ouest du Bénin."
+  },
+  {
+    "q": "Quelle musique moderne béninoise mélange traditions et sons actuels ?",
+    "theme": "Musique & arts",
+    "difficulty": 1,
+    "options": ["Afrobeat béninois", "Opera", "Lied", "Madrigal"],
+    "correctIndex": 0,
+    "fact": "L'afrobeat béninois s'inspire des rythmes traditionnels et du funk."
+  },
+  {
+    "q": "Quel artiste béninois est connu internationalement pour sa musique ?",
+    "theme": "Musique & arts",
+    "difficulty": 2,
+    "options": ["Angélique Kidjo", "Youssou Ndour", "Salif Keïta", "Fela Kuti"],
+    "correctIndex": 0,
+    "fact": "Angélique Kidjo, originaire d Ouidah, est une icône de la musique africaine."
+  },
+  {
+    "q": "Quelle sculpture est associée aux rois du Dahomey ?",
+    "theme": "Musique & arts",
+    "difficulty": 2,
+    "options": ["Statue en bronze", "Statue de glace", "Totem en bois", "Moai"],
+    "correctIndex": 0,
+    "fact": "Les arts du Dahomey incluent des bronzes, des appliqués et des statuettes royales."
+  },
+  {
+    "q": "Quel rythme traditionnel est joué lors des cérémonies de couronnement ?",
+    "theme": "Musique & arts",
+    "difficulty": 3,
+    "options": ["Agbadja", "Samba", "Tango", "Vals"],
+    "correctIndex": 0,
+    "fact": "L Agbadja est une musique et danse traditionnelles du sud du Bénin."
+  },
+  {
+    "q": "Quel art visuel orne les cases et palais traditionnels ?",
+    "theme": "Musique & arts",
+    "difficulty": 2,
+    "options": ["Appliqués", "Fresques à l huile", "Mosaïque", "Graffiti"],
+    "correctIndex": 0,
+    "fact": "Les appliqués en tissu décorent les cases et les palais royaux du Dahomey."
+  },
+  {
+    "q": "Quel conte est transmis oralement par les griots béninois ?",
+    "theme": "Musique & arts",
+    "difficulty": 3,
+    "options": ["Contes du Fa", "Roman policier", "Bande dessinée", "Poème épique"],
+    "correctIndex": 0,
+    "fact": "Les griots transmettent oralement l histoire, les légendes et les contes du Fa."
+  },
+  {
+    "q": "Quelle forme d art corporel est pratiquée lors des cérémonies ?",
+    "theme": "Musique & arts",
+    "difficulty": 2,
+    "options": ["Tatouage", "Piercing", "Maquillage", "Perruque"],
+    "correctIndex": 0,
+    "fact": "Les peintures corporelles et tatouages ornent les participants aux cérémonies."
+  },
+  {
+    "q": "Quel instrument à percussion est joué lors des funérailles traditionnelles ?",
+    "theme": "Musique & arts",
+    "difficulty": 3,
+    "options": ["Gankogui", "Piano", "Saxophone", "Clavecin"],
+    "correctIndex": 0,
+    "fact": "Le gankogui est une cloche en fer jouée dans la musique traditionnelle ewe et fon."
+  },
+  {
+    "q": "Quel musée d art contemporain se trouve à Cotonou ?",
+    "theme": "Musique & arts",
+    "difficulty": 3,
+    "options": ["Musée de la Fondation Zinsou", "Musée du Louvre", "Musée d Orsay", "Centre Pompidou"],
+    "correctIndex": 0,
+    "fact": "La Fondation Zinsou à Cotonou promeut l'art contemporain africain."
+  },
+  {
+    "q": "Quel sport est le plus populaire au Bénin ?",
+    "theme": "Sport",
+    "difficulty": 1,
+    "options": ["Football", "Rugby", "Cricket", "Baseball"],
+    "correctIndex": 0,
+    "fact": "Le football est le sport roi au Bénin, suivi par des milliers de fans."
+  },
+  {
+    "q": "Quel est le surnom de l équipe nationale de football du Bénin ?",
+    "theme": "Sport",
+    "difficulty": 1,
+    "options": ["Les Écureuils", "Les Lions", "Les Aigles", "Les Éléphants"],
+    "correctIndex": 0,
+    "fact": "L'équipe nationale se surnomme les Écureuils du Bénin."
+  },
+  {
+    "q": "Quelle discipline olympique le Bénin a-t-il pratiquée aux Jeux ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Athlétisme", "Ski alpin", "Hockey sur glace", "Bobsleigh"],
+    "correctIndex": 0,
+    "fact": "Le Bénin participe notamment à l athlétisme aux Jeux olympiques."
+  },
+  {
+    "q": "Quel sport de combat est pratiqué dans les écoles béninoises ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Judo", "Boxe anglaise", "Sumo", "Catch"],
+    "correctIndex": 0,
+    "fact": "Le judo est enseigné et pratiqué dans plusieurs écoles et clubs béninois."
+  },
+  {
+    "q": "Quel sport de raquette est joué dans les lycées du Bénin ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Tennis", "Golf", "Polo", "Cricket"],
+    "correctIndex": 0,
+    "fact": "Le tennis est pratiqué dans certains établissements scolaires et clubs."
+  },
+  {
+    "q": "Quel sport est très suivi à la télévision par les Béninois ?",
+    "theme": "Sport",
+    "difficulty": 1,
+    "options": ["Football", "Formule 1", "Golf", "Rugby"],
+    "correctIndex": 0,
+    "fact": "Les matchs de football, surtout ceux de l équipe nationale, rassemblent les familles."
+  },
+  {
+    "q": "Quel sport olympique le Bénin a-t-il représenté en escrime ?",
+    "theme": "Sport",
+    "difficulty": 3,
+    "options": ["Escrime", "Natation", "Gymnastique", "Aviron"],
+    "correctIndex": 0,
+    "fact": "Le Bénin a participé à des compétitions d escrime aux Jeux olympiques."
+  },
+  {
+    "q": "Quel sport de endurance est organisé dans les villes béninoises ?",
+    "theme": "Sport",
+    "difficulty": 3,
+    "options": ["Marathon", "Formule 1", "Ski", "Voile"],
+    "correctIndex": 0,
+    "fact": "Des courses à pied et marathons sont organisés dans plusieurs villes béninoises."
+  },
+  {
+    "q": "Quel sport de filet est pratiqué dans les écoles du Bénin ?",
+    "theme": "Sport",
+    "difficulty": 2,
+    "options": ["Volley-ball", "Baseball", "Golf", "Cricket"],
+    "correctIndex": 0,
+    "fact": "Le volley-ball est pratiqué dans plusieurs établissements scolaires."
+  },
+  {
+    "q": "Quel sport de combat traditionnel existe dans le nord du Bénin ?",
+    "theme": "Sport",
+    "difficulty": 3,
+    "options": ["Lutte traditionnelle", "Sumo", "Catch", "Karaté"],
+    "correctIndex": 0,
+    "fact": "La lutte traditionnelle est pratiquée lors des fêtes dans le nord du Bénin."
+  },
+  {
+    "q": "Quelle école d ingénieurs est située à Cotonou et forme des informaticiens ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 1,
+    "options": ["Epitech", "Polytechnique", "Centrale", "Mines"],
+    "correctIndex": 0,
+    "fact": "Epitech Bénin forme des étudiants aux métiers du numérique et de l'informatique."
+  },
+  {
+    "q": "Quelle application de messagerie est très utilisée par les étudiants béninois ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 1,
+    "options": ["WhatsApp", "Telegram", "Signal", "Messenger"],
+    "correctIndex": 0,
+    "fact": "WhatsApp est l'application de messagerie la plus populaire chez les étudiants."
+  },
+  {
+    "q": "Quel langage de programmation est souvent enseigné en première année d informatique ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 2,
+    "options": ["Python", "Fortran", "Cobol", "Basic"],
+    "correctIndex": 0,
+    "fact": "Python est un langage d initiation courant grâce à sa syntaxe claire."
+  },
+  {
+    "q": "Quelle plateforme permet de suivre des cours en ligne gratuits ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 2,
+    "options": ["Coursera", "Facebook", "Instagram", "TikTok"],
+    "correctIndex": 0,
+    "fact": "Coursera propose des cours en ligne (MOOCs) accessibles gratuitement ou moyennant paiement."
+  },
+  {
+    "q": "Quel outil est utilisé pour écrire du code informatique ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 1,
+    "options": ["Éditeur de texte / IDE", "Traitement de texte", "Tableur", "Navigateur"],
+    "correctIndex": 0,
+    "fact": "Un IDE (comme VS Code) ou un éditeur de texte est utilisé pour écrire du code."
+  },
+  {
+    "q": "Que signifie l acronyme HTML ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 2,
+    "options": ["HyperText Markup Language", "High Text Machine Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"],
+    "correctIndex": 0,
+    "fact": "HTML signifie HyperText Markup Language, le langage de structure des pages web."
+  },
+  {
+    "q": "Quel système d exploitation est largement utilisé sur les serveurs ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 2,
+    "options": ["Linux", "Windows", "macOS", "iOS"],
+    "correctIndex": 0,
+    "fact": "Linux est très répandu sur les serveurs grâce à sa stabilité et son ouverture."
+  },
+  {
+    "q": "Quel réseau social professionnel est utilisé pour chercher un stage ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 1,
+    "options": ["LinkedIn", "Instagram", "Snapchat", "TikTok"],
+    "correctIndex": 0,
+    "fact": "LinkedIn est le réseau social professionnel utilisé pour le recrutement et le réseautage."
+  },
+  {
+    "q": "Quel langage est utilisé pour créer des pages web dynamiques ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 2,
+    "options": ["JavaScript", "Latin", "Grec", "Sanskrit"],
+    "correctIndex": 0,
+    "fact": "JavaScript permet d ajouter de l interactivité aux pages web."
+  },
+  {
+    "q": "Quelle application est utilisée pour faire des visioconférences étudiantes ?",
+    "theme": "Tech & vie étudiante",
+    "difficulty": 1,
+    "options": ["Zoom", "Word", "Excel", "PowerPoint"],
+    "correctIndex": 0,
+    "fact": "Zoom est largement utilisé pour les cours en ligne et les réunions à distance."
+  },
+  {
+    "q": "Quelle est la plus grande démocratie d Afrique par sa population ?",
+    "theme": "Culture générale",
+    "difficulty": 1,
+    "options": ["Nigeria", "Égypte", "Afrique du Sud", "Kenya"],
+    "correctIndex": 0,
+    "fact": "Le Nigeria est le pays le plus peuplé d Afrique avec plus de 200 millions d habitants."
+  },
+  {
+    "q": "Quelle est la langue officielle du Bénin ?",
+    "theme": "Culture générale",
+    "difficulty": 1,
+    "options": ["Français", "Anglais", "Espagnol", "Portugais"],
+    "correctIndex": 0,
+    "fact": "Le français est la langue officielle, héritée de la colonisation."
+  },
+  {
+    "q": "Quelle est la capitale du Nigeria ?",
+    "theme": "Culture générale",
+    "difficulty": 2,
+    "options": ["Abuja", "Lagos", "Kano", "Kaduna"],
+    "correctIndex": 0,
+    "fact": "Abuja est la capitale fédérale du Nigeria depuis 1991."
+  },
+  {
+    "q": "Quel est le plus grand désert du monde ?",
+    "theme": "Culture générale",
+    "difficulty": 1,
+    "options": ["Sahara", "Gobi", "Kalahari", "Atacama"],
+    "correctIndex": 0,
+    "fact": "Le Sahara est le plus grand désert chaud du monde."
+  },
+  {
+    "q": "Qui a peint la Joconde ?",
+    "theme": "Culture générale",
+    "difficulty": 1,
+    "options": ["Léonard de Vinci", "Pablo Picasso", "Vincent van Gogh", "Claude Monet"],
+    "correctIndex": 0,
+    "fact": "La Joconde (Mona Lisa) a été peinte par Léonard de Vinci au XVIe siècle."
+  },
+  {
+    "q": "Quelle est la plus longue rivière d Afrique ?",
+    "theme": "Culture générale",
+    "difficulty": 2,
+    "options": ["Nil", "Congo", "Niger", "Zambèze"],
+    "correctIndex": 0,
+    "fact": "Le Nil, avec ses quelque 6 650 km, est le plus long fleuve d Afrique."
+  },
+  {
+    "q": "Quel est le plus petit pays du monde ?",
+    "theme": "Culture générale",
+    "difficulty": 1,
+    "options": ["Vatican", "Monaco", "Nauru", "Saint-Marin"],
+    "correctIndex": 0,
+    "fact": "La Cité du Vatican est le plus petit État souverain du monde."
+  },
+  {
+    "q": "Qui a découvert la pénicilline ?",
+    "theme": "Culture générale",
+    "difficulty": 3,
+    "options": ["Alexander Fleming", "Louis Pasteur", "Robert Koch", "Edward Jenner"],
+    "correctIndex": 0,
+    "fact": "Alexander Fleming a découvert la pénicilline en 1928."
+  },
+  {
+    "q": "Quelle est la devise de la France ?",
+    "theme": "Culture générale",
+    "difficulty": 1,
+    "options": ["Liberté, Égalité, Fraternité", "Travail, Famille, Patrie", "Unité, Justice, Progrès", "Paix, Unité, Développement"],
+    "correctIndex": 0,
+    "fact": "La devise de la France est 'Liberté, Égalité, Fraternité'."
+  },
+  {
+    "q": "Quel organisme protège le patrimoine mondial ?",
+    "theme": "Culture générale",
+    "difficulty": 2,
+    "options": ["UNESCO", "UNICEF", "OMS", "FAO"],
+    "correctIndex": 0,
+    "fact": "L'UNESCO (Organisation des Nations unies pour l'éducation, la science et la culture) protège le patrimoine mondial."
+  },
+  {
+    "q": "Qui fut le roi Guézo du Dahomey ?",
+    "theme": "Histoire du Bénin",
+    "difficulty": 2,
+    "options": ["Un roi qui a modernisé l armée et l État", "Un explorateur européen", "Un missionnaire", "Un chef militaire français"],
+    "correctIndex": 0,
+    "fact": "Le roi Guézo (1818-1858) a modernisé l administration et l armée du royaume du Dahomey."
+  },
+  {
+    "q": "Quel instrument accompagne les danses de masques sacrés au Bénin ?",
+    "theme": "Culture & traditions",
+    "difficulty": 1,
+    "options": ["Tam-tam", "Piano", "Guitare électrique", "Synthétiseur"],
+    "correctIndex": 0,
+    "fact": "Le tam-tam rythme les chants et les danses des cérémonies traditionnelles et vodun."
+  },
+  {
+    "q": "Quel art décoratif orne les cases et les palais royaux du Dahomey ?",
+    "theme": "Musique & arts",
+    "difficulty": 2,
+    "options": ["Appliqués en tissu", "Fresques à l huile", "Mosaïque romaine", "Graffiti urbain"],
+    "correctIndex": 0,
+    "fact": "Les appliqués en tissu décorent les cases et les palais royaux du royaume du Dahomey."
   }
 ]
