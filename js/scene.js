@@ -232,7 +232,7 @@
   }
 
   function buildTribune(scene) {
-    const ROWS = 6;
+    const ROWS = 7;
     const treadDepth = 0.95;      /* profondeur d'une marche */
     const rise = 0.5;             /* hauteur d'une rangée (≥ 0.45 pour voir par-dessus) */
     const seatH = 0.42;
@@ -260,7 +260,7 @@
       scene.add(strip);
     }
 
-    const seatPerRow = 16;
+    const seatPerRow = 20;
     const seatW = 0.62;
     const seatGap = 0.08;
     const totalCount = ROWS * seatPerRow;
@@ -868,17 +868,20 @@
     const headGeo = new THREE.SphereGeometry(0.22, 10, 8);
     const hairGeo = new THREE.BoxGeometry(0.28, 0.2, 0.28); /* afro / gélé / casquette */
     const armGeo = new THREE.BoxGeometry(0.07, 0.5, 0.07);
+    const shoulderGeo = new THREE.BoxGeometry(0.58, 0.18, 0.32);
 
     const bodyMat = new THREE.MeshBasicMaterial({ color: '#00E472' });
     const headMat = new THREE.MeshBasicMaterial({ color: '#E0AC69' });
     const hairMat = new THREE.MeshBasicMaterial({ color: '#2B1B12' });
     const armMat = new THREE.MeshBasicMaterial({ color: '#00E472' });
+    const shoulderMat = new THREE.MeshBasicMaterial({ color: '#00E472' });
 
     const bodies = new THREE.InstancedMesh(bodyGeo, bodyMat, totalCount);
     const heads = new THREE.InstancedMesh(headGeo, headMat, totalCount);
     const hairs = new THREE.InstancedMesh(hairGeo, hairMat, totalCount);
     const arms = new THREE.InstancedMesh(armGeo, armMat, totalCount * 2);
-    for (const inst of [bodies, heads, hairs, arms]) {
+    const shoulders = new THREE.InstancedMesh(shoulderGeo, shoulderMat, totalCount);
+    for (const inst of [bodies, heads, hairs, arms, shoulders]) {
       inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       inst.castShadow = false;
     }
@@ -903,12 +906,21 @@
         /* chaque siège est occupé (pas de vide artificiel) */
         present++;
         const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap) + (Math.random() - 0.5) * 0.04;
-        const bodyY = y - seatH / 2 + 0.05 + 0.75;
-        const headY = bodyY + 0.75 + 0.22;
+        const bodyH = 0.92 + Math.random() * 0.18;
+        const bodyW = 0.9 + Math.random() * 0.2;
+        const bodyY = y - seatH / 2 + 0.05 + 0.75 * bodyH;
+        const headY = bodyY + 0.75 * bodyH + 0.22;
+        const hairStyle = Math.random();
+        const hairScale = hairStyle < 0.34 ? [1.35, 1.5, 1.35]
+          : hairStyle < 0.67 ? [0.95, 0.65, 0.95] : [1.1, 0.8, 1.1];
         const data = {
           i, x, bodyY, headY, z: seatZ, row,
           phase: Math.random() * Math.PI * 2,
           phoneIdx: -1,
+          bodyH, bodyW,
+          headScale: 0.92 + Math.random() * 0.16,
+          hairScale,
+          lean: (Math.random() - 0.5) * 0.07,
           anim: 'idle', until: 0,
           skin: skins[(present * 5) % skins.length],
           outfit: outfits[(present * 7) % outfits.length],
@@ -922,19 +934,32 @@
 
         /* corps (boubou) */
         dummy.position.set(x, bodyY, seatZ);
-        dummy.rotation.set(0, ry, rz);
+        dummy.rotation.set(0, ry, rz + data.lean);
+        dummy.scale.set(data.bodyW, data.bodyH, 1);
         dummy.updateMatrix();
         bodies.setMatrixAt(data.crowdIdx = i, dummy.matrix);
         color.set(data.outfit); bodies.setColorAt(i, color);
 
+        /* épaules : silhouette moins « boîte » */
+        dummy.position.set(x, bodyY + 0.55 * data.bodyH, seatZ);
+        dummy.rotation.set(0, ry, rz + data.lean);
+        dummy.scale.set(data.bodyW, 1, 1);
+        dummy.updateMatrix();
+        shoulders.setMatrixAt(i, dummy.matrix);
+        color.set(data.outfit); shoulders.setColorAt(i, color);
+
         /* tête */
         dummy.position.set(x, headY, seatZ);
+        dummy.rotation.set(0, ry, rz + data.lean * 0.5);
+        dummy.scale.setScalar(data.headScale);
         dummy.updateMatrix();
         heads.setMatrixAt(i, dummy.matrix);
         color.set(data.skin); heads.setColorAt(i, color);
 
-        /* chevelure */
-        dummy.position.set(x, headY + 0.16, seatZ + 0.02);
+        /* chevelure : afro / gélé / casquette selon le spectateur */
+        dummy.position.set(x, headY + 0.16 * data.hairScale[1], seatZ + 0.02);
+        dummy.rotation.set(0, ry, rz + data.lean * 0.5);
+        dummy.scale.set(data.hairScale[0], data.hairScale[1], data.hairScale[2]);
         dummy.updateMatrix();
         hairs.setMatrixAt(i, dummy.matrix);
         color.set(data.hair); hairs.setColorAt(i, color);
@@ -942,12 +967,14 @@
         /* bras : deux instances par spectateur (gauche, droite) */
         [ -1, 1 ].forEach((side) => {
           const ai = i * 2 + (side === -1 ? 0 : 1);
-          dummy.position.set(x + side * 0.3, bodyY - 0.25, seatZ + 0.02);
-          dummy.rotation.set(0, 0, side * 0.1);
+          dummy.position.set(x + side * 0.3 * data.bodyW, bodyY - 0.25 * data.bodyH, seatZ + 0.02);
+          dummy.rotation.set(0, 0, side * 0.1 + data.lean);
+          dummy.scale.set(data.bodyW, data.bodyH, 1);
           dummy.updateMatrix();
           arms.setMatrixAt(ai, dummy.matrix);
           color.set(data.outfit); arms.setColorAt(ai, color);
         });
+        dummy.scale.setScalar(1);
       }
     }
     const phoneData = S.crowdData.filter((ch) => ch.i % 4 === 0);
@@ -976,15 +1003,17 @@
     heads.instanceColor.needsUpdate = true;
     hairs.instanceColor.needsUpdate = true;
     arms.instanceColor.needsUpdate = true;
+    shoulders.instanceColor.needsUpdate = true;
     phones.instanceColor.needsUpdate = true;
     bodies.instanceMatrix.needsUpdate = true;
     heads.instanceMatrix.needsUpdate = true;
     hairs.instanceMatrix.needsUpdate = true;
     arms.instanceMatrix.needsUpdate = true;
+    shoulders.instanceMatrix.needsUpdate = true;
     phones.instanceMatrix.needsUpdate = true;
 
-    scene.add(bodies, heads, hairs, arms, phones);
-    S.crowdInst = { bodies, heads, hairs, arms, phones };
+    scene.add(bodies, heads, hairs, arms, shoulders, phones);
+    S.crowdInst = { bodies, heads, hairs, arms, shoulders, phones };
     S.crowdCount = present;
   }
 
@@ -1010,19 +1039,30 @@
         lift = Math.sin(t * 1.6 + ch.phase) * 0.012;
       }
       const ry = Math.PI + (ch.tiltOffset || 0);
-      const rz = tilt;
+      const rz = tilt + ch.lean;
 
       /* corps */
       dummy.position.set(ch.x, ch.bodyY + lift, ch.z);
       dummy.rotation.set(0, ry, rz);
+      dummy.scale.set(ch.bodyW, ch.bodyH, 1);
       dummy.updateMatrix();
       inst.bodies.setMatrixAt(ch.i, dummy.matrix);
+      /* épaules */
+      dummy.position.set(ch.x, ch.bodyY + 0.55 * ch.bodyH + lift, ch.z);
+      dummy.rotation.set(0, ry, rz);
+      dummy.scale.set(ch.bodyW, 1, 1);
+      dummy.updateMatrix();
+      inst.shoulders.setMatrixAt(ch.i, dummy.matrix);
       /* tête */
       dummy.position.set(ch.x, ch.headY + lift, ch.z);
+      dummy.rotation.set(0, ry, rz * 0.5);
+      dummy.scale.setScalar(ch.headScale);
       dummy.updateMatrix();
       inst.heads.setMatrixAt(ch.i, dummy.matrix);
       /* chevelure */
-      dummy.position.set(ch.x, ch.headY + 0.16 + lift, ch.z + 0.02);
+      dummy.position.set(ch.x, ch.headY + 0.16 * ch.hairScale[1] + lift, ch.z + 0.02);
+      dummy.rotation.set(0, ry, rz * 0.5);
+      dummy.scale.set(ch.hairScale[0], ch.hairScale[1], ch.hairScale[2]);
       dummy.updateMatrix();
       inst.hairs.setMatrixAt(ch.i, dummy.matrix);
       /* bras : bras levés quand on applaudit */
@@ -1030,11 +1070,13 @@
       if (cheering) armLift = Math.abs(Math.sin(t * 14 + ch.phase)) * 0.68;
       [ -1, 1 ].forEach((side) => {
         const ai = ch.i * 2 + (side === -1 ? 0 : 1);
-        dummy.position.set(ch.x + side * 0.3, ch.bodyY - 0.25 + armLift, ch.z + 0.02);
-        dummy.rotation.set(0, 0, side * 0.1 + (cheering ? side * 1.15 : 0));
+        dummy.position.set(ch.x + side * 0.3 * ch.bodyW, ch.bodyY - 0.25 * ch.bodyH + armLift, ch.z + 0.02);
+        dummy.rotation.set(0, 0, side * 0.1 + ch.lean + (cheering ? side * 1.15 : 0));
+        dummy.scale.set(ch.bodyW, ch.bodyH, 1);
         dummy.updateMatrix();
         inst.arms.setMatrixAt(ai, dummy.matrix);
       });
+      dummy.scale.setScalar(1);
       if (inst.phones && ch.phoneIdx >= 0) {
         const pulse = 1 + Math.sin(t * 3 + ch.phase) * 0.08 + S.crowdCheer * 0.08
           + (cheering ? 0.3 + Math.sin(t * 14 + ch.phase) * 0.18 : 0);
@@ -1054,6 +1096,7 @@
     inst.heads.instanceMatrix.needsUpdate = true;
     inst.hairs.instanceMatrix.needsUpdate = true;
     inst.arms.instanceMatrix.needsUpdate = true;
+    inst.shoulders.instanceMatrix.needsUpdate = true;
     if (inst.phones) inst.phones.instanceMatrix.needsUpdate = true;
   }
 
