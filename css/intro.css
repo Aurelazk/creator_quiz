@@ -88,7 +88,7 @@
   position: absolute; bottom: clamp(14px, 4vh, 28px); right: clamp(14px, 4vw, 28px);
   z-index: 40; background: rgba(255,255,255,0.12); color: #fff;
   border: 1px solid rgba(255,255,255,0.35); border-radius: 99px;
-  padding: 0.5rem 1rem; font-size: 0.82rem; cursor: pointer;
+  padding: 0.5rem 1rem; min-height: 48px; font-size: 0.82rem; cursor: pointer;
   backdrop-filter: blur(6px); opacity: 0; transition: opacity .3s, background .2s;
 }
 .intro-skip.show { opacity: 1; }

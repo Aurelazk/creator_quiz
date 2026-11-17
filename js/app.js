@@ -130,6 +130,7 @@
     saveJSON(LS.name, name);
     const token = App.playerTokens[code] || null;
     App.code = code;
+    App.role = 'player';
     App.queuedMode = false;
     authenticate({ type: 'player:join', payload: { code, name, token, avatar: App.avatar } });
     toast('#phoneToasts', 'Connexion à la salle…', 'info', 1800);
@@ -151,6 +152,7 @@
     delete App.playerTokens[App.code];
     App.code = '';
     App.state = null;
+    App.role = null;
     showPlayerScreen('pHome');
     const codeIn = $('#codeIn');
     if (codeIn) codeIn.value = '';
@@ -507,6 +509,7 @@
 
   function onJoined(msg) {
     if (App.role === 'host') return;
+    App.role = 'player';
     App.code = msg.code;
     App.playerTokens[msg.code] = msg.token;
     saveJSON(LS.players, App.playerTokens);
@@ -772,9 +775,13 @@
       startHost();
     } else if (code) {
       const token = App.playerTokens[code];
-      App.code = code;
-      App.name = App.name || 'Joueur';
-      authenticate({ type: 'player:join', payload: { code, name: App.name, token, avatar: App.avatar } });
+      if (token) {
+        App.code = code;
+        App.name = App.name || 'Joueur';
+        authenticate({ type: 'player:join', payload: { code, name: App.name, token, avatar: App.avatar } });
+      } else {
+        global.Net.connect();
+      }
     } else {
       global.Net.connect();
     }

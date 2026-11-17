@@ -13,6 +13,7 @@
     "test:join": "node tests/join.test.js",
     "test:overlap": "node tests/overlap.js",
     "test:intro": "node tests/intro.js",
+    "test:phone": "node tests/phone-flow.js",
     "test:demo": "node tests/demo.js",
     "test:questions": "node tests/questions.test.js"
   },

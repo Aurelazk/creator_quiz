@@ -90,6 +90,7 @@ async function run() {
   phone.on('response', (r) => phoneResponses.push(r));
   await phone.goto(BASE, { waitUntil: 'domcontentloaded' });
   await phone.waitForFunction(() => window.App && window.Net, null, { timeout: 8000 });
+  await phone.waitForFunction(() => window.IntroAnim && window.IntroAnim.isFinished(), null, { timeout: 20000 });
   await phone.screenshot({ path: path.join(DIR, 'phone-home-390x844.png'), fullPage: true });
   const pm = await metrics(phone);
   check(!phoneRequests.some((u) => u.includes('three.min.js')), 'three.min.js non chargé côté joueur');
