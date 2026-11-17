@@ -233,8 +233,8 @@
 
   function buildTribune(scene) {
     const ROWS = 7;
-    const treadDepth = 0.95;      /* profondeur d'une marche */
-    const rise = 0.5;             /* hauteur d'une rangée (≥ 0.45 pour voir par-dessus) */
+    const treadDepth = 1.1;       /* profondeur d'une marche */
+    const rise = 0.58;            /* hauteur d'une rangée (≥ 0.45 pour voir par-dessus) */
     const seatH = 0.42;
     const width = 17;
     const startZ = -7.0;
@@ -260,9 +260,9 @@
       scene.add(strip);
     }
 
-    const seatPerRow = 20;
-    const seatW = 0.62;
-    const seatGap = 0.08;
+    const seatPerRow = 16;
+    const seatW = 0.68;
+    const seatGap = 0.24;
     const totalCount = ROWS * seatPerRow;
     const seatGeo = new THREE.BoxGeometry(seatW, 0.1, 0.5);
     const backGeo = new THREE.BoxGeometry(seatW * 0.9, 0.45, 0.12);
@@ -275,8 +275,9 @@
     for (let r = 0; r < ROWS; r++) {
       const y = startY + r * rise;
       const z = startZ - r * treadDepth;
+      const rowShift = (r % 2 ? 0.25 : -0.25) * (seatW + seatGap);
       for (let s = 0; s < seatPerRow; s++) {
-        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap);
+        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap) + rowShift;
         dummy.position.set(x, y - seatH / 2 + 0.05, z + treadDepth - 0.42);
         dummy.updateMatrix();
         seats.setMatrixAt(k, dummy.matrix);
@@ -915,11 +916,12 @@
       const y = startY + row * rise;
       const z = startZ - row * treadDepth;
       const seatZ = z + treadDepth - 0.42;
+      const rowShift = (row % 2 ? 0.25 : -0.25) * (seatW + seatGap);
       for (let s = 0; s < seatPerRow; s++) {
         const i = row * seatPerRow + s;
         present++;
-        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap) + (Math.random() - 0.5) * 0.04;
-        const scale = 0.88 + Math.random() * 0.24;
+        const x = (s - (seatPerRow - 1) / 2) * (seatW + seatGap) + rowShift + (Math.random() - 0.5) * 0.06;
+        const scale = 0.78 + Math.random() * 0.18;
         const bodyY = y - seatH / 2 + 0.05 + 0.78 * scale;
         const headY = bodyY + 0.78 * scale;
         const style = styles[(present + row) % styles.length];
