@@ -848,6 +848,10 @@
   /* ------------------------------------------------------------------ */
   /* Foule                                                              */
   /* ------------------------------------------------------------------ */
+  function hairHeight(style) {
+    return style === 'afro' ? 0.58 : style === 'curly' ? 0.42 : style === 'cap' ? 0.34 : 0.32;
+  }
+
   function buildCrowd(scene) {
     const trib = S.tribune;
     const ROWS = trib.ROWS;
@@ -866,7 +870,7 @@
     const shirts = ['#F4F6FC', '#F5C542', '#FF4E20', '#00E472', '#2E85FF', '#E84A8A'];
     const pants = ['#0B35FE', '#111C42', '#1F294A', '#5C3317', '#2B1B12'];
     const shoes = ['#F4F6FC', '#111C42', '#00E472', '#FF4E20'];
-    const hairsCol = ['#2B1B12', '#1B2A6B', '#F5C542', '#F4F6FC', '#5AD86B', '#8B5CF6', '#B9B9C9'];
+    const hairsCol = ['#2B1B12', '#3B2418', '#F5C542', '#F4F6FC', '#6B4A2A', '#8B4A2B', '#B9B9C9'];
     const styles = ['jacket', 'jacket', 'tee', 'tee', 'dress', 'hoodie'];
     const hairStyles = ['short', 'curly', 'afro', 'braids', 'cap'];
 
@@ -885,7 +889,12 @@
     const arms = makePart(GEO.cylLow, totalCount * 2);
     const hands = makePart(GEO.sphereLow, totalCount * 2);
     const heads = makePart(GEO.sphereLow, totalCount);
+    const chins = makePart(GEO.sphereLow, totalCount);
+    const ears = makePart(GEO.sphereLow, totalCount * 2);
+    const brows = makePart(GEO.box, totalCount * 2);
     const eyes = makePart(GEO.sphereLow, totalCount * 2);
+    const noses = makePart(GEO.sphereLow, totalCount);
+    const mouths = makePart(GEO.box, totalCount);
     const hairs = makePart(GEO.hemiLow, totalCount);
     const hairPuffs = makePart(GEO.sphereLow, totalCount);
 
@@ -955,16 +964,26 @@
             0.11 * scale, 0.11 * scale, 0.11 * scale, skin);
         });
         setPart(heads, i, x, headY, seatZ, 0.5 * scale, 0.52 * scale, 0.48 * scale, skin, 0, rotY, rotZ + lean * 0.5);
+        setPart(chins, i, x, headY - 0.28 * scale, seatZ + 0.03 * scale,
+          0.31 * scale, 0.22 * scale, 0.34 * scale, AvatarShade(skin, -6), 0, rotY, rotZ + lean * 0.5);
+        setPart(noses, i, x, headY - 0.04 * scale, seatZ + 0.49 * scale,
+          0.035 * scale, 0.055 * scale, 0.045 * scale, AvatarShade(skin, -10));
+        setPart(mouths, i, x, headY - 0.22 * scale, seatZ + 0.44 * scale,
+          0.075 * scale, 0.018 * scale, 0.012 * scale, '#5B2B35');
         [-1, 1].forEach((side, k) => {
-          setPart(eyes, i * 2 + k, x + side * 0.11 * scale, headY + 0.07 * scale, seatZ + 0.46 * scale,
-            0.045 * scale, 0.04 * scale, 0.02 * scale, '#141A33');
+          setPart(ears, i * 2 + k, x + side * 0.49 * scale, headY - 0.02 * scale, seatZ,
+            0.07 * scale, 0.11 * scale, 0.055 * scale, skin, 0, rotY, rotZ + lean * 0.5);
+          setPart(brows, i * 2 + k, x + side * 0.105 * scale, headY + 0.15 * scale, seatZ + 0.455 * scale,
+            0.085 * scale, 0.014 * scale, 0.012 * scale, hair, 0, rotY, rotZ + lean * 0.5);
+          setPart(eyes, i * 2 + k, x + side * 0.105 * scale, headY + 0.055 * scale, seatZ + 0.46 * scale,
+            0.038 * scale, 0.034 * scale, 0.018 * scale, '#10162E', 0, rotY, rotZ + lean * 0.5);
         });
-        const hairH = hairStyle === 'afro' ? 0.58 : hairStyle === 'curly' ? 0.36 : 0.3;
-        setPart(hairs, i, x, headY + 0.08 * scale, seatZ - 0.01,
+        const hairH = hairHeight(hairStyle);
+        setPart(hairs, i, x, headY + (0.52 - hairH) * scale, seatZ - 0.02 * scale,
           0.52 * scale, hairH * scale, 0.5 * scale, hair, 0, rotY, rotZ + lean * 0.5);
         const puffVisible = hairStyle === 'afro' ? 1 : 0.0001;
-        setPart(hairPuffs, i, x, headY + 0.16 * scale, seatZ - 0.08,
-          0.62 * scale * puffVisible, 0.58 * scale * puffVisible, 0.6 * scale * puffVisible, hair);
+        setPart(hairPuffs, i, x, headY + 0.18 * scale, seatZ - 0.06 * scale,
+          0.6 * scale * puffVisible, 0.55 * scale * puffVisible, 0.58 * scale * puffVisible, hair);
         dummy.scale.setScalar(1);
       }
     }
@@ -986,7 +1005,7 @@
     });
     dummy.scale.setScalar(1);
 
-    const parts = { torsos, jackets: jacketParts, skirts, legs, shoes: shoesParts, arms, hands, heads, eyes, hairs, hairPuffs, phones };
+    const parts = { torsos, jackets: jacketParts, skirts, legs, shoes: shoesParts, arms, hands, heads, chins, ears, brows, eyes, noses, mouths, hairs, hairPuffs, phones };
     for (const inst of Object.values(parts)) {
       if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
       inst.instanceMatrix.needsUpdate = true;
@@ -1055,18 +1074,29 @@
           ch.bodyY - 0.52 * sc + armLift * 1.5, ch.z + 0.01,
           0.11 * sc, 0.11 * sc, 0.11 * sc);
       });
-      set(inst.heads, ch.i, ch.x, ch.headY + lift, ch.z,
+      const headY = ch.headY + lift;
+      set(inst.heads, ch.i, ch.x, headY, ch.z,
         0.5 * sc, 0.52 * sc, 0.48 * sc, 0, ch.rotY, rzHead);
+      set(inst.chins, ch.i, ch.x, headY - 0.28 * sc, ch.z + 0.03 * sc,
+        0.31 * sc, 0.22 * sc, 0.34 * sc, 0, ch.rotY, rzHead);
+      set(inst.noses, ch.i, ch.x, headY - 0.04 * sc, ch.z + 0.49 * sc,
+        0.035 * sc, 0.055 * sc, 0.045 * sc, 0, ch.rotY, rzHead);
+      set(inst.mouths, ch.i, ch.x, headY - 0.22 * sc, ch.z + 0.44 * sc,
+        0.075 * sc, 0.018 * sc, 0.012 * sc, 0, ch.rotY, rzHead);
       [-1, 1].forEach((side, k) => {
-        set(inst.eyes, ch.i * 2 + k, ch.x + side * 0.11 * sc, ch.headY + 0.07 * sc + lift, ch.z + 0.46 * sc,
-          0.045 * sc, 0.04 * sc, 0.02 * sc);
+        set(inst.ears, ch.i * 2 + k, ch.x + side * 0.49 * sc, headY - 0.02 * sc, ch.z,
+          0.07 * sc, 0.11 * sc, 0.055 * sc, 0, ch.rotY, rzHead);
+        set(inst.brows, ch.i * 2 + k, ch.x + side * 0.105 * sc, headY + 0.15 * sc, ch.z + 0.455 * sc,
+          0.085 * sc, 0.014 * sc, 0.012 * sc, 0, ch.rotY, rzHead);
+        set(inst.eyes, ch.i * 2 + k, ch.x + side * 0.105 * sc, headY + 0.055 * sc, ch.z + 0.46 * sc,
+          0.038 * sc, 0.034 * sc, 0.018 * sc, 0, ch.rotY, rzHead);
       });
-      const hairH = ch.hairStyle === 'afro' ? 0.58 : ch.hairStyle === 'curly' ? 0.36 : 0.3;
-      set(inst.hairs, ch.i, ch.x, ch.headY + 0.08 * sc + lift, ch.z - 0.01,
+      const hairH = hairHeight(ch.hairStyle);
+      set(inst.hairs, ch.i, ch.x, headY + (0.52 - hairH) * sc, ch.z - 0.02 * sc,
         0.52 * sc, hairH * sc, 0.5 * sc, 0, ch.rotY, rzHead);
       const puffVisible = ch.hairStyle === 'afro' ? 1 : 0.0001;
-      set(inst.hairPuffs, ch.i, ch.x, ch.headY + 0.16 * sc + lift, ch.z - 0.08,
-        0.62 * sc * puffVisible, 0.58 * sc * puffVisible, 0.6 * sc * puffVisible);
+      set(inst.hairPuffs, ch.i, ch.x, headY + 0.18 * sc, ch.z - 0.06 * sc,
+        0.6 * sc * puffVisible, 0.55 * sc * puffVisible, 0.58 * sc * puffVisible);
       if (ch.phoneIdx >= 0) {
         const pulse = 1 + Math.sin(t * 3 + ch.phase) * 0.08 + S.crowdCheer * 0.08
           + (cheering ? 0.3 + Math.sin(t * 14 + ch.phase) * 0.18 : 0);
